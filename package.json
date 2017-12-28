@@ -1,0 +1,76 @@
+{
+	"name": "delta-controls",
+	"version": "0.0.0",
+	"description": "A 3D movement controller.",
+	"homepage": "https://github.com/vanruesc/delta-controls",
+	"main": "build/delta-controls.js",
+	"module": "src/index.js",
+	"license": "Zlib",
+
+	"keywords": [
+		"movement",
+		"translation",
+		"rotation",
+		"object",
+		"controls",
+		"3d"
+	],
+
+	"author": {
+		"name": "Raoul van Rüschen",
+		"email": "vanruesc@outlook.de"
+	},
+
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vanruesc/delta-controls.git"
+	},
+
+	"bugs": {
+		"url": "https://github.com/vanruesc/delta-controls/issues"
+	},
+
+	"files": [
+		"src",
+		"build"
+	],
+
+	"scripts": {
+		"test": "grunt --production"
+	},
+
+	"engines": {
+		"node": ">=4.0.0"
+	},
+
+	"eslintConfig": {
+		"extends": "delta"
+	},
+
+	"dependencies": {
+		"math-ds": "0.x.x"
+	},
+
+	"devDependencies": {
+		"babel-core": "6.x.x",
+		"babel-plugin-external-helpers": "6.x.x",
+		"babel-preset-env": "1.x.x",
+		"eslint-config-delta": "0.x.x",
+		"grunt": "1.x.x",
+		"grunt-cli": "1.x.x",
+		"grunt-contrib-nodeunit": "1.x.x",
+		"grunt-contrib-uglify": "3.x.x",
+		"grunt-contrib-copy": "1.x.x",
+		"grunt-eslint": "20.x.x",
+		"grunt-rollup": "8.x.x",
+		"jit-grunt": "0.x.x",
+		"load-grunt-config": "0.x.x",
+		"postprocessing": "4.x.x",
+		"rollup-plugin-babel": "3.x.x",
+		"rollup-plugin-node-resolve": "3.x.x",
+		"synthetic-event": "0.x.x",
+		"three": "0.89.x",
+		"three-demo": "0.x.x",
+		"time-grunt": "1.x.x"
+	}
+}
