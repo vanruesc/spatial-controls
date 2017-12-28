@@ -5087,7 +5087,7 @@
     "__docId__": 245,
     "kind": "file",
     "name": "src/strategies/ZoomStrategy.js",
-    "content": "import { Strategy } from \"./Strategy.js\";\r\n\r\n/**\r\n * A zoom strategy.\r\n */\r\n\r\nexport class ZoomStrategy extends Strategy {\r\n\r\n\t/**\r\n\t * Constructs a new zoom strategy.\r\n\t *\r\n\t * @param {RotationManager} rotationManager - A rotation manager.\r\n\t * @param {Boolean} zoomIn - Whether this strategy should zoom in.\r\n\t * @param {Number} [zoomAmount=100.0] - The zoom amount.\r\n\t */\r\n\r\n\tconstructor(rotationManager, zoomIn, zoomAmount = 10.0) {\r\n\r\n\t\tsuper();\r\n\r\n\t\t/**\r\n\t\t * A rotation manager.\r\n\t\t *\r\n\t\t * @type {RotationManager}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.rotationManager = rotationManager;\r\n\r\n\t\t/**\r\n\t\t * A direction.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.zoomIn = zoomIn;\r\n\r\n\t\t/**\r\n\t\t * the default zoom amount.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.zoomAmount = zoomAmount;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Executes this strategy.\r\n\t *\r\n\t * @param {Boolean} flag - A flag.\r\n\t */\r\n\r\n\texecute(flag) {\r\n\r\n\t\t// Only act on key down events.\r\n\t\tif(flag) {\r\n\r\n\t\t\tthis.rotationManager.zoom(this.zoomIn ? -this.zoomAmount : this.zoomAmount);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n}\r\n",
+    "content": "import { Strategy } from \"./Strategy.js\";\r\n\r\n/**\r\n * A zoom strategy.\r\n */\r\n\r\nexport class ZoomStrategy extends Strategy {\r\n\r\n\t/**\r\n\t * Constructs a new zoom strategy.\r\n\t *\r\n\t * @param {RotationManager} rotationManager - A rotation manager.\r\n\t * @param {Boolean} zoomIn - Whether this strategy should zoom in.\r\n\t * @param {Number} [zoomAmount=100.0] - The zoom amount.\r\n\t */\r\n\r\n\tconstructor(rotationManager, zoomIn, zoomAmount = 10.0) {\r\n\r\n\t\tsuper();\r\n\r\n\t\t/**\r\n\t\t * A rotation manager.\r\n\t\t *\r\n\t\t * @type {RotationManager}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.rotationManager = rotationManager;\r\n\r\n\t\t/**\r\n\t\t * Whether this strategy should zoom in.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.zoomIn = zoomIn;\r\n\r\n\t\t/**\r\n\t\t * the zoom amount.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.zoomAmount = zoomAmount;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Executes this strategy.\r\n\t *\r\n\t * @param {Boolean} flag - A flag.\r\n\t */\r\n\r\n\texecute(flag) {\r\n\r\n\t\t// Only act on key down events.\r\n\t\tif(flag) {\r\n\r\n\t\t\tthis.rotationManager.zoom(this.zoomIn ? -this.zoomAmount : this.zoomAmount);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n}\r\n",
     "static": true,
     "longname": "C:/Users/Raoul/Sourcecode/JavaScript/delta-controls/src/strategies/ZoomStrategy.js",
     "access": "public",
@@ -5186,7 +5186,7 @@
     "static": false,
     "longname": "src/strategies/ZoomStrategy.js~ZoomStrategy#zoomIn",
     "access": "private",
-    "description": "A direction.",
+    "description": "Whether this strategy should zoom in.",
     "lineNumber": 37,
     "type": {
       "nullable": null,
@@ -5205,7 +5205,7 @@
     "static": false,
     "longname": "src/strategies/ZoomStrategy.js~ZoomStrategy#zoomAmount",
     "access": "public",
-    "description": "the default zoom amount.",
+    "description": "the zoom amount.",
     "lineNumber": 45,
     "type": {
       "nullable": null,

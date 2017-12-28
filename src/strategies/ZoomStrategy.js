@@ -28,7 +28,7 @@ export class ZoomStrategy extends Strategy {
 		this.rotationManager = rotationManager;
 
 		/**
-		 * A direction.
+		 * Whether this strategy should zoom in.
 		 *
 		 * @type {Boolean}
 		 * @private
@@ -37,7 +37,7 @@ export class ZoomStrategy extends Strategy {
 		this.zoomIn = zoomIn;
 
 		/**
-		 * the default zoom amount.
+		 * the zoom amount.
 		 *
 		 * @type {Number}
 		 */
