@@ -1,0 +1,180 @@
+[
+  {
+    "name": "DeltaControls#handleMainPointerButton",
+    "filePath": "src/core/DeltaControls.js",
+    "lines": [
+      {
+        "lineNumber": 207,
+        "line": "\t/**\r"
+      },
+      {
+        "lineNumber": 208,
+        "line": "\t * Handles main pointer button events.\r"
+      },
+      {
+        "lineNumber": 209,
+        "line": "\t *\r"
+      },
+      {
+        "lineNumber": 210,
+        "line": "\t * @private\r"
+      },
+      {
+        "lineNumber": 211,
+        "line": "\t * @param {Boolean} lock - Whether the pointer button has been pressed down.\r"
+      },
+      {
+        "lineNumber": 212,
+        "line": "\t */\r"
+      },
+      {
+        "lineNumber": 213,
+        "line": "\r"
+      },
+      {
+        "lineNumber": 214,
+        "line": "\thandleMainPointerButton(pressed) {\r"
+      }
+    ],
+    "codeParams": [
+      "pressed"
+    ],
+    "docParams": [
+      "lock"
+    ]
+  },
+  {
+    "name": "RotationManager#updateQuaternion",
+    "filePath": "src/managers/RotationManager.js",
+    "lines": [
+      {
+        "lineNumber": 110,
+        "line": "\t/**\r"
+      },
+      {
+        "lineNumber": 111,
+        "line": "\t * Updates the quaternion.\r"
+      },
+      {
+        "lineNumber": 112,
+        "line": "\t *\r"
+      },
+      {
+        "lineNumber": 113,
+        "line": "\t * @param {RotationManager} This manager.\r"
+      },
+      {
+        "lineNumber": 114,
+        "line": "\t */\r"
+      },
+      {
+        "lineNumber": 115,
+        "line": "\r"
+      },
+      {
+        "lineNumber": 116,
+        "line": "\tupdateQuaternion() {\r"
+      }
+    ],
+    "codeParams": [],
+    "docParams": [
+      "This"
+    ]
+  },
+  {
+    "name": "RotationManager#adjustSpherical",
+    "filePath": "src/managers/RotationManager.js",
+    "lines": [
+      {
+        "lineNumber": 134,
+        "line": "\t/**\r"
+      },
+      {
+        "lineNumber": 135,
+        "line": "\t * Adjusts the spherical system.\r"
+      },
+      {
+        "lineNumber": 136,
+        "line": "\t *\r"
+      },
+      {
+        "lineNumber": 137,
+        "line": "\t * @param {Number} theta - The angle to add to theta in radians.\r"
+      },
+      {
+        "lineNumber": 138,
+        "line": "\t * @param {Number} phi - The angle to add to phi in radians.\r"
+      },
+      {
+        "lineNumber": 139,
+        "line": "\t * @param {RotationManager} This manager.\r"
+      },
+      {
+        "lineNumber": 140,
+        "line": "\t */\r"
+      },
+      {
+        "lineNumber": 141,
+        "line": "\r"
+      },
+      {
+        "lineNumber": 142,
+        "line": "\tadjustSpherical(theta, phi) {\r"
+      }
+    ],
+    "codeParams": [
+      "theta",
+      "phi"
+    ],
+    "docParams": [
+      "theta",
+      "phi",
+      "This"
+    ]
+  },
+  {
+    "name": "RotationManager#zoom",
+    "filePath": "src/managers/RotationManager.js",
+    "lines": [
+      {
+        "lineNumber": 169,
+        "line": "\t/**\r"
+      },
+      {
+        "lineNumber": 170,
+        "line": "\t * Zooms in or out.\r"
+      },
+      {
+        "lineNumber": 171,
+        "line": "\t *\r"
+      },
+      {
+        "lineNumber": 172,
+        "line": "\t * @param {Number} amount - The zoom amount.\r"
+      },
+      {
+        "lineNumber": 173,
+        "line": "\t * @param {RotationManager} This manager.\r"
+      },
+      {
+        "lineNumber": 174,
+        "line": "\t */\r"
+      },
+      {
+        "lineNumber": 175,
+        "line": "\r"
+      },
+      {
+        "lineNumber": 176,
+        "line": "\tzoom(amount) {\r"
+      }
+    ],
+    "codeParams": [
+      "amount"
+    ],
+    "docParams": [
+      "amount",
+      "This"
+    ]
+  }
+]
