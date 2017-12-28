@@ -42,6 +42,22 @@ export class RotationSettings {
 
 		this.maxPhi = Math.PI;
 
+		/**
+		 * Indicates whether the horizontal rotation should be inverted.
+		 *
+		 * @type {Boolean}
+		 */
+
+		this.invertX = false;
+
+		/**
+		 * Indicates whether the vertical rotation should be inverted.
+		 *
+		 * @type {Boolean}
+		 */
+
+		this.invertY = false;
+
 	}
 
 	/**

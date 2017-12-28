@@ -189,6 +189,8 @@ export class DeltaControlsDemo extends Demo {
 		folder.add(controls.settings.rotation, "maxTheta").min(-Math.PI).max(Math.PI).step(0.0001);
 		folder.add(controls.settings.rotation, "minPhi").min(0.0).max(Math.PI).step(0.0001);
 		folder.add(controls.settings.rotation, "maxPhi").min(0.0).max(Math.PI).step(0.0001);
+		folder.add(controls.settings.rotation, "invertX");
+		folder.add(controls.settings.rotation, "invertY");
 
 		folder = menu.addFolder("Translation");
 		folder.add(controls.settings.translation, "enabled");

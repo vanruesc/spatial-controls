@@ -147,8 +147,8 @@ export class RotationManager {
 		const rotation = settings.rotation;
 		const s = this.spherical;
 
-		s.theta -= theta;
-		s.phi = orbit ? s.phi - phi : s.phi + phi;
+		s.theta = !rotation.invertX ? s.theta - theta : s.theta + theta;
+		s.phi = ((orbit || rotation.invertY) && !(orbit && rotation.invertY)) ? s.phi - phi : s.phi + phi;
 
 		// Restrict theta and phi.
 		s.theta = Math.min(Math.max(s.theta, rotation.minTheta), rotation.maxTheta);
