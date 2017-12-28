@@ -4,7 +4,7 @@
 [![npm version](https://badge.fury.io/js/delta-controls.svg)](http://badge.fury.io/js/delta-controls) 
 [![Dependencies](https://david-dm.org/vanruesc/delta-controls.svg?branch=master)](https://david-dm.org/vanruesc/delta-controls)
 
-A 3D movement controller. This module supports multiple movement modes and configurable input settings.
+A 3D movement controller that supports multiple movement modes and configurable input settings.
 
 *[Demo](https://vanruesc.github.io/delta-controls/public/demo) &there4;
 [API Reference](https://vanruesc.github.io/delta-controls/public/docs)*
