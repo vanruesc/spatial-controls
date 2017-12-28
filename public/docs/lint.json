@@ -1,49 +1,5 @@
 [
   {
-    "name": "DeltaControls#handleMainPointerButton",
-    "filePath": "src/core/DeltaControls.js",
-    "lines": [
-      {
-        "lineNumber": 207,
-        "line": "\t/**\r"
-      },
-      {
-        "lineNumber": 208,
-        "line": "\t * Handles main pointer button events.\r"
-      },
-      {
-        "lineNumber": 209,
-        "line": "\t *\r"
-      },
-      {
-        "lineNumber": 210,
-        "line": "\t * @private\r"
-      },
-      {
-        "lineNumber": 211,
-        "line": "\t * @param {Boolean} lock - Whether the pointer button has been pressed down.\r"
-      },
-      {
-        "lineNumber": 212,
-        "line": "\t */\r"
-      },
-      {
-        "lineNumber": 213,
-        "line": "\r"
-      },
-      {
-        "lineNumber": 214,
-        "line": "\thandleMainPointerButton(pressed) {\r"
-      }
-    ],
-    "codeParams": [
-      "pressed"
-    ],
-    "docParams": [
-      "lock"
-    ]
-  },
-  {
     "name": "RotationManager#updateQuaternion",
     "filePath": "src/managers/RotationManager.js",
     "lines": [

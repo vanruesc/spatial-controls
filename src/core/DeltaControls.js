@@ -209,7 +209,7 @@ export class DeltaControls {
 	 * Handles main pointer button events.
 	 *
 	 * @private
-	 * @param {Boolean} lock - Whether the pointer button has been pressed down.
+	 * @param {Boolean} pressed - Whether the pointer button has been pressed down.
 	 */
 
 	handleMainPointerButton(pressed) {

@@ -10,6 +10,8 @@
  * @property {Number} MOVE_RIGHT - Move right.
  * @property {Number} MOVE_DOWN - Move down.
  * @property {Number} MOVE_UP - Move up.
+ * @property {Number} ZOOM_OUT - Zoom out.
+ * @property {Number} ZOOM_IN - Zoom in.
  */
 
 export const Action = {
