@@ -9515,8 +9515,8 @@
   						var rotation = settings.rotation;
   						var s = this.spherical;
 
-  						s.theta -= theta;
-  						s.phi = orbit ? s.phi - phi : s.phi + phi;
+  						s.theta = !rotation.invertX ? s.theta - theta : s.theta + theta;
+  						s.phi = (orbit || rotation.invertY) && !(orbit && rotation.invertY) ? s.phi - phi : s.phi + phi;
 
   						s.theta = Math.min(Math.max(s.theta, rotation.minTheta), rotation.maxTheta);
   						s.phi = Math.min(Math.max(s.phi, rotation.minPhi), rotation.maxPhi);
@@ -9928,6 +9928,10 @@
   				this.minPhi = 0.0;
 
   				this.maxPhi = Math.PI;
+
+  				this.invertX = false;
+
+  				this.invertY = false;
   		}
 
   		createClass(RotationSettings, [{
@@ -10683,6 +10687,8 @@
   						folder.add(controls.settings.rotation, "maxTheta").min(-Math.PI).max(Math.PI).step(0.0001);
   						folder.add(controls.settings.rotation, "minPhi").min(0.0).max(Math.PI).step(0.0001);
   						folder.add(controls.settings.rotation, "maxPhi").min(0.0).max(Math.PI).step(0.0001);
+  						folder.add(controls.settings.rotation, "invertX");
+  						folder.add(controls.settings.rotation, "invertY");
 
   						folder = menu.addFolder("Translation");
   						folder.add(controls.settings.translation, "enabled");

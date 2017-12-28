@@ -1,7 +1,7 @@
 {
   "coverage": "100%",
-  "expectCount": 154,
-  "actualCount": 154,
+  "expectCount": 156,
+  "actualCount": 156,
   "files": {
     "src/core/Action.js": {
       "expectCount": 1,
@@ -59,8 +59,8 @@
       "undocumentLines": []
     },
     "src/settings/RotationSettings.js": {
-      "expectCount": 8,
-      "actualCount": 8,
+      "expectCount": 10,
+      "actualCount": 10,
       "undocumentLines": []
     },
     "src/settings/SensitivitySettings.js": {

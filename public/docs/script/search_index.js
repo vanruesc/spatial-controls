@@ -1026,6 +1026,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/settings/rotationsettings.js~rotationsettings#invertx",
+    "class/src/settings/RotationSettings.js~RotationSettings.html#instance-member-invertX",
+    "src/settings/RotationSettings.js~RotationSettings#invertX",
+    "member"
+  ],
+  [
+    "src/settings/rotationsettings.js~rotationsettings#inverty",
+    "class/src/settings/RotationSettings.js~RotationSettings.html#instance-member-invertY",
+    "src/settings/RotationSettings.js~RotationSettings#invertY",
+    "member"
+  ],
+  [
     "src/settings/rotationsettings.js~rotationsettings#maxphi",
     "class/src/settings/RotationSettings.js~RotationSettings.html#instance-member-maxPhi",
     "src/settings/RotationSettings.js~RotationSettings#maxPhi",
