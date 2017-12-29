@@ -9896,6 +9896,8 @@
 
 
   		this.hold = false;
+
+  		this.lock = true;
   	}
 
   	createClass(PointerSettings, [{
@@ -9903,6 +9905,7 @@
   		value: function copy(settings) {
 
   			this.hold = settings.hold;
+  			this.lock = settings.lock;
 
   			return this;
   		}
@@ -10250,12 +10253,28 @@
   				key: "handlePointerMoveEvent",
   				value: function handlePointerMoveEvent(event) {
 
-  						var sensitivity = this.settings.sensitivity;
+  						var settings = this.settings;
+  						var pointer = settings.pointer;
+  						var sensitivity = settings.sensitivity;
   						var rotationManager = this.rotationManager;
+  						var lastScreenPosition = this.lastScreenPosition;
 
-  						if (!this.settings.pointer.hold || this.dragging) {
+  						var movementX = void 0,
+  						    movementY = void 0;
 
-  								rotationManager.adjustSpherical(event.movementX * sensitivity.rotation, event.movementY * sensitivity.rotation).updateQuaternion();
+  						if (document.pointerLockElement === this.dom) {
+
+  								if (!pointer.hold || this.dragging) {
+
+  										rotationManager.adjustSpherical(event.movementX * sensitivity.rotation, event.movementY * sensitivity.rotation).updateQuaternion();
+  								}
+  						} else {
+  								movementX = event.screenX - lastScreenPosition.x;
+  								movementY = event.screenY - lastScreenPosition.y;
+
+  								lastScreenPosition.set(event.screenX, event.screenY);
+
+  								rotationManager.adjustSpherical(movementX * sensitivity.rotation, movementY * sensitivity.rotation).updateQuaternion();
   						}
   				}
   		}, {
@@ -10278,17 +10297,31 @@
   				}
   		}, {
   				key: "handleMainPointerButton",
-  				value: function handleMainPointerButton(pressed) {
+  				value: function handleMainPointerButton(event, pressed) {
 
   						this.dragging = pressed;
-  						this.setPointerLocked();
+
+  						if (this.settings.pointer.lock) {
+
+  								this.setPointerLocked();
+  						} else {
+
+  								if (pressed) {
+
+  										this.lastScreenPosition.set(event.screenX, event.screenY);
+  										this.dom.addEventListener("mousemove", this);
+  								} else {
+
+  										this.dom.removeEventListener("mousemove", this);
+  								}
+  						}
   				}
   		}, {
   				key: "handleAuxiliaryPointerButton",
-  				value: function handleAuxiliaryPointerButton(pressed) {}
+  				value: function handleAuxiliaryPointerButton(event, pressed) {}
   		}, {
   				key: "handleSecondaryPointerButton",
-  				value: function handleSecondaryPointerButton(pressed) {}
+  				value: function handleSecondaryPointerButton(event, pressed) {}
   		}, {
   				key: "handlePointerButtonEvent",
   				value: function handlePointerButtonEvent(event, pressed) {
@@ -10298,15 +10331,15 @@
   						switch (event.button) {
 
   								case PointerButton.MAIN:
-  										this.handleMainPointerButton(pressed);
+  										this.handleMainPointerButton(event, pressed);
   										break;
 
   								case PointerButton.AUXILIARY:
-  										this.handleAuxiliaryPointerButton(pressed);
+  										this.handleAuxiliaryPointerButton(event, pressed);
   										break;
 
   								case PointerButton.SECONDARY:
-  										this.handleSecondaryPointerButton(pressed);
+  										this.handleSecondaryPointerButton(event, pressed);
   										break;
 
   						}
@@ -10322,7 +10355,6 @@
   						if (start) {
 
   								this.lastScreenPosition.set(touch.screenX, touch.screenY);
-
   								this.dom.addEventListener("touchmove", this);
   						} else {
 
@@ -10674,6 +10706,7 @@
 
   						folder = menu.addFolder("Pointer Behaviour");
   						folder.add(controls.settings.pointer, "hold");
+  						folder.add(controls.settings.pointer, "lock");
   						folder.open();
 
   						folder = menu.addFolder("Sensitivity");

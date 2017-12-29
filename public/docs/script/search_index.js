@@ -1002,6 +1002,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/settings/pointersettings.js~pointersettings#lock",
+    "class/src/settings/PointerSettings.js~PointerSettings.html#instance-member-lock",
+    "src/settings/PointerSettings.js~PointerSettings#lock",
+    "member"
+  ],
+  [
     "src/settings/rotationsettings.js",
     "file/src/settings/RotationSettings.js.html",
     "src/settings/RotationSettings.js",
