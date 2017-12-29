@@ -176,6 +176,7 @@ export class DeltaControlsDemo extends Demo {
 
 		folder = menu.addFolder("Pointer Behaviour");
 		folder.add(controls.settings.pointer, "hold");
+		folder.add(controls.settings.pointer, "lock");
 		folder.open();
 
 		folder = menu.addFolder("Sensitivity");

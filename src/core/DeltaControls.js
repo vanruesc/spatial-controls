@@ -161,14 +161,36 @@ export class DeltaControls {
 
 	handlePointerMoveEvent(event) {
 
-		const sensitivity = this.settings.sensitivity;
+		const settings = this.settings;
+		const pointer = settings.pointer;
+		const sensitivity = settings.sensitivity;
 		const rotationManager = this.rotationManager;
+		const lastScreenPosition = this.lastScreenPosition;
 
-		if(!this.settings.pointer.hold || this.dragging) {
+		let movementX, movementY;
+
+		if(document.pointerLockElement === this.dom) {
+
+			if(!pointer.hold || this.dragging) {
+
+				rotationManager.adjustSpherical(
+					event.movementX * sensitivity.rotation,
+					event.movementY * sensitivity.rotation
+				).updateQuaternion();
+
+			}
+
+		} else {
+
+			// Compensate for inconsistent web APIs.
+			movementX = event.screenX - lastScreenPosition.x;
+			movementY = event.screenY - lastScreenPosition.y;
+
+			lastScreenPosition.set(event.screenX, event.screenY);
 
 			rotationManager.adjustSpherical(
-				event.movementX * sensitivity.rotation,
-				event.movementY * sensitivity.rotation
+				movementX * sensitivity.rotation,
+				movementY * sensitivity.rotation
 			).updateQuaternion();
 
 		}
@@ -209,13 +231,32 @@ export class DeltaControls {
 	 * Handles main pointer button events.
 	 *
 	 * @private
+	 * @param {MouseEvent} event - A pointer event.
 	 * @param {Boolean} pressed - Whether the pointer button has been pressed down.
 	 */
 
-	handleMainPointerButton(pressed) {
+	handleMainPointerButton(event, pressed) {
 
 		this.dragging = pressed;
-		this.setPointerLocked();
+
+		if(this.settings.pointer.lock) {
+
+			this.setPointerLocked();
+
+		} else {
+
+			if(pressed) {
+
+				this.lastScreenPosition.set(event.screenX, event.screenY);
+				this.dom.addEventListener("mousemove", this);
+
+			} else {
+
+				this.dom.removeEventListener("mousemove", this);
+
+			}
+
+		}
 
 	}
 
@@ -223,10 +264,11 @@ export class DeltaControls {
 	 * Handles auxiliary pointer button events.
 	 *
 	 * @private
+	 * @param {MouseEvent} event - A pointer event.
 	 * @param {Boolean} pressed - Whether the pointer button has been pressed down.
 	 */
 
-	handleAuxiliaryPointerButton(pressed) {
+	handleAuxiliaryPointerButton(event, pressed) {
 
 	}
 
@@ -234,10 +276,11 @@ export class DeltaControls {
 	 * Handles secondary pointer button events.
 	 *
 	 * @private
+	 * @param {MouseEvent} event - A pointer event.
 	 * @param {Boolean} pressed - Whether the pointer button has been pressed down.
 	 */
 
-	handleSecondaryPointerButton(pressed) {
+	handleSecondaryPointerButton(event, pressed) {
 
 	}
 
@@ -256,15 +299,15 @@ export class DeltaControls {
 		switch(event.button) {
 
 			case PointerButton.MAIN:
-				this.handleMainPointerButton(pressed);
+				this.handleMainPointerButton(event, pressed);
 				break;
 
 			case PointerButton.AUXILIARY:
-				this.handleAuxiliaryPointerButton(pressed);
+				this.handleAuxiliaryPointerButton(event, pressed);
 				break;
 
 			case PointerButton.SECONDARY:
-				this.handleSecondaryPointerButton(pressed);
+				this.handleSecondaryPointerButton(event, pressed);
 				break;
 
 		}
@@ -289,7 +332,6 @@ export class DeltaControls {
 		if(start) {
 
 			this.lastScreenPosition.set(touch.screenX, touch.screenY);
-
 			this.dom.addEventListener("touchmove", this);
 
 		} else {
