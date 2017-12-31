@@ -110,7 +110,6 @@ export class DeltaControlsDemo extends Demo {
 
 		const controls = new DeltaControls(camera.position, camera.quaternion, renderer.domElement);
 		controls.lookAt(scene.position);
-		controls.setOrbit(true);
 		controls.settings.zoom.minDistance = 0.25;
 		controls.settings.zoom.maxDistance = 3.0;
 		this.controls = controls;
@@ -139,7 +138,7 @@ export class DeltaControlsDemo extends Demo {
 	}
 
 	/**
-	 * Renders this demo.
+	 * Updates this demo.
 	 *
 	 * @param {Number} delta - The time since the last frame in seconds.
 	 */
@@ -198,8 +197,10 @@ export class DeltaControlsDemo extends Demo {
 
 		folder = menu.addFolder("Zooming");
 		folder.add(controls.settings.zoom, "enabled");
+		folder.add(controls.settings.zoom, "invert");
 		folder.add(controls.settings.zoom, "minDistance").min(0.1).max(1.0).step(0.01);
 		folder.add(controls.settings.zoom, "maxDistance").min(1.0).max(10.0).step(0.01);
+		folder.add(controls.settings.zoom, "step").min(1.0).max(20.0).step(0.25);
 
 	}
 

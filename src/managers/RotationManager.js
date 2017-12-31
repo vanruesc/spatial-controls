@@ -170,11 +170,11 @@ export class RotationManager {
 	/**
 	 * Zooms in or out.
 	 *
-	 * @param {Number} amount - The zoom amount.
+	 * @param {Number} sign - The zoom sign. Possible values are [-1, 0, 1].
 	 * @param {RotationManager} This manager.
 	 */
 
-	zoom(amount) {
+	zoom(sign) {
 
 		const settings = this.settings;
 		const general = settings.general;
@@ -182,11 +182,17 @@ export class RotationManager {
 		const zoom = settings.zoom;
 		const s = this.spherical;
 
-		let min, max;
+		let amount, min, max;
 
 		if(general.orbit && zoom.enabled) {
 
-			amount *= sensitivity.zoom;
+			amount = sign * zoom.step * sensitivity.zoom;
+
+			if(zoom.invert) {
+
+				amount = -amount;
+
+			}
 
 			min = Math.max(zoom.minDistance, 1e-6);
 			max = Math.min(zoom.maxDistance, Infinity);

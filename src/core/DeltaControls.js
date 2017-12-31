@@ -373,7 +373,7 @@ export class DeltaControls {
 
 	handleWheelEvent(event) {
 
-		this.rotationManager.zoom(event.deltaY);
+		this.rotationManager.zoom(Math.sign(event.deltaY));
 
 	}
 

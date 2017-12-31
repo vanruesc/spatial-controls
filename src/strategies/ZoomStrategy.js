@@ -11,10 +11,9 @@ export class ZoomStrategy extends Strategy {
 	 *
 	 * @param {RotationManager} rotationManager - A rotation manager.
 	 * @param {Boolean} zoomIn - Whether this strategy should zoom in.
-	 * @param {Number} [zoomAmount=100.0] - The zoom amount.
 	 */
 
-	constructor(rotationManager, zoomIn, zoomAmount = 10.0) {
+	constructor(rotationManager, zoomIn) {
 
 		super();
 
@@ -36,14 +35,6 @@ export class ZoomStrategy extends Strategy {
 
 		this.zoomIn = zoomIn;
 
-		/**
-		 * the zoom amount.
-		 *
-		 * @type {Number}
-		 */
-
-		this.zoomAmount = zoomAmount;
-
 	}
 
 	/**
@@ -57,7 +48,7 @@ export class ZoomStrategy extends Strategy {
 		// Only act on key down events.
 		if(flag) {
 
-			this.rotationManager.zoom(this.zoomIn ? -this.zoomAmount : this.zoomAmount);
+			this.rotationManager.zoom(this.zoomIn ? -1 : 1);
 
 		}
 

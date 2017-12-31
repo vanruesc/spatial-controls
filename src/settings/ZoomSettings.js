@@ -19,6 +19,14 @@ export class ZoomSettings {
 		this.enabled = true;
 
 		/**
+		 * Indicates whether the zoom controls should be inverted.
+		 *
+		 * @type {Boolean}
+		 */
+
+		this.invert = false;
+
+		/**
 		 * The minimum zoom distance.
 		 *
 		 * @type {Number}
@@ -34,6 +42,14 @@ export class ZoomSettings {
 
 		this.maxDistance = Infinity;
 
+		/**
+		 * The base zoom step.
+		 *
+		 * @type {Number}
+		 */
+
+		this.step = 10.0;
+
 	}
 
 	/**
@@ -45,9 +61,11 @@ export class ZoomSettings {
 
 	copy(settings) {
 
+		this.enabled = settings.enabled;
+		this.invert = settings.invert;
 		this.minDistance = settings.minDistance;
 		this.maxDistance = settings.maxDistance;
-		this.enabled = settings.enabled;
+		this.step = settings.step;
 
 		return this;
 
