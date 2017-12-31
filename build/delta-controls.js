@@ -1,5 +1,5 @@
 /**
- * delta-controls v0.1.0 build Dec 29 2017
+ * delta-controls v0.2.0 build Dec 31 2017
  * https://github.com/vanruesc/delta-controls
  * Copyright 2017 Raoul van Rüschen, Zlib
  */
@@ -5195,7 +5195,7 @@
   				}
   		}, {
   				key: "zoom",
-  				value: function zoom(amount) {
+  				value: function zoom(sign) {
 
   						var settings = this.settings;
   						var general = settings.general;
@@ -5203,12 +5203,18 @@
   						var zoom = settings.zoom;
   						var s = this.spherical;
 
-  						var min = void 0,
+  						var amount = void 0,
+  						    min = void 0,
   						    max = void 0;
 
   						if (general.orbit && zoom.enabled) {
 
-  								amount *= sensitivity.zoom;
+  								amount = sign * zoom.step * sensitivity.zoom;
+
+  								if (zoom.invert) {
+
+  										amount = -amount;
+  								}
 
   								min = Math.max(zoom.minDistance, 1e-6);
   								max = Math.min(zoom.maxDistance, Infinity);
@@ -5609,6 +5615,8 @@
   						this.maxTheta = settings.maxTheta;
   						this.minPhi = settings.minPhi;
   						this.maxPhi = settings.maxPhi;
+  						this.invertX = settings.invertX;
+  						this.invertY = settings.invertY;
 
   						return this;
   				}
@@ -5681,35 +5689,41 @@
   }();
 
   var ZoomSettings = function () {
-  	function ZoomSettings() {
-  		classCallCheck(this, ZoomSettings);
+  		function ZoomSettings() {
+  				classCallCheck(this, ZoomSettings);
 
 
-  		this.enabled = true;
+  				this.enabled = true;
 
-  		this.minDistance = 1e-6;
+  				this.invert = false;
 
-  		this.maxDistance = Infinity;
-  	}
+  				this.minDistance = 1e-6;
 
-  	createClass(ZoomSettings, [{
-  		key: "copy",
-  		value: function copy(settings) {
+  				this.maxDistance = Infinity;
 
-  			this.minDistance = settings.minDistance;
-  			this.maxDistance = settings.maxDistance;
-  			this.enabled = settings.enabled;
-
-  			return this;
+  				this.step = 10.0;
   		}
-  	}, {
-  		key: "clone",
-  		value: function clone() {
 
-  			return new this.constructor().copy(this);
-  		}
-  	}]);
-  	return ZoomSettings;
+  		createClass(ZoomSettings, [{
+  				key: "copy",
+  				value: function copy(settings) {
+
+  						this.enabled = settings.enabled;
+  						this.invert = settings.invert;
+  						this.minDistance = settings.minDistance;
+  						this.maxDistance = settings.maxDistance;
+  						this.step = settings.step;
+
+  						return this;
+  				}
+  		}, {
+  				key: "clone",
+  				value: function clone() {
+
+  						return new this.constructor().copy(this);
+  				}
+  		}]);
+  		return ZoomSettings;
   }();
 
   var Settings = function () {
@@ -5846,7 +5860,6 @@
   		inherits(ZoomStrategy, _Strategy);
 
   		function ZoomStrategy(rotationManager, zoomIn) {
-  				var zoomAmount = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 10.0;
   				classCallCheck(this, ZoomStrategy);
 
   				var _this = possibleConstructorReturn(this, (ZoomStrategy.__proto__ || Object.getPrototypeOf(ZoomStrategy)).call(this));
@@ -5854,8 +5867,6 @@
   				_this.rotationManager = rotationManager;
 
   				_this.zoomIn = zoomIn;
-
-  				_this.zoomAmount = zoomAmount;
 
   				return _this;
   		}
@@ -5865,7 +5876,7 @@
   				value: function execute(flag) {
   						if (flag) {
 
-  								this.rotationManager.zoom(this.zoomIn ? -this.zoomAmount : this.zoomAmount);
+  								this.rotationManager.zoom(this.zoomIn ? -1 : 1);
   						}
   				}
   		}]);
@@ -6042,7 +6053,7 @@
   				key: "handleWheelEvent",
   				value: function handleWheelEvent(event) {
 
-  						this.rotationManager.zoom(event.deltaY);
+  						this.rotationManager.zoom(Math.sign(event.deltaY));
   				}
   		}, {
   				key: "handlePointerLockEvent",

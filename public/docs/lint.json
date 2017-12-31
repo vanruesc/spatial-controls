@@ -106,7 +106,7 @@
       },
       {
         "lineNumber": 172,
-        "line": "\t * @param {Number} amount - The zoom amount.\r"
+        "line": "\t * @param {Number} sign - The zoom sign. Possible values are [-1, 0, 1].\r"
       },
       {
         "lineNumber": 173,
@@ -122,14 +122,14 @@
       },
       {
         "lineNumber": 176,
-        "line": "\tzoom(amount) {\r"
+        "line": "\tzoom(sign) {\r"
       }
     ],
     "codeParams": [
-      "amount"
+      "sign"
     ],
     "docParams": [
-      "amount",
+      "sign",
       "This"
     ]
   }

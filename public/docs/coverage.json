@@ -1,7 +1,7 @@
 {
   "coverage": "100%",
-  "expectCount": 157,
-  "actualCount": 157,
+  "expectCount": 158,
+  "actualCount": 158,
   "files": {
     "src/core/Action.js": {
       "expectCount": 1,
@@ -79,8 +79,8 @@
       "undocumentLines": []
     },
     "src/settings/ZoomSettings.js": {
-      "expectCount": 7,
-      "actualCount": 7,
+      "expectCount": 9,
+      "actualCount": 9,
       "undocumentLines": []
     },
     "src/strategies/MovementStrategy.js": {
@@ -94,8 +94,8 @@
       "undocumentLines": []
     },
     "src/strategies/ZoomStrategy.js": {
-      "expectCount": 6,
-      "actualCount": 6,
+      "expectCount": 5,
+      "actualCount": 5,
       "undocumentLines": []
     }
   }

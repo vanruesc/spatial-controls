@@ -1242,6 +1242,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/settings/zoomsettings.js~zoomsettings#invert",
+    "class/src/settings/ZoomSettings.js~ZoomSettings.html#instance-member-invert",
+    "src/settings/ZoomSettings.js~ZoomSettings#invert",
+    "member"
+  ],
+  [
     "src/settings/zoomsettings.js~zoomsettings#maxdistance",
     "class/src/settings/ZoomSettings.js~ZoomSettings.html#instance-member-maxDistance",
     "src/settings/ZoomSettings.js~ZoomSettings#maxDistance",
@@ -1251,6 +1257,12 @@ window.esdocSearchIndex = [
     "src/settings/zoomsettings.js~zoomsettings#mindistance",
     "class/src/settings/ZoomSettings.js~ZoomSettings.html#instance-member-minDistance",
     "src/settings/ZoomSettings.js~ZoomSettings#minDistance",
+    "member"
+  ],
+  [
+    "src/settings/zoomsettings.js~zoomsettings#step",
+    "class/src/settings/ZoomSettings.js~ZoomSettings.html#instance-member-step",
+    "src/settings/ZoomSettings.js~ZoomSettings#step",
     "member"
   ],
   [
@@ -1323,12 +1335,6 @@ window.esdocSearchIndex = [
     "src/strategies/zoomstrategy.js~zoomstrategy#rotationmanager",
     "class/src/strategies/ZoomStrategy.js~ZoomStrategy.html#instance-member-rotationManager",
     "src/strategies/ZoomStrategy.js~ZoomStrategy#rotationManager",
-    "member"
-  ],
-  [
-    "src/strategies/zoomstrategy.js~zoomstrategy#zoomamount",
-    "class/src/strategies/ZoomStrategy.js~ZoomStrategy.html#instance-member-zoomAmount",
-    "src/strategies/ZoomStrategy.js~ZoomStrategy#zoomAmount",
     "member"
   ],
   [
