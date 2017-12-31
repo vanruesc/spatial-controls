@@ -1,5 +1,5 @@
 /**
- * delta-controls v0.2.0 build Dec 31 2017
+ * delta-controls v0.3.0 build Dec 31 2017
  * https://github.com/vanruesc/delta-controls
  * Copyright 2017 Raoul van Rüschen, Zlib
  */
@@ -5397,32 +5397,6 @@
   		return TranslationManager;
   }();
 
-  var GeneralSettings = function () {
-  	function GeneralSettings() {
-  		classCallCheck(this, GeneralSettings);
-
-
-  		this.orbit = true;
-  	}
-
-  	createClass(GeneralSettings, [{
-  		key: "copy",
-  		value: function copy(settings) {
-
-  			this.orbit = settings.orbit;
-
-  			return this;
-  		}
-  	}, {
-  		key: "clone",
-  		value: function clone() {
-
-  			return new this.constructor().copy(this);
-  		}
-  	}]);
-  	return GeneralSettings;
-  }();
-
   var KeyCodeHandler = {
     get: function get(target, name) {
 
@@ -5508,19 +5482,80 @@
 
   }, KeyCodeHandler);
 
+  var GeneralSettings = function () {
+  	function GeneralSettings() {
+  		classCallCheck(this, GeneralSettings);
+
+
+  		this.orbit = true;
+  	}
+
+  	createClass(GeneralSettings, [{
+  		key: "copy",
+  		value: function copy(settings) {
+
+  			this.orbit = settings.orbit;
+
+  			return this;
+  		}
+  	}, {
+  		key: "clone",
+  		value: function clone() {
+
+  			return new this.constructor().copy(this);
+  		}
+  	}]);
+  	return GeneralSettings;
+  }();
+
   var KeyBindings = function () {
   	function KeyBindings() {
   		classCallCheck(this, KeyBindings);
 
 
-  		this.actions = new Map([[KeyCode.W, Action.MOVE_FORWARD], [KeyCode.UP, Action.MOVE_FORWARD], [KeyCode.A, Action.MOVE_LEFT], [KeyCode.LEFT, Action.MOVE_LEFT], [KeyCode.S, Action.MOVE_BACKWARD], [KeyCode.DOWN, Action.MOVE_BACKWARD], [KeyCode.D, Action.MOVE_RIGHT], [KeyCode.RIGHT, Action.MOVE_RIGHT], [KeyCode.X, Action.MOVE_DOWN], [KeyCode.SPACE, Action.MOVE_UP], [KeyCode.PAGE_DOWN, Action.ZOOM_OUT], [KeyCode.PAGE_UP, Action.ZOOM_IN]]);
+  		this.defaultActions = new Map();
+
+  		this.actions = new Map();
   	}
 
   	createClass(KeyBindings, [{
+  		key: "reset",
+  		value: function reset() {
+
+  			this.actions = new Map(this.defaultActions);
+
+  			return this;
+  		}
+  	}, {
+  		key: "setDefault",
+  		value: function setDefault(actions) {
+
+  			this.defaultActions = actions;
+
+  			return this.reset();
+  		}
+  	}, {
   		key: "copy",
   		value: function copy(keyBindings) {
 
+  			this.defaultActions = new Map(keyBindings.defaultActions);
   			this.actions = new Map(keyBindings.actions);
+
+  			return this;
+  		}
+  	}, {
+  		key: "clearDefault",
+  		value: function clearDefault() {
+
+  			this.defaultActions.clear();
+
+  			return this;
+  		}
+  	}, {
+  		key: "clear",
+  		value: function clear() {
+
+  			this.actions.clear();
 
   			return this;
   		}
@@ -5546,7 +5581,7 @@
   		key: "set",
   		value: function set$$1(keyCode, action) {
 
-  			this.actions.set(keyCode);
+  			this.actions.set(keyCode, action);
 
   			return this;
   		}
@@ -5734,6 +5769,7 @@
   				this.general = new GeneralSettings();
 
   				this.keyBindings = new KeyBindings();
+  				this.keyBindings.setDefault(new Map([[KeyCode.W, Action.MOVE_FORWARD], [KeyCode.UP, Action.MOVE_FORWARD], [KeyCode.A, Action.MOVE_LEFT], [KeyCode.LEFT, Action.MOVE_LEFT], [KeyCode.S, Action.MOVE_BACKWARD], [KeyCode.DOWN, Action.MOVE_BACKWARD], [KeyCode.D, Action.MOVE_RIGHT], [KeyCode.RIGHT, Action.MOVE_RIGHT], [KeyCode.X, Action.MOVE_DOWN], [KeyCode.SPACE, Action.MOVE_UP], [KeyCode.PAGE_DOWN, Action.ZOOM_OUT], [KeyCode.PAGE_UP, Action.ZOOM_IN]]));
 
   				this.pointer = new PointerSettings();
 

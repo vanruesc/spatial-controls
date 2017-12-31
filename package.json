@@ -1,6 +1,6 @@
 {
 	"name": "delta-controls",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "A 3D movement controller.",
 	"homepage": "https://github.com/vanruesc/delta-controls",
 	"main": "build/delta-controls.js",
@@ -13,6 +13,7 @@
 		"rotation",
 		"object",
 		"controls",
+		"key-bindings",
 		"3d"
 	],
 

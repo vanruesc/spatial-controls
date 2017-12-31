@@ -132,5 +132,49 @@
       "sign",
       "This"
     ]
+  },
+  {
+    "name": "KeyBindings#setDefault",
+    "filePath": "src/settings/KeyBindings.js",
+    "lines": [
+      {
+        "lineNumber": 44,
+        "line": "\t/**\r"
+      },
+      {
+        "lineNumber": 45,
+        "line": "\t * Establishes default key bindings and resets the current bindings.\r"
+      },
+      {
+        "lineNumber": 46,
+        "line": "\t *\r"
+      },
+      {
+        "lineNumber": 47,
+        "line": "\t * @param {KeyBindings} map - A map. Each key must be a key code and each value must be a number.\r"
+      },
+      {
+        "lineNumber": 48,
+        "line": "\t * @return {KeyBindings} This key bindings instance.\r"
+      },
+      {
+        "lineNumber": 49,
+        "line": "\t */\r"
+      },
+      {
+        "lineNumber": 50,
+        "line": "\r"
+      },
+      {
+        "lineNumber": 51,
+        "line": "\tsetDefault(actions) {\r"
+      }
+    ],
+    "codeParams": [
+      "actions"
+    ],
+    "docParams": [
+      "map"
+    ]
   }
 ]

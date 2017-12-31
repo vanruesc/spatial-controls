@@ -3655,7 +3655,7 @@
     "__docId__": 161,
     "kind": "file",
     "name": "src/settings/KeyBindings.js",
-    "content": "import { Action } from \"../core/Action.js\";\r\nimport { KeyCode } from \"../input/KeyCode.js\";\r\n\r\n/**\r\n * Key bindings.\r\n */\r\n\r\nexport class KeyBindings {\r\n\r\n\t/**\r\n\t * Constructs new key bindings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * A map, populated with default action bindings.\r\n\t\t *\r\n\t\t * @type {Map}\r\n\t\t */\r\n\r\n\t\tthis.actions = new Map([\r\n\r\n\t\t\t[KeyCode.W, Action.MOVE_FORWARD],\r\n\t\t\t[KeyCode.UP, Action.MOVE_FORWARD],\r\n\r\n\t\t\t[KeyCode.A, Action.MOVE_LEFT],\r\n\t\t\t[KeyCode.LEFT, Action.MOVE_LEFT],\r\n\r\n\t\t\t[KeyCode.S, Action.MOVE_BACKWARD],\r\n\t\t\t[KeyCode.DOWN, Action.MOVE_BACKWARD],\r\n\r\n\t\t\t[KeyCode.D, Action.MOVE_RIGHT],\r\n\t\t\t[KeyCode.RIGHT, Action.MOVE_RIGHT],\r\n\r\n\t\t\t[KeyCode.X, Action.MOVE_DOWN],\r\n\t\t\t[KeyCode.SPACE, Action.MOVE_UP],\r\n\r\n\t\t\t[KeyCode.PAGE_DOWN, Action.ZOOM_OUT],\r\n\t\t\t[KeyCode.PAGE_UP, Action.ZOOM_IN]\r\n\r\n\t\t]);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given key bindings.\r\n\t *\r\n\t * @param {KeyBindings} keyBindings - Key bindings.\r\n\t * @return {KeyBindings} This key bindings instance.\r\n\t */\r\n\r\n\tcopy(keyBindings) {\r\n\r\n\t\tthis.actions = new Map(keyBindings.actions);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones these key bindings.\r\n\t *\r\n\t * @return {KeyBindings} The cloned key bindings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Checks if the given key is bound to an action.\r\n\t *\r\n\t * @param {KeyCode} keyCode - A key code.\r\n\t * @return {Boolean} Whether the given key is bound to an action.\r\n\t */\r\n\r\n\thas(keyCode) {\r\n\r\n\t\treturn this.actions.has(keyCode);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the action that is bound to the given key.\r\n\t *\r\n\t * @param {KeyCode} keyCode - A key code.\r\n\t * @return {Action} The action, or undefined if the key is not bound to any action.\r\n\t */\r\n\r\n\tget(keyCode) {\r\n\r\n\t\treturn this.actions.get(keyCode);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Binds a key to an action.\r\n\t *\r\n\t * @param {KeyCode} keyCode - A key code.\r\n\t * @param {Action} action - An action.\r\n\t * @return {KeyBindings} This instance.\r\n\t */\r\n\r\n\tset(keyCode, action) {\r\n\r\n\t\tthis.actions.set(keyCode);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Unbinds a key.\r\n\t *\r\n\t * @param {KeyCode} keyCode - A key code.\r\n\t * @return {Boolean} Whether the key bindings existed or not.\r\n\t */\r\n\r\n\tdelete(keyCode) {\r\n\r\n\t\treturn this.actions.delete(keyCode);\r\n\r\n\t}\r\n\r\n}\r\n",
+    "content": "/**\r\n * Key bindings.\r\n */\r\n\r\nexport class KeyBindings {\r\n\r\n\t/**\r\n\t * Constructs new key bindings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * The default key bindings.\r\n\t\t *\r\n\t\t * @type {Map}\r\n\t\t */\r\n\r\n\t\tthis.defaultActions = new Map();\r\n\r\n\t\t/**\r\n\t\t * The current key bindings.\r\n\t\t *\r\n\t\t * @type {Map}\r\n\t\t */\r\n\r\n\t\tthis.actions = new Map();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Resets the current bindings to match the default bindings.\r\n\t *\r\n\t * @return {KeyBindings} This key bindings instance.\r\n\t */\r\n\r\n\treset() {\r\n\r\n\t\tthis.actions = new Map(this.defaultActions);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Establishes default key bindings and resets the current bindings.\r\n\t *\r\n\t * @param {KeyBindings} map - A map. Each key must be a key code and each value must be a number.\r\n\t * @return {KeyBindings} This key bindings instance.\r\n\t */\r\n\r\n\tsetDefault(actions) {\r\n\r\n\t\tthis.defaultActions = actions;\r\n\r\n\t\treturn this.reset();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given key bindings, including the default bindings.\r\n\t *\r\n\t * @param {KeyBindings} keyBindings - Key bindings.\r\n\t * @return {KeyBindings} This key bindings instance.\r\n\t */\r\n\r\n\tcopy(keyBindings) {\r\n\r\n\t\tthis.defaultActions = new Map(keyBindings.defaultActions);\r\n\t\tthis.actions = new Map(keyBindings.actions);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clears the default key bindings.\r\n\t *\r\n\t * @return {KeyBindings} This key bindings instance.\r\n\t */\r\n\r\n\tclearDefault() {\r\n\r\n\t\tthis.defaultActions.clear();\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clears the current key bindings.\r\n\t *\r\n\t * @return {KeyBindings} This key bindings instance.\r\n\t */\r\n\r\n\tclear() {\r\n\r\n\t\tthis.actions.clear();\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones these key bindings.\r\n\t *\r\n\t * @return {KeyBindings} The cloned key bindings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Checks if the given key is bound to an action.\r\n\t *\r\n\t * @param {KeyCode} keyCode - A key code.\r\n\t * @return {Boolean} Whether the given key is bound to an action.\r\n\t */\r\n\r\n\thas(keyCode) {\r\n\r\n\t\treturn this.actions.has(keyCode);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the action that is bound to the given key.\r\n\t *\r\n\t * @param {KeyCode} keyCode - A key code.\r\n\t * @return {Number} The action, or undefined if the key is not bound to any action.\r\n\t */\r\n\r\n\tget(keyCode) {\r\n\r\n\t\treturn this.actions.get(keyCode);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Binds a key to an action.\r\n\t *\r\n\t * @param {KeyCode} keyCode - A key code.\r\n\t * @param {Number} action - An action.\r\n\t * @return {KeyBindings} This instance.\r\n\t */\r\n\r\n\tset(keyCode, action) {\r\n\r\n\t\tthis.actions.set(keyCode, action);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Unbinds a key.\r\n\t *\r\n\t * @param {KeyCode} keyCode - A key code.\r\n\t * @return {Boolean} Whether the key bindings existed or not.\r\n\t */\r\n\r\n\tdelete(keyCode) {\r\n\r\n\t\treturn this.actions.delete(keyCode);\r\n\r\n\t}\r\n\r\n}\r\n",
     "static": true,
     "longname": "C:/Users/Raoul/Sourcecode/JavaScript/delta-controls/src/settings/KeyBindings.js",
     "access": "public",
@@ -3674,7 +3674,7 @@
     "importPath": "delta-controls/src/settings/KeyBindings.js",
     "importStyle": "{KeyBindings}",
     "description": "Key bindings.",
-    "lineNumber": 8,
+    "lineNumber": 5,
     "interface": false
   },
   {
@@ -3688,18 +3688,18 @@
     "longname": "src/settings/KeyBindings.js~KeyBindings#constructor",
     "access": "public",
     "description": "Constructs new key bindings.",
-    "lineNumber": 14
+    "lineNumber": 11
   },
   {
     "__docId__": 164,
     "kind": "member",
-    "name": "actions",
+    "name": "defaultActions",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
     "static": false,
-    "longname": "src/settings/KeyBindings.js~KeyBindings#actions",
+    "longname": "src/settings/KeyBindings.js~KeyBindings#defaultActions",
     "access": "public",
-    "description": "A map, populated with default action bindings.",
-    "lineNumber": 22,
+    "description": "The default key bindings.",
+    "lineNumber": 19,
     "type": {
       "nullable": null,
       "types": [
@@ -3711,6 +3711,80 @@
   },
   {
     "__docId__": 165,
+    "kind": "member",
+    "name": "actions",
+    "memberof": "src/settings/KeyBindings.js~KeyBindings",
+    "static": false,
+    "longname": "src/settings/KeyBindings.js~KeyBindings#actions",
+    "access": "public",
+    "description": "The current key bindings.",
+    "lineNumber": 27,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Map"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 166,
+    "kind": "method",
+    "name": "reset",
+    "memberof": "src/settings/KeyBindings.js~KeyBindings",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/settings/KeyBindings.js~KeyBindings#reset",
+    "access": "public",
+    "description": "Resets the current bindings to match the default bindings.",
+    "lineNumber": 37,
+    "return": {
+      "nullable": null,
+      "types": [
+        "KeyBindings"
+      ],
+      "spread": false,
+      "description": "This key bindings instance."
+    },
+    "params": []
+  },
+  {
+    "__docId__": 168,
+    "kind": "method",
+    "name": "setDefault",
+    "memberof": "src/settings/KeyBindings.js~KeyBindings",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/settings/KeyBindings.js~KeyBindings#setDefault",
+    "access": "public",
+    "description": "Establishes default key bindings and resets the current bindings.",
+    "lineNumber": 52,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "KeyBindings"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "map",
+        "description": "A map. Each key must be a key code and each value must be a number."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "KeyBindings"
+      ],
+      "spread": false,
+      "description": "This key bindings instance."
+    }
+  },
+  {
+    "__docId__": 170,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3719,8 +3793,8 @@
     "static": false,
     "longname": "src/settings/KeyBindings.js~KeyBindings#copy",
     "access": "public",
-    "description": "Copies the given key bindings.",
-    "lineNumber": 53,
+    "description": "Copies the given key bindings, including the default bindings.",
+    "lineNumber": 67,
     "params": [
       {
         "nullable": null,
@@ -3743,7 +3817,51 @@
     }
   },
   {
-    "__docId__": 167,
+    "__docId__": 173,
+    "kind": "method",
+    "name": "clearDefault",
+    "memberof": "src/settings/KeyBindings.js~KeyBindings",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/settings/KeyBindings.js~KeyBindings#clearDefault",
+    "access": "public",
+    "description": "Clears the default key bindings.",
+    "lineNumber": 82,
+    "return": {
+      "nullable": null,
+      "types": [
+        "KeyBindings"
+      ],
+      "spread": false,
+      "description": "This key bindings instance."
+    },
+    "params": []
+  },
+  {
+    "__docId__": 174,
+    "kind": "method",
+    "name": "clear",
+    "memberof": "src/settings/KeyBindings.js~KeyBindings",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/settings/KeyBindings.js~KeyBindings#clear",
+    "access": "public",
+    "description": "Clears the current key bindings.",
+    "lineNumber": 96,
+    "return": {
+      "nullable": null,
+      "types": [
+        "KeyBindings"
+      ],
+      "spread": false,
+      "description": "This key bindings instance."
+    },
+    "params": []
+  },
+  {
+    "__docId__": 175,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3753,7 +3871,7 @@
     "longname": "src/settings/KeyBindings.js~KeyBindings#clone",
     "access": "public",
     "description": "Clones these key bindings.",
-    "lineNumber": 67,
+    "lineNumber": 110,
     "return": {
       "nullable": null,
       "types": [
@@ -3765,7 +3883,7 @@
     "params": []
   },
   {
-    "__docId__": 168,
+    "__docId__": 176,
     "kind": "method",
     "name": "has",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3775,7 +3893,7 @@
     "longname": "src/settings/KeyBindings.js~KeyBindings#has",
     "access": "public",
     "description": "Checks if the given key is bound to an action.",
-    "lineNumber": 80,
+    "lineNumber": 123,
     "params": [
       {
         "nullable": null,
@@ -3798,7 +3916,7 @@
     }
   },
   {
-    "__docId__": 169,
+    "__docId__": 177,
     "kind": "method",
     "name": "get",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3808,7 +3926,7 @@
     "longname": "src/settings/KeyBindings.js~KeyBindings#get",
     "access": "public",
     "description": "Returns the action that is bound to the given key.",
-    "lineNumber": 93,
+    "lineNumber": 136,
     "params": [
       {
         "nullable": null,
@@ -3824,14 +3942,14 @@
     "return": {
       "nullable": null,
       "types": [
-        "Action"
+        "Number"
       ],
       "spread": false,
       "description": "The action, or undefined if the key is not bound to any action."
     }
   },
   {
-    "__docId__": 170,
+    "__docId__": 178,
     "kind": "method",
     "name": "set",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3841,7 +3959,7 @@
     "longname": "src/settings/KeyBindings.js~KeyBindings#set",
     "access": "public",
     "description": "Binds a key to an action.",
-    "lineNumber": 107,
+    "lineNumber": 150,
     "params": [
       {
         "nullable": null,
@@ -3856,7 +3974,7 @@
       {
         "nullable": null,
         "types": [
-          "Action"
+          "Number"
         ],
         "spread": false,
         "optional": false,
@@ -3874,7 +3992,7 @@
     }
   },
   {
-    "__docId__": 171,
+    "__docId__": 179,
     "kind": "method",
     "name": "delete",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3884,7 +4002,7 @@
     "longname": "src/settings/KeyBindings.js~KeyBindings#delete",
     "access": "public",
     "description": "Unbinds a key.",
-    "lineNumber": 122,
+    "lineNumber": 165,
     "params": [
       {
         "nullable": null,
@@ -3907,7 +4025,7 @@
     }
   },
   {
-    "__docId__": 172,
+    "__docId__": 180,
     "kind": "file",
     "name": "src/settings/PointerSettings.js",
     "content": "/**\r\n * Pointer settings.\r\n */\r\n\r\nexport class PointerSettings {\r\n\r\n\t/**\r\n\t * Constructs new pointer settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * Whether the pointer buttons must be held down to have an effect.\r\n\t\t *\r\n\t\t * This setting only applies when the pointer is locked.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.hold = false;\r\n\r\n\t\t/**\r\n\t\t * Whether the pointer should be locked on click events.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.lock = true;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given pointer settings.\r\n\t *\r\n\t * @param {PointerSettings} settings - Pointer settings.\r\n\t * @return {PointerSettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.hold = settings.hold;\r\n\t\tthis.lock = settings.lock;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this pointer settings instance.\r\n\t *\r\n\t * @return {PointerSettings} The cloned pointer settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -3918,7 +4036,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 173,
+    "__docId__": 181,
     "kind": "class",
     "name": "PointerSettings",
     "memberof": "src/settings/PointerSettings.js",
@@ -3933,7 +4051,7 @@
     "interface": false
   },
   {
-    "__docId__": 174,
+    "__docId__": 182,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/PointerSettings.js~PointerSettings",
@@ -3946,7 +4064,7 @@
     "lineNumber": 11
   },
   {
-    "__docId__": 175,
+    "__docId__": 183,
     "kind": "member",
     "name": "hold",
     "memberof": "src/settings/PointerSettings.js~PointerSettings",
@@ -3965,7 +4083,7 @@
     }
   },
   {
-    "__docId__": 176,
+    "__docId__": 184,
     "kind": "member",
     "name": "lock",
     "memberof": "src/settings/PointerSettings.js~PointerSettings",
@@ -3984,7 +4102,7 @@
     }
   },
   {
-    "__docId__": 177,
+    "__docId__": 185,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/PointerSettings.js~PointerSettings",
@@ -4017,7 +4135,7 @@
     }
   },
   {
-    "__docId__": 180,
+    "__docId__": 188,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/PointerSettings.js~PointerSettings",
@@ -4039,7 +4157,7 @@
     "params": []
   },
   {
-    "__docId__": 181,
+    "__docId__": 189,
     "kind": "file",
     "name": "src/settings/RotationSettings.js",
     "content": "/**\r\n * Rotation settings.\r\n */\r\n\r\nexport class RotationSettings {\r\n\r\n\t/**\r\n\t * Constructs new rotation settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * The minimum azimuth angle in radians. Range: [-Math.PI, Math.PI].\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.minTheta = -Infinity;\r\n\r\n\t\t/**\r\n\t\t * The maximum azimuth angle in radians. Range: [-Math.PI, Math.PI].\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.maxTheta = Infinity;\r\n\r\n\t\t/**\r\n\t\t * The minimum polar angle in radians. Range: [0, Math.PI].\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.minPhi = 0.0;\r\n\r\n\t\t/**\r\n\t\t * The maximum polar angle in radians. Range: [0, Math.PI].\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.maxPhi = Math.PI;\r\n\r\n\t\t/**\r\n\t\t * Indicates whether the horizontal rotation should be inverted.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.invertX = false;\r\n\r\n\t\t/**\r\n\t\t * Indicates whether the vertical rotation should be inverted.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.invertY = false;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given rotation settings.\r\n\t *\r\n\t * @param {RotationSettings} settings - Rotation settings.\r\n\t * @return {RotationSettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.minTheta = settings.minTheta;\r\n\t\tthis.maxTheta = settings.maxTheta;\r\n\t\tthis.minPhi = settings.minPhi;\r\n\t\tthis.maxPhi = settings.maxPhi;\r\n\t\tthis.invertX = settings.invertX;\r\n\t\tthis.invertY = settings.invertY;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this rotation settings instance.\r\n\t *\r\n\t * @return {RotationSettings} The cloned rotation settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -4050,7 +4168,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 182,
+    "__docId__": 190,
     "kind": "class",
     "name": "RotationSettings",
     "memberof": "src/settings/RotationSettings.js",
@@ -4065,7 +4183,7 @@
     "interface": false
   },
   {
-    "__docId__": 183,
+    "__docId__": 191,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4078,7 +4196,7 @@
     "lineNumber": 11
   },
   {
-    "__docId__": 184,
+    "__docId__": 192,
     "kind": "member",
     "name": "minTheta",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4097,7 +4215,7 @@
     }
   },
   {
-    "__docId__": 185,
+    "__docId__": 193,
     "kind": "member",
     "name": "maxTheta",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4116,7 +4234,7 @@
     }
   },
   {
-    "__docId__": 186,
+    "__docId__": 194,
     "kind": "member",
     "name": "minPhi",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4135,7 +4253,7 @@
     }
   },
   {
-    "__docId__": 187,
+    "__docId__": 195,
     "kind": "member",
     "name": "maxPhi",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4154,7 +4272,7 @@
     }
   },
   {
-    "__docId__": 188,
+    "__docId__": 196,
     "kind": "member",
     "name": "invertX",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4173,7 +4291,7 @@
     }
   },
   {
-    "__docId__": 189,
+    "__docId__": 197,
     "kind": "member",
     "name": "invertY",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4192,7 +4310,7 @@
     }
   },
   {
-    "__docId__": 190,
+    "__docId__": 198,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4225,7 +4343,7 @@
     }
   },
   {
-    "__docId__": 197,
+    "__docId__": 205,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4247,7 +4365,7 @@
     "params": []
   },
   {
-    "__docId__": 198,
+    "__docId__": 206,
     "kind": "file",
     "name": "src/settings/SensitivitySettings.js",
     "content": "/**\r\n * Sensitivity settings.\r\n */\r\n\r\nexport class SensitivitySettings {\r\n\r\n\t/**\r\n\t * Constructs new sensitivity settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * The rotation sensitivity.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.rotation = 0.0025;\r\n\r\n\t\t/**\r\n\t\t * The translation sensitivity.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.translation = 1.0;\r\n\r\n\t\t/**\r\n\t\t * The zoom sensitivity.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.zoom = 0.01;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given sensitivity settings.\r\n\t *\r\n\t * @param {SensitivitySettings} settings - Sensitivity settings.\r\n\t * @return {SensitivitySettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.rotation = settings.rotation;\r\n\t\tthis.translation = settings.translation;\r\n\t\tthis.zoom = settings.zoom;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones these sensitivity settings.\r\n\t *\r\n\t * @return {SensitivitySettings} The cloned sensitivity settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -4258,7 +4376,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 199,
+    "__docId__": 207,
     "kind": "class",
     "name": "SensitivitySettings",
     "memberof": "src/settings/SensitivitySettings.js",
@@ -4273,7 +4391,7 @@
     "interface": false
   },
   {
-    "__docId__": 200,
+    "__docId__": 208,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/SensitivitySettings.js~SensitivitySettings",
@@ -4286,7 +4404,7 @@
     "lineNumber": 11
   },
   {
-    "__docId__": 201,
+    "__docId__": 209,
     "kind": "member",
     "name": "rotation",
     "memberof": "src/settings/SensitivitySettings.js~SensitivitySettings",
@@ -4305,7 +4423,7 @@
     }
   },
   {
-    "__docId__": 202,
+    "__docId__": 210,
     "kind": "member",
     "name": "translation",
     "memberof": "src/settings/SensitivitySettings.js~SensitivitySettings",
@@ -4324,7 +4442,7 @@
     }
   },
   {
-    "__docId__": 203,
+    "__docId__": 211,
     "kind": "member",
     "name": "zoom",
     "memberof": "src/settings/SensitivitySettings.js~SensitivitySettings",
@@ -4343,7 +4461,7 @@
     }
   },
   {
-    "__docId__": 204,
+    "__docId__": 212,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/SensitivitySettings.js~SensitivitySettings",
@@ -4376,7 +4494,7 @@
     }
   },
   {
-    "__docId__": 208,
+    "__docId__": 216,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/SensitivitySettings.js~SensitivitySettings",
@@ -4398,10 +4516,10 @@
     "params": []
   },
   {
-    "__docId__": 209,
+    "__docId__": 217,
     "kind": "file",
     "name": "src/settings/Settings.js",
-    "content": "import { GeneralSettings } from \"./GeneralSettings.js\";\r\nimport { KeyBindings } from \"./KeyBindings.js\";\r\nimport { PointerSettings } from \"./PointerSettings.js\";\r\nimport { RotationSettings } from \"./RotationSettings.js\";\r\nimport { SensitivitySettings } from \"./SensitivitySettings.js\";\r\nimport { TranslationSettings } from \"./TranslationSettings.js\";\r\nimport { ZoomSettings } from \"./ZoomSettings.js\";\r\n\r\n/**\r\n * Control settings.\r\n */\r\n\r\nexport class Settings {\r\n\r\n\t/**\r\n\t * Constructs new settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * General settings.\r\n\t\t *\r\n\t\t * @type {GeneralSettings}\r\n\t\t */\r\n\r\n\t\tthis.general = new GeneralSettings();\r\n\r\n\t\t/**\r\n\t\t * Key bindings.\r\n\t\t *\r\n\t\t * @type {KeyBindings}\r\n\t\t */\r\n\r\n\t\tthis.keyBindings = new KeyBindings();\r\n\r\n\t\t/**\r\n\t\t * Pointer settings.\r\n\t\t *\r\n\t\t * @type {PointerSettings}\r\n\t\t */\r\n\r\n\t\tthis.pointer = new PointerSettings();\r\n\r\n\t\t/**\r\n\t\t * Rotation settings.\r\n\t\t *\r\n\t\t * @type {RotationSettings}\r\n\t\t */\r\n\r\n\t\tthis.rotation = new RotationSettings();\r\n\r\n\t\t/**\r\n\t\t * Sensitivity settings.\r\n\t\t *\r\n\t\t * @type {SensitivitySettings}\r\n\t\t */\r\n\r\n\t\tthis.sensitivity = new SensitivitySettings();\r\n\r\n\t\t/**\r\n\t\t * Translation settings.\r\n\t\t *\r\n\t\t * @type {TranslationSettings}\r\n\t\t */\r\n\r\n\t\tthis.translation = new TranslationSettings();\r\n\r\n\t\t/**\r\n\t\t * Zoom settings.\r\n\t\t *\r\n\t\t * @type {ZoomSettings}\r\n\t\t */\r\n\r\n\t\tthis.zoom = new ZoomSettings();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given settings.\r\n\t *\r\n\t * @param {Settings} settings - Settings.\r\n\t * @return {Settings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.general.copy(settings.general);\r\n\t\tthis.keyBindings.copy(settings.keyBindings);\r\n\t\tthis.pointer.copy(settings.pointer);\r\n\t\tthis.rotation.copy(settings.rotation);\r\n\t\tthis.sensitivity.copy(settings.sensitivity);\r\n\t\tthis.translation.copy(settings.translation);\r\n\t\tthis.zoom.copy(settings.zoom);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones these settings.\r\n\t *\r\n\t * @return {Settings} The cloned settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Saves the current settings in the form of a JSON blob.\r\n\t *\r\n\t * @return {DOMString} A URL to the exported settings.\r\n\t */\r\n\r\n\ttoDataURL() {\r\n\r\n\t\treturn URL.createObjectURL(new Blob([JSON.stringify(this)], { type: \"text/json\" }));\r\n\r\n\t}\r\n\r\n}\r\n",
+    "content": "import { Action } from \"../core/Action.js\";\r\nimport { KeyCode } from \"../input/KeyCode.js\";\r\nimport { GeneralSettings } from \"./GeneralSettings.js\";\r\nimport { KeyBindings } from \"./KeyBindings.js\";\r\nimport { PointerSettings } from \"./PointerSettings.js\";\r\nimport { RotationSettings } from \"./RotationSettings.js\";\r\nimport { SensitivitySettings } from \"./SensitivitySettings.js\";\r\nimport { TranslationSettings } from \"./TranslationSettings.js\";\r\nimport { ZoomSettings } from \"./ZoomSettings.js\";\r\n\r\n/**\r\n * Control settings.\r\n */\r\n\r\nexport class Settings {\r\n\r\n\t/**\r\n\t * Constructs new settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * General settings.\r\n\t\t *\r\n\t\t * @type {GeneralSettings}\r\n\t\t */\r\n\r\n\t\tthis.general = new GeneralSettings();\r\n\r\n\t\t/**\r\n\t\t * Key bindings.\r\n\t\t *\r\n\t\t * @type {KeyBindings}\r\n\t\t */\r\n\r\n\t\tthis.keyBindings = new KeyBindings();\r\n\t\tthis.keyBindings.setDefault(new Map([\r\n\r\n\t\t\t[KeyCode.W, Action.MOVE_FORWARD],\r\n\t\t\t[KeyCode.UP, Action.MOVE_FORWARD],\r\n\r\n\t\t\t[KeyCode.A, Action.MOVE_LEFT],\r\n\t\t\t[KeyCode.LEFT, Action.MOVE_LEFT],\r\n\r\n\t\t\t[KeyCode.S, Action.MOVE_BACKWARD],\r\n\t\t\t[KeyCode.DOWN, Action.MOVE_BACKWARD],\r\n\r\n\t\t\t[KeyCode.D, Action.MOVE_RIGHT],\r\n\t\t\t[KeyCode.RIGHT, Action.MOVE_RIGHT],\r\n\r\n\t\t\t[KeyCode.X, Action.MOVE_DOWN],\r\n\t\t\t[KeyCode.SPACE, Action.MOVE_UP],\r\n\r\n\t\t\t[KeyCode.PAGE_DOWN, Action.ZOOM_OUT],\r\n\t\t\t[KeyCode.PAGE_UP, Action.ZOOM_IN]\r\n\r\n\t\t]));\r\n\r\n\t\t/**\r\n\t\t * Pointer settings.\r\n\t\t *\r\n\t\t * @type {PointerSettings}\r\n\t\t */\r\n\r\n\t\tthis.pointer = new PointerSettings();\r\n\r\n\t\t/**\r\n\t\t * Rotation settings.\r\n\t\t *\r\n\t\t * @type {RotationSettings}\r\n\t\t */\r\n\r\n\t\tthis.rotation = new RotationSettings();\r\n\r\n\t\t/**\r\n\t\t * Sensitivity settings.\r\n\t\t *\r\n\t\t * @type {SensitivitySettings}\r\n\t\t */\r\n\r\n\t\tthis.sensitivity = new SensitivitySettings();\r\n\r\n\t\t/**\r\n\t\t * Translation settings.\r\n\t\t *\r\n\t\t * @type {TranslationSettings}\r\n\t\t */\r\n\r\n\t\tthis.translation = new TranslationSettings();\r\n\r\n\t\t/**\r\n\t\t * Zoom settings.\r\n\t\t *\r\n\t\t * @type {ZoomSettings}\r\n\t\t */\r\n\r\n\t\tthis.zoom = new ZoomSettings();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given settings.\r\n\t *\r\n\t * @param {Settings} settings - Settings.\r\n\t * @return {Settings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.general.copy(settings.general);\r\n\t\tthis.keyBindings.copy(settings.keyBindings);\r\n\t\tthis.pointer.copy(settings.pointer);\r\n\t\tthis.rotation.copy(settings.rotation);\r\n\t\tthis.sensitivity.copy(settings.sensitivity);\r\n\t\tthis.translation.copy(settings.translation);\r\n\t\tthis.zoom.copy(settings.zoom);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones these settings.\r\n\t *\r\n\t * @return {Settings} The cloned settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Saves the current settings in the form of a JSON blob.\r\n\t *\r\n\t * @return {DOMString} A URL to the exported settings.\r\n\t */\r\n\r\n\ttoDataURL() {\r\n\r\n\t\treturn URL.createObjectURL(new Blob([JSON.stringify(this)], { type: \"text/json\" }));\r\n\r\n\t}\r\n\r\n}\r\n",
     "static": true,
     "longname": "C:/Users/Raoul/Sourcecode/JavaScript/delta-controls/src/settings/Settings.js",
     "access": "public",
@@ -4409,7 +4527,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 210,
+    "__docId__": 218,
     "kind": "class",
     "name": "Settings",
     "memberof": "src/settings/Settings.js",
@@ -4420,11 +4538,11 @@
     "importPath": "delta-controls/src/settings/Settings.js",
     "importStyle": "{Settings}",
     "description": "Control settings.",
-    "lineNumber": 13,
+    "lineNumber": 15,
     "interface": false
   },
   {
-    "__docId__": 211,
+    "__docId__": 219,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4434,10 +4552,10 @@
     "longname": "src/settings/Settings.js~Settings#constructor",
     "access": "public",
     "description": "Constructs new settings.",
-    "lineNumber": 19
+    "lineNumber": 21
   },
   {
-    "__docId__": 212,
+    "__docId__": 220,
     "kind": "member",
     "name": "general",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4445,7 +4563,7 @@
     "longname": "src/settings/Settings.js~Settings#general",
     "access": "public",
     "description": "General settings.",
-    "lineNumber": 27,
+    "lineNumber": 29,
     "type": {
       "nullable": null,
       "types": [
@@ -4456,7 +4574,7 @@
     }
   },
   {
-    "__docId__": 213,
+    "__docId__": 221,
     "kind": "member",
     "name": "keyBindings",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4464,7 +4582,7 @@
     "longname": "src/settings/Settings.js~Settings#keyBindings",
     "access": "public",
     "description": "Key bindings.",
-    "lineNumber": 35,
+    "lineNumber": 37,
     "type": {
       "nullable": null,
       "types": [
@@ -4475,7 +4593,7 @@
     }
   },
   {
-    "__docId__": 214,
+    "__docId__": 222,
     "kind": "member",
     "name": "pointer",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4483,7 +4601,7 @@
     "longname": "src/settings/Settings.js~Settings#pointer",
     "access": "public",
     "description": "Pointer settings.",
-    "lineNumber": 43,
+    "lineNumber": 66,
     "type": {
       "nullable": null,
       "types": [
@@ -4494,7 +4612,7 @@
     }
   },
   {
-    "__docId__": 215,
+    "__docId__": 223,
     "kind": "member",
     "name": "rotation",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4502,7 +4620,7 @@
     "longname": "src/settings/Settings.js~Settings#rotation",
     "access": "public",
     "description": "Rotation settings.",
-    "lineNumber": 51,
+    "lineNumber": 74,
     "type": {
       "nullable": null,
       "types": [
@@ -4513,7 +4631,7 @@
     }
   },
   {
-    "__docId__": 216,
+    "__docId__": 224,
     "kind": "member",
     "name": "sensitivity",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4521,7 +4639,7 @@
     "longname": "src/settings/Settings.js~Settings#sensitivity",
     "access": "public",
     "description": "Sensitivity settings.",
-    "lineNumber": 59,
+    "lineNumber": 82,
     "type": {
       "nullable": null,
       "types": [
@@ -4532,7 +4650,7 @@
     }
   },
   {
-    "__docId__": 217,
+    "__docId__": 225,
     "kind": "member",
     "name": "translation",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4540,7 +4658,7 @@
     "longname": "src/settings/Settings.js~Settings#translation",
     "access": "public",
     "description": "Translation settings.",
-    "lineNumber": 67,
+    "lineNumber": 90,
     "type": {
       "nullable": null,
       "types": [
@@ -4551,7 +4669,7 @@
     }
   },
   {
-    "__docId__": 218,
+    "__docId__": 226,
     "kind": "member",
     "name": "zoom",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4559,7 +4677,7 @@
     "longname": "src/settings/Settings.js~Settings#zoom",
     "access": "public",
     "description": "Zoom settings.",
-    "lineNumber": 75,
+    "lineNumber": 98,
     "type": {
       "nullable": null,
       "types": [
@@ -4570,7 +4688,7 @@
     }
   },
   {
-    "__docId__": 219,
+    "__docId__": 227,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4580,7 +4698,7 @@
     "longname": "src/settings/Settings.js~Settings#copy",
     "access": "public",
     "description": "Copies the given settings.",
-    "lineNumber": 86,
+    "lineNumber": 109,
     "params": [
       {
         "nullable": null,
@@ -4603,7 +4721,7 @@
     }
   },
   {
-    "__docId__": 220,
+    "__docId__": 228,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4613,7 +4731,7 @@
     "longname": "src/settings/Settings.js~Settings#clone",
     "access": "public",
     "description": "Clones these settings.",
-    "lineNumber": 106,
+    "lineNumber": 129,
     "return": {
       "nullable": null,
       "types": [
@@ -4625,7 +4743,7 @@
     "params": []
   },
   {
-    "__docId__": 221,
+    "__docId__": 229,
     "kind": "method",
     "name": "toDataURL",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4635,7 +4753,7 @@
     "longname": "src/settings/Settings.js~Settings#toDataURL",
     "access": "public",
     "description": "Saves the current settings in the form of a JSON blob.",
-    "lineNumber": 118,
+    "lineNumber": 141,
     "return": {
       "nullable": null,
       "types": [
@@ -4647,7 +4765,7 @@
     "params": []
   },
   {
-    "__docId__": 222,
+    "__docId__": 230,
     "kind": "file",
     "name": "src/settings/TranslationSettings.js",
     "content": "/**\r\n * Translation settings.\r\n */\r\n\r\nexport class TranslationSettings {\r\n\r\n\t/**\r\n\t * Constructs new translation settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * Whether positional translation is enabled.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.enabled = true;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given translation settings.\r\n\t *\r\n\t * @param {TranslationSettings} settings - Translation settings.\r\n\t * @return {TranslationSettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.enabled = settings.enabled;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this translation settings instance.\r\n\t *\r\n\t * @return {RotationSettings} The cloned translation settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -4658,7 +4776,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 223,
+    "__docId__": 231,
     "kind": "class",
     "name": "TranslationSettings",
     "memberof": "src/settings/TranslationSettings.js",
@@ -4673,7 +4791,7 @@
     "interface": false
   },
   {
-    "__docId__": 224,
+    "__docId__": 232,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/TranslationSettings.js~TranslationSettings",
@@ -4686,7 +4804,7 @@
     "lineNumber": 11
   },
   {
-    "__docId__": 225,
+    "__docId__": 233,
     "kind": "member",
     "name": "enabled",
     "memberof": "src/settings/TranslationSettings.js~TranslationSettings",
@@ -4705,7 +4823,7 @@
     }
   },
   {
-    "__docId__": 226,
+    "__docId__": 234,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/TranslationSettings.js~TranslationSettings",
@@ -4738,7 +4856,7 @@
     }
   },
   {
-    "__docId__": 228,
+    "__docId__": 236,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/TranslationSettings.js~TranslationSettings",
@@ -4760,7 +4878,7 @@
     "params": []
   },
   {
-    "__docId__": 229,
+    "__docId__": 237,
     "kind": "file",
     "name": "src/settings/ZoomSettings.js",
     "content": "/**\r\n * Zoom settings.\r\n */\r\n\r\nexport class ZoomSettings {\r\n\r\n\t/**\r\n\t * Constructs new zoom settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * Whether zooming is enabled.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.enabled = true;\r\n\r\n\t\t/**\r\n\t\t * Indicates whether the zoom controls should be inverted.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.invert = false;\r\n\r\n\t\t/**\r\n\t\t * The minimum zoom distance.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.minDistance = 1e-6;\r\n\r\n\t\t/**\r\n\t\t * The maximum zoom distance.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.maxDistance = Infinity;\r\n\r\n\t\t/**\r\n\t\t * The base zoom step.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.step = 10.0;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given zoom settings.\r\n\t *\r\n\t * @param {ZoomSettings} settings - Zoom settings.\r\n\t * @return {ZoomSettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.enabled = settings.enabled;\r\n\t\tthis.invert = settings.invert;\r\n\t\tthis.minDistance = settings.minDistance;\r\n\t\tthis.maxDistance = settings.maxDistance;\r\n\t\tthis.step = settings.step;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this zoom settings instance.\r\n\t *\r\n\t * @return {ZoomSettings} The cloned zoom settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -4771,7 +4889,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 230,
+    "__docId__": 238,
     "kind": "class",
     "name": "ZoomSettings",
     "memberof": "src/settings/ZoomSettings.js",
@@ -4786,7 +4904,7 @@
     "interface": false
   },
   {
-    "__docId__": 231,
+    "__docId__": 239,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -4799,7 +4917,7 @@
     "lineNumber": 11
   },
   {
-    "__docId__": 232,
+    "__docId__": 240,
     "kind": "member",
     "name": "enabled",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -4818,7 +4936,7 @@
     }
   },
   {
-    "__docId__": 233,
+    "__docId__": 241,
     "kind": "member",
     "name": "invert",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -4837,7 +4955,7 @@
     }
   },
   {
-    "__docId__": 234,
+    "__docId__": 242,
     "kind": "member",
     "name": "minDistance",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -4856,7 +4974,7 @@
     }
   },
   {
-    "__docId__": 235,
+    "__docId__": 243,
     "kind": "member",
     "name": "maxDistance",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -4875,7 +4993,7 @@
     }
   },
   {
-    "__docId__": 236,
+    "__docId__": 244,
     "kind": "member",
     "name": "step",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -4894,7 +5012,7 @@
     }
   },
   {
-    "__docId__": 237,
+    "__docId__": 245,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -4927,7 +5045,7 @@
     }
   },
   {
-    "__docId__": 243,
+    "__docId__": 251,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -4949,7 +5067,7 @@
     "params": []
   },
   {
-    "__docId__": 244,
+    "__docId__": 252,
     "kind": "file",
     "name": "src/strategies/index.js",
     "content": "/**\r\n * A collection of control strategies.\r\n *\r\n * @module delta-controls/strategies\r\n */\r\n\r\nexport { Direction, MovementStrategy } from \"./MovementStrategy.js\";\r\nexport { Strategy } from \"./Strategy.js\";\r\nexport { ZoomStrategy } from \"./ZoomStrategy.js\";\r\n",
@@ -4960,7 +5078,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 245,
+    "__docId__": 253,
     "kind": "file",
     "name": "src/strategies/MovementStrategy.js",
     "content": "import { Strategy } from \"./Strategy.js\";\r\n\r\n/**\r\n * A movement strategy.\r\n */\r\n\r\nexport class MovementStrategy extends Strategy {\r\n\r\n\t/**\r\n\t * Constructs a new movement strategy.\r\n\t *\r\n\t * @param {MovementState} movementState - A movement state.\r\n\t * @param {Direction} direction - A direction.\r\n\t */\r\n\r\n\tconstructor(movementState, direction) {\r\n\r\n\t\tsuper();\r\n\r\n\t\t/**\r\n\t\t * A movement state.\r\n\t\t *\r\n\t\t * @type {MovementState}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.movementState = movementState;\r\n\r\n\t\t/**\r\n\t\t * A direction.\r\n\t\t *\r\n\t\t * @type {Direction}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.direction = direction;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Executes this strategy.\r\n\t *\r\n\t * @param {Boolean} flag - A flag.\r\n\t */\r\n\r\n\texecute(flag) {\r\n\r\n\t\tconst state = this.movementState;\r\n\r\n\t\tswitch(this.direction) {\r\n\r\n\t\t\tcase Direction.FORWARD:\r\n\t\t\t\tstate.forward = flag;\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase Direction.LEFT:\r\n\t\t\t\tstate.left = flag;\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase Direction.BACKWARD:\r\n\t\t\t\tstate.backward = flag;\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase Direction.RIGHT:\r\n\t\t\t\tstate.right = flag;\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase Direction.DOWN:\r\n\t\t\t\tstate.down = flag;\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase Direction.UP:\r\n\t\t\t\tstate.up = flag;\r\n\t\t\t\tbreak;\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n}\r\n/**\r\n * An enumeration of movement directions.\r\n *\r\n * @type {Object}\r\n * @property {Number} FORWARD - Move forward.\r\n * @property {Number} LEFT - Move left.\r\n * @property {Number} BACKWARD - Move backward.\r\n * @property {Number} RIGHT - Move right.\r\n * @property {Number} DOWN - Move down.\r\n * @property {Number} UP - Move up.\r\n */\r\n\r\nexport const Direction = {\r\n\r\n\tFORWARD: 0,\r\n\tLEFT: 1,\r\n\tBACKWARD: 2,\r\n\tRIGHT: 3,\r\n\tDOWN: 4,\r\n\tUP: 5\r\n\r\n};\r\n",
@@ -4971,7 +5089,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 246,
+    "__docId__": 254,
     "kind": "class",
     "name": "MovementStrategy",
     "memberof": "src/strategies/MovementStrategy.js",
@@ -4989,7 +5107,7 @@
     ]
   },
   {
-    "__docId__": 247,
+    "__docId__": 255,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/strategies/MovementStrategy.js~MovementStrategy",
@@ -5024,7 +5142,7 @@
     ]
   },
   {
-    "__docId__": 248,
+    "__docId__": 256,
     "kind": "member",
     "name": "movementState",
     "memberof": "src/strategies/MovementStrategy.js~MovementStrategy",
@@ -5043,7 +5161,7 @@
     }
   },
   {
-    "__docId__": 249,
+    "__docId__": 257,
     "kind": "member",
     "name": "direction",
     "memberof": "src/strategies/MovementStrategy.js~MovementStrategy",
@@ -5062,7 +5180,7 @@
     }
   },
   {
-    "__docId__": 250,
+    "__docId__": 258,
     "kind": "method",
     "name": "execute",
     "memberof": "src/strategies/MovementStrategy.js~MovementStrategy",
@@ -5088,7 +5206,7 @@
     "return": null
   },
   {
-    "__docId__": 251,
+    "__docId__": 259,
     "kind": "variable",
     "name": "Direction",
     "memberof": "src/strategies/MovementStrategy.js",
@@ -5172,7 +5290,7 @@
     }
   },
   {
-    "__docId__": 252,
+    "__docId__": 260,
     "kind": "file",
     "name": "src/strategies/Strategy.js",
     "content": "/**\r\n * The Strategy interface.\r\n */\r\n\r\nexport class Strategy {\r\n\r\n\t/**\r\n\t * Executes this strategy.\r\n\t *\r\n\t * @throws {Error} An error is thrown if the method is not overridden.\r\n\t * @param {Boolean} flag - A flag.\r\n\t */\r\n\r\n\texecute(flag) {\r\n\r\n\t\tthrow new Error(\"Strategy#execute method not implemented!\");\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -5183,7 +5301,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 253,
+    "__docId__": 261,
     "kind": "class",
     "name": "Strategy",
     "memberof": "src/strategies/Strategy.js",
@@ -5198,7 +5316,7 @@
     "interface": false
   },
   {
-    "__docId__": 254,
+    "__docId__": 262,
     "kind": "method",
     "name": "execute",
     "memberof": "src/strategies/Strategy.js~Strategy",
@@ -5232,7 +5350,7 @@
     "return": null
   },
   {
-    "__docId__": 255,
+    "__docId__": 263,
     "kind": "file",
     "name": "src/strategies/ZoomStrategy.js",
     "content": "import { Strategy } from \"./Strategy.js\";\r\n\r\n/**\r\n * A zoom strategy.\r\n */\r\n\r\nexport class ZoomStrategy extends Strategy {\r\n\r\n\t/**\r\n\t * Constructs a new zoom strategy.\r\n\t *\r\n\t * @param {RotationManager} rotationManager - A rotation manager.\r\n\t * @param {Boolean} zoomIn - Whether this strategy should zoom in.\r\n\t */\r\n\r\n\tconstructor(rotationManager, zoomIn) {\r\n\r\n\t\tsuper();\r\n\r\n\t\t/**\r\n\t\t * A rotation manager.\r\n\t\t *\r\n\t\t * @type {RotationManager}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.rotationManager = rotationManager;\r\n\r\n\t\t/**\r\n\t\t * Whether this strategy should zoom in.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.zoomIn = zoomIn;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Executes this strategy.\r\n\t *\r\n\t * @param {Boolean} flag - A flag.\r\n\t */\r\n\r\n\texecute(flag) {\r\n\r\n\t\t// Only act on key down events.\r\n\t\tif(flag) {\r\n\r\n\t\t\tthis.rotationManager.zoom(this.zoomIn ? -1 : 1);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -5243,7 +5361,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 256,
+    "__docId__": 264,
     "kind": "class",
     "name": "ZoomStrategy",
     "memberof": "src/strategies/ZoomStrategy.js",
@@ -5261,7 +5379,7 @@
     ]
   },
   {
-    "__docId__": 257,
+    "__docId__": 265,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/strategies/ZoomStrategy.js~ZoomStrategy",
@@ -5296,7 +5414,7 @@
     ]
   },
   {
-    "__docId__": 258,
+    "__docId__": 266,
     "kind": "member",
     "name": "rotationManager",
     "memberof": "src/strategies/ZoomStrategy.js~ZoomStrategy",
@@ -5315,7 +5433,7 @@
     }
   },
   {
-    "__docId__": 259,
+    "__docId__": 267,
     "kind": "member",
     "name": "zoomIn",
     "memberof": "src/strategies/ZoomStrategy.js~ZoomStrategy",
@@ -5334,7 +5452,7 @@
     }
   },
   {
-    "__docId__": 260,
+    "__docId__": 268,
     "kind": "method",
     "name": "execute",
     "memberof": "src/strategies/ZoomStrategy.js~ZoomStrategy",
@@ -5369,7 +5487,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\r\n\t\"name\": \"delta-controls\",\r\n\t\"version\": \"0.2.0\",\r\n\t\"description\": \"A 3D movement controller.\",\r\n\t\"homepage\": \"https://github.com/vanruesc/delta-controls\",\r\n\t\"main\": \"build/delta-controls.js\",\r\n\t\"module\": \"src/index.js\",\r\n\t\"license\": \"Zlib\",\r\n\r\n\t\"keywords\": [\r\n\t\t\"movement\",\r\n\t\t\"translation\",\r\n\t\t\"rotation\",\r\n\t\t\"object\",\r\n\t\t\"controls\",\r\n\t\t\"3d\"\r\n\t],\r\n\r\n\t\"author\": {\r\n\t\t\"name\": \"Raoul van Rüschen\",\r\n\t\t\"email\": \"vanruesc@outlook.de\"\r\n\t},\r\n\r\n\t\"repository\": {\r\n\t\t\"type\": \"git\",\r\n\t\t\"url\": \"https://github.com/vanruesc/delta-controls.git\"\r\n\t},\r\n\r\n\t\"bugs\": {\r\n\t\t\"url\": \"https://github.com/vanruesc/delta-controls/issues\"\r\n\t},\r\n\r\n\t\"files\": [\r\n\t\t\"src\",\r\n\t\t\"build\"\r\n\t],\r\n\r\n\t\"scripts\": {\r\n\t\t\"test\": \"grunt --production\"\r\n\t},\r\n\r\n\t\"engines\": {\r\n\t\t\"node\": \">=4.0.0\"\r\n\t},\r\n\r\n\t\"eslintConfig\": {\r\n\t\t\"extends\": \"delta\"\r\n\t},\r\n\r\n\t\"dependencies\": {\r\n\t\t\"math-ds\": \"0.x.x\"\r\n\t},\r\n\r\n\t\"devDependencies\": {\r\n\t\t\"@vanruesc/grunt-esdoc\": \"0.x.x\",\r\n\t\t\"babel-core\": \"6.x.x\",\r\n\t\t\"babel-plugin-external-helpers\": \"6.x.x\",\r\n\t\t\"babel-preset-env\": \"1.x.x\",\r\n\t\t\"esdoc-standard-plugin\": \"1.x.x\",\r\n\t\t\"eslint-config-delta\": \"0.x.x\",\r\n\t\t\"grunt\": \"1.x.x\",\r\n\t\t\"grunt-cli\": \"1.x.x\",\r\n\t\t\"grunt-contrib-nodeunit\": \"1.x.x\",\r\n\t\t\"grunt-contrib-uglify\": \"3.x.x\",\r\n\t\t\"grunt-contrib-copy\": \"1.x.x\",\r\n\t\t\"grunt-eslint\": \"20.x.x\",\r\n\t\t\"grunt-rollup\": \"8.x.x\",\r\n\t\t\"jit-grunt\": \"0.x.x\",\r\n\t\t\"load-grunt-config\": \"0.x.x\",\r\n\t\t\"postprocessing\": \"4.x.x\",\r\n\t\t\"rollup-plugin-babel\": \"3.x.x\",\r\n\t\t\"rollup-plugin-node-resolve\": \"3.x.x\",\r\n\t\t\"synthetic-event\": \"0.x.x\",\r\n\t\t\"three\": \"0.89.x\",\r\n\t\t\"three-demo\": \"0.x.x\",\r\n\t\t\"time-grunt\": \"1.x.x\"\r\n\t}\r\n}\r\n",
+    "content": "{\r\n\t\"name\": \"delta-controls\",\r\n\t\"version\": \"0.3.0\",\r\n\t\"description\": \"A 3D movement controller.\",\r\n\t\"homepage\": \"https://github.com/vanruesc/delta-controls\",\r\n\t\"main\": \"build/delta-controls.js\",\r\n\t\"module\": \"src/index.js\",\r\n\t\"license\": \"Zlib\",\r\n\r\n\t\"keywords\": [\r\n\t\t\"movement\",\r\n\t\t\"translation\",\r\n\t\t\"rotation\",\r\n\t\t\"object\",\r\n\t\t\"controls\",\r\n\t\t\"key-bindings\",\r\n\t\t\"3d\"\r\n\t],\r\n\r\n\t\"author\": {\r\n\t\t\"name\": \"Raoul van Rüschen\",\r\n\t\t\"email\": \"vanruesc@outlook.de\"\r\n\t},\r\n\r\n\t\"repository\": {\r\n\t\t\"type\": \"git\",\r\n\t\t\"url\": \"https://github.com/vanruesc/delta-controls.git\"\r\n\t},\r\n\r\n\t\"bugs\": {\r\n\t\t\"url\": \"https://github.com/vanruesc/delta-controls/issues\"\r\n\t},\r\n\r\n\t\"files\": [\r\n\t\t\"src\",\r\n\t\t\"build\"\r\n\t],\r\n\r\n\t\"scripts\": {\r\n\t\t\"test\": \"grunt --production\"\r\n\t},\r\n\r\n\t\"engines\": {\r\n\t\t\"node\": \">=4.0.0\"\r\n\t},\r\n\r\n\t\"eslintConfig\": {\r\n\t\t\"extends\": \"delta\"\r\n\t},\r\n\r\n\t\"dependencies\": {\r\n\t\t\"math-ds\": \"0.x.x\"\r\n\t},\r\n\r\n\t\"devDependencies\": {\r\n\t\t\"@vanruesc/grunt-esdoc\": \"0.x.x\",\r\n\t\t\"babel-core\": \"6.x.x\",\r\n\t\t\"babel-plugin-external-helpers\": \"6.x.x\",\r\n\t\t\"babel-preset-env\": \"1.x.x\",\r\n\t\t\"esdoc-standard-plugin\": \"1.x.x\",\r\n\t\t\"eslint-config-delta\": \"0.x.x\",\r\n\t\t\"grunt\": \"1.x.x\",\r\n\t\t\"grunt-cli\": \"1.x.x\",\r\n\t\t\"grunt-contrib-nodeunit\": \"1.x.x\",\r\n\t\t\"grunt-contrib-uglify\": \"3.x.x\",\r\n\t\t\"grunt-contrib-copy\": \"1.x.x\",\r\n\t\t\"grunt-eslint\": \"20.x.x\",\r\n\t\t\"grunt-rollup\": \"8.x.x\",\r\n\t\t\"jit-grunt\": \"0.x.x\",\r\n\t\t\"load-grunt-config\": \"0.x.x\",\r\n\t\t\"postprocessing\": \"4.x.x\",\r\n\t\t\"rollup-plugin-babel\": \"3.x.x\",\r\n\t\t\"rollup-plugin-node-resolve\": \"3.x.x\",\r\n\t\t\"synthetic-event\": \"0.x.x\",\r\n\t\t\"three\": \"0.89.x\",\r\n\t\t\"three-demo\": \"0.x.x\",\r\n\t\t\"time-grunt\": \"1.x.x\"\r\n\t}\r\n}\r\n",
     "longname": "C:\\Users\\Raoul\\Sourcecode\\JavaScript\\delta-controls\\package.json",
     "name": "package.json",
     "static": true,

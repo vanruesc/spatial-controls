@@ -912,6 +912,18 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/settings/keybindings.js~keybindings#clear",
+    "class/src/settings/KeyBindings.js~KeyBindings.html#instance-method-clear",
+    "src/settings/KeyBindings.js~KeyBindings#clear",
+    "method"
+  ],
+  [
+    "src/settings/keybindings.js~keybindings#cleardefault",
+    "class/src/settings/KeyBindings.js~KeyBindings.html#instance-method-clearDefault",
+    "src/settings/KeyBindings.js~KeyBindings#clearDefault",
+    "method"
+  ],
+  [
     "src/settings/keybindings.js~keybindings#clone",
     "class/src/settings/KeyBindings.js~KeyBindings.html#instance-method-clone",
     "src/settings/KeyBindings.js~KeyBindings#clone",
@@ -928,6 +940,12 @@ window.esdocSearchIndex = [
     "class/src/settings/KeyBindings.js~KeyBindings.html#instance-method-copy",
     "src/settings/KeyBindings.js~KeyBindings#copy",
     "method"
+  ],
+  [
+    "src/settings/keybindings.js~keybindings#defaultactions",
+    "class/src/settings/KeyBindings.js~KeyBindings.html#instance-member-defaultActions",
+    "src/settings/KeyBindings.js~KeyBindings#defaultActions",
+    "member"
   ],
   [
     "src/settings/keybindings.js~keybindings#delete",
@@ -948,9 +966,21 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/settings/keybindings.js~keybindings#reset",
+    "class/src/settings/KeyBindings.js~KeyBindings.html#instance-method-reset",
+    "src/settings/KeyBindings.js~KeyBindings#reset",
+    "method"
+  ],
+  [
     "src/settings/keybindings.js~keybindings#set",
     "class/src/settings/KeyBindings.js~KeyBindings.html#instance-method-set",
     "src/settings/KeyBindings.js~KeyBindings#set",
+    "method"
+  ],
+  [
+    "src/settings/keybindings.js~keybindings#setdefault",
+    "class/src/settings/KeyBindings.js~KeyBindings.html#instance-method-setDefault",
+    "src/settings/KeyBindings.js~KeyBindings#setDefault",
     "method"
   ],
   [
