@@ -151,7 +151,7 @@
       },
       {
         "lineNumber": 47,
-        "line": "\t * @param {KeyBindings} map - A map. Each key must be a key code and each value must be a number.\r"
+        "line": "\t * @param {Map} map - A map. Each key must be a key code and each value must be a number.\r"
       },
       {
         "lineNumber": 48,
