@@ -168,4 +168,19 @@ export class KeyBindings {
 
 	}
 
+	/**
+	 * Creates a plain representation of this instance.
+	 *
+	 * @return {String} The plain representation.
+	 */
+
+	toJSON() {
+
+		return {
+			defaultActions: [...this.defaultActions],
+			actions: [...this.actions]
+		};
+
+	}
+
 }
