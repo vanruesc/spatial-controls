@@ -1,7 +1,7 @@
 {
   "coverage": "100%",
-  "expectCount": 163,
-  "actualCount": 163,
+  "expectCount": 164,
+  "actualCount": 164,
   "files": {
     "src/core/Action.js": {
       "expectCount": 1,
@@ -49,8 +49,8 @@
       "undocumentLines": []
     },
     "src/settings/KeyBindings.js": {
-      "expectCount": 14,
-      "actualCount": 14,
+      "expectCount": 15,
+      "actualCount": 15,
       "undocumentLines": []
     },
     "src/settings/PointerSettings.js": {

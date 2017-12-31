@@ -984,6 +984,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/settings/keybindings.js~keybindings#tojson",
+    "class/src/settings/KeyBindings.js~KeyBindings.html#instance-method-toJSON",
+    "src/settings/KeyBindings.js~KeyBindings#toJSON",
+    "method"
+  ],
+  [
     "src/settings/pointersettings.js",
     "file/src/settings/PointerSettings.js.html",
     "src/settings/PointerSettings.js",

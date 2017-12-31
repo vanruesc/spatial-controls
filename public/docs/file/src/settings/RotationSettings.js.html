@@ -124,10 +124,12 @@ export class RotationSettings {
 
 	copy(settings) {
 
-		this.minTheta = settings.minTheta;
-		this.maxTheta = settings.maxTheta;
+		this.minTheta = (settings.minTheta !== null) ? settings.minTheta : -Infinity;
+		this.maxTheta = (settings.maxTheta !== null) ? settings.maxTheta : Infinity;
+
 		this.minPhi = settings.minPhi;
 		this.maxPhi = settings.maxPhi;
+
 		this.invertX = settings.invertX;
 		this.invertY = settings.invertY;
 

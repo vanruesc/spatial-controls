@@ -70,6 +70,34 @@
     return call && (typeof call === "object" || typeof call === "function") ? call : self;
   };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  var toConsumableArray = function (arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+      return arr2;
+    } else {
+      return Array.from(arr);
+    }
+  };
+
   var fragment = "uniform sampler2D tPreviousLum;\r\nuniform sampler2D tCurrentLum;\r\nuniform float minLuminance;\r\nuniform float delta;\r\nuniform float tau;\r\n\r\nvarying vec2 vUv;\r\n\r\nvoid main() {\r\n\r\n\tfloat previousLum = texture2D(tPreviousLum, vUv, MIP_LEVEL_1X1).r;\r\n\tfloat currentLum = texture2D(tCurrentLum, vUv, MIP_LEVEL_1X1).r;\r\n\r\n\tpreviousLum = max(minLuminance, previousLum);\r\n\tcurrentLum = max(minLuminance, currentLum);\r\n\r\n\t// Adapt the luminance using Pattanaik's technique.\r\n\tfloat adaptedLum = previousLum + (currentLum - previousLum) * (1.0 - exp(-delta * tau));\r\n\r\n\tgl_FragColor.r = adaptedLum;\r\n\r\n}\r\n";
   var vertex = "varying vec2 vUv;\r\n\r\nvoid main() {\r\n\r\n\tvUv = uv;\r\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\r\n\r\n}\r\n";
 
@@ -9927,6 +9955,15 @@
 
   			return this.actions.delete(keyCode);
   		}
+  	}, {
+  		key: "toJSON",
+  		value: function toJSON() {
+
+  			return {
+  				defaultActions: [].concat(toConsumableArray(this.defaultActions)),
+  				actions: [].concat(toConsumableArray(this.actions))
+  			};
+  		}
   	}]);
   	return KeyBindings;
   }();
@@ -9982,10 +10019,12 @@
   				key: "copy",
   				value: function copy(settings) {
 
-  						this.minTheta = settings.minTheta;
-  						this.maxTheta = settings.maxTheta;
+  						this.minTheta = settings.minTheta !== null ? settings.minTheta : -Infinity;
+  						this.maxTheta = settings.maxTheta !== null ? settings.maxTheta : Infinity;
+
   						this.minPhi = settings.minPhi;
   						this.maxPhi = settings.maxPhi;
+
   						this.invertX = settings.invertX;
   						this.invertY = settings.invertY;
 

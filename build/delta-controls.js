@@ -89,6 +89,34 @@
     return call && (typeof call === "object" || typeof call === "function") ? call : self;
   };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  var toConsumableArray = function (arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+      return arr2;
+    } else {
+      return Array.from(arr);
+    }
+  };
+
   var Vector3 = function () {
   	function Vector3() {
   		var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
@@ -5591,6 +5619,15 @@
 
   			return this.actions.delete(keyCode);
   		}
+  	}, {
+  		key: "toJSON",
+  		value: function toJSON() {
+
+  			return {
+  				defaultActions: [].concat(toConsumableArray(this.defaultActions)),
+  				actions: [].concat(toConsumableArray(this.actions))
+  			};
+  		}
   	}]);
   	return KeyBindings;
   }();
@@ -5646,10 +5683,12 @@
   				key: "copy",
   				value: function copy(settings) {
 
-  						this.minTheta = settings.minTheta;
-  						this.maxTheta = settings.maxTheta;
+  						this.minTheta = settings.minTheta !== null ? settings.minTheta : -Infinity;
+  						this.maxTheta = settings.maxTheta !== null ? settings.maxTheta : Infinity;
+
   						this.minPhi = settings.minPhi;
   						this.maxPhi = settings.maxPhi;
+
   						this.invertX = settings.invertX;
   						this.invertY = settings.invertY;
 
