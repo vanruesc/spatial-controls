@@ -1,28 +1,28 @@
 {
   "type": "File",
   "start": 0,
-  "end": 318,
+  "end": 354,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 26,
+      "line": 29,
       "column": 0
     }
   },
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 318,
+    "end": 354,
     "loc": {
       "start": {
         "line": 1,
         "column": 0
       },
       "end": {
-        "line": 26,
+        "line": 29,
         "column": 0
       }
     },
@@ -116,16 +116,16 @@
         "trailingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n ",
+            "value": "*\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
             "start": 38,
-            "end": 86,
+            "end": 98,
             "loc": {
               "start": {
                 "line": 3,
                 "column": 0
               },
               "end": {
-                "line": 7,
+                "line": 8,
                 "column": 3
               }
             }
@@ -134,15 +134,15 @@
       },
       {
         "type": "ExportNamedDeclaration",
-        "start": 90,
-        "end": 128,
+        "start": 102,
+        "end": 140,
         "loc": {
           "start": {
-            "line": 9,
+            "line": 10,
             "column": 0
           },
           "end": {
-            "line": 9,
+            "line": 10,
             "column": 38
           }
         },
@@ -150,44 +150,44 @@
         "source": null,
         "declaration": {
           "type": "VariableDeclaration",
-          "start": 97,
-          "end": 128,
+          "start": 109,
+          "end": 140,
           "loc": {
             "start": {
-              "line": 9,
+              "line": 10,
               "column": 7
             },
             "end": {
-              "line": 9,
+              "line": 10,
               "column": 38
             }
           },
           "declarations": [
             {
               "type": "VariableDeclarator",
-              "start": 103,
-              "end": 127,
+              "start": 115,
+              "end": 139,
               "loc": {
                 "start": {
-                  "line": 9,
+                  "line": 10,
                   "column": 13
                 },
                 "end": {
-                  "line": 9,
+                  "line": 10,
                   "column": 37
                 }
               },
               "id": {
                 "type": "Identifier",
-                "start": 103,
-                "end": 104,
+                "start": 115,
+                "end": 116,
                 "loc": {
                   "start": {
-                    "line": 9,
+                    "line": 10,
                     "column": 13
                   },
                   "end": {
-                    "line": 9,
+                    "line": 10,
                     "column": 14
                   },
                   "identifierName": "x"
@@ -197,29 +197,29 @@
               },
               "init": {
                 "type": "NewExpression",
-                "start": 107,
-                "end": 127,
+                "start": 119,
+                "end": 139,
                 "loc": {
                   "start": {
-                    "line": 9,
+                    "line": 10,
                     "column": 17
                   },
                   "end": {
-                    "line": 9,
+                    "line": 10,
                     "column": 37
                   }
                 },
                 "callee": {
                   "type": "Identifier",
-                  "start": 111,
-                  "end": 118,
+                  "start": 123,
+                  "end": 130,
                   "loc": {
                     "start": {
-                      "line": 9,
+                      "line": 10,
                       "column": 21
                     },
                     "end": {
-                      "line": 9,
+                      "line": 10,
                       "column": 28
                     },
                     "identifierName": "Vector3"
@@ -229,15 +229,15 @@
                 "arguments": [
                   {
                     "type": "NumericLiteral",
-                    "start": 119,
-                    "end": 120,
+                    "start": 131,
+                    "end": 132,
                     "loc": {
                       "start": {
-                        "line": 9,
+                        "line": 10,
                         "column": 29
                       },
                       "end": {
-                        "line": 9,
+                        "line": 10,
                         "column": 30
                       }
                     },
@@ -249,15 +249,15 @@
                   },
                   {
                     "type": "NumericLiteral",
-                    "start": 122,
-                    "end": 123,
+                    "start": 134,
+                    "end": 135,
                     "loc": {
                       "start": {
-                        "line": 9,
+                        "line": 10,
                         "column": 32
                       },
                       "end": {
-                        "line": 9,
+                        "line": 10,
                         "column": 33
                       }
                     },
@@ -269,15 +269,15 @@
                   },
                   {
                     "type": "NumericLiteral",
-                    "start": 125,
-                    "end": 126,
+                    "start": 137,
+                    "end": 138,
                     "loc": {
                       "start": {
-                        "line": 9,
+                        "line": 10,
                         "column": 35
                       },
                       "end": {
-                        "line": 9,
+                        "line": 10,
                         "column": 36
                       }
                     },
@@ -296,16 +296,16 @@
           "leadingComments": [
             {
               "type": "CommentBlock",
-              "value": "*\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n ",
+              "value": "*\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
               "start": 38,
-              "end": 86,
+              "end": 98,
               "loc": {
                 "start": {
                   "line": 3,
                   "column": 0
                 },
                 "end": {
-                  "line": 7,
+                  "line": 8,
                   "column": 3
                 }
               }
@@ -314,16 +314,16 @@
           "trailingComments": [
             {
               "type": "CommentBlock",
-              "value": "*\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n ",
-              "start": 132,
-              "end": 180,
+              "value": "*\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
+              "start": 144,
+              "end": 204,
               "loc": {
                 "start": {
-                  "line": 11,
+                  "line": 12,
                   "column": 0
                 },
                 "end": {
-                  "line": 15,
+                  "line": 17,
                   "column": 3
                 }
               }
@@ -333,16 +333,16 @@
         "leadingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n ",
+            "value": "*\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
             "start": 38,
-            "end": 86,
+            "end": 98,
             "loc": {
               "start": {
                 "line": 3,
                 "column": 0
               },
               "end": {
-                "line": 7,
+                "line": 8,
                 "column": 3
               }
             }
@@ -351,16 +351,16 @@
         "trailingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n ",
-            "start": 132,
-            "end": 180,
+            "value": "*\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
+            "start": 144,
+            "end": 204,
             "loc": {
               "start": {
-                "line": 11,
+                "line": 12,
                 "column": 0
               },
               "end": {
-                "line": 15,
+                "line": 17,
                 "column": 3
               }
             }
@@ -369,15 +369,15 @@
       },
       {
         "type": "ExportNamedDeclaration",
-        "start": 184,
-        "end": 222,
+        "start": 208,
+        "end": 246,
         "loc": {
           "start": {
-            "line": 17,
+            "line": 19,
             "column": 0
           },
           "end": {
-            "line": 17,
+            "line": 19,
             "column": 38
           }
         },
@@ -385,44 +385,44 @@
         "source": null,
         "declaration": {
           "type": "VariableDeclaration",
-          "start": 191,
-          "end": 222,
+          "start": 215,
+          "end": 246,
           "loc": {
             "start": {
-              "line": 17,
+              "line": 19,
               "column": 7
             },
             "end": {
-              "line": 17,
+              "line": 19,
               "column": 38
             }
           },
           "declarations": [
             {
               "type": "VariableDeclarator",
-              "start": 197,
-              "end": 221,
+              "start": 221,
+              "end": 245,
               "loc": {
                 "start": {
-                  "line": 17,
+                  "line": 19,
                   "column": 13
                 },
                 "end": {
-                  "line": 17,
+                  "line": 19,
                   "column": 37
                 }
               },
               "id": {
                 "type": "Identifier",
-                "start": 197,
-                "end": 198,
+                "start": 221,
+                "end": 222,
                 "loc": {
                   "start": {
-                    "line": 17,
+                    "line": 19,
                     "column": 13
                   },
                   "end": {
-                    "line": 17,
+                    "line": 19,
                     "column": 14
                   },
                   "identifierName": "y"
@@ -432,29 +432,29 @@
               },
               "init": {
                 "type": "NewExpression",
-                "start": 201,
-                "end": 221,
+                "start": 225,
+                "end": 245,
                 "loc": {
                   "start": {
-                    "line": 17,
+                    "line": 19,
                     "column": 17
                   },
                   "end": {
-                    "line": 17,
+                    "line": 19,
                     "column": 37
                   }
                 },
                 "callee": {
                   "type": "Identifier",
-                  "start": 205,
-                  "end": 212,
+                  "start": 229,
+                  "end": 236,
                   "loc": {
                     "start": {
-                      "line": 17,
+                      "line": 19,
                       "column": 21
                     },
                     "end": {
-                      "line": 17,
+                      "line": 19,
                       "column": 28
                     },
                     "identifierName": "Vector3"
@@ -464,15 +464,15 @@
                 "arguments": [
                   {
                     "type": "NumericLiteral",
-                    "start": 213,
-                    "end": 214,
+                    "start": 237,
+                    "end": 238,
                     "loc": {
                       "start": {
-                        "line": 17,
+                        "line": 19,
                         "column": 29
                       },
                       "end": {
-                        "line": 17,
+                        "line": 19,
                         "column": 30
                       }
                     },
@@ -484,15 +484,15 @@
                   },
                   {
                     "type": "NumericLiteral",
-                    "start": 216,
-                    "end": 217,
+                    "start": 240,
+                    "end": 241,
                     "loc": {
                       "start": {
-                        "line": 17,
+                        "line": 19,
                         "column": 32
                       },
                       "end": {
-                        "line": 17,
+                        "line": 19,
                         "column": 33
                       }
                     },
@@ -504,15 +504,15 @@
                   },
                   {
                     "type": "NumericLiteral",
-                    "start": 219,
-                    "end": 220,
+                    "start": 243,
+                    "end": 244,
                     "loc": {
                       "start": {
-                        "line": 17,
+                        "line": 19,
                         "column": 35
                       },
                       "end": {
-                        "line": 17,
+                        "line": 19,
                         "column": 36
                       }
                     },
@@ -531,16 +531,16 @@
           "leadingComments": [
             {
               "type": "CommentBlock",
-              "value": "*\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n ",
-              "start": 132,
-              "end": 180,
+              "value": "*\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
+              "start": 144,
+              "end": 204,
               "loc": {
                 "start": {
-                  "line": 11,
+                  "line": 12,
                   "column": 0
                 },
                 "end": {
-                  "line": 15,
+                  "line": 17,
                   "column": 3
                 }
               }
@@ -549,16 +549,16 @@
           "trailingComments": [
             {
               "type": "CommentBlock",
-              "value": "*\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n ",
-              "start": 226,
-              "end": 274,
+              "value": "*\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
+              "start": 250,
+              "end": 310,
               "loc": {
                 "start": {
-                  "line": 19,
+                  "line": 21,
                   "column": 0
                 },
                 "end": {
-                  "line": 23,
+                  "line": 26,
                   "column": 3
                 }
               }
@@ -568,16 +568,16 @@
         "leadingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n ",
-            "start": 132,
-            "end": 180,
+            "value": "*\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
+            "start": 144,
+            "end": 204,
             "loc": {
               "start": {
-                "line": 11,
+                "line": 12,
                 "column": 0
               },
               "end": {
-                "line": 15,
+                "line": 17,
                 "column": 3
               }
             }
@@ -586,16 +586,16 @@
         "trailingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n ",
-            "start": 226,
-            "end": 274,
+            "value": "*\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
+            "start": 250,
+            "end": 310,
             "loc": {
               "start": {
-                "line": 19,
+                "line": 21,
                 "column": 0
               },
               "end": {
-                "line": 23,
+                "line": 26,
                 "column": 3
               }
             }
@@ -604,15 +604,15 @@
       },
       {
         "type": "ExportNamedDeclaration",
-        "start": 278,
-        "end": 316,
+        "start": 314,
+        "end": 352,
         "loc": {
           "start": {
-            "line": 25,
+            "line": 28,
             "column": 0
           },
           "end": {
-            "line": 25,
+            "line": 28,
             "column": 38
           }
         },
@@ -620,44 +620,44 @@
         "source": null,
         "declaration": {
           "type": "VariableDeclaration",
-          "start": 285,
-          "end": 316,
+          "start": 321,
+          "end": 352,
           "loc": {
             "start": {
-              "line": 25,
+              "line": 28,
               "column": 7
             },
             "end": {
-              "line": 25,
+              "line": 28,
               "column": 38
             }
           },
           "declarations": [
             {
               "type": "VariableDeclarator",
-              "start": 291,
-              "end": 315,
+              "start": 327,
+              "end": 351,
               "loc": {
                 "start": {
-                  "line": 25,
+                  "line": 28,
                   "column": 13
                 },
                 "end": {
-                  "line": 25,
+                  "line": 28,
                   "column": 37
                 }
               },
               "id": {
                 "type": "Identifier",
-                "start": 291,
-                "end": 292,
+                "start": 327,
+                "end": 328,
                 "loc": {
                   "start": {
-                    "line": 25,
+                    "line": 28,
                     "column": 13
                   },
                   "end": {
-                    "line": 25,
+                    "line": 28,
                     "column": 14
                   },
                   "identifierName": "z"
@@ -667,29 +667,29 @@
               },
               "init": {
                 "type": "NewExpression",
-                "start": 295,
-                "end": 315,
+                "start": 331,
+                "end": 351,
                 "loc": {
                   "start": {
-                    "line": 25,
+                    "line": 28,
                     "column": 17
                   },
                   "end": {
-                    "line": 25,
+                    "line": 28,
                     "column": 37
                   }
                 },
                 "callee": {
                   "type": "Identifier",
-                  "start": 299,
-                  "end": 306,
+                  "start": 335,
+                  "end": 342,
                   "loc": {
                     "start": {
-                      "line": 25,
+                      "line": 28,
                       "column": 21
                     },
                     "end": {
-                      "line": 25,
+                      "line": 28,
                       "column": 28
                     },
                     "identifierName": "Vector3"
@@ -699,15 +699,15 @@
                 "arguments": [
                   {
                     "type": "NumericLiteral",
-                    "start": 307,
-                    "end": 308,
+                    "start": 343,
+                    "end": 344,
                     "loc": {
                       "start": {
-                        "line": 25,
+                        "line": 28,
                         "column": 29
                       },
                       "end": {
-                        "line": 25,
+                        "line": 28,
                         "column": 30
                       }
                     },
@@ -719,15 +719,15 @@
                   },
                   {
                     "type": "NumericLiteral",
-                    "start": 310,
-                    "end": 311,
+                    "start": 346,
+                    "end": 347,
                     "loc": {
                       "start": {
-                        "line": 25,
+                        "line": 28,
                         "column": 32
                       },
                       "end": {
-                        "line": 25,
+                        "line": 28,
                         "column": 33
                       }
                     },
@@ -739,15 +739,15 @@
                   },
                   {
                     "type": "NumericLiteral",
-                    "start": 313,
-                    "end": 314,
+                    "start": 349,
+                    "end": 350,
                     "loc": {
                       "start": {
-                        "line": 25,
+                        "line": 28,
                         "column": 35
                       },
                       "end": {
-                        "line": 25,
+                        "line": 28,
                         "column": 36
                       }
                     },
@@ -766,16 +766,16 @@
           "leadingComments": [
             {
               "type": "CommentBlock",
-              "value": "*\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n ",
-              "start": 226,
-              "end": 274,
+              "value": "*\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
+              "start": 250,
+              "end": 310,
               "loc": {
                 "start": {
-                  "line": 19,
+                  "line": 21,
                   "column": 0
                 },
                 "end": {
-                  "line": 23,
+                  "line": 26,
                   "column": 3
                 }
               }
@@ -786,16 +786,16 @@
         "leadingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n ",
-            "start": 226,
-            "end": 274,
+            "value": "*\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
+            "start": 250,
+            "end": 310,
             "loc": {
               "start": {
-                "line": 19,
+                "line": 21,
                 "column": 0
               },
               "end": {
-                "line": 23,
+                "line": 26,
                 "column": 3
               }
             }
@@ -808,48 +808,48 @@
   "comments": [
     {
       "type": "CommentBlock",
-      "value": "*\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n ",
+      "value": "*\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
       "start": 38,
-      "end": 86,
+      "end": 98,
       "loc": {
         "start": {
           "line": 3,
           "column": 0
         },
         "end": {
-          "line": 7,
+          "line": 8,
           "column": 3
         }
       }
     },
     {
       "type": "CommentBlock",
-      "value": "*\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n ",
-      "start": 132,
-      "end": 180,
+      "value": "*\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
+      "start": 144,
+      "end": 204,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 12,
           "column": 0
         },
         "end": {
-          "line": 15,
+          "line": 17,
           "column": 3
         }
       }
     },
     {
       "type": "CommentBlock",
-      "value": "*\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n ",
-      "start": 226,
-      "end": 274,
+      "value": "*\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
+      "start": 250,
+      "end": 310,
       "loc": {
         "start": {
-          "line": 19,
+          "line": 21,
           "column": 0
         },
         "end": {
-          "line": 23,
+          "line": 26,
           "column": 3
         }
       }
@@ -1041,16 +1041,16 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n ",
+      "value": "*\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
       "start": 38,
-      "end": 86,
+      "end": 98,
       "loc": {
         "start": {
           "line": 3,
           "column": 0
         },
         "end": {
-          "line": 7,
+          "line": 8,
           "column": 3
         }
       }
@@ -1070,15 +1070,15 @@
         "updateContext": null
       },
       "value": "export",
-      "start": 90,
-      "end": 96,
+      "start": 102,
+      "end": 108,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 0
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 6
         }
       }
@@ -1098,15 +1098,15 @@
         "updateContext": null
       },
       "value": "const",
-      "start": 97,
-      "end": 102,
+      "start": 109,
+      "end": 114,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 7
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 12
         }
       }
@@ -1124,15 +1124,15 @@
         "binop": null
       },
       "value": "x",
-      "start": 103,
-      "end": 104,
+      "start": 115,
+      "end": 116,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 13
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 14
         }
       }
@@ -1151,15 +1151,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 105,
-      "end": 106,
+      "start": 117,
+      "end": 118,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 15
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 16
         }
       }
@@ -1179,15 +1179,15 @@
         "updateContext": null
       },
       "value": "new",
-      "start": 107,
-      "end": 110,
+      "start": 119,
+      "end": 122,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 17
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 20
         }
       }
@@ -1205,15 +1205,15 @@
         "binop": null
       },
       "value": "Vector3",
-      "start": 111,
-      "end": 118,
+      "start": 123,
+      "end": 130,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 21
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 28
         }
       }
@@ -1230,15 +1230,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 118,
-      "end": 119,
+      "start": 130,
+      "end": 131,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 28
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 29
         }
       }
@@ -1257,15 +1257,15 @@
         "updateContext": null
       },
       "value": 1,
-      "start": 119,
-      "end": 120,
+      "start": 131,
+      "end": 132,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 29
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 30
         }
       }
@@ -1283,15 +1283,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 120,
-      "end": 121,
+      "start": 132,
+      "end": 133,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 30
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 31
         }
       }
@@ -1310,15 +1310,15 @@
         "updateContext": null
       },
       "value": 0,
-      "start": 122,
-      "end": 123,
+      "start": 134,
+      "end": 135,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 32
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 33
         }
       }
@@ -1336,15 +1336,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 123,
-      "end": 124,
+      "start": 135,
+      "end": 136,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 33
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 34
         }
       }
@@ -1363,15 +1363,15 @@
         "updateContext": null
       },
       "value": 0,
-      "start": 125,
-      "end": 126,
+      "start": 137,
+      "end": 138,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 35
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 36
         }
       }
@@ -1388,15 +1388,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 126,
-      "end": 127,
+      "start": 138,
+      "end": 139,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 36
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 37
         }
       }
@@ -1414,31 +1414,31 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 127,
-      "end": 128,
+      "start": 139,
+      "end": 140,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 37
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 38
         }
       }
     },
     {
       "type": "CommentBlock",
-      "value": "*\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n ",
-      "start": 132,
-      "end": 180,
+      "value": "*\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
+      "start": 144,
+      "end": 204,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 12,
           "column": 0
         },
         "end": {
-          "line": 15,
+          "line": 17,
           "column": 3
         }
       }
@@ -1458,15 +1458,15 @@
         "updateContext": null
       },
       "value": "export",
-      "start": 184,
-      "end": 190,
+      "start": 208,
+      "end": 214,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 0
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 6
         }
       }
@@ -1486,15 +1486,15 @@
         "updateContext": null
       },
       "value": "const",
-      "start": 191,
-      "end": 196,
+      "start": 215,
+      "end": 220,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 7
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 12
         }
       }
@@ -1512,15 +1512,15 @@
         "binop": null
       },
       "value": "y",
-      "start": 197,
-      "end": 198,
+      "start": 221,
+      "end": 222,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 13
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 14
         }
       }
@@ -1539,15 +1539,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 199,
-      "end": 200,
+      "start": 223,
+      "end": 224,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 15
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 16
         }
       }
@@ -1567,15 +1567,15 @@
         "updateContext": null
       },
       "value": "new",
-      "start": 201,
-      "end": 204,
+      "start": 225,
+      "end": 228,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 17
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 20
         }
       }
@@ -1593,15 +1593,15 @@
         "binop": null
       },
       "value": "Vector3",
-      "start": 205,
-      "end": 212,
+      "start": 229,
+      "end": 236,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 21
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 28
         }
       }
@@ -1618,15 +1618,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 212,
-      "end": 213,
+      "start": 236,
+      "end": 237,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 28
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 29
         }
       }
@@ -1645,15 +1645,15 @@
         "updateContext": null
       },
       "value": 0,
-      "start": 213,
-      "end": 214,
+      "start": 237,
+      "end": 238,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 29
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 30
         }
       }
@@ -1671,15 +1671,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 214,
-      "end": 215,
+      "start": 238,
+      "end": 239,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 30
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 31
         }
       }
@@ -1698,15 +1698,15 @@
         "updateContext": null
       },
       "value": 1,
-      "start": 216,
-      "end": 217,
+      "start": 240,
+      "end": 241,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 32
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 33
         }
       }
@@ -1724,15 +1724,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 217,
-      "end": 218,
+      "start": 241,
+      "end": 242,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 33
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 34
         }
       }
@@ -1751,15 +1751,15 @@
         "updateContext": null
       },
       "value": 0,
-      "start": 219,
-      "end": 220,
+      "start": 243,
+      "end": 244,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 35
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 36
         }
       }
@@ -1776,15 +1776,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 220,
-      "end": 221,
+      "start": 244,
+      "end": 245,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 36
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 37
         }
       }
@@ -1802,31 +1802,31 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 221,
-      "end": 222,
+      "start": 245,
+      "end": 246,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 37
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 38
         }
       }
     },
     {
       "type": "CommentBlock",
-      "value": "*\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n ",
-      "start": 226,
-      "end": 274,
+      "value": "*\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n ",
+      "start": 250,
+      "end": 310,
       "loc": {
         "start": {
-          "line": 19,
+          "line": 21,
           "column": 0
         },
         "end": {
-          "line": 23,
+          "line": 26,
           "column": 3
         }
       }
@@ -1846,15 +1846,15 @@
         "updateContext": null
       },
       "value": "export",
-      "start": 278,
-      "end": 284,
+      "start": 314,
+      "end": 320,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 0
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 6
         }
       }
@@ -1874,15 +1874,15 @@
         "updateContext": null
       },
       "value": "const",
-      "start": 285,
-      "end": 290,
+      "start": 321,
+      "end": 326,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 7
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 12
         }
       }
@@ -1900,15 +1900,15 @@
         "binop": null
       },
       "value": "z",
-      "start": 291,
-      "end": 292,
+      "start": 327,
+      "end": 328,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 13
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 14
         }
       }
@@ -1927,15 +1927,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 293,
-      "end": 294,
+      "start": 329,
+      "end": 330,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 15
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 16
         }
       }
@@ -1955,15 +1955,15 @@
         "updateContext": null
       },
       "value": "new",
-      "start": 295,
-      "end": 298,
+      "start": 331,
+      "end": 334,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 17
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 20
         }
       }
@@ -1981,15 +1981,15 @@
         "binop": null
       },
       "value": "Vector3",
-      "start": 299,
-      "end": 306,
+      "start": 335,
+      "end": 342,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 21
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 28
         }
       }
@@ -2006,15 +2006,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 306,
-      "end": 307,
+      "start": 342,
+      "end": 343,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 28
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 29
         }
       }
@@ -2033,15 +2033,15 @@
         "updateContext": null
       },
       "value": 0,
-      "start": 307,
-      "end": 308,
+      "start": 343,
+      "end": 344,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 29
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 30
         }
       }
@@ -2059,15 +2059,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 308,
-      "end": 309,
+      "start": 344,
+      "end": 345,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 30
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 31
         }
       }
@@ -2086,15 +2086,15 @@
         "updateContext": null
       },
       "value": 0,
-      "start": 310,
-      "end": 311,
+      "start": 346,
+      "end": 347,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 32
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 33
         }
       }
@@ -2112,15 +2112,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 311,
-      "end": 312,
+      "start": 347,
+      "end": 348,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 33
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 34
         }
       }
@@ -2139,15 +2139,15 @@
         "updateContext": null
       },
       "value": 1,
-      "start": 313,
-      "end": 314,
+      "start": 349,
+      "end": 350,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 35
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 36
         }
       }
@@ -2164,15 +2164,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 314,
-      "end": 315,
+      "start": 350,
+      "end": 351,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 36
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 37
         }
       }
@@ -2190,15 +2190,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 315,
-      "end": 316,
+      "start": 351,
+      "end": 352,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 28,
           "column": 37
         },
         "end": {
-          "line": 25,
+          "line": 28,
           "column": 38
         }
       }
@@ -2216,15 +2216,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 318,
-      "end": 318,
+      "start": 354,
+      "end": 354,
       "loc": {
         "start": {
-          "line": 26,
+          "line": 29,
           "column": 0
         },
         "end": {
-          "line": 26,
+          "line": 29,
           "column": 0
         }
       }

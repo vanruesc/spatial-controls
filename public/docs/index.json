@@ -2450,7 +2450,7 @@
     "__docId__": 100,
     "kind": "file",
     "name": "src/managers/axes.js",
-    "content": "import { Vector3 } from \"math-ds\";\r\n\r\n/**\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n */\r\n\r\nexport const x = new Vector3(1, 0, 0);\r\n\r\n/**\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n */\r\n\r\nexport const y = new Vector3(0, 1, 0);\r\n\r\n/**\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n */\r\n\r\nexport const z = new Vector3(0, 0, 1);\r\n",
+    "content": "import { Vector3 } from \"math-ds\";\r\n\r\n/**\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n */\r\n\r\nexport const x = new Vector3(1, 0, 0);\r\n\r\n/**\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n */\r\n\r\nexport const y = new Vector3(0, 1, 0);\r\n\r\n/**\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n */\r\n\r\nexport const z = new Vector3(0, 0, 1);\r\n",
     "static": true,
     "longname": "C:/Users/Raoul/Sourcecode/JavaScript/delta-controls/src/managers/axes.js",
     "access": "public",
@@ -2469,7 +2469,8 @@
     "importPath": "delta-controls/src/managers/axes.js",
     "importStyle": "{x}",
     "description": "The X-axis.",
-    "lineNumber": 9,
+    "lineNumber": 10,
+    "ignore": true,
     "type": {
       "nullable": null,
       "types": [
@@ -2491,7 +2492,8 @@
     "importPath": "delta-controls/src/managers/axes.js",
     "importStyle": "{y}",
     "description": "The Y-axis.",
-    "lineNumber": 17,
+    "lineNumber": 19,
+    "ignore": true,
     "type": {
       "nullable": null,
       "types": [
@@ -2513,7 +2515,8 @@
     "importPath": "delta-controls/src/managers/axes.js",
     "importStyle": "{z}",
     "description": "The Z-axis.",
-    "lineNumber": 25,
+    "lineNumber": 28,
+    "ignore": true,
     "type": {
       "nullable": null,
       "types": [

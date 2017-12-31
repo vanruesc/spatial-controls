@@ -114,24 +114,6 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "delta-controls/src/managers/axes.js~x",
-    "variable/index.html#static-variable-x",
-    "<span>x</span> <span class=\"search-result-import-path\">delta-controls/src/managers/axes.js</span>",
-    "variable"
-  ],
-  [
-    "delta-controls/src/managers/axes.js~y",
-    "variable/index.html#static-variable-y",
-    "<span>y</span> <span class=\"search-result-import-path\">delta-controls/src/managers/axes.js</span>",
-    "variable"
-  ],
-  [
-    "delta-controls/src/managers/axes.js~z",
-    "variable/index.html#static-variable-z",
-    "<span>z</span> <span class=\"search-result-import-path\">delta-controls/src/managers/axes.js</span>",
-    "variable"
-  ],
-  [
     "src/.external-ecmascript.js~array",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
     "src/.external-ecmascript.js~Array",
