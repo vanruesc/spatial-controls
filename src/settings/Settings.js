@@ -1,3 +1,5 @@
+import { Action } from "../core/Action.js";
+import { KeyCode } from "../input/KeyCode.js";
 import { GeneralSettings } from "./GeneralSettings.js";
 import { KeyBindings } from "./KeyBindings.js";
 import { PointerSettings } from "./PointerSettings.js";
@@ -33,6 +35,27 @@ export class Settings {
 		 */
 
 		this.keyBindings = new KeyBindings();
+		this.keyBindings.setDefault(new Map([
+
+			[KeyCode.W, Action.MOVE_FORWARD],
+			[KeyCode.UP, Action.MOVE_FORWARD],
+
+			[KeyCode.A, Action.MOVE_LEFT],
+			[KeyCode.LEFT, Action.MOVE_LEFT],
+
+			[KeyCode.S, Action.MOVE_BACKWARD],
+			[KeyCode.DOWN, Action.MOVE_BACKWARD],
+
+			[KeyCode.D, Action.MOVE_RIGHT],
+			[KeyCode.RIGHT, Action.MOVE_RIGHT],
+
+			[KeyCode.X, Action.MOVE_DOWN],
+			[KeyCode.SPACE, Action.MOVE_UP],
+
+			[KeyCode.PAGE_DOWN, Action.ZOOM_OUT],
+			[KeyCode.PAGE_UP, Action.ZOOM_IN]
+
+		]));
 
 		/**
 		 * Pointer settings.

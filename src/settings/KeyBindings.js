@@ -1,6 +1,3 @@
-import { Action } from "../core/Action.js";
-import { KeyCode } from "../input/KeyCode.js";
-
 /**
  * Key bindings.
  */
@@ -14,37 +11,54 @@ export class KeyBindings {
 	constructor() {
 
 		/**
-		 * A map, populated with default action bindings.
+		 * The default key bindings.
 		 *
 		 * @type {Map}
 		 */
 
-		this.actions = new Map([
+		this.defaultActions = new Map();
 
-			[KeyCode.W, Action.MOVE_FORWARD],
-			[KeyCode.UP, Action.MOVE_FORWARD],
+		/**
+		 * The current key bindings.
+		 *
+		 * @type {Map}
+		 */
 
-			[KeyCode.A, Action.MOVE_LEFT],
-			[KeyCode.LEFT, Action.MOVE_LEFT],
-
-			[KeyCode.S, Action.MOVE_BACKWARD],
-			[KeyCode.DOWN, Action.MOVE_BACKWARD],
-
-			[KeyCode.D, Action.MOVE_RIGHT],
-			[KeyCode.RIGHT, Action.MOVE_RIGHT],
-
-			[KeyCode.X, Action.MOVE_DOWN],
-			[KeyCode.SPACE, Action.MOVE_UP],
-
-			[KeyCode.PAGE_DOWN, Action.ZOOM_OUT],
-			[KeyCode.PAGE_UP, Action.ZOOM_IN]
-
-		]);
+		this.actions = new Map();
 
 	}
 
 	/**
-	 * Copies the given key bindings.
+	 * Resets the current bindings to match the default bindings.
+	 *
+	 * @return {KeyBindings} This key bindings instance.
+	 */
+
+	reset() {
+
+		this.actions = new Map(this.defaultActions);
+
+		return this;
+
+	}
+
+	/**
+	 * Establishes default key bindings and resets the current bindings.
+	 *
+	 * @param {KeyBindings} map - A map. Each key must be a key code and each value must be a number.
+	 * @return {KeyBindings} This key bindings instance.
+	 */
+
+	setDefault(actions) {
+
+		this.defaultActions = actions;
+
+		return this.reset();
+
+	}
+
+	/**
+	 * Copies the given key bindings, including the default bindings.
 	 *
 	 * @param {KeyBindings} keyBindings - Key bindings.
 	 * @return {KeyBindings} This key bindings instance.
@@ -52,7 +66,36 @@ export class KeyBindings {
 
 	copy(keyBindings) {
 
+		this.defaultActions = new Map(keyBindings.defaultActions);
 		this.actions = new Map(keyBindings.actions);
+
+		return this;
+
+	}
+
+	/**
+	 * Clears the default key bindings.
+	 *
+	 * @return {KeyBindings} This key bindings instance.
+	 */
+
+	clearDefault() {
+
+		this.defaultActions.clear();
+
+		return this;
+
+	}
+
+	/**
+	 * Clears the current key bindings.
+	 *
+	 * @return {KeyBindings} This key bindings instance.
+	 */
+
+	clear() {
+
+		this.actions.clear();
 
 		return this;
 
@@ -87,7 +130,7 @@ export class KeyBindings {
 	 * Returns the action that is bound to the given key.
 	 *
 	 * @param {KeyCode} keyCode - A key code.
-	 * @return {Action} The action, or undefined if the key is not bound to any action.
+	 * @return {Number} The action, or undefined if the key is not bound to any action.
 	 */
 
 	get(keyCode) {
@@ -100,13 +143,13 @@ export class KeyBindings {
 	 * Binds a key to an action.
 	 *
 	 * @param {KeyCode} keyCode - A key code.
-	 * @param {Action} action - An action.
+	 * @param {Number} action - An action.
 	 * @return {KeyBindings} This instance.
 	 */
 
 	set(keyCode, action) {
 
-		this.actions.set(keyCode);
+		this.actions.set(keyCode, action);
 
 		return this;
 
