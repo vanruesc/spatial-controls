@@ -153,6 +153,18 @@ export class DeltaControls {
 	}
 
 	/**
+	 * A pivot offset. Only affects third person orbiting.
+	 *
+	 * @type {Vector3}
+	 */
+
+	get pivotOffset() {
+
+		return this.rotationManager.pivotOffset;
+
+	}
+
+	/**
 	 * Handles pointer move events.
 	 *
 	 * @private
