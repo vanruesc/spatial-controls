@@ -481,7 +481,6 @@ export class DeltaControls {
 	/**
 	 * Moves to the given position.
 	 *
-	 * @private
 	 * @param {Vector3} position - The position.
 	 * @return {DeltaControls} This instance.
 	 */
