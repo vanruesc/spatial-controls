@@ -534,6 +534,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/core/deltacontrols.js~deltacontrols#pivotoffset",
+    "class/src/core/DeltaControls.js~DeltaControls.html#instance-get-pivotOffset",
+    "src/core/DeltaControls.js~DeltaControls#pivotOffset",
+    "member"
+  ],
+  [
     "src/core/deltacontrols.js~deltacontrols#position",
     "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-position",
     "src/core/DeltaControls.js~DeltaControls#position",

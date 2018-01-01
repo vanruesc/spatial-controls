@@ -10676,6 +10676,12 @@
 
   						this.setEnabled(false);
   				}
+  		}, {
+  				key: "pivotOffset",
+  				get: function get$$1() {
+
+  						return this.rotationManager.pivotOffset;
+  				}
   		}]);
   		return DeltaControls;
   }();

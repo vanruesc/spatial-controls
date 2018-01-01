@@ -1,7 +1,7 @@
 {
   "coverage": "100%",
-  "expectCount": 164,
-  "actualCount": 164,
+  "expectCount": 165,
+  "actualCount": 165,
   "files": {
     "src/core/Action.js": {
       "expectCount": 1,
@@ -9,8 +9,8 @@
       "undocumentLines": []
     },
     "src/core/DeltaControls.js": {
-      "expectCount": 36,
-      "actualCount": 36,
+      "expectCount": 37,
+      "actualCount": 37,
       "undocumentLines": []
     },
     "src/input/KeyCode.js": {

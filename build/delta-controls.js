@@ -1,7 +1,7 @@
 /**
- * delta-controls v0.3.0 build Dec 31 2017
+ * delta-controls v0.4.0 build Jan 01 2018
  * https://github.com/vanruesc/delta-controls
- * Copyright 2017 Raoul van Rüschen, Zlib
+ * Copyright 2018 Raoul van Rüschen, Zlib
  */
 
 (function (global, factory) {
@@ -6339,6 +6339,12 @@
   				value: function dispose() {
 
   						this.setEnabled(false);
+  				}
+  		}, {
+  				key: "pivotOffset",
+  				get: function get$$1() {
+
+  						return this.rotationManager.pivotOffset;
   				}
   		}]);
   		return DeltaControls;
