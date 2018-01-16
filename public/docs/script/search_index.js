@@ -582,6 +582,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/core/deltacontrols.js~deltacontrols#setdom",
+    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-setDom",
+    "src/core/DeltaControls.js~DeltaControls#setDom",
+    "method"
+  ],
+  [
     "src/core/deltacontrols.js~deltacontrols#setenabled",
     "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-setEnabled",
     "src/core/DeltaControls.js~DeltaControls#setEnabled",
