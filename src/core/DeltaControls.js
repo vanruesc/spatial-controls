@@ -705,6 +705,7 @@ export class DeltaControls {
 	 * Enables or disables the controls.
 	 *
 	 * @param {Boolean} [enabled=true] - Whether the controls should be enabled or disabled.
+	 * @return {DeltaControls} This instance.
 	 */
 
 	setEnabled(enabled = true) {
@@ -741,6 +742,8 @@ export class DeltaControls {
 
 		this.setPointerLocked(false);
 		this.enabled = enabled;
+
+		return this;
 
 	}
 
