@@ -227,6 +227,34 @@ export class DeltaControls {
 	}
 
 	/**
+	 * Sets the DOM element.
+	 *
+	 * @param {HTMLElement} dom - The new DOM element.
+	 * @return {DeltaControls} This instance.
+	 */
+
+	setDom(dom) {
+
+		const enabled = this.enabled;
+
+		if(dom !== null) {
+
+			if(enabled) {
+
+				this.setEnabled(false);
+
+			}
+
+			this.dom = dom;
+			this.setEnabled(enabled);
+
+		}
+
+		return this;
+
+	}
+
+	/**
 	 * Sets the position vector.
 	 *
 	 * @param {Vector3} position - The new position vector.
