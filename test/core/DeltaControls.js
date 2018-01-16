@@ -15,6 +15,15 @@ module.exports = {
 			test.ok(controls);
 			test.done();
 
+		},
+
+		"can copy another instance": function(test) {
+
+			const controls1 = new DeltaControls(new Vector3(), new Quaternion(), null);
+			const controls2 = new DeltaControls(new Vector3(), new Quaternion(), null);
+			test.ok(controls1.copy(controls2));
+			test.done();
+
 		}
 
 	}
