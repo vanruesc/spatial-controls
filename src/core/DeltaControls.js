@@ -24,7 +24,7 @@ export class DeltaControls {
 	 * @param {HTMLElement} [dom=document.body] - A DOM element. Acts as the primary event target.
 	 */
 
-	constructor(position, quaternion, dom = document.body) {
+	constructor(position = null, quaternion = null, dom = document.body) {
 
 		/**
 		 * A DOM element. Acts as the primary event target.
@@ -78,9 +78,6 @@ export class DeltaControls {
 		 */
 
 		this.rotationManager = new RotationManager(position, quaternion, this.target, this.settings);
-
-		// Update the orientation right away.
-		this.lookAt(this.target);
 
 		/**
 		 * A translation manager.
@@ -144,9 +141,15 @@ export class DeltaControls {
 
 		this.enabled = false;
 
-		if(dom !== null) {
+		if(position !== null && quaternion !== null) {
 
-			this.setEnabled();
+			this.lookAt(this.target);
+
+			if(dom !== null) {
+
+				this.setEnabled();
+
+			}
 
 		}
 
