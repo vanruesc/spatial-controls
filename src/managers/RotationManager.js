@@ -111,7 +111,7 @@ export class RotationManager {
 	/**
 	 * Updates the quaternion.
 	 *
-	 * @param {RotationManager} This manager.
+	 * @return {RotationManager} This manager.
 	 */
 
 	updateQuaternion() {
@@ -137,7 +137,7 @@ export class RotationManager {
 	 *
 	 * @param {Number} theta - The angle to add to theta in radians.
 	 * @param {Number} phi - The angle to add to phi in radians.
-	 * @param {RotationManager} This manager.
+	 * @return {RotationManager} This manager.
 	 */
 
 	adjustSpherical(theta, phi) {
@@ -171,7 +171,7 @@ export class RotationManager {
 	 * Zooms in or out.
 	 *
 	 * @param {Number} sign - The zoom sign. Possible values are [-1, 0, 1].
-	 * @param {RotationManager} This manager.
+	 * @return {RotationManager} This manager.
 	 */
 
 	zoom(sign) {
@@ -220,7 +220,7 @@ export class RotationManager {
 	 * Looks at the given point.
 	 *
 	 * @param {Vector3} point - The target point.
-	 * @return {DeltaControls} This instance.
+	 * @return {RotationManager} This manager.
 	 */
 
 	lookAt(point) {
