@@ -88,7 +88,50 @@ export class RotationManager {
 
 		this.spherical = new Spherical();
 
+	}
 
+	/**
+	 * Sets the position.
+	 *
+	 * @param {Vector3} position - A position.
+	 * @return {RotationManager} This manager.
+	 */
+
+	setPosition(position) {
+
+		this.position = position;
+
+		return this;
+
+	}
+
+	/**
+	 * Sets the quaternion.
+	 *
+	 * @param {Quaternion} quaternion - A quaternion.
+	 * @return {RotationManager} This manager.
+	 */
+
+	setQuaternion(quaternion) {
+
+		this.quaternion = quaternion;
+
+		return this;
+
+	}
+
+	/**
+	 * Sets the target.
+	 *
+	 * @param {Vector3} target - A target.
+	 * @return {RotationManager} This manager.
+	 */
+
+	setTarget(target) {
+
+		this.target = target;
+
+		return this;
 
 	}
 
