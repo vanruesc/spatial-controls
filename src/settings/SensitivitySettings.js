@@ -32,7 +32,7 @@ export class SensitivitySettings {
 		 * @type {Number}
 		 */
 
-		this.zoom = 0.01;
+		this.zoom = 0.1;
 
 	}
 

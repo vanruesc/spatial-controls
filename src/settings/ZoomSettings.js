@@ -42,14 +42,6 @@ export class ZoomSettings {
 
 		this.maxDistance = Infinity;
 
-		/**
-		 * The base zoom step.
-		 *
-		 * @type {Number}
-		 */
-
-		this.step = 10.0;
-
 	}
 
 	/**
@@ -65,7 +57,6 @@ export class ZoomSettings {
 		this.invert = settings.invert;
 		this.minDistance = settings.minDistance;
 		this.maxDistance = settings.maxDistance;
-		this.step = settings.step;
 
 		return this;
 
