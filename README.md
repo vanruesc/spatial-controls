@@ -55,10 +55,10 @@ const settings = controls.settings;
 const keyBindings = settings.keyBindings;
 
 // Activate or deactivate third person controls. Enabled by default.
-controls.setOrbit(true|false);
+controls.setOrbitEnabled(true|false);
 
 settings.pointer.hold = true;
-settings.rotation.minPhi = 0.125;
+settings.rotation.minPolarAngle = 0.125;
 settings.sensitivity.rotation = 0.075;
 settings.translation.enabled = true;
 settings.zoom.minDistance = 1.0;
