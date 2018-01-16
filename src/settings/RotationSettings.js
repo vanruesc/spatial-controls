@@ -1,3 +1,6 @@
+import { Vector3 } from "math-ds";
+import * as axes from "../core/axes.js";
+
 /**
  * Rotation settings.
  */
@@ -11,7 +14,24 @@ export class RotationSettings {
 	constructor() {
 
 		/**
-		 * The minimum azimuth angle in radians. Range: [-Math.PI, Math.PI].
+		 * The up vector. Must be normalized.
+		 *
+		 * @type {Vector3}
+		 */
+
+		this.up = new Vector3();
+		this.up.copy(axes.y);
+
+		/**
+		 * A pivot offset. Only affects third person orbiting.
+		 *
+		 * @type {Vector3}
+		 */
+
+		this.pivotOffset = new Vector3();
+
+		/**
+		 * The minimum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
 		 *
 		 * @type {Number}
 		 */
@@ -68,6 +88,9 @@ export class RotationSettings {
 	 */
 
 	copy(settings) {
+
+		this.up.copy(settings.up);
+		this.pivotOffset.copy(settings.pivotOffset);
 
 		this.minAzimuthalAngle = (settings.minAzimuthalAngle !== null) ? settings.minAzimuthalAngle : -Infinity;
 		this.maxAzimuthalAngle = (settings.maxAzimuthalAngle !== null) ? settings.maxAzimuthalAngle : Infinity;

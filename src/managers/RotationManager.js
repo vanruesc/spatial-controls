@@ -1,5 +1,4 @@
 import { Matrix4, Spherical, Vector3 } from "math-ds";
-import * as axes from "./axes.js";
 
 /**
  * Two PI.
@@ -82,15 +81,6 @@ export class RotationManager {
 		this.settings = settings;
 
 		/**
-		 * The up vector. Must be normalized.
-		 *
-		 * @type {Vector3}
-		 */
-
-		this.up = new Vector3();
-		this.up.copy(axes.y);
-
-		/**
 		 * A spherical coordinate system.
 		 *
 		 * @type {Spherical}
@@ -98,13 +88,7 @@ export class RotationManager {
 
 		this.spherical = new Spherical();
 
-		/**
-		 * A pivot offset. Only affects third person orbiting.
-		 *
-		 * @type {Vector3}
-		 */
 
-		this.pivotOffset = new Vector3();
 
 	}
 
@@ -116,13 +100,16 @@ export class RotationManager {
 
 	updateQuaternion() {
 
-		if(this.settings.general.orbit) {
+		const settings = this.settings;
+		const rotation = settings.rotation;
 
-			m.lookAt(v.subVectors(this.position, this.target), this.pivotOffset, this.up);
+		if(settings.general.orbit) {
+
+			m.lookAt(v.subVectors(this.position, this.target), rotation.pivotOffset, rotation.up);
 
 		} else {
 
-			m.lookAt(v.set(0, 0, 0), this.target.setFromSpherical(this.spherical), this.up);
+			m.lookAt(v.set(0, 0, 0), this.target.setFromSpherical(this.spherical), rotation.up);
 
 		}
 
