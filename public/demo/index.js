@@ -4964,6 +4964,8 @@
 
   var v$2 = new Vector3$1();
 
+  var points = [new Vector3$1(), new Vector3$1(), new Vector3$1(), new Vector3$1(), new Vector3$1(), new Vector3$1(), new Vector3$1(), new Vector3$1()];
+
   var Box3 = function () {
   	function Box3() {
   		var min = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3$1(Infinity, Infinity, Infinity);
@@ -5113,6 +5115,29 @@
   			var clampedPoint = v$2.copy(p).clamp(this.min, this.max);
 
   			return clampedPoint.sub(p).length();
+  		}
+  	}, {
+  		key: "applyMatrix4",
+  		value: function applyMatrix4(m) {
+
+  			var min = this.min;
+  			var max = this.max;
+
+  			if (!this.isEmpty()) {
+
+  				points[0].set(min.x, min.y, min.z).applyMatrix4(m);
+  				points[1].set(min.x, min.y, max.z).applyMatrix4(m);
+  				points[2].set(min.x, max.y, min.z).applyMatrix4(m);
+  				points[3].set(min.x, max.y, max.z).applyMatrix4(m);
+  				points[4].set(max.x, min.y, min.z).applyMatrix4(m);
+  				points[5].set(max.x, min.y, max.z).applyMatrix4(m);
+  				points[6].set(max.x, max.y, min.z).applyMatrix4(m);
+  				points[7].set(max.x, max.y, max.z).applyMatrix4(m);
+
+  				this.setFromPoints(points);
+  			}
+
+  			return this;
   		}
   	}, {
   		key: "translate",
@@ -6322,12 +6347,12 @@
 
   var RotationOrder = {
 
-    XYZ: "XYZ",
-    YZX: "YZX",
-    ZXY: "ZXY",
-    XZY: "XZY",
-    YXZ: "YXZ",
-    ZYX: "ZYX"
+    XYZ: 0,
+    YZX: 1,
+    ZXY: 2,
+    XZY: 3,
+    YXZ: 4,
+    ZYX: 5
 
   };
 
@@ -6741,10 +6766,7 @@
   		}
   	}], [{
   		key: "slerp",
-  		value: function slerp(qa, qb) {
-  			var qr = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new Quaternion();
-  			var t = arguments[3];
-
+  		value: function slerp(qa, qb, qr, t) {
 
   			return qr.copy(qa).slerp(qb, t);
   		}
@@ -6848,7 +6870,7 @@
   			this.x = x;
   			this.y = y;
   			this.z = z;
-  			this.order = z;
+  			this.order = order;
 
   			return this;
   		}
@@ -9485,12 +9507,6 @@
 
   };
 
-  var x = new Vector3$1(1, 0, 0);
-
-  var y = new Vector3$1(0, 1, 0);
-
-  var z = new Vector3$1(0, 0, 1);
-
   var TWO_PI = Math.PI * 2;
 
   var v$5 = new Vector3$1();
@@ -9510,24 +9526,46 @@
 
   				this.settings = settings;
 
-  				this.up = new Vector3$1();
-  				this.up.copy(y);
-
   				this.spherical = new Spherical();
-
-  				this.pivotOffset = new Vector3$1();
   		}
 
   		createClass(RotationManager, [{
+  				key: "setPosition",
+  				value: function setPosition(position) {
+
+  						this.position = position;
+
+  						return this;
+  				}
+  		}, {
+  				key: "setQuaternion",
+  				value: function setQuaternion(quaternion) {
+
+  						this.quaternion = quaternion;
+
+  						return this;
+  				}
+  		}, {
+  				key: "setTarget",
+  				value: function setTarget(target) {
+
+  						this.target = target;
+
+  						return this;
+  				}
+  		}, {
   				key: "updateQuaternion",
   				value: function updateQuaternion() {
 
-  						if (this.settings.general.orbit) {
+  						var settings = this.settings;
+  						var rotation = settings.rotation;
 
-  								m$1.lookAt(v$5.subVectors(this.position, this.target), this.pivotOffset, this.up);
+  						if (settings.general.orbit) {
+
+  								m$1.lookAt(v$5.subVectors(this.position, this.target), rotation.pivotOffset, rotation.up);
   						} else {
 
-  								m$1.lookAt(v$5.set(0, 0, 0), this.target.setFromSpherical(this.spherical), this.up);
+  								m$1.lookAt(v$5.set(0, 0, 0), this.target.setFromSpherical(this.spherical), rotation.up);
   						}
 
   						this.quaternion.setFromRotationMatrix(m$1);
@@ -9546,8 +9584,8 @@
   						s.theta = !rotation.invertX ? s.theta - theta : s.theta + theta;
   						s.phi = (orbit || rotation.invertY) && !(orbit && rotation.invertY) ? s.phi - phi : s.phi + phi;
 
-  						s.theta = Math.min(Math.max(s.theta, rotation.minTheta), rotation.maxTheta);
-  						s.phi = Math.min(Math.max(s.phi, rotation.minPhi), rotation.maxPhi);
+  						s.theta = Math.min(Math.max(s.theta, rotation.minAzimuthalAngle), rotation.maxAzimuthalAngle);
+  						s.phi = Math.min(Math.max(s.phi, rotation.minPolarAngle), rotation.maxPolarAngle);
   						s.theta %= TWO_PI;
   						s.makeSafe();
 
@@ -9573,7 +9611,7 @@
 
   						if (general.orbit && zoom.enabled) {
 
-  								amount = sign * zoom.step * sensitivity.zoom;
+  								amount = sign * sensitivity.zoom;
 
   								if (zoom.invert) {
 
@@ -9670,6 +9708,12 @@
   		return MovementState;
   }();
 
+  var x = new Vector3$1(1, 0, 0);
+
+  var y = new Vector3$1(0, 1, 0);
+
+  var z = new Vector3$1(0, 0, 1);
+
   var v$6 = new Vector3$1();
 
   var TranslationManager = function () {
@@ -9689,6 +9733,30 @@
   		}
 
   		createClass(TranslationManager, [{
+  				key: "setPosition",
+  				value: function setPosition(position) {
+
+  						this.position = position;
+
+  						return this;
+  				}
+  		}, {
+  				key: "setQuaternion",
+  				value: function setQuaternion(quaternion) {
+
+  						this.quaternion = quaternion;
+
+  						return this;
+  				}
+  		}, {
+  				key: "setTarget",
+  				value: function setTarget(target) {
+
+  						this.target = target;
+
+  						return this;
+  				}
+  		}, {
   				key: "translateOnAxis",
   				value: function translateOnAxis(axis, distance) {
 
@@ -10002,13 +10070,18 @@
   				classCallCheck(this, RotationSettings);
 
 
-  				this.minTheta = -Infinity;
+  				this.up = new Vector3$1();
+  				this.up.copy(y);
 
-  				this.maxTheta = Infinity;
+  				this.pivotOffset = new Vector3$1();
 
-  				this.minPhi = 0.0;
+  				this.minAzimuthalAngle = -Infinity;
 
-  				this.maxPhi = Math.PI;
+  				this.maxAzimuthalAngle = Infinity;
+
+  				this.minPolarAngle = 0.0;
+
+  				this.maxPolarAngle = Math.PI;
 
   				this.invertX = false;
 
@@ -10019,11 +10092,14 @@
   				key: "copy",
   				value: function copy(settings) {
 
-  						this.minTheta = settings.minTheta !== null ? settings.minTheta : -Infinity;
-  						this.maxTheta = settings.maxTheta !== null ? settings.maxTheta : Infinity;
+  						this.up.copy(settings.up);
+  						this.pivotOffset.copy(settings.pivotOffset);
 
-  						this.minPhi = settings.minPhi;
-  						this.maxPhi = settings.maxPhi;
+  						this.minAzimuthalAngle = settings.minAzimuthalAngle !== null ? settings.minAzimuthalAngle : -Infinity;
+  						this.maxAzimuthalAngle = settings.maxAzimuthalAngle !== null ? settings.maxAzimuthalAngle : Infinity;
+
+  						this.minPolarAngle = settings.minPolarAngle;
+  						this.maxPolarAngle = settings.maxPolarAngle;
 
   						this.invertX = settings.invertX;
   						this.invertY = settings.invertY;
@@ -10049,7 +10125,7 @@
 
   		this.translation = 1.0;
 
-  		this.zoom = 0.01;
+  		this.zoom = 0.1;
   	}
 
   	createClass(SensitivitySettings, [{
@@ -10110,8 +10186,6 @@
   				this.minDistance = 1e-6;
 
   				this.maxDistance = Infinity;
-
-  				this.step = 10.0;
   		}
 
   		createClass(ZoomSettings, [{
@@ -10122,7 +10196,6 @@
   						this.invert = settings.invert;
   						this.minDistance = settings.minDistance;
   						this.maxDistance = settings.maxDistance;
-  						this.step = settings.step;
 
   						return this;
   				}
@@ -10295,395 +10368,431 @@
   }(Strategy);
 
   var DeltaControls = function () {
-  		function DeltaControls(position, quaternion) {
-  				var dom = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : document.body;
-  				classCallCheck(this, DeltaControls);
+  	function DeltaControls(position, quaternion) {
+  		var dom = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : document.body;
+  		classCallCheck(this, DeltaControls);
 
 
-  				this.dom = dom;
+  		this.dom = dom;
 
-  				this.position = position;
+  		this.position = position;
 
-  				this.quaternion = quaternion;
+  		this.quaternion = quaternion;
 
-  				this.target = new Vector3$1();
+  		this.target = new Vector3$1();
 
-  				this.settings = new Settings();
+  		this.settings = new Settings();
 
-  				this.rotationManager = new RotationManager(position, quaternion, this.target, this.settings);
+  		this.rotationManager = new RotationManager(position, quaternion, this.target, this.settings);
 
-  				this.lookAt(this.target);
+  		this.lookAt(this.target);
 
-  				this.translationManager = new TranslationManager(position, quaternion, this.target, this.settings);
+  		this.translationManager = new TranslationManager(position, quaternion, this.target, this.settings);
 
-  				this.strategies = function (rotationManager, translationManager) {
+  		this.strategies = function (rotationManager, translationManager) {
 
-  						var state = translationManager.movementState;
+  			var state = translationManager.movementState;
 
-  						return new Map([[Action.MOVE_FORWARD, new MovementStrategy(state, Direction.FORWARD)], [Action.MOVE_LEFT, new MovementStrategy(state, Direction.LEFT)], [Action.MOVE_BACKWARD, new MovementStrategy(state, Direction.BACKWARD)], [Action.MOVE_RIGHT, new MovementStrategy(state, Direction.RIGHT)], [Action.MOVE_DOWN, new MovementStrategy(state, Direction.DOWN)], [Action.MOVE_UP, new MovementStrategy(state, Direction.UP)], [Action.ZOOM_OUT, new ZoomStrategy(rotationManager, false)], [Action.ZOOM_IN, new ZoomStrategy(rotationManager, true)]]);
-  				}(this.rotationManager, this.translationManager);
+  			return new Map([[Action.MOVE_FORWARD, new MovementStrategy(state, Direction.FORWARD)], [Action.MOVE_LEFT, new MovementStrategy(state, Direction.LEFT)], [Action.MOVE_BACKWARD, new MovementStrategy(state, Direction.BACKWARD)], [Action.MOVE_RIGHT, new MovementStrategy(state, Direction.RIGHT)], [Action.MOVE_DOWN, new MovementStrategy(state, Direction.DOWN)], [Action.MOVE_UP, new MovementStrategy(state, Direction.UP)], [Action.ZOOM_OUT, new ZoomStrategy(rotationManager, false)], [Action.ZOOM_IN, new ZoomStrategy(rotationManager, true)]]);
+  		}(this.rotationManager, this.translationManager);
 
-  				this.lastScreenPosition = new Vector2$1();
+  		this.lastScreenPosition = new Vector2$1();
 
-  				this.dragging = false;
+  		this.dragging = false;
 
-  				this.enabled = false;
+  		this.enabled = false;
 
-  				if (dom !== null) {
+  		if (dom !== null) {
 
-  						this.setEnabled();
-  				}
+  			this.setEnabled();
   		}
+  	}
 
-  		createClass(DeltaControls, [{
-  				key: "handlePointerMoveEvent",
-  				value: function handlePointerMoveEvent(event) {
+  	createClass(DeltaControls, [{
+  		key: "getDom",
+  		value: function getDom() {
 
-  						var settings = this.settings;
-  						var pointer = settings.pointer;
-  						var sensitivity = settings.sensitivity;
-  						var rotationManager = this.rotationManager;
-  						var lastScreenPosition = this.lastScreenPosition;
+  			return this.dom;
+  		}
+  	}, {
+  		key: "getPosition",
+  		value: function getPosition() {
 
-  						var movementX = void 0,
-  						    movementY = void 0;
+  			return this.position;
+  		}
+  	}, {
+  		key: "getQuaternion",
+  		value: function getQuaternion() {
 
-  						if (document.pointerLockElement === this.dom) {
+  			return this.quaternion;
+  		}
+  	}, {
+  		key: "getTarget",
+  		value: function getTarget() {
+  			var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3$1();
 
-  								if (!pointer.hold || this.dragging) {
 
-  										rotationManager.adjustSpherical(event.movementX * sensitivity.rotation, event.movementY * sensitivity.rotation).updateQuaternion();
-  								}
-  						} else {
-  								movementX = event.screenX - lastScreenPosition.x;
-  								movementY = event.screenY - lastScreenPosition.y;
+  			target.copy(this.target);
 
-  								lastScreenPosition.set(event.screenX, event.screenY);
+  			if (!this.settings.general.orbit) {
+  				target.add(this.position);
+  			}
 
-  								rotationManager.adjustSpherical(movementX * sensitivity.rotation, movementY * sensitivity.rotation).updateQuaternion();
-  						}
+  			return target;
+  		}
+  	}, {
+  		key: "getViewDirection",
+  		value: function getViewDirection() {
+  			var view = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3$1();
+
+
+  			return this.rotationManager.getViewDirection(view);
+  		}
+  	}, {
+  		key: "setPosition",
+  		value: function setPosition(position) {
+
+  			this.position = position;
+  			this.rotationManager.setPosition(position);
+  			this.translationManager.setPosition(position);
+
+  			return this.lookAt(this.target);
+  		}
+  	}, {
+  		key: "setQuaternion",
+  		value: function setQuaternion(quaternion) {
+
+  			this.quaternion = quaternion;
+  			this.rotationManager.setQuaternion(quaternion);
+  			this.translationManager.setQuaternion(quaternion);
+
+  			return this.lookAt(this.target);
+  		}
+  	}, {
+  		key: "setTarget",
+  		value: function setTarget(target) {
+
+  			this.target = target;
+  			this.rotationManager.setTarget(target);
+  			this.translationManager.setTarget(target);
+
+  			return this.lookAt(this.target);
+  		}
+  	}, {
+  		key: "setOrbitEnabled",
+  		value: function setOrbitEnabled(orbit) {
+
+  			var general = this.settings.general;
+
+  			if (general.orbit !== orbit) {
+
+  				this.getTarget(this.target);
+  				general.orbit = orbit;
+  				this.lookAt(this.target);
+  			}
+
+  			return this;
+  		}
+  	}, {
+  		key: "copy",
+  		value: function copy(controls) {
+
+  			this.dom = controls.getDom();
+  			this.position = controls.getPosition();
+  			this.quaternion = controls.getQuaternion();
+  			this.target = controls.getTarget();
+
+  			this.settings.copy(controls.settings);
+
+  			this.rotationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);
+  			this.translationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);
+
+  			return this.lookAt(this.target);
+  		}
+  	}, {
+  		key: "clone",
+  		value: function clone() {
+
+  			return new this.constructor().copy(this);
+  		}
+  	}, {
+  		key: "handlePointerMoveEvent",
+  		value: function handlePointerMoveEvent(event) {
+
+  			var settings = this.settings;
+  			var pointer = settings.pointer;
+  			var sensitivity = settings.sensitivity;
+  			var rotationManager = this.rotationManager;
+  			var lastScreenPosition = this.lastScreenPosition;
+
+  			var movementX = void 0,
+  			    movementY = void 0;
+
+  			if (document.pointerLockElement === this.dom) {
+
+  				if (!pointer.hold || this.dragging) {
+
+  					rotationManager.adjustSpherical(event.movementX * sensitivity.rotation, event.movementY * sensitivity.rotation).updateQuaternion();
   				}
-  		}, {
-  				key: "handleTouchMoveEvent",
-  				value: function handleTouchMoveEvent(event) {
+  			} else {
+  				movementX = event.screenX - lastScreenPosition.x;
+  				movementY = event.screenY - lastScreenPosition.y;
 
-  						var sensitivity = this.settings.sensitivity;
-  						var rotationManager = this.rotationManager;
-  						var lastScreenPosition = this.lastScreenPosition;
-  						var touch = event.touches[0];
+  				lastScreenPosition.set(event.screenX, event.screenY);
 
-  						var movementX = touch.screenX - lastScreenPosition.x;
-  						var movementY = touch.screenY - lastScreenPosition.y;
+  				rotationManager.adjustSpherical(movementX * sensitivity.rotation, movementY * sensitivity.rotation).updateQuaternion();
+  			}
+  		}
+  	}, {
+  		key: "handleTouchMoveEvent",
+  		value: function handleTouchMoveEvent(event) {
 
-  						lastScreenPosition.set(touch.screenX, touch.screenY);
+  			var sensitivity = this.settings.sensitivity;
+  			var rotationManager = this.rotationManager;
+  			var lastScreenPosition = this.lastScreenPosition;
+  			var touch = event.touches[0];
 
-  						event.preventDefault();
+  			var movementX = touch.screenX - lastScreenPosition.x;
+  			var movementY = touch.screenY - lastScreenPosition.y;
 
-  						rotationManager.adjustSpherical(movementX * sensitivity.rotation, movementY * sensitivity.rotation).updateQuaternion();
+  			lastScreenPosition.set(touch.screenX, touch.screenY);
+
+  			event.preventDefault();
+
+  			rotationManager.adjustSpherical(movementX * sensitivity.rotation, movementY * sensitivity.rotation).updateQuaternion();
+  		}
+  	}, {
+  		key: "handleMainPointerButton",
+  		value: function handleMainPointerButton(event, pressed) {
+
+  			this.dragging = pressed;
+
+  			if (this.settings.pointer.lock) {
+
+  				this.setPointerLocked();
+  			} else {
+
+  				if (pressed) {
+
+  					this.lastScreenPosition.set(event.screenX, event.screenY);
+  					this.dom.addEventListener("mousemove", this);
+  				} else {
+
+  					this.dom.removeEventListener("mousemove", this);
   				}
-  		}, {
-  				key: "handleMainPointerButton",
-  				value: function handleMainPointerButton(event, pressed) {
+  			}
+  		}
+  	}, {
+  		key: "handleAuxiliaryPointerButton",
+  		value: function handleAuxiliaryPointerButton(event, pressed) {}
+  	}, {
+  		key: "handleSecondaryPointerButton",
+  		value: function handleSecondaryPointerButton(event, pressed) {}
+  	}, {
+  		key: "handlePointerButtonEvent",
+  		value: function handlePointerButtonEvent(event, pressed) {
 
-  						this.dragging = pressed;
+  			event.preventDefault();
 
-  						if (this.settings.pointer.lock) {
+  			switch (event.button) {
 
-  								this.setPointerLocked();
-  						} else {
+  				case PointerButton.MAIN:
+  					this.handleMainPointerButton(event, pressed);
+  					break;
 
-  								if (pressed) {
+  				case PointerButton.AUXILIARY:
+  					this.handleAuxiliaryPointerButton(event, pressed);
+  					break;
 
-  										this.lastScreenPosition.set(event.screenX, event.screenY);
-  										this.dom.addEventListener("mousemove", this);
-  								} else {
+  				case PointerButton.SECONDARY:
+  					this.handleSecondaryPointerButton(event, pressed);
+  					break;
 
-  										this.dom.removeEventListener("mousemove", this);
-  								}
-  						}
+  			}
+  		}
+  	}, {
+  		key: "handleTouchEvent",
+  		value: function handleTouchEvent(event, start) {
+
+  			var touch = event.touches[0];
+
+  			event.preventDefault();
+
+  			if (start) {
+
+  				this.lastScreenPosition.set(touch.screenX, touch.screenY);
+  				this.dom.addEventListener("touchmove", this);
+  			} else {
+
+  				this.dom.removeEventListener("touchmove", this);
+  			}
+  		}
+  	}, {
+  		key: "handleKeyboardEvent",
+  		value: function handleKeyboardEvent(event, pressed) {
+
+  			var keyBindings = this.settings.keyBindings;
+
+  			if (keyBindings.has(event.keyCode)) {
+
+  				event.preventDefault();
+
+  				this.strategies.get(keyBindings.get(event.keyCode)).execute(pressed);
+  			}
+  		}
+  	}, {
+  		key: "handleWheelEvent",
+  		value: function handleWheelEvent(event) {
+
+  			this.rotationManager.zoom(Math.sign(event.deltaY));
+  		}
+  	}, {
+  		key: "handlePointerLockEvent",
+  		value: function handlePointerLockEvent() {
+
+  			if (document.pointerLockElement === this.dom) {
+
+  				this.dom.addEventListener("mousemove", this);
+  			} else {
+
+  				this.dom.removeEventListener("mousemove", this);
+  			}
+  		}
+  	}, {
+  		key: "handleEvent",
+  		value: function handleEvent(event) {
+
+  			switch (event.type) {
+
+  				case "mousemove":
+  					this.handlePointerMoveEvent(event);
+  					break;
+
+  				case "touchmove":
+  					this.handleTouchMoveEvent(event);
+  					break;
+
+  				case "mousedown":
+  					this.handlePointerButtonEvent(event, true);
+  					break;
+
+  				case "mouseup":
+  					this.handlePointerButtonEvent(event, false);
+  					break;
+
+  				case "touchstart":
+  					this.handleTouchEvent(event, true);
+  					break;
+
+  				case "touchend":
+  					this.handleTouchEvent(event, false);
+  					break;
+
+  				case "keydown":
+  					this.handleKeyboardEvent(event, true);
+  					break;
+
+  				case "keyup":
+  					this.handleKeyboardEvent(event, false);
+  					break;
+
+  				case "wheel":
+  					this.handleWheelEvent(event);
+  					break;
+
+  				case "pointerlockchange":
+  					this.handlePointerLockEvent();
+  					break;
+
+  			}
+  		}
+  	}, {
+  		key: "update",
+  		value: function update(delta) {
+
+  			this.rotationManager.update(delta);
+  			this.translationManager.update(delta);
+  		}
+  	}, {
+  		key: "moveTo",
+  		value: function moveTo(position) {
+
+  			this.rotationManager.moveTo(position);
+
+  			return this;
+  		}
+  	}, {
+  		key: "lookAt",
+  		value: function lookAt(point) {
+
+  			this.rotationManager.lookAt(point);
+
+  			return this;
+  		}
+  	}, {
+  		key: "setPointerLocked",
+  		value: function setPointerLocked() {
+  			var locked = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+
+  			if (locked) {
+
+  				if (document.pointerLockElement !== this.dom && this.dom.requestPointerLock !== undefined) {
+
+  					this.dom.requestPointerLock();
   				}
-  		}, {
-  				key: "handleAuxiliaryPointerButton",
-  				value: function handleAuxiliaryPointerButton(event, pressed) {}
-  		}, {
-  				key: "handleSecondaryPointerButton",
-  				value: function handleSecondaryPointerButton(event, pressed) {}
-  		}, {
-  				key: "handlePointerButtonEvent",
-  				value: function handlePointerButtonEvent(event, pressed) {
-
-  						event.preventDefault();
-
-  						switch (event.button) {
-
-  								case PointerButton.MAIN:
-  										this.handleMainPointerButton(event, pressed);
-  										break;
-
-  								case PointerButton.AUXILIARY:
-  										this.handleAuxiliaryPointerButton(event, pressed);
-  										break;
-
-  								case PointerButton.SECONDARY:
-  										this.handleSecondaryPointerButton(event, pressed);
-  										break;
-
-  						}
-  				}
-  		}, {
-  				key: "handleTouchEvent",
-  				value: function handleTouchEvent(event, start) {
-
-  						var touch = event.touches[0];
-
-  						event.preventDefault();
-
-  						if (start) {
-
-  								this.lastScreenPosition.set(touch.screenX, touch.screenY);
-  								this.dom.addEventListener("touchmove", this);
-  						} else {
-
-  								this.dom.removeEventListener("touchmove", this);
-  						}
-  				}
-  		}, {
-  				key: "handleKeyboardEvent",
-  				value: function handleKeyboardEvent(event, pressed) {
-
-  						var keyBindings = this.settings.keyBindings;
-
-  						if (keyBindings.has(event.keyCode)) {
-
-  								event.preventDefault();
-
-  								this.strategies.get(keyBindings.get(event.keyCode)).execute(pressed);
-  						}
-  				}
-  		}, {
-  				key: "handleWheelEvent",
-  				value: function handleWheelEvent(event) {
-
-  						this.rotationManager.zoom(Math.sign(event.deltaY));
-  				}
-  		}, {
-  				key: "handlePointerLockEvent",
-  				value: function handlePointerLockEvent() {
-
-  						if (document.pointerLockElement === this.dom) {
-
-  								this.dom.addEventListener("mousemove", this);
-  						} else {
-
-  								this.dom.removeEventListener("mousemove", this);
-  						}
-  				}
-  		}, {
-  				key: "handleEvent",
-  				value: function handleEvent(event) {
-
-  						switch (event.type) {
-
-  								case "mousemove":
-  										this.handlePointerMoveEvent(event);
-  										break;
-
-  								case "touchmove":
-  										this.handleTouchMoveEvent(event);
-  										break;
-
-  								case "mousedown":
-  										this.handlePointerButtonEvent(event, true);
-  										break;
-
-  								case "mouseup":
-  										this.handlePointerButtonEvent(event, false);
-  										break;
-
-  								case "touchstart":
-  										this.handleTouchEvent(event, true);
-  										break;
-
-  								case "touchend":
-  										this.handleTouchEvent(event, false);
-  										break;
-
-  								case "keydown":
-  										this.handleKeyboardEvent(event, true);
-  										break;
-
-  								case "keyup":
-  										this.handleKeyboardEvent(event, false);
-  										break;
-
-  								case "wheel":
-  										this.handleWheelEvent(event);
-  										break;
-
-  								case "pointerlockchange":
-  										this.handlePointerLockEvent();
-  										break;
-
-  						}
-  				}
-  		}, {
-  				key: "update",
-  				value: function update(delta) {
-
-  						this.rotationManager.update(delta);
-  						this.translationManager.update(delta);
-  				}
-  		}, {
-  				key: "moveTo",
-  				value: function moveTo(position) {
-
-  						this.rotationManager.moveTo(position);
-
-  						return this;
-  				}
-  		}, {
-  				key: "lookAt",
-  				value: function lookAt(point) {
-
-  						this.rotationManager.lookAt(point);
-
-  						return this;
-  				}
-  		}, {
-  				key: "getViewDirection",
-  				value: function getViewDirection() {
-  						var view = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3$1();
-
-
-  						return this.rotationManager.getViewDirection(view);
-  				}
-  		}, {
-  				key: "getTarget",
-  				value: function getTarget() {
-  						var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3$1();
-
-
-  						target.copy(this.target);
-
-  						if (!this.settings.general.orbit) {
-  								target.add(this.position);
-  						}
-
-  						return target;
-  				}
-  		}, {
-  				key: "setTarget",
-  				value: function setTarget(target) {
-
-  						this.target = target;
-  						this.rotationManager.target = target;
-  						this.translationManager.target = target;
-
-  						return this.lookAt(this.target);
-  				}
-  		}, {
-  				key: "setPosition",
-  				value: function setPosition(position) {
-
-  						this.position = position;
-  						this.rotationManager.position = position;
-  						this.translationManager.position = position;
-
-  						return this.lookAt(this.target);
-  				}
-  		}, {
-  				key: "setQuaternion",
-  				value: function setQuaternion(quaternion) {
-
-  						this.quaternion = quaternion;
-  						this.rotationManager.quaternion = quaternion;
-  						this.translationManager.quaternion = quaternion;
-
-  						return this.lookAt(this.target);
-  				}
-  		}, {
-  				key: "setOrbit",
-  				value: function setOrbit(orbit) {
-
-  						var general = this.settings.general;
-
-  						if (general.orbit !== orbit) {
-
-  								this.getTarget(this.target);
-  								general.orbit = orbit;
-  								this.lookAt(this.target);
-  						}
-
-  						return this;
-  				}
-  		}, {
-  				key: "setPointerLocked",
-  				value: function setPointerLocked() {
-  						var locked = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-
-  						if (locked) {
-
-  								if (document.pointerLockElement !== this.dom && this.dom.requestPointerLock !== undefined) {
-
-  										this.dom.requestPointerLock();
-  								}
-  						} else if (document.exitPointerLock !== undefined) {
-
-  								document.exitPointerLock();
-  						}
-  				}
-  		}, {
-  				key: "setEnabled",
-  				value: function setEnabled() {
-  						var enabled = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-
-  						var dom = this.dom;
-
-  						this.translationManager.movementState.reset();
-
-  						if (enabled && !this.enabled) {
-
-  								document.addEventListener("pointerlockchange", this);
-  								document.body.addEventListener("keyup", this);
-  								document.body.addEventListener("keydown", this);
-  								dom.addEventListener("mousedown", this);
-  								dom.addEventListener("mouseup", this);
-  								dom.addEventListener("touchstart", this);
-  								dom.addEventListener("touchend", this);
-  								dom.addEventListener("wheel", this);
-  						} else if (!enabled && this.enabled) {
-
-  								document.removeEventListener("pointerlockchange", this);
-  								document.body.removeEventListener("keyup", this);
-  								document.body.removeEventListener("keydown", this);
-  								dom.removeEventListener("mousedown", this);
-  								dom.removeEventListener("mouseup", this);
-  								dom.removeEventListener("touchstart", this);
-  								dom.removeEventListener("touchend", this);
-  								dom.removeEventListener("wheel", this);
-  								dom.removeEventListener("mousemove", this);
-  								dom.removeEventListener("touchmove", this);
-  						}
-
-  						this.setPointerLocked(false);
-  						this.enabled = enabled;
-  				}
-  		}, {
-  				key: "dispose",
-  				value: function dispose() {
-
-  						this.setEnabled(false);
-  				}
-  		}, {
-  				key: "pivotOffset",
-  				get: function get$$1() {
-
-  						return this.rotationManager.pivotOffset;
-  				}
-  		}]);
-  		return DeltaControls;
+  			} else if (document.exitPointerLock !== undefined) {
+
+  				document.exitPointerLock();
+  			}
+  		}
+  	}, {
+  		key: "setEnabled",
+  		value: function setEnabled() {
+  			var enabled = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+
+  			var dom = this.dom;
+
+  			this.translationManager.movementState.reset();
+
+  			if (enabled && !this.enabled) {
+
+  				document.addEventListener("pointerlockchange", this);
+  				document.body.addEventListener("keyup", this);
+  				document.body.addEventListener("keydown", this);
+  				dom.addEventListener("mousedown", this);
+  				dom.addEventListener("mouseup", this);
+  				dom.addEventListener("touchstart", this);
+  				dom.addEventListener("touchend", this);
+  				dom.addEventListener("wheel", this);
+  			} else if (!enabled && this.enabled) {
+
+  				document.removeEventListener("pointerlockchange", this);
+  				document.body.removeEventListener("keyup", this);
+  				document.body.removeEventListener("keydown", this);
+  				dom.removeEventListener("mousedown", this);
+  				dom.removeEventListener("mouseup", this);
+  				dom.removeEventListener("touchstart", this);
+  				dom.removeEventListener("touchend", this);
+  				dom.removeEventListener("wheel", this);
+  				dom.removeEventListener("mousemove", this);
+  				dom.removeEventListener("touchmove", this);
+  			}
+
+  			this.setPointerLocked(false);
+  			this.enabled = enabled;
+
+  			return this;
+  		}
+  	}, {
+  		key: "dispose",
+  		value: function dispose() {
+
+  			this.setEnabled(false);
+  		}
+  	}]);
+  	return DeltaControls;
   }();
 
   var DeltaControlsDemo = function (_Demo) {
@@ -10791,7 +10900,7 @@
   						folder.add(params, "orbit").onChange(function () {
 
   								mesh.visible = params.orbit;
-  								controls.setOrbit(params.orbit);
+  								controls.setOrbitEnabled(params.orbit);
   						});
   						folder.open();
 
@@ -10803,14 +10912,14 @@
   						folder = menu.addFolder("Sensitivity");
   						folder.add(controls.settings.sensitivity, "rotation").min(0.0001).max(0.01).step(0.0001);
   						folder.add(controls.settings.sensitivity, "translation").min(0.01).max(5.0).step(0.01);
-  						folder.add(controls.settings.sensitivity, "zoom").min(0.0001).max(0.1).step(0.0001);
+  						folder.add(controls.settings.sensitivity, "zoom").min(0.001).max(1.0).step(0.001);
   						folder.open();
 
   						folder = menu.addFolder("Rotation");
-  						folder.add(controls.settings.rotation, "minTheta").min(-Math.PI).max(Math.PI).step(0.0001);
-  						folder.add(controls.settings.rotation, "maxTheta").min(-Math.PI).max(Math.PI).step(0.0001);
-  						folder.add(controls.settings.rotation, "minPhi").min(0.0).max(Math.PI).step(0.0001);
-  						folder.add(controls.settings.rotation, "maxPhi").min(0.0).max(Math.PI).step(0.0001);
+  						folder.add(controls.settings.rotation, "minAzimuthalAngle").min(-Math.PI).max(Math.PI).step(0.0001);
+  						folder.add(controls.settings.rotation, "maxAzimuthalAngle").min(-Math.PI).max(Math.PI).step(0.0001);
+  						folder.add(controls.settings.rotation, "minPolarAngle").min(0.0).max(Math.PI).step(0.0001);
+  						folder.add(controls.settings.rotation, "maxPolarAngle").min(0.0).max(Math.PI).step(0.0001);
   						folder.add(controls.settings.rotation, "invertX");
   						folder.add(controls.settings.rotation, "invertY");
 
@@ -10822,7 +10931,6 @@
   						folder.add(controls.settings.zoom, "invert");
   						folder.add(controls.settings.zoom, "minDistance").min(0.1).max(1.0).step(0.01);
   						folder.add(controls.settings.zoom, "maxDistance").min(1.0).max(10.0).step(0.01);
-  						folder.add(controls.settings.zoom, "step").min(1.0).max(20.0).step(0.25);
   				}
   		}]);
   		return DeltaControlsDemo;
