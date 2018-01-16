@@ -55,7 +55,7 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/managers/TranslationManager.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Vector3 } from &quot;math-ds&quot;;
 import { MovementState } from &quot;./MovementState.js&quot;;
-import * as axes from &quot;./axes.js&quot;;
+import * as axes from &quot;../core/axes.js&quot;;
 
 /**
  * A vector.
@@ -126,6 +126,51 @@ export class TranslationManager {
 		 */
 
 		this.movementState = new MovementState();
+
+	}
+
+	/**
+	 * Sets the position.
+	 *
+	 * @param {Vector3} position - A position.
+	 * @return {RotationManager} This manager.
+	 */
+
+	setPosition(position) {
+
+		this.position = position;
+
+		return this;
+
+	}
+
+	/**
+	 * Sets the quaternion.
+	 *
+	 * @param {Quaternion} quaternion - A quaternion.
+	 * @return {RotationManager} This manager.
+	 */
+
+	setQuaternion(quaternion) {
+
+		this.quaternion = quaternion;
+
+		return this;
+
+	}
+
+	/**
+	 * Sets the target.
+	 *
+	 * @param {Vector3} target - A target.
+	 * @return {RotationManager} This manager.
+	 */
+
+	setTarget(target) {
+
+		this.target = target;
+
+		return this;
 
 	}
 

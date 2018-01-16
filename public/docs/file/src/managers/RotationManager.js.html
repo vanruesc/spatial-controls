@@ -54,7 +54,6 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/managers/RotationManager.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Matrix4, Spherical, Vector3 } from &quot;math-ds&quot;;
-import * as axes from &quot;./axes.js&quot;;
 
 /**
  * Two PI.
@@ -137,15 +136,6 @@ export class RotationManager {
 		this.settings = settings;
 
 		/**
-		 * The up vector. Must be normalized.
-		 *
-		 * @type {Vector3}
-		 */
-
-		this.up = new Vector3();
-		this.up.copy(axes.y);
-
-		/**
 		 * A spherical coordinate system.
 		 *
 		 * @type {Spherical}
@@ -153,31 +143,71 @@ export class RotationManager {
 
 		this.spherical = new Spherical();
 
-		/**
-		 * A pivot offset. Only affects third person orbiting.
-		 *
-		 * @type {Vector3}
-		 */
+	}
 
-		this.pivotOffset = new Vector3();
+	/**
+	 * Sets the position.
+	 *
+	 * @param {Vector3} position - A position.
+	 * @return {RotationManager} This manager.
+	 */
+
+	setPosition(position) {
+
+		this.position = position;
+
+		return this;
+
+	}
+
+	/**
+	 * Sets the quaternion.
+	 *
+	 * @param {Quaternion} quaternion - A quaternion.
+	 * @return {RotationManager} This manager.
+	 */
+
+	setQuaternion(quaternion) {
+
+		this.quaternion = quaternion;
+
+		return this;
+
+	}
+
+	/**
+	 * Sets the target.
+	 *
+	 * @param {Vector3} target - A target.
+	 * @return {RotationManager} This manager.
+	 */
+
+	setTarget(target) {
+
+		this.target = target;
+
+		return this;
 
 	}
 
 	/**
 	 * Updates the quaternion.
 	 *
-	 * @param {RotationManager} This manager.
+	 * @return {RotationManager} This manager.
 	 */
 
 	updateQuaternion() {
 
-		if(this.settings.general.orbit) {
+		const settings = this.settings;
+		const rotation = settings.rotation;
 
-			m.lookAt(v.subVectors(this.position, this.target), this.pivotOffset, this.up);
+		if(settings.general.orbit) {
+
+			m.lookAt(v.subVectors(this.position, this.target), rotation.pivotOffset, rotation.up);
 
 		} else {
 
-			m.lookAt(v.set(0, 0, 0), this.target.setFromSpherical(this.spherical), this.up);
+			m.lookAt(v.set(0, 0, 0), this.target.setFromSpherical(this.spherical), rotation.up);
 
 		}
 
@@ -192,7 +222,7 @@ export class RotationManager {
 	 *
 	 * @param {Number} theta - The angle to add to theta in radians.
 	 * @param {Number} phi - The angle to add to phi in radians.
-	 * @param {RotationManager} This manager.
+	 * @return {RotationManager} This manager.
 	 */
 
 	adjustSpherical(theta, phi) {
@@ -206,8 +236,8 @@ export class RotationManager {
 		s.phi = ((orbit || rotation.invertY) &amp;&amp; !(orbit &amp;&amp; rotation.invertY)) ? s.phi - phi : s.phi + phi;
 
 		// Restrict theta and phi.
-		s.theta = Math.min(Math.max(s.theta, rotation.minTheta), rotation.maxTheta);
-		s.phi = Math.min(Math.max(s.phi, rotation.minPhi), rotation.maxPhi);
+		s.theta = Math.min(Math.max(s.theta, rotation.minAzimuthalAngle), rotation.maxAzimuthalAngle);
+		s.phi = Math.min(Math.max(s.phi, rotation.minPolarAngle), rotation.maxPolarAngle);
 		s.theta %= TWO_PI;
 		s.makeSafe();
 
@@ -226,7 +256,7 @@ export class RotationManager {
 	 * Zooms in or out.
 	 *
 	 * @param {Number} sign - The zoom sign. Possible values are [-1, 0, 1].
-	 * @param {RotationManager} This manager.
+	 * @return {RotationManager} This manager.
 	 */
 
 	zoom(sign) {
@@ -241,7 +271,7 @@ export class RotationManager {
 
 		if(general.orbit &amp;&amp; zoom.enabled) {
 
-			amount = sign * zoom.step * sensitivity.zoom;
+			amount = sign * sensitivity.zoom;
 
 			if(zoom.invert) {
 
@@ -275,7 +305,7 @@ export class RotationManager {
 	 * Looks at the given point.
 	 *
 	 * @param {Vector3} point - The target point.
-	 * @return {DeltaControls} This instance.
+	 * @return {RotationManager} This manager.
 	 */
 
 	lookAt(point) {

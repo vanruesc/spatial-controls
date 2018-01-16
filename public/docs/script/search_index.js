@@ -408,9 +408,21 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/core/deltacontrols.js~deltacontrols#clone",
+    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-clone",
+    "src/core/DeltaControls.js~DeltaControls#clone",
+    "method"
+  ],
+  [
     "src/core/deltacontrols.js~deltacontrols#constructor",
     "class/src/core/DeltaControls.js~DeltaControls.html#instance-constructor-constructor",
     "src/core/DeltaControls.js~DeltaControls#constructor",
+    "method"
+  ],
+  [
+    "src/core/deltacontrols.js~deltacontrols#copy",
+    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-copy",
+    "src/core/DeltaControls.js~DeltaControls#copy",
     "method"
   ],
   [
@@ -436,6 +448,24 @@ window.esdocSearchIndex = [
     "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-enabled",
     "src/core/DeltaControls.js~DeltaControls#enabled",
     "member"
+  ],
+  [
+    "src/core/deltacontrols.js~deltacontrols#getdom",
+    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-getDom",
+    "src/core/DeltaControls.js~DeltaControls#getDom",
+    "method"
+  ],
+  [
+    "src/core/deltacontrols.js~deltacontrols#getposition",
+    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-getPosition",
+    "src/core/DeltaControls.js~DeltaControls#getPosition",
+    "method"
+  ],
+  [
+    "src/core/deltacontrols.js~deltacontrols#getquaternion",
+    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-getQuaternion",
+    "src/core/DeltaControls.js~DeltaControls#getQuaternion",
+    "method"
   ],
   [
     "src/core/deltacontrols.js~deltacontrols#gettarget",
@@ -534,12 +564,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/core/deltacontrols.js~deltacontrols#pivotoffset",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-get-pivotOffset",
-    "src/core/DeltaControls.js~DeltaControls#pivotOffset",
-    "member"
-  ],
-  [
     "src/core/deltacontrols.js~deltacontrols#position",
     "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-position",
     "src/core/DeltaControls.js~DeltaControls#position",
@@ -564,9 +588,9 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/core/deltacontrols.js~deltacontrols#setorbit",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-setOrbit",
-    "src/core/DeltaControls.js~DeltaControls#setOrbit",
+    "src/core/deltacontrols.js~deltacontrols#setorbitenabled",
+    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-setOrbitEnabled",
+    "src/core/DeltaControls.js~DeltaControls#setOrbitEnabled",
     "method"
   ],
   [
@@ -622,6 +646,12 @@ window.esdocSearchIndex = [
     "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-update",
     "src/core/DeltaControls.js~DeltaControls#update",
     "method"
+  ],
+  [
+    "src/core/axes.js",
+    "file/src/core/axes.js.html",
+    "src/core/axes.js",
+    "file"
   ],
   [
     "src/core/index.js",
@@ -738,12 +768,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/managers/rotationmanager.js~rotationmanager#pivotoffset",
-    "class/src/managers/RotationManager.js~RotationManager.html#instance-member-pivotOffset",
-    "src/managers/RotationManager.js~RotationManager#pivotOffset",
-    "member"
-  ],
-  [
     "src/managers/rotationmanager.js~rotationmanager#position",
     "class/src/managers/RotationManager.js~RotationManager.html#instance-member-position",
     "src/managers/RotationManager.js~RotationManager#position",
@@ -754,6 +778,24 @@ window.esdocSearchIndex = [
     "class/src/managers/RotationManager.js~RotationManager.html#instance-member-quaternion",
     "src/managers/RotationManager.js~RotationManager#quaternion",
     "member"
+  ],
+  [
+    "src/managers/rotationmanager.js~rotationmanager#setposition",
+    "class/src/managers/RotationManager.js~RotationManager.html#instance-method-setPosition",
+    "src/managers/RotationManager.js~RotationManager#setPosition",
+    "method"
+  ],
+  [
+    "src/managers/rotationmanager.js~rotationmanager#setquaternion",
+    "class/src/managers/RotationManager.js~RotationManager.html#instance-method-setQuaternion",
+    "src/managers/RotationManager.js~RotationManager#setQuaternion",
+    "method"
+  ],
+  [
+    "src/managers/rotationmanager.js~rotationmanager#settarget",
+    "class/src/managers/RotationManager.js~RotationManager.html#instance-method-setTarget",
+    "src/managers/RotationManager.js~RotationManager#setTarget",
+    "method"
   ],
   [
     "src/managers/rotationmanager.js~rotationmanager#settings",
@@ -771,12 +813,6 @@ window.esdocSearchIndex = [
     "src/managers/rotationmanager.js~rotationmanager#target",
     "class/src/managers/RotationManager.js~RotationManager.html#instance-member-target",
     "src/managers/RotationManager.js~RotationManager#target",
-    "member"
-  ],
-  [
-    "src/managers/rotationmanager.js~rotationmanager#up",
-    "class/src/managers/RotationManager.js~RotationManager.html#instance-member-up",
-    "src/managers/RotationManager.js~RotationManager#up",
     "member"
   ],
   [
@@ -834,6 +870,24 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/managers/translationmanager.js~translationmanager#setposition",
+    "class/src/managers/TranslationManager.js~TranslationManager.html#instance-method-setPosition",
+    "src/managers/TranslationManager.js~TranslationManager#setPosition",
+    "method"
+  ],
+  [
+    "src/managers/translationmanager.js~translationmanager#setquaternion",
+    "class/src/managers/TranslationManager.js~TranslationManager.html#instance-method-setQuaternion",
+    "src/managers/TranslationManager.js~TranslationManager#setQuaternion",
+    "method"
+  ],
+  [
+    "src/managers/translationmanager.js~translationmanager#settarget",
+    "class/src/managers/TranslationManager.js~TranslationManager.html#instance-method-setTarget",
+    "src/managers/TranslationManager.js~TranslationManager#setTarget",
+    "method"
+  ],
+  [
     "src/managers/translationmanager.js~translationmanager#settings",
     "class/src/managers/TranslationManager.js~TranslationManager.html#instance-member-settings",
     "src/managers/TranslationManager.js~TranslationManager#settings",
@@ -862,12 +916,6 @@ window.esdocSearchIndex = [
     "class/src/managers/TranslationManager.js~TranslationManager.html#instance-method-update",
     "src/managers/TranslationManager.js~TranslationManager#update",
     "method"
-  ],
-  [
-    "src/managers/axes.js",
-    "file/src/managers/axes.js.html",
-    "src/managers/axes.js",
-    "file"
   ],
   [
     "src/managers/index.js",
@@ -1068,27 +1116,39 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/settings/rotationsettings.js~rotationsettings#maxphi",
-    "class/src/settings/RotationSettings.js~RotationSettings.html#instance-member-maxPhi",
-    "src/settings/RotationSettings.js~RotationSettings#maxPhi",
+    "src/settings/rotationsettings.js~rotationsettings#maxazimuthalangle",
+    "class/src/settings/RotationSettings.js~RotationSettings.html#instance-member-maxAzimuthalAngle",
+    "src/settings/RotationSettings.js~RotationSettings#maxAzimuthalAngle",
     "member"
   ],
   [
-    "src/settings/rotationsettings.js~rotationsettings#maxtheta",
-    "class/src/settings/RotationSettings.js~RotationSettings.html#instance-member-maxTheta",
-    "src/settings/RotationSettings.js~RotationSettings#maxTheta",
+    "src/settings/rotationsettings.js~rotationsettings#maxpolarangle",
+    "class/src/settings/RotationSettings.js~RotationSettings.html#instance-member-maxPolarAngle",
+    "src/settings/RotationSettings.js~RotationSettings#maxPolarAngle",
     "member"
   ],
   [
-    "src/settings/rotationsettings.js~rotationsettings#minphi",
-    "class/src/settings/RotationSettings.js~RotationSettings.html#instance-member-minPhi",
-    "src/settings/RotationSettings.js~RotationSettings#minPhi",
+    "src/settings/rotationsettings.js~rotationsettings#minazimuthalangle",
+    "class/src/settings/RotationSettings.js~RotationSettings.html#instance-member-minAzimuthalAngle",
+    "src/settings/RotationSettings.js~RotationSettings#minAzimuthalAngle",
     "member"
   ],
   [
-    "src/settings/rotationsettings.js~rotationsettings#mintheta",
-    "class/src/settings/RotationSettings.js~RotationSettings.html#instance-member-minTheta",
-    "src/settings/RotationSettings.js~RotationSettings#minTheta",
+    "src/settings/rotationsettings.js~rotationsettings#minpolarangle",
+    "class/src/settings/RotationSettings.js~RotationSettings.html#instance-member-minPolarAngle",
+    "src/settings/RotationSettings.js~RotationSettings#minPolarAngle",
+    "member"
+  ],
+  [
+    "src/settings/rotationsettings.js~rotationsettings#pivotoffset",
+    "class/src/settings/RotationSettings.js~RotationSettings.html#instance-member-pivotOffset",
+    "src/settings/RotationSettings.js~RotationSettings#pivotOffset",
+    "member"
+  ],
+  [
+    "src/settings/rotationsettings.js~rotationsettings#up",
+    "class/src/settings/RotationSettings.js~RotationSettings.html#instance-member-up",
+    "src/settings/RotationSettings.js~RotationSettings#up",
     "member"
   ],
   [
@@ -1281,12 +1341,6 @@ window.esdocSearchIndex = [
     "src/settings/zoomsettings.js~zoomsettings#mindistance",
     "class/src/settings/ZoomSettings.js~ZoomSettings.html#instance-member-minDistance",
     "src/settings/ZoomSettings.js~ZoomSettings#minDistance",
-    "member"
-  ],
-  [
-    "src/settings/zoomsettings.js~zoomsettings#step",
-    "class/src/settings/ZoomSettings.js~ZoomSettings.html#instance-member-step",
-    "src/settings/ZoomSettings.js~ZoomSettings#step",
     "member"
   ],
   [

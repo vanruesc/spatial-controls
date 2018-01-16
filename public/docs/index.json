@@ -681,8 +681,88 @@
   {
     "__docId__": 50,
     "kind": "file",
+    "name": "src/core/axes.js",
+    "content": "import { Vector3 } from \"math-ds\";\r\n\r\n/**\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n */\r\n\r\nexport const x = new Vector3(1, 0, 0);\r\n\r\n/**\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n */\r\n\r\nexport const y = new Vector3(0, 1, 0);\r\n\r\n/**\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n */\r\n\r\nexport const z = new Vector3(0, 0, 1);\r\n",
+    "static": true,
+    "longname": "C:/Users/Raoul/Sourcecode/JavaScript/delta-controls/src/core/axes.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 51,
+    "kind": "variable",
+    "name": "x",
+    "memberof": "src/core/axes.js",
+    "static": true,
+    "longname": "src/core/axes.js~x",
+    "access": "public",
+    "export": true,
+    "importPath": "delta-controls/src/core/axes.js",
+    "importStyle": "{x}",
+    "description": "The X-axis.",
+    "lineNumber": 10,
+    "ignore": true,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Vector3"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 52,
+    "kind": "variable",
+    "name": "y",
+    "memberof": "src/core/axes.js",
+    "static": true,
+    "longname": "src/core/axes.js~y",
+    "access": "public",
+    "export": true,
+    "importPath": "delta-controls/src/core/axes.js",
+    "importStyle": "{y}",
+    "description": "The Y-axis.",
+    "lineNumber": 19,
+    "ignore": true,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Vector3"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 53,
+    "kind": "variable",
+    "name": "z",
+    "memberof": "src/core/axes.js",
+    "static": true,
+    "longname": "src/core/axes.js~z",
+    "access": "public",
+    "export": true,
+    "importPath": "delta-controls/src/core/axes.js",
+    "importStyle": "{z}",
+    "description": "The Z-axis.",
+    "lineNumber": 28,
+    "ignore": true,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Vector3"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 54,
+    "kind": "file",
     "name": "src/core/DeltaControls.js",
-    "content": "import { Vector2, Vector3 } from \"math-ds\";\r\nimport { PointerButton } from \"../input/PointerButton.js\";\r\nimport { RotationManager } from \"../managers/RotationManager.js\";\r\nimport { TranslationManager } from \"../managers/TranslationManager.js\";\r\nimport { Settings } from \"../settings/Settings.js\";\r\nimport { Direction, MovementStrategy } from \"../strategies/MovementStrategy.js\";\r\nimport { ZoomStrategy } from \"../strategies/ZoomStrategy.js\";\r\nimport { Action } from \"./Action.js\";\r\n\r\n/**\r\n * Movement controls driven by user input.\r\n *\r\n * @implements {Disposable}\r\n * @implements {EventListener}\r\n */\r\n\r\nexport class DeltaControls {\r\n\r\n\t/**\r\n\t * Constructs new controls.\r\n\t *\r\n\t * @param {Vector3} position - A position.\r\n\t * @param {Quaternion} quaternion - A quaternion.\r\n\t * @param {HTMLElement} [dom=document.body] - A DOM element. Acts as the primary event target.\r\n\t */\r\n\r\n\tconstructor(position, quaternion, dom = document.body) {\r\n\r\n\t\t/**\r\n\t\t * A DOM element. Acts as the primary event target.\r\n\t\t *\r\n\t\t * @type {HTMLElement}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.dom = dom;\r\n\r\n\t\t/**\r\n\t\t * The position that will be modified.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.position = position;\r\n\r\n\t\t/**\r\n\t\t * The quaternion that will be modified.\r\n\t\t *\r\n\t\t * @type {Quaternion}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\r\n\t\t/**\r\n\t\t * The target.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.target = new Vector3();\r\n\r\n\t\t/**\r\n\t\t * The control settings.\r\n\t\t *\r\n\t\t * @type {Settings}\r\n\t\t */\r\n\r\n\t\tthis.settings = new Settings();\r\n\r\n\t\t/**\r\n\t\t * A rotation manager.\r\n\t\t *\r\n\t\t * @type {RotationManager}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.rotationManager = new RotationManager(position, quaternion, this.target, this.settings);\r\n\r\n\t\t// Update the orientation right away.\r\n\t\tthis.lookAt(this.target);\r\n\r\n\t\t/**\r\n\t\t * A translation manager.\r\n\t\t *\r\n\t\t * @type {TranslationManager}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.translationManager = new TranslationManager(position, quaternion, this.target, this.settings);\r\n\r\n\t\t/**\r\n\t\t * A map that links actions to specific strategies.\r\n\t\t *\r\n\t\t * @type {Map}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.strategies = ((rotationManager, translationManager) => {\r\n\r\n\t\t\tconst state = translationManager.movementState;\r\n\r\n\t\t\treturn new Map([\r\n\r\n\t\t\t\t[Action.MOVE_FORWARD, new MovementStrategy(state, Direction.FORWARD)],\r\n\t\t\t\t[Action.MOVE_LEFT, new MovementStrategy(state, Direction.LEFT)],\r\n\t\t\t\t[Action.MOVE_BACKWARD, new MovementStrategy(state, Direction.BACKWARD)],\r\n\t\t\t\t[Action.MOVE_RIGHT, new MovementStrategy(state, Direction.RIGHT)],\r\n\t\t\t\t[Action.MOVE_DOWN, new MovementStrategy(state, Direction.DOWN)],\r\n\t\t\t\t[Action.MOVE_UP, new MovementStrategy(state, Direction.UP)],\r\n\t\t\t\t[Action.ZOOM_OUT, new ZoomStrategy(rotationManager, false)],\r\n\t\t\t\t[Action.ZOOM_IN, new ZoomStrategy(rotationManager, true)]\r\n\r\n\t\t\t]);\r\n\r\n\t\t})(this.rotationManager, this.translationManager);\r\n\r\n\t\t/**\r\n\t\t * A screen position.\r\n\t\t *\r\n\t\t * @type {Vector2}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.lastScreenPosition = new Vector2();\r\n\r\n\t\t/**\r\n\t\t * Indicates whether the user is currently holding the pointer button down.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.dragging = false;\r\n\r\n\t\t/**\r\n\t\t * The internal enabled state.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.enabled = false;\r\n\r\n\t\tif(dom !== null) {\r\n\r\n\t\t\tthis.setEnabled();\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * A pivot offset. Only affects third person orbiting.\r\n\t *\r\n\t * @type {Vector3}\r\n\t */\r\n\r\n\tget pivotOffset() {\r\n\r\n\t\treturn this.rotationManager.pivotOffset;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles pointer move events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t */\r\n\r\n\thandlePointerMoveEvent(event) {\r\n\r\n\t\tconst settings = this.settings;\r\n\t\tconst pointer = settings.pointer;\r\n\t\tconst sensitivity = settings.sensitivity;\r\n\t\tconst rotationManager = this.rotationManager;\r\n\t\tconst lastScreenPosition = this.lastScreenPosition;\r\n\r\n\t\tlet movementX, movementY;\r\n\r\n\t\tif(document.pointerLockElement === this.dom) {\r\n\r\n\t\t\tif(!pointer.hold || this.dragging) {\r\n\r\n\t\t\t\trotationManager.adjustSpherical(\r\n\t\t\t\t\tevent.movementX * sensitivity.rotation,\r\n\t\t\t\t\tevent.movementY * sensitivity.rotation\r\n\t\t\t\t).updateQuaternion();\r\n\r\n\t\t\t}\r\n\r\n\t\t} else {\r\n\r\n\t\t\t// Compensate for inconsistent web APIs.\r\n\t\t\tmovementX = event.screenX - lastScreenPosition.x;\r\n\t\t\tmovementY = event.screenY - lastScreenPosition.y;\r\n\r\n\t\t\tlastScreenPosition.set(event.screenX, event.screenY);\r\n\r\n\t\t\trotationManager.adjustSpherical(\r\n\t\t\t\tmovementX * sensitivity.rotation,\r\n\t\t\t\tmovementY * sensitivity.rotation\r\n\t\t\t).updateQuaternion();\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles touch move events.\r\n\t *\r\n\t * @private\r\n\t * @param {TouchEvent} event - A touch event.\r\n\t */\r\n\r\n\thandleTouchMoveEvent(event) {\r\n\r\n\t\tconst sensitivity = this.settings.sensitivity;\r\n\t\tconst rotationManager = this.rotationManager;\r\n\t\tconst lastScreenPosition = this.lastScreenPosition;\r\n\t\tconst touch = event.touches[0];\r\n\r\n\t\t// Compensate for inconsistent web APIs.\r\n\t\tconst movementX = touch.screenX - lastScreenPosition.x;\r\n\t\tconst movementY = touch.screenY - lastScreenPosition.y;\r\n\r\n\t\tlastScreenPosition.set(touch.screenX, touch.screenY);\r\n\r\n\t\t// Don't produce a mouse move event.\r\n\t\tevent.preventDefault();\r\n\r\n\t\trotationManager.adjustSpherical(\r\n\t\t\tmovementX * sensitivity.rotation,\r\n\t\t\tmovementY * sensitivity.rotation\r\n\t\t).updateQuaternion();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles main pointer button events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandleMainPointerButton(event, pressed) {\r\n\r\n\t\tthis.dragging = pressed;\r\n\r\n\t\tif(this.settings.pointer.lock) {\r\n\r\n\t\t\tthis.setPointerLocked();\r\n\r\n\t\t} else {\r\n\r\n\t\t\tif(pressed) {\r\n\r\n\t\t\t\tthis.lastScreenPosition.set(event.screenX, event.screenY);\r\n\t\t\t\tthis.dom.addEventListener(\"mousemove\", this);\r\n\r\n\t\t\t} else {\r\n\r\n\t\t\t\tthis.dom.removeEventListener(\"mousemove\", this);\r\n\r\n\t\t\t}\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles auxiliary pointer button events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandleAuxiliaryPointerButton(event, pressed) {\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles secondary pointer button events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandleSecondaryPointerButton(event, pressed) {\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles pointer events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandlePointerButtonEvent(event, pressed) {\r\n\r\n\t\tevent.preventDefault();\r\n\r\n\t\tswitch(event.button) {\r\n\r\n\t\t\tcase PointerButton.MAIN:\r\n\t\t\t\tthis.handleMainPointerButton(event, pressed);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase PointerButton.AUXILIARY:\r\n\t\t\t\tthis.handleAuxiliaryPointerButton(event, pressed);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase PointerButton.SECONDARY:\r\n\t\t\t\tthis.handleSecondaryPointerButton(event, pressed);\r\n\t\t\t\tbreak;\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles touch start and end events.\r\n\t *\r\n\t * @private\r\n\t * @param {TouchEvent} event - A touch event.\r\n\t * @param {Boolean} start - Whether the event is a touch start event.\r\n\t */\r\n\r\n\thandleTouchEvent(event, start) {\r\n\r\n\t\tconst touch = event.touches[0];\r\n\r\n\t\t// Don't produce mouse events.\r\n\t\tevent.preventDefault();\r\n\r\n\t\tif(start) {\r\n\r\n\t\t\tthis.lastScreenPosition.set(touch.screenX, touch.screenY);\r\n\t\t\tthis.dom.addEventListener(\"touchmove\", this);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tthis.dom.removeEventListener(\"touchmove\", this);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles keyboard events.\r\n\t *\r\n\t * @private\r\n\t * @param {KeyboardEvent} event - A keyboard event.\r\n\t * @param {Boolean} pressed - Whether the key has been pressed down.\r\n\t */\r\n\r\n\thandleKeyboardEvent(event, pressed) {\r\n\r\n\t\tconst keyBindings = this.settings.keyBindings;\r\n\r\n\t\tif(keyBindings.has(event.keyCode)) {\r\n\r\n\t\t\tevent.preventDefault();\r\n\r\n\t\t\tthis.strategies.get(keyBindings.get(event.keyCode)).execute(pressed);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles wheel events.\r\n\t *\r\n\t * @private\r\n\t * @param {WheelEvent} event - A wheel event.\r\n\t */\r\n\r\n\thandleWheelEvent(event) {\r\n\r\n\t\tthis.rotationManager.zoom(Math.sign(event.deltaY));\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Enables or disables controls based on the pointer lock state.\r\n\t *\r\n\t * @private\r\n\t */\r\n\r\n\thandlePointerLockEvent() {\r\n\r\n\t\tif(document.pointerLockElement === this.dom) {\r\n\r\n\t\t\tthis.dom.addEventListener(\"mousemove\", this);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tthis.dom.removeEventListener(\"mousemove\", this);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles events.\r\n\t *\r\n\t * @param {Event} event - An event.\r\n\t */\r\n\r\n\thandleEvent(event) {\r\n\r\n\t\tswitch(event.type) {\r\n\r\n\t\t\tcase \"mousemove\":\r\n\t\t\t\tthis.handlePointerMoveEvent(event);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"touchmove\":\r\n\t\t\t\tthis.handleTouchMoveEvent(event);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"mousedown\":\r\n\t\t\t\tthis.handlePointerButtonEvent(event, true);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"mouseup\":\r\n\t\t\t\tthis.handlePointerButtonEvent(event, false);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"touchstart\":\r\n\t\t\t\tthis.handleTouchEvent(event, true);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"touchend\":\r\n\t\t\t\tthis.handleTouchEvent(event, false);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"keydown\":\r\n\t\t\t\tthis.handleKeyboardEvent(event, true);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"keyup\":\r\n\t\t\t\tthis.handleKeyboardEvent(event, false);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"wheel\":\r\n\t\t\t\tthis.handleWheelEvent(event);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"pointerlockchange\":\r\n\t\t\t\tthis.handlePointerLockEvent();\r\n\t\t\t\tbreak;\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Updates movement and rotation calculations based on time.\r\n\t *\r\n\t * This method should be called before a new frame is rendered.\r\n\t *\r\n\t * @param {Number} delta - The time since the last update in seconds.\r\n\t */\r\n\r\n\tupdate(delta) {\r\n\r\n\t\tthis.rotationManager.update(delta);\r\n\t\tthis.translationManager.update(delta);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Moves to the given position.\r\n\t *\r\n\t * @param {Vector3} position - The position.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tmoveTo(position) {\r\n\r\n\t\tthis.rotationManager.moveTo(position);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Looks at the given point.\r\n\t *\r\n\t * @param {Vector3} point - The target point.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tlookAt(point) {\r\n\r\n\t\tthis.rotationManager.lookAt(point);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the current view direction.\r\n\t *\r\n\t * @param {Vector3} [view] - A vector to store the direction in. If none is provided, a new vector will be created.\r\n\t * @return {Vector3} The normalized view direction.\r\n\t */\r\n\r\n\tgetViewDirection(view = new Vector3()) {\r\n\r\n\t\treturn this.rotationManager.getViewDirection(view);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the current target.\r\n\t *\r\n\t * @param {Vector3} [target] - A vector to store the target in. If none is provided, a new vector will be created.\r\n\t * @return {Vector3} The current target.\r\n\t */\r\n\r\n\tgetTarget(target = new Vector3()) {\r\n\r\n\t\ttarget.copy(this.target);\r\n\r\n\t\tif(!this.settings.general.orbit) {\r\n\r\n\t\t\t// The target is relative to the position.\r\n\t\t\ttarget.add(this.position);\r\n\r\n\t\t}\r\n\r\n\t\treturn target;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the target.\r\n\t *\r\n\t * @param {Vector3} target - The new target.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetTarget(target) {\r\n\r\n\t\tthis.target = target;\r\n\t\tthis.rotationManager.target = target;\r\n\t\tthis.translationManager.target = target;\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the position vector.\r\n\t *\r\n\t * @param {Vector3} position - The new position vector.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetPosition(position) {\r\n\r\n\t\tthis.position = position;\r\n\t\tthis.rotationManager.position = position;\r\n\t\tthis.translationManager.position = position;\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the quaternion.\r\n\t *\r\n\t * @param {Quaternion} quaternion - The new quaternion.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetQuaternion(quaternion) {\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\t\tthis.rotationManager.quaternion = quaternion;\r\n\t\tthis.translationManager.quaternion = quaternion;\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Changes the control mode to first or third person perspective.\r\n\t *\r\n\t * @param {Boolean} orbit - Enable third person perspective.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetOrbit(orbit) {\r\n\r\n\t\tconst general = this.settings.general;\r\n\r\n\t\tif(general.orbit !== orbit) {\r\n\r\n\t\t\tthis.getTarget(this.target);\r\n\t\t\tgeneral.orbit = orbit;\r\n\t\t\tthis.lookAt(this.target);\r\n\r\n\t\t}\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Locks or unlocks the pointer.\r\n\t *\r\n\t * @private\r\n\t * @param {Boolean} [locked=true] - Whether the pointer should be locked.\r\n\t */\r\n\r\n\tsetPointerLocked(locked = true) {\r\n\r\n\t\tif(locked) {\r\n\r\n\t\t\tif(document.pointerLockElement !== this.dom && this.dom.requestPointerLock !== undefined) {\r\n\r\n\t\t\t\tthis.dom.requestPointerLock();\r\n\r\n\t\t\t}\r\n\r\n\t\t} else if(document.exitPointerLock !== undefined) {\r\n\r\n\t\t\tdocument.exitPointerLock();\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Enables or disables the controls.\r\n\t *\r\n\t * @param {Boolean} [enabled=true] - Whether the controls should be enabled or disabled.\r\n\t */\r\n\r\n\tsetEnabled(enabled = true) {\r\n\r\n\t\tconst dom = this.dom;\r\n\r\n\t\tthis.translationManager.movementState.reset();\r\n\r\n\t\tif(enabled && !this.enabled) {\r\n\r\n\t\t\tdocument.addEventListener(\"pointerlockchange\", this);\r\n\t\t\tdocument.body.addEventListener(\"keyup\", this);\r\n\t\t\tdocument.body.addEventListener(\"keydown\", this);\r\n\t\t\tdom.addEventListener(\"mousedown\", this);\r\n\t\t\tdom.addEventListener(\"mouseup\", this);\r\n\t\t\tdom.addEventListener(\"touchstart\", this);\r\n\t\t\tdom.addEventListener(\"touchend\", this);\r\n\t\t\tdom.addEventListener(\"wheel\", this);\r\n\r\n\t\t} else if(!enabled && this.enabled) {\r\n\r\n\t\t\tdocument.removeEventListener(\"pointerlockchange\", this);\r\n\t\t\tdocument.body.removeEventListener(\"keyup\", this);\r\n\t\t\tdocument.body.removeEventListener(\"keydown\", this);\r\n\t\t\tdom.removeEventListener(\"mousedown\", this);\r\n\t\t\tdom.removeEventListener(\"mouseup\", this);\r\n\t\t\tdom.removeEventListener(\"touchstart\", this);\r\n\t\t\tdom.removeEventListener(\"touchend\", this);\r\n\t\t\tdom.removeEventListener(\"wheel\", this);\r\n\t\t\tdom.removeEventListener(\"mousemove\", this);\r\n\t\t\tdom.removeEventListener(\"touchmove\", this);\r\n\r\n\t\t}\r\n\r\n\t\tthis.setPointerLocked(false);\r\n\t\tthis.enabled = enabled;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Removes all event listeners and unlocks the pointer.\r\n\t */\r\n\r\n\tdispose() {\r\n\r\n\t\tthis.setEnabled(false);\r\n\r\n\t}\r\n\r\n}\r\n",
+    "content": "import { Vector2, Vector3 } from \"math-ds\";\r\nimport { PointerButton } from \"../input/PointerButton.js\";\r\nimport { RotationManager } from \"../managers/RotationManager.js\";\r\nimport { TranslationManager } from \"../managers/TranslationManager.js\";\r\nimport { Settings } from \"../settings/Settings.js\";\r\nimport { Direction, MovementStrategy } from \"../strategies/MovementStrategy.js\";\r\nimport { ZoomStrategy } from \"../strategies/ZoomStrategy.js\";\r\nimport { Action } from \"./Action.js\";\r\n\r\n/**\r\n * Movement controls driven by user input.\r\n *\r\n * @implements {Disposable}\r\n * @implements {EventListener}\r\n */\r\n\r\nexport class DeltaControls {\r\n\r\n\t/**\r\n\t * Constructs new controls.\r\n\t *\r\n\t * @param {Vector3} position - A position.\r\n\t * @param {Quaternion} quaternion - A quaternion.\r\n\t * @param {HTMLElement} [dom=document.body] - A DOM element. Acts as the primary event target.\r\n\t */\r\n\r\n\tconstructor(position, quaternion, dom = document.body) {\r\n\r\n\t\t/**\r\n\t\t * A DOM element. Acts as the primary event target.\r\n\t\t *\r\n\t\t * @type {HTMLElement}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.dom = dom;\r\n\r\n\t\t/**\r\n\t\t * The position that will be modified.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.position = position;\r\n\r\n\t\t/**\r\n\t\t * The quaternion that will be modified.\r\n\t\t *\r\n\t\t * @type {Quaternion}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\r\n\t\t/**\r\n\t\t * The target.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.target = new Vector3();\r\n\r\n\t\t/**\r\n\t\t * The control settings.\r\n\t\t *\r\n\t\t * @type {Settings}\r\n\t\t */\r\n\r\n\t\tthis.settings = new Settings();\r\n\r\n\t\t/**\r\n\t\t * A rotation manager.\r\n\t\t *\r\n\t\t * @type {RotationManager}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.rotationManager = new RotationManager(position, quaternion, this.target, this.settings);\r\n\r\n\t\t// Update the orientation right away.\r\n\t\tthis.lookAt(this.target);\r\n\r\n\t\t/**\r\n\t\t * A translation manager.\r\n\t\t *\r\n\t\t * @type {TranslationManager}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.translationManager = new TranslationManager(position, quaternion, this.target, this.settings);\r\n\r\n\t\t/**\r\n\t\t * A map that links actions to specific strategies.\r\n\t\t *\r\n\t\t * @type {Map}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.strategies = ((rotationManager, translationManager) => {\r\n\r\n\t\t\tconst state = translationManager.movementState;\r\n\r\n\t\t\treturn new Map([\r\n\r\n\t\t\t\t[Action.MOVE_FORWARD, new MovementStrategy(state, Direction.FORWARD)],\r\n\t\t\t\t[Action.MOVE_LEFT, new MovementStrategy(state, Direction.LEFT)],\r\n\t\t\t\t[Action.MOVE_BACKWARD, new MovementStrategy(state, Direction.BACKWARD)],\r\n\t\t\t\t[Action.MOVE_RIGHT, new MovementStrategy(state, Direction.RIGHT)],\r\n\t\t\t\t[Action.MOVE_DOWN, new MovementStrategy(state, Direction.DOWN)],\r\n\t\t\t\t[Action.MOVE_UP, new MovementStrategy(state, Direction.UP)],\r\n\t\t\t\t[Action.ZOOM_OUT, new ZoomStrategy(rotationManager, false)],\r\n\t\t\t\t[Action.ZOOM_IN, new ZoomStrategy(rotationManager, true)]\r\n\r\n\t\t\t]);\r\n\r\n\t\t})(this.rotationManager, this.translationManager);\r\n\r\n\t\t/**\r\n\t\t * A screen position.\r\n\t\t *\r\n\t\t * @type {Vector2}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.lastScreenPosition = new Vector2();\r\n\r\n\t\t/**\r\n\t\t * Indicates whether the user is currently holding the pointer button down.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.dragging = false;\r\n\r\n\t\t/**\r\n\t\t * The internal enabled state.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.enabled = false;\r\n\r\n\t\tif(dom !== null) {\r\n\r\n\t\t\tthis.setEnabled();\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the DOM element.\r\n\t *\r\n\t * @return {HTMLElement} The DOM element.\r\n\t */\r\n\r\n\tgetDom() {\r\n\r\n\t\treturn this.dom;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the position.\r\n\t *\r\n\t * @return {Vector3} The position.\r\n\t */\r\n\r\n\tgetPosition() {\r\n\r\n\t\treturn this.position;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the quaternion.\r\n\t *\r\n\t * @return {Quaternion} The quaternion.\r\n\t */\r\n\r\n\tgetQuaternion() {\r\n\r\n\t\treturn this.quaternion;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the current target.\r\n\t *\r\n\t * @param {Vector3} [target] - A vector to store the target in. If none is provided, a new one will be created.\r\n\t * @return {Vector3} The current target.\r\n\t */\r\n\r\n\tgetTarget(target = new Vector3()) {\r\n\r\n\t\ttarget.copy(this.target);\r\n\r\n\t\tif(!this.settings.general.orbit) {\r\n\r\n\t\t\t// The target is relative to the position.\r\n\t\t\ttarget.add(this.position);\r\n\r\n\t\t}\r\n\r\n\t\treturn target;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the current view direction.\r\n\t *\r\n\t * @param {Vector3} [view] - A vector to store the direction in. If none is provided, a new one will be created.\r\n\t * @return {Vector3} The normalized view direction.\r\n\t */\r\n\r\n\tgetViewDirection(view = new Vector3()) {\r\n\r\n\t\treturn this.rotationManager.getViewDirection(view);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the position vector.\r\n\t *\r\n\t * @param {Vector3} position - The new position vector.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetPosition(position) {\r\n\r\n\t\tthis.position = position;\r\n\t\tthis.rotationManager.setPosition(position);\r\n\t\tthis.translationManager.setPosition(position);\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the quaternion.\r\n\t *\r\n\t * @param {Quaternion} quaternion - The new quaternion.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetQuaternion(quaternion) {\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\t\tthis.rotationManager.setQuaternion(quaternion);\r\n\t\tthis.translationManager.setQuaternion(quaternion);\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the target.\r\n\t *\r\n\t * @param {Vector3} target - The new target.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetTarget(target) {\r\n\r\n\t\tthis.target = target;\r\n\t\tthis.rotationManager.setTarget(target);\r\n\t\tthis.translationManager.setTarget(target);\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Changes the control mode to first or third person perspective.\r\n\t *\r\n\t * @param {Boolean} orbit - Whether the third person perspective should be enabled.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetOrbitEnabled(orbit) {\r\n\r\n\t\tconst general = this.settings.general;\r\n\r\n\t\tif(general.orbit !== orbit) {\r\n\r\n\t\t\tthis.getTarget(this.target);\r\n\t\t\tgeneral.orbit = orbit;\r\n\t\t\tthis.lookAt(this.target);\r\n\r\n\t\t}\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given controls.\r\n\t *\r\n\t * @param {DeltaControls} controls - A controls instance.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tcopy(controls) {\r\n\r\n\t\tthis.dom = controls.getDom();\r\n\t\tthis.position = controls.getPosition();\r\n\t\tthis.quaternion = controls.getQuaternion();\r\n\t\tthis.target = controls.getTarget();\r\n\r\n\t\tthis.settings.copy(controls.settings);\r\n\r\n\t\tthis.rotationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);\r\n\t\tthis.translationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this instance.\r\n\t *\r\n\t * @return {DeltaControls} the cloned controls.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles pointer move events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t */\r\n\r\n\thandlePointerMoveEvent(event) {\r\n\r\n\t\tconst settings = this.settings;\r\n\t\tconst pointer = settings.pointer;\r\n\t\tconst sensitivity = settings.sensitivity;\r\n\t\tconst rotationManager = this.rotationManager;\r\n\t\tconst lastScreenPosition = this.lastScreenPosition;\r\n\r\n\t\tlet movementX, movementY;\r\n\r\n\t\tif(document.pointerLockElement === this.dom) {\r\n\r\n\t\t\tif(!pointer.hold || this.dragging) {\r\n\r\n\t\t\t\trotationManager.adjustSpherical(\r\n\t\t\t\t\tevent.movementX * sensitivity.rotation,\r\n\t\t\t\t\tevent.movementY * sensitivity.rotation\r\n\t\t\t\t).updateQuaternion();\r\n\r\n\t\t\t}\r\n\r\n\t\t} else {\r\n\r\n\t\t\t// Compensate for inconsistent web APIs.\r\n\t\t\tmovementX = event.screenX - lastScreenPosition.x;\r\n\t\t\tmovementY = event.screenY - lastScreenPosition.y;\r\n\r\n\t\t\tlastScreenPosition.set(event.screenX, event.screenY);\r\n\r\n\t\t\trotationManager.adjustSpherical(\r\n\t\t\t\tmovementX * sensitivity.rotation,\r\n\t\t\t\tmovementY * sensitivity.rotation\r\n\t\t\t).updateQuaternion();\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles touch move events.\r\n\t *\r\n\t * @private\r\n\t * @param {TouchEvent} event - A touch event.\r\n\t */\r\n\r\n\thandleTouchMoveEvent(event) {\r\n\r\n\t\tconst sensitivity = this.settings.sensitivity;\r\n\t\tconst rotationManager = this.rotationManager;\r\n\t\tconst lastScreenPosition = this.lastScreenPosition;\r\n\t\tconst touch = event.touches[0];\r\n\r\n\t\t// Compensate for inconsistent web APIs.\r\n\t\tconst movementX = touch.screenX - lastScreenPosition.x;\r\n\t\tconst movementY = touch.screenY - lastScreenPosition.y;\r\n\r\n\t\tlastScreenPosition.set(touch.screenX, touch.screenY);\r\n\r\n\t\t// Don't produce a mouse move event.\r\n\t\tevent.preventDefault();\r\n\r\n\t\trotationManager.adjustSpherical(\r\n\t\t\tmovementX * sensitivity.rotation,\r\n\t\t\tmovementY * sensitivity.rotation\r\n\t\t).updateQuaternion();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles main pointer button events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandleMainPointerButton(event, pressed) {\r\n\r\n\t\tthis.dragging = pressed;\r\n\r\n\t\tif(this.settings.pointer.lock) {\r\n\r\n\t\t\tthis.setPointerLocked();\r\n\r\n\t\t} else {\r\n\r\n\t\t\tif(pressed) {\r\n\r\n\t\t\t\tthis.lastScreenPosition.set(event.screenX, event.screenY);\r\n\t\t\t\tthis.dom.addEventListener(\"mousemove\", this);\r\n\r\n\t\t\t} else {\r\n\r\n\t\t\t\tthis.dom.removeEventListener(\"mousemove\", this);\r\n\r\n\t\t\t}\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles auxiliary pointer button events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandleAuxiliaryPointerButton(event, pressed) {\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles secondary pointer button events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandleSecondaryPointerButton(event, pressed) {\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles pointer events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandlePointerButtonEvent(event, pressed) {\r\n\r\n\t\tevent.preventDefault();\r\n\r\n\t\tswitch(event.button) {\r\n\r\n\t\t\tcase PointerButton.MAIN:\r\n\t\t\t\tthis.handleMainPointerButton(event, pressed);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase PointerButton.AUXILIARY:\r\n\t\t\t\tthis.handleAuxiliaryPointerButton(event, pressed);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase PointerButton.SECONDARY:\r\n\t\t\t\tthis.handleSecondaryPointerButton(event, pressed);\r\n\t\t\t\tbreak;\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles touch start and end events.\r\n\t *\r\n\t * @private\r\n\t * @param {TouchEvent} event - A touch event.\r\n\t * @param {Boolean} start - Whether the event is a touch start event.\r\n\t */\r\n\r\n\thandleTouchEvent(event, start) {\r\n\r\n\t\tconst touch = event.touches[0];\r\n\r\n\t\t// Don't produce mouse events.\r\n\t\tevent.preventDefault();\r\n\r\n\t\tif(start) {\r\n\r\n\t\t\tthis.lastScreenPosition.set(touch.screenX, touch.screenY);\r\n\t\t\tthis.dom.addEventListener(\"touchmove\", this);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tthis.dom.removeEventListener(\"touchmove\", this);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles keyboard events.\r\n\t *\r\n\t * @private\r\n\t * @param {KeyboardEvent} event - A keyboard event.\r\n\t * @param {Boolean} pressed - Whether the key has been pressed down.\r\n\t */\r\n\r\n\thandleKeyboardEvent(event, pressed) {\r\n\r\n\t\tconst keyBindings = this.settings.keyBindings;\r\n\r\n\t\tif(keyBindings.has(event.keyCode)) {\r\n\r\n\t\t\tevent.preventDefault();\r\n\r\n\t\t\tthis.strategies.get(keyBindings.get(event.keyCode)).execute(pressed);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles wheel events.\r\n\t *\r\n\t * @private\r\n\t * @param {WheelEvent} event - A wheel event.\r\n\t */\r\n\r\n\thandleWheelEvent(event) {\r\n\r\n\t\tthis.rotationManager.zoom(Math.sign(event.deltaY));\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Enables or disables controls based on the pointer lock state.\r\n\t *\r\n\t * @private\r\n\t */\r\n\r\n\thandlePointerLockEvent() {\r\n\r\n\t\tif(document.pointerLockElement === this.dom) {\r\n\r\n\t\t\tthis.dom.addEventListener(\"mousemove\", this);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tthis.dom.removeEventListener(\"mousemove\", this);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles events.\r\n\t *\r\n\t * @param {Event} event - An event.\r\n\t */\r\n\r\n\thandleEvent(event) {\r\n\r\n\t\tswitch(event.type) {\r\n\r\n\t\t\tcase \"mousemove\":\r\n\t\t\t\tthis.handlePointerMoveEvent(event);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"touchmove\":\r\n\t\t\t\tthis.handleTouchMoveEvent(event);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"mousedown\":\r\n\t\t\t\tthis.handlePointerButtonEvent(event, true);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"mouseup\":\r\n\t\t\t\tthis.handlePointerButtonEvent(event, false);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"touchstart\":\r\n\t\t\t\tthis.handleTouchEvent(event, true);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"touchend\":\r\n\t\t\t\tthis.handleTouchEvent(event, false);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"keydown\":\r\n\t\t\t\tthis.handleKeyboardEvent(event, true);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"keyup\":\r\n\t\t\t\tthis.handleKeyboardEvent(event, false);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"wheel\":\r\n\t\t\t\tthis.handleWheelEvent(event);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"pointerlockchange\":\r\n\t\t\t\tthis.handlePointerLockEvent();\r\n\t\t\t\tbreak;\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Updates movement and rotation calculations based on time.\r\n\t *\r\n\t * This method should be called before a new frame is rendered.\r\n\t *\r\n\t * @param {Number} delta - The time since the last update in seconds.\r\n\t */\r\n\r\n\tupdate(delta) {\r\n\r\n\t\tthis.rotationManager.update(delta);\r\n\t\tthis.translationManager.update(delta);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Moves to the given position.\r\n\t *\r\n\t * @param {Vector3} position - The position.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tmoveTo(position) {\r\n\r\n\t\tthis.rotationManager.moveTo(position);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Looks at the given point.\r\n\t *\r\n\t * @param {Vector3} point - The target point.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tlookAt(point) {\r\n\r\n\t\tthis.rotationManager.lookAt(point);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Locks or unlocks the pointer.\r\n\t *\r\n\t * @private\r\n\t * @param {Boolean} [locked=true] - Whether the pointer should be locked.\r\n\t */\r\n\r\n\tsetPointerLocked(locked = true) {\r\n\r\n\t\tif(locked) {\r\n\r\n\t\t\tif(document.pointerLockElement !== this.dom && this.dom.requestPointerLock !== undefined) {\r\n\r\n\t\t\t\tthis.dom.requestPointerLock();\r\n\r\n\t\t\t}\r\n\r\n\t\t} else if(document.exitPointerLock !== undefined) {\r\n\r\n\t\t\tdocument.exitPointerLock();\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Enables or disables the controls.\r\n\t *\r\n\t * @param {Boolean} [enabled=true] - Whether the controls should be enabled or disabled.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetEnabled(enabled = true) {\r\n\r\n\t\tconst dom = this.dom;\r\n\r\n\t\tthis.translationManager.movementState.reset();\r\n\r\n\t\tif(enabled && !this.enabled) {\r\n\r\n\t\t\tdocument.addEventListener(\"pointerlockchange\", this);\r\n\t\t\tdocument.body.addEventListener(\"keyup\", this);\r\n\t\t\tdocument.body.addEventListener(\"keydown\", this);\r\n\t\t\tdom.addEventListener(\"mousedown\", this);\r\n\t\t\tdom.addEventListener(\"mouseup\", this);\r\n\t\t\tdom.addEventListener(\"touchstart\", this);\r\n\t\t\tdom.addEventListener(\"touchend\", this);\r\n\t\t\tdom.addEventListener(\"wheel\", this);\r\n\r\n\t\t} else if(!enabled && this.enabled) {\r\n\r\n\t\t\tdocument.removeEventListener(\"pointerlockchange\", this);\r\n\t\t\tdocument.body.removeEventListener(\"keyup\", this);\r\n\t\t\tdocument.body.removeEventListener(\"keydown\", this);\r\n\t\t\tdom.removeEventListener(\"mousedown\", this);\r\n\t\t\tdom.removeEventListener(\"mouseup\", this);\r\n\t\t\tdom.removeEventListener(\"touchstart\", this);\r\n\t\t\tdom.removeEventListener(\"touchend\", this);\r\n\t\t\tdom.removeEventListener(\"wheel\", this);\r\n\t\t\tdom.removeEventListener(\"mousemove\", this);\r\n\t\t\tdom.removeEventListener(\"touchmove\", this);\r\n\r\n\t\t}\r\n\r\n\t\tthis.setPointerLocked(false);\r\n\t\tthis.enabled = enabled;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Removes all event listeners and unlocks the pointer.\r\n\t */\r\n\r\n\tdispose() {\r\n\r\n\t\tthis.setEnabled(false);\r\n\r\n\t}\r\n\r\n}\r\n",
     "static": true,
     "longname": "C:/Users/Raoul/Sourcecode/JavaScript/delta-controls/src/core/DeltaControls.js",
     "access": "public",
@@ -690,7 +770,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 51,
+    "__docId__": 55,
     "kind": "class",
     "name": "DeltaControls",
     "memberof": "src/core/DeltaControls.js",
@@ -709,7 +789,7 @@
     ]
   },
   {
-    "__docId__": 52,
+    "__docId__": 56,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -756,7 +836,7 @@
     ]
   },
   {
-    "__docId__": 53,
+    "__docId__": 57,
     "kind": "member",
     "name": "dom",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -775,7 +855,7 @@
     }
   },
   {
-    "__docId__": 54,
+    "__docId__": 58,
     "kind": "member",
     "name": "position",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -794,7 +874,7 @@
     }
   },
   {
-    "__docId__": 55,
+    "__docId__": 59,
     "kind": "member",
     "name": "quaternion",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -813,7 +893,7 @@
     }
   },
   {
-    "__docId__": 56,
+    "__docId__": 60,
     "kind": "member",
     "name": "target",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -832,7 +912,7 @@
     }
   },
   {
-    "__docId__": 57,
+    "__docId__": 61,
     "kind": "member",
     "name": "settings",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -851,7 +931,7 @@
     }
   },
   {
-    "__docId__": 58,
+    "__docId__": 62,
     "kind": "member",
     "name": "rotationManager",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -870,7 +950,7 @@
     }
   },
   {
-    "__docId__": 59,
+    "__docId__": 63,
     "kind": "member",
     "name": "translationManager",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -889,7 +969,7 @@
     }
   },
   {
-    "__docId__": 60,
+    "__docId__": 64,
     "kind": "member",
     "name": "strategies",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -908,7 +988,7 @@
     }
   },
   {
-    "__docId__": 61,
+    "__docId__": 65,
     "kind": "member",
     "name": "lastScreenPosition",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -927,7 +1007,7 @@
     }
   },
   {
-    "__docId__": 62,
+    "__docId__": 66,
     "kind": "member",
     "name": "dragging",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -946,7 +1026,7 @@
     }
   },
   {
-    "__docId__": 63,
+    "__docId__": 67,
     "kind": "member",
     "name": "enabled",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -965,28 +1045,326 @@
     }
   },
   {
-    "__docId__": 64,
-    "kind": "get",
-    "name": "pivotOffset",
+    "__docId__": 68,
+    "kind": "method",
+    "name": "getDom",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/core/DeltaControls.js~DeltaControls#pivotOffset",
+    "longname": "src/core/DeltaControls.js~DeltaControls#getDom",
     "access": "public",
-    "description": "A pivot offset. Only affects third person orbiting.",
+    "description": "Returns the DOM element.",
     "lineNumber": 161,
-    "type": {
+    "return": {
+      "nullable": null,
+      "types": [
+        "HTMLElement"
+      ],
+      "spread": false,
+      "description": "The DOM element."
+    },
+    "params": []
+  },
+  {
+    "__docId__": 69,
+    "kind": "method",
+    "name": "getPosition",
+    "memberof": "src/core/DeltaControls.js~DeltaControls",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/core/DeltaControls.js~DeltaControls#getPosition",
+    "access": "public",
+    "description": "Returns the position.",
+    "lineNumber": 173,
+    "return": {
       "nullable": null,
       "types": [
         "Vector3"
       ],
       "spread": false,
-      "description": null
+      "description": "The position."
+    },
+    "params": []
+  },
+  {
+    "__docId__": 70,
+    "kind": "method",
+    "name": "getQuaternion",
+    "memberof": "src/core/DeltaControls.js~DeltaControls",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/core/DeltaControls.js~DeltaControls#getQuaternion",
+    "access": "public",
+    "description": "Returns the quaternion.",
+    "lineNumber": 185,
+    "return": {
+      "nullable": null,
+      "types": [
+        "Quaternion"
+      ],
+      "spread": false,
+      "description": "The quaternion."
+    },
+    "params": []
+  },
+  {
+    "__docId__": 71,
+    "kind": "method",
+    "name": "getTarget",
+    "memberof": "src/core/DeltaControls.js~DeltaControls",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/core/DeltaControls.js~DeltaControls#getTarget",
+    "access": "public",
+    "description": "Returns the current target.",
+    "lineNumber": 198,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Vector3"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "target",
+        "description": "A vector to store the target in. If none is provided, a new one will be created."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Vector3"
+      ],
+      "spread": false,
+      "description": "The current target."
     }
   },
   {
-    "__docId__": 65,
+    "__docId__": 72,
+    "kind": "method",
+    "name": "getViewDirection",
+    "memberof": "src/core/DeltaControls.js~DeltaControls",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/core/DeltaControls.js~DeltaControls#getViewDirection",
+    "access": "public",
+    "description": "Returns the current view direction.",
+    "lineNumber": 220,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Vector3"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "view",
+        "description": "A vector to store the direction in. If none is provided, a new one will be created."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Vector3"
+      ],
+      "spread": false,
+      "description": "The normalized view direction."
+    }
+  },
+  {
+    "__docId__": 73,
+    "kind": "method",
+    "name": "setPosition",
+    "memberof": "src/core/DeltaControls.js~DeltaControls",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/core/DeltaControls.js~DeltaControls#setPosition",
+    "access": "public",
+    "description": "Sets the position vector.",
+    "lineNumber": 233,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Vector3"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "position",
+        "description": "The new position vector."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "DeltaControls"
+      ],
+      "spread": false,
+      "description": "This instance."
+    }
+  },
+  {
+    "__docId__": 75,
+    "kind": "method",
+    "name": "setQuaternion",
+    "memberof": "src/core/DeltaControls.js~DeltaControls",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/core/DeltaControls.js~DeltaControls#setQuaternion",
+    "access": "public",
+    "description": "Sets the quaternion.",
+    "lineNumber": 250,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Quaternion"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "quaternion",
+        "description": "The new quaternion."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "DeltaControls"
+      ],
+      "spread": false,
+      "description": "This instance."
+    }
+  },
+  {
+    "__docId__": 77,
+    "kind": "method",
+    "name": "setTarget",
+    "memberof": "src/core/DeltaControls.js~DeltaControls",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/core/DeltaControls.js~DeltaControls#setTarget",
+    "access": "public",
+    "description": "Sets the target.",
+    "lineNumber": 267,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Vector3"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "target",
+        "description": "The new target."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "DeltaControls"
+      ],
+      "spread": false,
+      "description": "This instance."
+    }
+  },
+  {
+    "__docId__": 79,
+    "kind": "method",
+    "name": "setOrbitEnabled",
+    "memberof": "src/core/DeltaControls.js~DeltaControls",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/core/DeltaControls.js~DeltaControls#setOrbitEnabled",
+    "access": "public",
+    "description": "Changes the control mode to first or third person perspective.",
+    "lineNumber": 284,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "orbit",
+        "description": "Whether the third person perspective should be enabled."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "DeltaControls"
+      ],
+      "spread": false,
+      "description": "This instance."
+    }
+  },
+  {
+    "__docId__": 80,
+    "kind": "method",
+    "name": "copy",
+    "memberof": "src/core/DeltaControls.js~DeltaControls",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/core/DeltaControls.js~DeltaControls#copy",
+    "access": "public",
+    "description": "Copies the given controls.",
+    "lineNumber": 307,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "DeltaControls"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "controls",
+        "description": "A controls instance."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "DeltaControls"
+      ],
+      "spread": false,
+      "description": "This instance."
+    }
+  },
+  {
+    "__docId__": 85,
+    "kind": "method",
+    "name": "clone",
+    "memberof": "src/core/DeltaControls.js~DeltaControls",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/core/DeltaControls.js~DeltaControls#clone",
+    "access": "public",
+    "description": "Clones this instance.",
+    "lineNumber": 329,
+    "return": {
+      "nullable": null,
+      "types": [
+        "DeltaControls"
+      ],
+      "spread": false,
+      "description": "the cloned controls."
+    },
+    "params": []
+  },
+  {
+    "__docId__": 86,
     "kind": "method",
     "name": "handlePointerMoveEvent",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -996,7 +1374,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handlePointerMoveEvent",
     "access": "private",
     "description": "Handles pointer move events.",
-    "lineNumber": 174,
+    "lineNumber": 342,
     "params": [
       {
         "nullable": null,
@@ -1012,7 +1390,7 @@
     "return": null
   },
   {
-    "__docId__": 66,
+    "__docId__": 87,
     "kind": "method",
     "name": "handleTouchMoveEvent",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1022,7 +1400,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleTouchMoveEvent",
     "access": "private",
     "description": "Handles touch move events.",
-    "lineNumber": 219,
+    "lineNumber": 387,
     "params": [
       {
         "nullable": null,
@@ -1038,7 +1416,7 @@
     "return": null
   },
   {
-    "__docId__": 67,
+    "__docId__": 88,
     "kind": "method",
     "name": "handleMainPointerButton",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1048,7 +1426,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleMainPointerButton",
     "access": "private",
     "description": "Handles main pointer button events.",
-    "lineNumber": 250,
+    "lineNumber": 418,
     "params": [
       {
         "nullable": null,
@@ -1074,7 +1452,7 @@
     "return": null
   },
   {
-    "__docId__": 69,
+    "__docId__": 90,
     "kind": "method",
     "name": "handleAuxiliaryPointerButton",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1084,7 +1462,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleAuxiliaryPointerButton",
     "access": "private",
     "description": "Handles auxiliary pointer button events.",
-    "lineNumber": 283,
+    "lineNumber": 451,
     "params": [
       {
         "nullable": null,
@@ -1110,7 +1488,7 @@
     "return": null
   },
   {
-    "__docId__": 70,
+    "__docId__": 91,
     "kind": "method",
     "name": "handleSecondaryPointerButton",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1120,7 +1498,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleSecondaryPointerButton",
     "access": "private",
     "description": "Handles secondary pointer button events.",
-    "lineNumber": 295,
+    "lineNumber": 463,
     "params": [
       {
         "nullable": null,
@@ -1146,7 +1524,7 @@
     "return": null
   },
   {
-    "__docId__": 71,
+    "__docId__": 92,
     "kind": "method",
     "name": "handlePointerButtonEvent",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1156,7 +1534,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handlePointerButtonEvent",
     "access": "private",
     "description": "Handles pointer events.",
-    "lineNumber": 307,
+    "lineNumber": 475,
     "params": [
       {
         "nullable": null,
@@ -1182,7 +1560,7 @@
     "return": null
   },
   {
-    "__docId__": 72,
+    "__docId__": 93,
     "kind": "method",
     "name": "handleTouchEvent",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1192,7 +1570,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleTouchEvent",
     "access": "private",
     "description": "Handles touch start and end events.",
-    "lineNumber": 337,
+    "lineNumber": 505,
     "params": [
       {
         "nullable": null,
@@ -1218,7 +1596,7 @@
     "return": null
   },
   {
-    "__docId__": 73,
+    "__docId__": 94,
     "kind": "method",
     "name": "handleKeyboardEvent",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1228,7 +1606,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleKeyboardEvent",
     "access": "private",
     "description": "Handles keyboard events.",
-    "lineNumber": 365,
+    "lineNumber": 533,
     "params": [
       {
         "nullable": null,
@@ -1254,7 +1632,7 @@
     "return": null
   },
   {
-    "__docId__": 74,
+    "__docId__": 95,
     "kind": "method",
     "name": "handleWheelEvent",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1264,7 +1642,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleWheelEvent",
     "access": "private",
     "description": "Handles wheel events.",
-    "lineNumber": 386,
+    "lineNumber": 554,
     "params": [
       {
         "nullable": null,
@@ -1280,7 +1658,7 @@
     "return": null
   },
   {
-    "__docId__": 75,
+    "__docId__": 96,
     "kind": "method",
     "name": "handlePointerLockEvent",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1290,12 +1668,12 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handlePointerLockEvent",
     "access": "private",
     "description": "Enables or disables controls based on the pointer lock state.",
-    "lineNumber": 398,
+    "lineNumber": 566,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 76,
+    "__docId__": 97,
     "kind": "method",
     "name": "handleEvent",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1305,7 +1683,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleEvent",
     "access": "public",
     "description": "Handles events.",
-    "lineNumber": 418,
+    "lineNumber": 586,
     "params": [
       {
         "nullable": null,
@@ -1321,7 +1699,7 @@
     "return": null
   },
   {
-    "__docId__": 77,
+    "__docId__": 98,
     "kind": "method",
     "name": "update",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1331,7 +1709,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#update",
     "access": "public",
     "description": "Updates movement and rotation calculations based on time.\n\nThis method should be called before a new frame is rendered.",
-    "lineNumber": 474,
+    "lineNumber": 642,
     "params": [
       {
         "nullable": null,
@@ -1347,7 +1725,7 @@
     "return": null
   },
   {
-    "__docId__": 78,
+    "__docId__": 99,
     "kind": "method",
     "name": "moveTo",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1357,7 +1735,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#moveTo",
     "access": "public",
     "description": "Moves to the given position.",
-    "lineNumber": 488,
+    "lineNumber": 656,
     "params": [
       {
         "nullable": null,
@@ -1380,7 +1758,7 @@
     }
   },
   {
-    "__docId__": 79,
+    "__docId__": 100,
     "kind": "method",
     "name": "lookAt",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1390,7 +1768,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#lookAt",
     "access": "public",
     "description": "Looks at the given point.",
-    "lineNumber": 503,
+    "lineNumber": 671,
     "params": [
       {
         "nullable": null,
@@ -1413,205 +1791,7 @@
     }
   },
   {
-    "__docId__": 80,
-    "kind": "method",
-    "name": "getViewDirection",
-    "memberof": "src/core/DeltaControls.js~DeltaControls",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/core/DeltaControls.js~DeltaControls#getViewDirection",
-    "access": "public",
-    "description": "Returns the current view direction.",
-    "lineNumber": 518,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Vector3"
-        ],
-        "spread": false,
-        "optional": true,
-        "name": "view",
-        "description": "A vector to store the direction in. If none is provided, a new vector will be created."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "Vector3"
-      ],
-      "spread": false,
-      "description": "The normalized view direction."
-    }
-  },
-  {
-    "__docId__": 81,
-    "kind": "method",
-    "name": "getTarget",
-    "memberof": "src/core/DeltaControls.js~DeltaControls",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/core/DeltaControls.js~DeltaControls#getTarget",
-    "access": "public",
-    "description": "Returns the current target.",
-    "lineNumber": 531,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Vector3"
-        ],
-        "spread": false,
-        "optional": true,
-        "name": "target",
-        "description": "A vector to store the target in. If none is provided, a new vector will be created."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "Vector3"
-      ],
-      "spread": false,
-      "description": "The current target."
-    }
-  },
-  {
-    "__docId__": 82,
-    "kind": "method",
-    "name": "setTarget",
-    "memberof": "src/core/DeltaControls.js~DeltaControls",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/core/DeltaControls.js~DeltaControls#setTarget",
-    "access": "public",
-    "description": "Sets the target.",
-    "lineNumber": 553,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Vector3"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "target",
-        "description": "The new target."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "DeltaControls"
-      ],
-      "spread": false,
-      "description": "This instance."
-    }
-  },
-  {
-    "__docId__": 84,
-    "kind": "method",
-    "name": "setPosition",
-    "memberof": "src/core/DeltaControls.js~DeltaControls",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/core/DeltaControls.js~DeltaControls#setPosition",
-    "access": "public",
-    "description": "Sets the position vector.",
-    "lineNumber": 570,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Vector3"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "position",
-        "description": "The new position vector."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "DeltaControls"
-      ],
-      "spread": false,
-      "description": "This instance."
-    }
-  },
-  {
-    "__docId__": 86,
-    "kind": "method",
-    "name": "setQuaternion",
-    "memberof": "src/core/DeltaControls.js~DeltaControls",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/core/DeltaControls.js~DeltaControls#setQuaternion",
-    "access": "public",
-    "description": "Sets the quaternion.",
-    "lineNumber": 587,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Quaternion"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "quaternion",
-        "description": "The new quaternion."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "DeltaControls"
-      ],
-      "spread": false,
-      "description": "This instance."
-    }
-  },
-  {
-    "__docId__": 88,
-    "kind": "method",
-    "name": "setOrbit",
-    "memberof": "src/core/DeltaControls.js~DeltaControls",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/core/DeltaControls.js~DeltaControls#setOrbit",
-    "access": "public",
-    "description": "Changes the control mode to first or third person perspective.",
-    "lineNumber": 604,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Boolean"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "orbit",
-        "description": "Enable third person perspective."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "DeltaControls"
-      ],
-      "spread": false,
-      "description": "This instance."
-    }
-  },
-  {
-    "__docId__": 89,
+    "__docId__": 101,
     "kind": "method",
     "name": "setPointerLocked",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1621,7 +1801,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#setPointerLocked",
     "access": "private",
     "description": "Locks or unlocks the pointer.",
-    "lineNumber": 627,
+    "lineNumber": 686,
     "params": [
       {
         "nullable": null,
@@ -1639,7 +1819,7 @@
     "return": null
   },
   {
-    "__docId__": 90,
+    "__docId__": 102,
     "kind": "method",
     "name": "setEnabled",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1649,7 +1829,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#setEnabled",
     "access": "public",
     "description": "Enables or disables the controls.",
-    "lineNumber": 651,
+    "lineNumber": 711,
     "params": [
       {
         "nullable": null,
@@ -1664,10 +1844,17 @@
         "description": "Whether the controls should be enabled or disabled."
       }
     ],
-    "return": null
+    "return": {
+      "nullable": null,
+      "types": [
+        "DeltaControls"
+      ],
+      "spread": false,
+      "description": "This instance."
+    }
   },
   {
-    "__docId__": 92,
+    "__docId__": 104,
     "kind": "method",
     "name": "dispose",
     "memberof": "src/core/DeltaControls.js~DeltaControls",
@@ -1677,12 +1864,12 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#dispose",
     "access": "public",
     "description": "Removes all event listeners and unlocks the pointer.",
-    "lineNumber": 692,
+    "lineNumber": 754,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 93,
+    "__docId__": 105,
     "kind": "file",
     "name": "src/core/index.js",
     "content": "/**\r\n * A collection of core components.\r\n *\r\n * @module delta-controls/core\r\n */\r\n\r\nexport { Action } from \"./Action.js\";\r\nexport { DeltaControls } from \"./DeltaControls.js\";\r\n",
@@ -1693,7 +1880,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 94,
+    "__docId__": 106,
     "kind": "file",
     "name": "src/index.js",
     "content": "/**\r\n * Exposure of the library components.\r\n *\r\n * @module delta-controls\r\n */\r\n\r\nexport {\r\n\tAction,\r\n\tDeltaControls\r\n} from \"./core\";\r\n\r\nexport {\r\n\tKeyCode,\r\n\tPointerButton\r\n} from \"./input\";\r\n\r\nexport {\r\n\tMovementState,\r\n\tRotationManager,\r\n\tTranslationManager\r\n} from \"./managers\";\r\n\r\nexport {\r\n\tGeneralSettings,\r\n\tKeyBindings,\r\n\tPointerSettings,\r\n\tRotationSettings,\r\n\tSensitivitySettings,\r\n\tTranslationSettings,\r\n\tSettings,\r\n\tZoomSettings\r\n} from \"./settings\";\r\n\r\nexport {\r\n\tDirection,\r\n\tMovementStrategy,\r\n\tStrategy,\r\n\tZoomStrategy\r\n} from \"./strategies\";\r\n",
@@ -1704,7 +1891,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 95,
+    "__docId__": 107,
     "kind": "file",
     "name": "src/input/index.js",
     "content": "/**\r\n * A collection of classes related to input values.\r\n *\r\n * @module delta-controls/input\r\n */\r\n\r\nexport { KeyCode } from \"./KeyCode.js\";\r\nexport { PointerButton } from \"./PointerButton.js\";\r\n",
@@ -1715,7 +1902,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 96,
+    "__docId__": 108,
     "kind": "file",
     "name": "src/input/KeyCode.js",
     "content": "/**\r\n * A handler for the KeyCode Proxy.\r\n *\r\n * @type {Object}\r\n * @private\r\n */\r\n\r\nconst KeyCodeHandler = {\r\n\r\n\t/**\r\n\t * Handles key code lookups.\r\n\t *\r\n\t * @param {Object} target - The KeyCode enumeration.\r\n\t * @param {String} name - A potential key code identifier.\r\n\t * @return {Number} A key code.\r\n\t */\r\n\r\n\tget(target, name) {\r\n\r\n\t\treturn (name in target) ?\r\n\t\t\ttarget[name] : (name.length === 1) ?\r\n\t\t\t\tname.toUpperCase().charCodeAt(0) : undefined;\r\n\r\n\t}\r\n\r\n};\r\n\r\n/**\r\n * An enumeration of key codes.\r\n *\r\n * Special keys are listed explicitly. Simple character keys [A-Z] are computed\r\n * on demand. For instance, `KeyCode.A` will return the key code for the A key.\r\n *\r\n * @type {Object}\r\n * @property {Number} BACKSPACE - Backspace key.\r\n * @property {Number} TAB - Tab key.\r\n * @property {Number} ENTER - Enter key.\r\n * @property {Number} SHIFT - Shift key.\r\n * @property {Number} CTRL - Control key.\r\n * @property {Number} ALT - Alt key.\r\n * @property {Number} PAUSE - Pause key.\r\n * @property {Number} CAPS_LOCK - Caps lock key.\r\n * @property {Number} ESCAPE - Escape key.\r\n * @property {Number} SPACE - Space bar.\r\n * @property {Number} PAGE_UP - Page up key.\r\n * @property {Number} PAGE_DOWN - Page down key.\r\n * @property {Number} END - End key.\r\n * @property {Number} HOME - Home key.\r\n * @property {Number} LEFT - Left arrow key.\r\n * @property {Number} UP - Up arrow key.\r\n * @property {Number} RIGHT - Right arrow key.\r\n * @property {Number} DOWN - Down arrow key.\r\n * @property {Number} INSERT - Insert key.\r\n * @property {Number} DELETE - Delete key.\r\n * @property {Number} META_LEFT - Left OS key.\r\n * @property {Number} META_RIGHT - Right OS key.\r\n * @property {Number} SELECT - Select key.\r\n * @property {Number} NUMPAD_0 - Numpad 0 key.\r\n * @property {Number} NUMPAD_1 - Numpad 1 key.\r\n * @property {Number} NUMPAD_2 - Numpad 2 key.\r\n * @property {Number} NUMPAD_3 - Numpad 3 key.\r\n * @property {Number} NUMPAD_4 - Numpad 4 key.\r\n * @property {Number} NUMPAD_5 - Numpad 5 key.\r\n * @property {Number} NUMPAD_6 - Numpad 6 key.\r\n * @property {Number} NUMPAD_7 - Numpad 7 key.\r\n * @property {Number} NUMPAD_8 - Numpad 8 key.\r\n * @property {Number} NUMPAD_9 - Numpad 9 key.\r\n * @property {Number} MULTIPLY - Multiply key.\r\n * @property {Number} ADD - Add key.\r\n * @property {Number} SUBTRACT - Subtract key.\r\n * @property {Number} DECIMAL_POINT - Decimal point key.\r\n * @property {Number} DIVIDE - Divide key.\r\n * @property {Number} F1 - F1 key.\r\n * @property {Number} F2 - F2 key.\r\n * @property {Number} F3 - F3 key.\r\n * @property {Number} F4 - F4 key.\r\n * @property {Number} F5 - F5 key.\r\n * @property {Number} F6 - F6 key.\r\n * @property {Number} F7 - F7 key.\r\n * @property {Number} F8 - F8 key.\r\n * @property {Number} F9 - F9 key.\r\n * @property {Number} F10 - F10 key.\r\n * @property {Number} F11 - F11 key.\r\n * @property {Number} F12 - F12 key.\r\n * @property {Number} NUM_LOCK - Num lock key.\r\n * @property {Number} SCROLL_LOCK - Scroll lock key.\r\n * @property {Number} SEMICOLON - Semicolon key.\r\n * @property {Number} EQUAL_SIGN - Equal sign key.\r\n * @property {Number} COMMA - Comma key.\r\n * @property {Number} DASH - Dash key.\r\n * @property {Number} PERIOD - Period key.\r\n * @property {Number} FORWARD_SLASH - Forward slash key.\r\n * @property {Number} GRAVE_ACCENT - Grave accent key.\r\n * @property {Number} OPEN_BRACKET - Open bracket key.\r\n * @property {Number} BACK_SLASH - Back slash key.\r\n * @property {Number} CLOSE_BRACKET - Close bracket key.\r\n * @property {Number} SINGLE_QUOTE - Single quote key.\r\n */\r\n\r\nexport const KeyCode = new Proxy({\r\n\r\n\tBACKSPACE: 8,\r\n\tTAB: 9,\r\n\tENTER: 13,\r\n\r\n\tSHIFT: 16,\r\n\tCTRL: 17,\r\n\tALT: 18,\r\n\r\n\tPAUSE: 19,\r\n\tCAPS_LOCK: 20,\r\n\tESCAPE: 27,\r\n\r\n\tSPACE: 32,\r\n\tPAGE_UP: 33,\r\n\tPAGE_DOWN: 34,\r\n\tEND: 35,\r\n\tHOME: 36,\r\n\tLEFT: 37,\r\n\tUP: 38,\r\n\tRIGHT: 39,\r\n\tDOWN: 40,\r\n\r\n\tINSERT: 45,\r\n\tDELETE: 46,\r\n\r\n\tMETA_LEFT: 91,\r\n\tMETA_RIGHT: 92,\r\n\tSELECT: 93,\r\n\r\n\tNUMPAD_0: 96,\r\n\tNUMPAD_1: 97,\r\n\tNUMPAD_2: 98,\r\n\tNUMPAD_3: 99,\r\n\tNUMPAD_4: 100,\r\n\tNUMPAD_5: 101,\r\n\tNUMPAD_6: 102,\r\n\tNUMPAD_7: 103,\r\n\tNUMPAD_8: 104,\r\n\tNUMPAD_9: 105,\r\n\tMULTIPLY: 106,\r\n\tADD: 107,\r\n\tSUBTRACT: 109,\r\n\tDECIMAL_POINT: 110,\r\n\tDIVIDE: 111,\r\n\r\n\tF1: 112,\r\n\tF2: 113,\r\n\tF3: 114,\r\n\tF4: 115,\r\n\tF5: 116,\r\n\tF6: 117,\r\n\tF7: 118,\r\n\tF8: 119,\r\n\tF9: 120,\r\n\tF10: 121,\r\n\tF11: 122,\r\n\tF12: 123,\r\n\r\n\tNUM_LOCK: 144,\r\n\tSCROLL_LOCK: 145,\r\n\r\n\tSEMICOLON: 186,\r\n\tEQUAL_SIGN: 187,\r\n\tCOMMA: 188,\r\n\tDASH: 189,\r\n\tPERIOD: 190,\r\n\tFORWARD_SLASH: 191,\r\n\tGRAVE_ACCENT: 192,\r\n\r\n\tOPEN_BRACKET: 219,\r\n\tBACK_SLASH: 220,\r\n\tCLOSE_BRACKET: 221,\r\n\tSINGLE_QUOTE: 222\r\n\r\n}, KeyCodeHandler);\r\n",
@@ -1726,7 +1913,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 97,
+    "__docId__": 109,
     "kind": "variable",
     "name": "KeyCodeHandler",
     "memberof": "src/input/KeyCode.js",
@@ -1749,7 +1936,7 @@
     "ignore": true
   },
   {
-    "__docId__": 98,
+    "__docId__": 110,
     "kind": "variable",
     "name": "KeyCode",
     "memberof": "src/input/KeyCode.js",
@@ -2403,7 +2590,7 @@
     }
   },
   {
-    "__docId__": 99,
+    "__docId__": 111,
     "kind": "file",
     "name": "src/input/PointerButton.js",
     "content": "/**\r\n * An enumeration of pointer buttons.\r\n *\r\n * @type {Object}\r\n * @property {Number} MAIN - The main mouse button, usually the left one.\r\n * @property {Number} AUXILIARY - The auxiliary mouse button, usually the middle one.\r\n * @property {Number} SECONDARY - The secondary mouse button, usually the right one.\r\n */\r\n\r\nexport const PointerButton = {\r\n\r\n\tMAIN: 0,\r\n\tAUXILIARY: 1,\r\n\tSECONDARY: 2\r\n\r\n};\r\n",
@@ -2414,7 +2601,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 100,
+    "__docId__": 112,
     "kind": "variable",
     "name": "PointerButton",
     "memberof": "src/input/PointerButton.js",
@@ -2468,87 +2655,7 @@
     }
   },
   {
-    "__docId__": 101,
-    "kind": "file",
-    "name": "src/managers/axes.js",
-    "content": "import { Vector3 } from \"math-ds\";\r\n\r\n/**\r\n * The X-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n */\r\n\r\nexport const x = new Vector3(1, 0, 0);\r\n\r\n/**\r\n * The Y-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n */\r\n\r\nexport const y = new Vector3(0, 1, 0);\r\n\r\n/**\r\n * The Z-axis.\r\n *\r\n * @type {Vector3}\r\n * @ignore\r\n */\r\n\r\nexport const z = new Vector3(0, 0, 1);\r\n",
-    "static": true,
-    "longname": "C:/Users/Raoul/Sourcecode/JavaScript/delta-controls/src/managers/axes.js",
-    "access": "public",
-    "description": null,
-    "lineNumber": 1
-  },
-  {
-    "__docId__": 102,
-    "kind": "variable",
-    "name": "x",
-    "memberof": "src/managers/axes.js",
-    "static": true,
-    "longname": "src/managers/axes.js~x",
-    "access": "public",
-    "export": true,
-    "importPath": "delta-controls/src/managers/axes.js",
-    "importStyle": "{x}",
-    "description": "The X-axis.",
-    "lineNumber": 10,
-    "ignore": true,
-    "type": {
-      "nullable": null,
-      "types": [
-        "Vector3"
-      ],
-      "spread": false,
-      "description": null
-    }
-  },
-  {
-    "__docId__": 103,
-    "kind": "variable",
-    "name": "y",
-    "memberof": "src/managers/axes.js",
-    "static": true,
-    "longname": "src/managers/axes.js~y",
-    "access": "public",
-    "export": true,
-    "importPath": "delta-controls/src/managers/axes.js",
-    "importStyle": "{y}",
-    "description": "The Y-axis.",
-    "lineNumber": 19,
-    "ignore": true,
-    "type": {
-      "nullable": null,
-      "types": [
-        "Vector3"
-      ],
-      "spread": false,
-      "description": null
-    }
-  },
-  {
-    "__docId__": 104,
-    "kind": "variable",
-    "name": "z",
-    "memberof": "src/managers/axes.js",
-    "static": true,
-    "longname": "src/managers/axes.js~z",
-    "access": "public",
-    "export": true,
-    "importPath": "delta-controls/src/managers/axes.js",
-    "importStyle": "{z}",
-    "description": "The Z-axis.",
-    "lineNumber": 28,
-    "ignore": true,
-    "type": {
-      "nullable": null,
-      "types": [
-        "Vector3"
-      ],
-      "spread": false,
-      "description": null
-    }
-  },
-  {
-    "__docId__": 105,
+    "__docId__": 113,
     "kind": "file",
     "name": "src/managers/index.js",
     "content": "/**\r\n * A collection of managers.\r\n *\r\n * @module delta-controls/managers\r\n */\r\n\r\nexport { MovementState } from \"./MovementState.js\";\r\nexport { RotationManager } from \"./RotationManager.js\";\r\nexport { TranslationManager } from \"./TranslationManager.js\";\r\n",
@@ -2559,7 +2666,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 106,
+    "__docId__": 114,
     "kind": "file",
     "name": "src/managers/MovementState.js",
     "content": "/**\r\n * An collection of movement flags.\r\n */\r\n\r\nexport class MovementState {\r\n\r\n\t/**\r\n\t * Constructs a new movement state.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * Movement to the left.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.left = false;\r\n\r\n\t\t/**\r\n\t\t * Movement to the right.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.right = false;\r\n\r\n\t\t/**\r\n\t\t * Forward motion.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.forward = false;\r\n\r\n\t\t/**\r\n\t\t * Backward motion.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.backward = false;\r\n\r\n\t\t/**\r\n\t\t * Ascension.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.up = false;\r\n\r\n\t\t/**\r\n\t\t * Descent.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.down = false;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Resets this state.\r\n\t *\r\n\t * @return {MovementState} This state.\r\n\t */\r\n\r\n\treset() {\r\n\r\n\t\tthis.left = false;\r\n\t\tthis.right = false;\r\n\t\tthis.forward = false;\r\n\t\tthis.backward = false;\r\n\t\tthis.up = false;\r\n\t\tthis.down = false;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -2570,7 +2677,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 107,
+    "__docId__": 115,
     "kind": "class",
     "name": "MovementState",
     "memberof": "src/managers/MovementState.js",
@@ -2585,7 +2692,7 @@
     "interface": false
   },
   {
-    "__docId__": 108,
+    "__docId__": 116,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/managers/MovementState.js~MovementState",
@@ -2598,7 +2705,7 @@
     "lineNumber": 11
   },
   {
-    "__docId__": 109,
+    "__docId__": 117,
     "kind": "member",
     "name": "left",
     "memberof": "src/managers/MovementState.js~MovementState",
@@ -2617,7 +2724,7 @@
     }
   },
   {
-    "__docId__": 110,
+    "__docId__": 118,
     "kind": "member",
     "name": "right",
     "memberof": "src/managers/MovementState.js~MovementState",
@@ -2636,7 +2743,7 @@
     }
   },
   {
-    "__docId__": 111,
+    "__docId__": 119,
     "kind": "member",
     "name": "forward",
     "memberof": "src/managers/MovementState.js~MovementState",
@@ -2655,7 +2762,7 @@
     }
   },
   {
-    "__docId__": 112,
+    "__docId__": 120,
     "kind": "member",
     "name": "backward",
     "memberof": "src/managers/MovementState.js~MovementState",
@@ -2674,7 +2781,7 @@
     }
   },
   {
-    "__docId__": 113,
+    "__docId__": 121,
     "kind": "member",
     "name": "up",
     "memberof": "src/managers/MovementState.js~MovementState",
@@ -2693,7 +2800,7 @@
     }
   },
   {
-    "__docId__": 114,
+    "__docId__": 122,
     "kind": "member",
     "name": "down",
     "memberof": "src/managers/MovementState.js~MovementState",
@@ -2712,7 +2819,7 @@
     }
   },
   {
-    "__docId__": 115,
+    "__docId__": 123,
     "kind": "method",
     "name": "reset",
     "memberof": "src/managers/MovementState.js~MovementState",
@@ -2734,10 +2841,10 @@
     "params": []
   },
   {
-    "__docId__": 122,
+    "__docId__": 130,
     "kind": "file",
     "name": "src/managers/RotationManager.js",
-    "content": "import { Matrix4, Spherical, Vector3 } from \"math-ds\";\r\nimport * as axes from \"./axes.js\";\r\n\r\n/**\r\n * Two PI.\r\n *\r\n * @type {Number}\r\n * @private\r\n */\r\n\r\nconst TWO_PI = Math.PI * 2;\r\n\r\n/**\r\n * A vector.\r\n *\r\n * @type {Vector3}\r\n * @private\r\n */\r\n\r\nconst v = new Vector3();\r\n\r\n/**\r\n * A matrix.\r\n *\r\n * @type {Matrix4}\r\n * @private\r\n */\r\n\r\nconst m = new Matrix4();\r\n\r\n/**\r\n * A rotation manager.\r\n */\r\n\r\nexport class RotationManager {\r\n\r\n\t/**\r\n\t * Constructs a new rotation manager.\r\n\t *\r\n\t * @param {Vector3} position - A position.\r\n\t * @param {Quaternion} quaternion - A quaternion.\r\n\t * @param {Vector3} target - A target.\r\n\t * @param {Settings} settings - The settings.\r\n\t */\r\n\r\n\tconstructor(position, quaternion, target, settings) {\r\n\r\n\t\t/**\r\n\t\t * The position that will be modified.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.position = position;\r\n\r\n\t\t/**\r\n\t\t * The quaternion that will be modified.\r\n\t\t *\r\n\t\t * @type {Quaternion}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\r\n\t\t/**\r\n\t\t * A target.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.target = target;\r\n\r\n\t\t/**\r\n\t\t * The settings.\r\n\t\t *\r\n\t\t * @type {Settings}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.settings = settings;\r\n\r\n\t\t/**\r\n\t\t * The up vector. Must be normalized.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t */\r\n\r\n\t\tthis.up = new Vector3();\r\n\t\tthis.up.copy(axes.y);\r\n\r\n\t\t/**\r\n\t\t * A spherical coordinate system.\r\n\t\t *\r\n\t\t * @type {Spherical}\r\n\t\t */\r\n\r\n\t\tthis.spherical = new Spherical();\r\n\r\n\t\t/**\r\n\t\t * A pivot offset. Only affects third person orbiting.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t */\r\n\r\n\t\tthis.pivotOffset = new Vector3();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Updates the quaternion.\r\n\t *\r\n\t * @param {RotationManager} This manager.\r\n\t */\r\n\r\n\tupdateQuaternion() {\r\n\r\n\t\tif(this.settings.general.orbit) {\r\n\r\n\t\t\tm.lookAt(v.subVectors(this.position, this.target), this.pivotOffset, this.up);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tm.lookAt(v.set(0, 0, 0), this.target.setFromSpherical(this.spherical), this.up);\r\n\r\n\t\t}\r\n\r\n\t\tthis.quaternion.setFromRotationMatrix(m);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Adjusts the spherical system.\r\n\t *\r\n\t * @param {Number} theta - The angle to add to theta in radians.\r\n\t * @param {Number} phi - The angle to add to phi in radians.\r\n\t * @param {RotationManager} This manager.\r\n\t */\r\n\r\n\tadjustSpherical(theta, phi) {\r\n\r\n\t\tconst settings = this.settings;\r\n\t\tconst orbit = settings.general.orbit;\r\n\t\tconst rotation = settings.rotation;\r\n\t\tconst s = this.spherical;\r\n\r\n\t\ts.theta = !rotation.invertX ? s.theta - theta : s.theta + theta;\r\n\t\ts.phi = ((orbit || rotation.invertY) && !(orbit && rotation.invertY)) ? s.phi - phi : s.phi + phi;\r\n\r\n\t\t// Restrict theta and phi.\r\n\t\ts.theta = Math.min(Math.max(s.theta, rotation.minTheta), rotation.maxTheta);\r\n\t\ts.phi = Math.min(Math.max(s.phi, rotation.minPhi), rotation.maxPhi);\r\n\t\ts.theta %= TWO_PI;\r\n\t\ts.makeSafe();\r\n\r\n\t\tif(orbit) {\r\n\r\n\t\t\t// Keep the position up-to-date.\r\n\t\t\tthis.position.setFromSpherical(s).add(this.target);\r\n\r\n\t\t}\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Zooms in or out.\r\n\t *\r\n\t * @param {Number} sign - The zoom sign. Possible values are [-1, 0, 1].\r\n\t * @param {RotationManager} This manager.\r\n\t */\r\n\r\n\tzoom(sign) {\r\n\r\n\t\tconst settings = this.settings;\r\n\t\tconst general = settings.general;\r\n\t\tconst sensitivity = settings.sensitivity;\r\n\t\tconst zoom = settings.zoom;\r\n\t\tconst s = this.spherical;\r\n\r\n\t\tlet amount, min, max;\r\n\r\n\t\tif(general.orbit && zoom.enabled) {\r\n\r\n\t\t\tamount = sign * zoom.step * sensitivity.zoom;\r\n\r\n\t\t\tif(zoom.invert) {\r\n\r\n\t\t\t\tamount = -amount;\r\n\r\n\t\t\t}\r\n\r\n\t\t\tmin = Math.max(zoom.minDistance, 1e-6);\r\n\t\t\tmax = Math.min(zoom.maxDistance, Infinity);\r\n\r\n\t\t\ts.radius = Math.min(Math.max(s.radius + amount, min), max);\r\n\t\t\tthis.position.setFromSpherical(s).add(this.target);\r\n\r\n\t\t}\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Updates rotation calculations based on time.\r\n\t *\r\n\t * @param {Number} delta - The time since the last update in seconds.\r\n\t */\r\n\r\n\tupdate(delta) {\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Looks at the given point.\r\n\t *\r\n\t * @param {Vector3} point - The target point.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tlookAt(point) {\r\n\r\n\t\tconst spherical = this.spherical;\r\n\t\tconst position = this.position;\r\n\t\tconst target = this.target;\r\n\r\n\t\ttarget.copy(point);\r\n\r\n\t\tif(this.settings.general.orbit) {\r\n\r\n\t\t\tv.subVectors(position, target);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tv.subVectors(target, position).normalize();\r\n\r\n\t\t}\r\n\r\n\t\tspherical.setFromVector3(v);\r\n\t\tspherical.radius = Math.max(spherical.radius, 1e-6);\r\n\t\tthis.updateQuaternion();\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the current view direction.\r\n\t *\r\n\t * @param {Vector3} [view] - A vector to store the direction in. If none is provided, a new vector will be created.\r\n\t * @return {Vector3} The normalized view direction.\r\n\t */\r\n\r\n\tgetViewDirection(view = new Vector3()) {\r\n\r\n\t\tview.setFromSpherical(this.spherical).normalize();\r\n\r\n\t\tif(this.settings.general.orbit) {\r\n\r\n\t\t\tview.negate();\r\n\r\n\t\t}\r\n\r\n\t\treturn view;\r\n\r\n\t}\r\n\r\n}\r\n",
+    "content": "import { Matrix4, Spherical, Vector3 } from \"math-ds\";\r\n\r\n/**\r\n * Two PI.\r\n *\r\n * @type {Number}\r\n * @private\r\n */\r\n\r\nconst TWO_PI = Math.PI * 2;\r\n\r\n/**\r\n * A vector.\r\n *\r\n * @type {Vector3}\r\n * @private\r\n */\r\n\r\nconst v = new Vector3();\r\n\r\n/**\r\n * A matrix.\r\n *\r\n * @type {Matrix4}\r\n * @private\r\n */\r\n\r\nconst m = new Matrix4();\r\n\r\n/**\r\n * A rotation manager.\r\n */\r\n\r\nexport class RotationManager {\r\n\r\n\t/**\r\n\t * Constructs a new rotation manager.\r\n\t *\r\n\t * @param {Vector3} position - A position.\r\n\t * @param {Quaternion} quaternion - A quaternion.\r\n\t * @param {Vector3} target - A target.\r\n\t * @param {Settings} settings - The settings.\r\n\t */\r\n\r\n\tconstructor(position, quaternion, target, settings) {\r\n\r\n\t\t/**\r\n\t\t * The position that will be modified.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.position = position;\r\n\r\n\t\t/**\r\n\t\t * The quaternion that will be modified.\r\n\t\t *\r\n\t\t * @type {Quaternion}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\r\n\t\t/**\r\n\t\t * A target.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.target = target;\r\n\r\n\t\t/**\r\n\t\t * The settings.\r\n\t\t *\r\n\t\t * @type {Settings}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.settings = settings;\r\n\r\n\t\t/**\r\n\t\t * A spherical coordinate system.\r\n\t\t *\r\n\t\t * @type {Spherical}\r\n\t\t */\r\n\r\n\t\tthis.spherical = new Spherical();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the position.\r\n\t *\r\n\t * @param {Vector3} position - A position.\r\n\t * @return {RotationManager} This manager.\r\n\t */\r\n\r\n\tsetPosition(position) {\r\n\r\n\t\tthis.position = position;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the quaternion.\r\n\t *\r\n\t * @param {Quaternion} quaternion - A quaternion.\r\n\t * @return {RotationManager} This manager.\r\n\t */\r\n\r\n\tsetQuaternion(quaternion) {\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the target.\r\n\t *\r\n\t * @param {Vector3} target - A target.\r\n\t * @return {RotationManager} This manager.\r\n\t */\r\n\r\n\tsetTarget(target) {\r\n\r\n\t\tthis.target = target;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Updates the quaternion.\r\n\t *\r\n\t * @return {RotationManager} This manager.\r\n\t */\r\n\r\n\tupdateQuaternion() {\r\n\r\n\t\tconst settings = this.settings;\r\n\t\tconst rotation = settings.rotation;\r\n\r\n\t\tif(settings.general.orbit) {\r\n\r\n\t\t\tm.lookAt(v.subVectors(this.position, this.target), rotation.pivotOffset, rotation.up);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tm.lookAt(v.set(0, 0, 0), this.target.setFromSpherical(this.spherical), rotation.up);\r\n\r\n\t\t}\r\n\r\n\t\tthis.quaternion.setFromRotationMatrix(m);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Adjusts the spherical system.\r\n\t *\r\n\t * @param {Number} theta - The angle to add to theta in radians.\r\n\t * @param {Number} phi - The angle to add to phi in radians.\r\n\t * @return {RotationManager} This manager.\r\n\t */\r\n\r\n\tadjustSpherical(theta, phi) {\r\n\r\n\t\tconst settings = this.settings;\r\n\t\tconst orbit = settings.general.orbit;\r\n\t\tconst rotation = settings.rotation;\r\n\t\tconst s = this.spherical;\r\n\r\n\t\ts.theta = !rotation.invertX ? s.theta - theta : s.theta + theta;\r\n\t\ts.phi = ((orbit || rotation.invertY) && !(orbit && rotation.invertY)) ? s.phi - phi : s.phi + phi;\r\n\r\n\t\t// Restrict theta and phi.\r\n\t\ts.theta = Math.min(Math.max(s.theta, rotation.minAzimuthalAngle), rotation.maxAzimuthalAngle);\r\n\t\ts.phi = Math.min(Math.max(s.phi, rotation.minPolarAngle), rotation.maxPolarAngle);\r\n\t\ts.theta %= TWO_PI;\r\n\t\ts.makeSafe();\r\n\r\n\t\tif(orbit) {\r\n\r\n\t\t\t// Keep the position up-to-date.\r\n\t\t\tthis.position.setFromSpherical(s).add(this.target);\r\n\r\n\t\t}\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Zooms in or out.\r\n\t *\r\n\t * @param {Number} sign - The zoom sign. Possible values are [-1, 0, 1].\r\n\t * @return {RotationManager} This manager.\r\n\t */\r\n\r\n\tzoom(sign) {\r\n\r\n\t\tconst settings = this.settings;\r\n\t\tconst general = settings.general;\r\n\t\tconst sensitivity = settings.sensitivity;\r\n\t\tconst zoom = settings.zoom;\r\n\t\tconst s = this.spherical;\r\n\r\n\t\tlet amount, min, max;\r\n\r\n\t\tif(general.orbit && zoom.enabled) {\r\n\r\n\t\t\tamount = sign * sensitivity.zoom;\r\n\r\n\t\t\tif(zoom.invert) {\r\n\r\n\t\t\t\tamount = -amount;\r\n\r\n\t\t\t}\r\n\r\n\t\t\tmin = Math.max(zoom.minDistance, 1e-6);\r\n\t\t\tmax = Math.min(zoom.maxDistance, Infinity);\r\n\r\n\t\t\ts.radius = Math.min(Math.max(s.radius + amount, min), max);\r\n\t\t\tthis.position.setFromSpherical(s).add(this.target);\r\n\r\n\t\t}\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Updates rotation calculations based on time.\r\n\t *\r\n\t * @param {Number} delta - The time since the last update in seconds.\r\n\t */\r\n\r\n\tupdate(delta) {\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Looks at the given point.\r\n\t *\r\n\t * @param {Vector3} point - The target point.\r\n\t * @return {RotationManager} This manager.\r\n\t */\r\n\r\n\tlookAt(point) {\r\n\r\n\t\tconst spherical = this.spherical;\r\n\t\tconst position = this.position;\r\n\t\tconst target = this.target;\r\n\r\n\t\ttarget.copy(point);\r\n\r\n\t\tif(this.settings.general.orbit) {\r\n\r\n\t\t\tv.subVectors(position, target);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tv.subVectors(target, position).normalize();\r\n\r\n\t\t}\r\n\r\n\t\tspherical.setFromVector3(v);\r\n\t\tspherical.radius = Math.max(spherical.radius, 1e-6);\r\n\t\tthis.updateQuaternion();\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the current view direction.\r\n\t *\r\n\t * @param {Vector3} [view] - A vector to store the direction in. If none is provided, a new vector will be created.\r\n\t * @return {Vector3} The normalized view direction.\r\n\t */\r\n\r\n\tgetViewDirection(view = new Vector3()) {\r\n\r\n\t\tview.setFromSpherical(this.spherical).normalize();\r\n\r\n\t\tif(this.settings.general.orbit) {\r\n\r\n\t\t\tview.negate();\r\n\r\n\t\t}\r\n\r\n\t\treturn view;\r\n\r\n\t}\r\n\r\n}\r\n",
     "static": true,
     "longname": "C:/Users/Raoul/Sourcecode/JavaScript/delta-controls/src/managers/RotationManager.js",
     "access": "public",
@@ -2745,7 +2852,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 123,
+    "__docId__": 131,
     "kind": "variable",
     "name": "TWO_PI",
     "memberof": "src/managers/RotationManager.js",
@@ -2756,7 +2863,7 @@
     "importPath": "delta-controls/src/managers/RotationManager.js",
     "importStyle": null,
     "description": "Two PI.",
-    "lineNumber": 11,
+    "lineNumber": 10,
     "type": {
       "nullable": null,
       "types": [
@@ -2768,7 +2875,7 @@
     "ignore": true
   },
   {
-    "__docId__": 124,
+    "__docId__": 132,
     "kind": "variable",
     "name": "v",
     "memberof": "src/managers/RotationManager.js",
@@ -2779,7 +2886,7 @@
     "importPath": "delta-controls/src/managers/RotationManager.js",
     "importStyle": null,
     "description": "A vector.",
-    "lineNumber": 20,
+    "lineNumber": 19,
     "type": {
       "nullable": null,
       "types": [
@@ -2791,7 +2898,7 @@
     "ignore": true
   },
   {
-    "__docId__": 125,
+    "__docId__": 133,
     "kind": "variable",
     "name": "m",
     "memberof": "src/managers/RotationManager.js",
@@ -2802,7 +2909,7 @@
     "importPath": "delta-controls/src/managers/RotationManager.js",
     "importStyle": null,
     "description": "A matrix.",
-    "lineNumber": 29,
+    "lineNumber": 28,
     "type": {
       "nullable": null,
       "types": [
@@ -2814,7 +2921,7 @@
     "ignore": true
   },
   {
-    "__docId__": 126,
+    "__docId__": 134,
     "kind": "class",
     "name": "RotationManager",
     "memberof": "src/managers/RotationManager.js",
@@ -2825,11 +2932,11 @@
     "importPath": "delta-controls/src/managers/RotationManager.js",
     "importStyle": "{RotationManager}",
     "description": "A rotation manager.",
-    "lineNumber": 35,
+    "lineNumber": 34,
     "interface": false
   },
   {
-    "__docId__": 127,
+    "__docId__": 135,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/managers/RotationManager.js~RotationManager",
@@ -2839,7 +2946,7 @@
     "longname": "src/managers/RotationManager.js~RotationManager#constructor",
     "access": "public",
     "description": "Constructs a new rotation manager.",
-    "lineNumber": 46,
+    "lineNumber": 45,
     "params": [
       {
         "nullable": null,
@@ -2884,7 +2991,7 @@
     ]
   },
   {
-    "__docId__": 128,
+    "__docId__": 136,
     "kind": "member",
     "name": "position",
     "memberof": "src/managers/RotationManager.js~RotationManager",
@@ -2892,7 +2999,7 @@
     "longname": "src/managers/RotationManager.js~RotationManager#position",
     "access": "private",
     "description": "The position that will be modified.",
-    "lineNumber": 55,
+    "lineNumber": 54,
     "type": {
       "nullable": null,
       "types": [
@@ -2903,7 +3010,7 @@
     }
   },
   {
-    "__docId__": 129,
+    "__docId__": 137,
     "kind": "member",
     "name": "quaternion",
     "memberof": "src/managers/RotationManager.js~RotationManager",
@@ -2911,7 +3018,7 @@
     "longname": "src/managers/RotationManager.js~RotationManager#quaternion",
     "access": "private",
     "description": "The quaternion that will be modified.",
-    "lineNumber": 64,
+    "lineNumber": 63,
     "type": {
       "nullable": null,
       "types": [
@@ -2922,7 +3029,7 @@
     }
   },
   {
-    "__docId__": 130,
+    "__docId__": 138,
     "kind": "member",
     "name": "target",
     "memberof": "src/managers/RotationManager.js~RotationManager",
@@ -2930,7 +3037,7 @@
     "longname": "src/managers/RotationManager.js~RotationManager#target",
     "access": "private",
     "description": "A target.",
-    "lineNumber": 73,
+    "lineNumber": 72,
     "type": {
       "nullable": null,
       "types": [
@@ -2941,7 +3048,7 @@
     }
   },
   {
-    "__docId__": 131,
+    "__docId__": 139,
     "kind": "member",
     "name": "settings",
     "memberof": "src/managers/RotationManager.js~RotationManager",
@@ -2949,7 +3056,7 @@
     "longname": "src/managers/RotationManager.js~RotationManager#settings",
     "access": "private",
     "description": "The settings.",
-    "lineNumber": 82,
+    "lineNumber": 81,
     "type": {
       "nullable": null,
       "types": [
@@ -2960,26 +3067,7 @@
     }
   },
   {
-    "__docId__": 132,
-    "kind": "member",
-    "name": "up",
-    "memberof": "src/managers/RotationManager.js~RotationManager",
-    "static": false,
-    "longname": "src/managers/RotationManager.js~RotationManager#up",
-    "access": "public",
-    "description": "The up vector. Must be normalized.",
-    "lineNumber": 90,
-    "type": {
-      "nullable": null,
-      "types": [
-        "Vector3"
-      ],
-      "spread": false,
-      "description": null
-    }
-  },
-  {
-    "__docId__": 133,
+    "__docId__": 140,
     "kind": "member",
     "name": "spherical",
     "memberof": "src/managers/RotationManager.js~RotationManager",
@@ -2987,7 +3075,7 @@
     "longname": "src/managers/RotationManager.js~RotationManager#spherical",
     "access": "public",
     "description": "A spherical coordinate system.",
-    "lineNumber": 99,
+    "lineNumber": 89,
     "type": {
       "nullable": null,
       "types": [
@@ -2998,26 +3086,106 @@
     }
   },
   {
-    "__docId__": 134,
-    "kind": "member",
-    "name": "pivotOffset",
+    "__docId__": 141,
+    "kind": "method",
+    "name": "setPosition",
     "memberof": "src/managers/RotationManager.js~RotationManager",
+    "generator": false,
+    "async": false,
     "static": false,
-    "longname": "src/managers/RotationManager.js~RotationManager#pivotOffset",
+    "longname": "src/managers/RotationManager.js~RotationManager#setPosition",
     "access": "public",
-    "description": "A pivot offset. Only affects third person orbiting.",
-    "lineNumber": 107,
-    "type": {
+    "description": "Sets the position.",
+    "lineNumber": 100,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Vector3"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "position",
+        "description": "A position."
+      }
+    ],
+    "return": {
       "nullable": null,
       "types": [
-        "Vector3"
+        "RotationManager"
       ],
       "spread": false,
-      "description": null
+      "description": "This manager."
     }
   },
   {
-    "__docId__": 135,
+    "__docId__": 143,
+    "kind": "method",
+    "name": "setQuaternion",
+    "memberof": "src/managers/RotationManager.js~RotationManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/managers/RotationManager.js~RotationManager#setQuaternion",
+    "access": "public",
+    "description": "Sets the quaternion.",
+    "lineNumber": 115,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Quaternion"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "quaternion",
+        "description": "A quaternion."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "RotationManager"
+      ],
+      "spread": false,
+      "description": "This manager."
+    }
+  },
+  {
+    "__docId__": 145,
+    "kind": "method",
+    "name": "setTarget",
+    "memberof": "src/managers/RotationManager.js~RotationManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/managers/RotationManager.js~RotationManager#setTarget",
+    "access": "public",
+    "description": "Sets the target.",
+    "lineNumber": 130,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Vector3"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "target",
+        "description": "A target."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "RotationManager"
+      ],
+      "spread": false,
+      "description": "This manager."
+    }
+  },
+  {
+    "__docId__": 147,
     "kind": "method",
     "name": "updateQuaternion",
     "memberof": "src/managers/RotationManager.js~RotationManager",
@@ -3027,27 +3195,19 @@
     "longname": "src/managers/RotationManager.js~RotationManager#updateQuaternion",
     "access": "public",
     "description": "Updates the quaternion.",
-    "lineNumber": 117,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "RotationManager"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "This",
-        "description": "manager."
-      }
-    ],
+    "lineNumber": 144,
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "RotationManager"
+      ],
+      "spread": false,
+      "description": "This manager."
+    },
+    "params": []
   },
   {
-    "__docId__": 136,
+    "__docId__": 148,
     "kind": "method",
     "name": "adjustSpherical",
     "memberof": "src/managers/RotationManager.js~RotationManager",
@@ -3057,7 +3217,7 @@
     "longname": "src/managers/RotationManager.js~RotationManager#adjustSpherical",
     "access": "public",
     "description": "Adjusts the spherical system.",
-    "lineNumber": 143,
+    "lineNumber": 173,
     "params": [
       {
         "nullable": null,
@@ -3078,26 +3238,19 @@
         "optional": false,
         "name": "phi",
         "description": "The angle to add to phi in radians."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "RotationManager"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "This",
-        "description": "manager."
       }
     ],
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "RotationManager"
+      ],
+      "spread": false,
+      "description": "This manager."
     }
   },
   {
-    "__docId__": 137,
+    "__docId__": 149,
     "kind": "method",
     "name": "zoom",
     "memberof": "src/managers/RotationManager.js~RotationManager",
@@ -3107,7 +3260,7 @@
     "longname": "src/managers/RotationManager.js~RotationManager#zoom",
     "access": "public",
     "description": "Zooms in or out.",
-    "lineNumber": 177,
+    "lineNumber": 207,
     "params": [
       {
         "nullable": null,
@@ -3118,26 +3271,19 @@
         "optional": false,
         "name": "sign",
         "description": "The zoom sign. Possible values are [-1, 0, 1]."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "RotationManager"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "This",
-        "description": "manager."
       }
     ],
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "RotationManager"
+      ],
+      "spread": false,
+      "description": "This manager."
     }
   },
   {
-    "__docId__": 138,
+    "__docId__": 150,
     "kind": "method",
     "name": "update",
     "memberof": "src/managers/RotationManager.js~RotationManager",
@@ -3147,7 +3293,7 @@
     "longname": "src/managers/RotationManager.js~RotationManager#update",
     "access": "public",
     "description": "Updates rotation calculations based on time.",
-    "lineNumber": 215,
+    "lineNumber": 245,
     "params": [
       {
         "nullable": null,
@@ -3163,7 +3309,7 @@
     "return": null
   },
   {
-    "__docId__": 139,
+    "__docId__": 151,
     "kind": "method",
     "name": "lookAt",
     "memberof": "src/managers/RotationManager.js~RotationManager",
@@ -3173,7 +3319,7 @@
     "longname": "src/managers/RotationManager.js~RotationManager#lookAt",
     "access": "public",
     "description": "Looks at the given point.",
-    "lineNumber": 226,
+    "lineNumber": 256,
     "params": [
       {
         "nullable": null,
@@ -3189,14 +3335,14 @@
     "return": {
       "nullable": null,
       "types": [
-        "DeltaControls"
+        "RotationManager"
       ],
       "spread": false,
-      "description": "This instance."
+      "description": "This manager."
     }
   },
   {
-    "__docId__": 140,
+    "__docId__": 152,
     "kind": "method",
     "name": "getViewDirection",
     "memberof": "src/managers/RotationManager.js~RotationManager",
@@ -3206,7 +3352,7 @@
     "longname": "src/managers/RotationManager.js~RotationManager#getViewDirection",
     "access": "public",
     "description": "Returns the current view direction.",
-    "lineNumber": 259,
+    "lineNumber": 289,
     "params": [
       {
         "nullable": null,
@@ -3229,10 +3375,10 @@
     }
   },
   {
-    "__docId__": 141,
+    "__docId__": 153,
     "kind": "file",
     "name": "src/managers/TranslationManager.js",
-    "content": "import { Vector3 } from \"math-ds\";\r\nimport { MovementState } from \"./MovementState.js\";\r\nimport * as axes from \"./axes.js\";\r\n\r\n/**\r\n * A vector.\r\n *\r\n * @type {Vector3}\r\n * @private\r\n */\r\n\r\nconst v = new Vector3();\r\n\r\n/**\r\n * A translation manager.\r\n */\r\n\r\nexport class TranslationManager {\r\n\r\n\t/**\r\n\t * Constructs a new translation manager.\r\n\t *\r\n\t * @param {Vector3} position - A position.\r\n\t * @param {Quaternion} quaternion - A quaternion.\r\n\t * @param {Vector3} target - A target.\r\n\t * @param {Settings} settings - The settings.\r\n\t */\r\n\r\n\tconstructor(position, quaternion, target, settings) {\r\n\r\n\t\t/**\r\n\t\t * The position that will be modified.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.position = position;\r\n\r\n\t\t/**\r\n\t\t * The quaternion that will be modified.\r\n\t\t *\r\n\t\t * @type {Quaternion}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\r\n\t\t/**\r\n\t\t * A target.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.target = target;\r\n\r\n\t\t/**\r\n\t\t * The settings.\r\n\t\t *\r\n\t\t * @type {Settings}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.settings = settings;\r\n\r\n\t\t/**\r\n\t\t * The current movement state.\r\n\t\t *\r\n\t\t * @type {MovementState}\r\n\t\t */\r\n\r\n\t\tthis.movementState = new MovementState();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Translates a position by a specific distance along a given axis.\r\n\t *\r\n\t * @private\r\n\t * @param {Vector3} axis - The axis.\r\n\t * @param {Vector3} distance - The distance.\r\n\t */\r\n\r\n\ttranslateOnAxis(axis, distance) {\r\n\r\n\t\tv.copy(axis).applyQuaternion(this.quaternion).multiplyScalar(distance);\r\n\r\n\t\tthis.position.add(v);\r\n\r\n\t\tif(this.settings.general.orbit) {\r\n\r\n\t\t\tthis.target.add(v);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Modifies the position based on the current movement state and elapsed time.\r\n\t *\r\n\t * @private\r\n\t * @param {Number} delta - The time since the last update in seconds.\r\n\t */\r\n\r\n\ttranslate(delta) {\r\n\r\n\t\tconst sensitivity = this.settings.sensitivity;\r\n\t\tconst state = this.movementState;\r\n\r\n\t\tconst step = delta * sensitivity.translation;\r\n\r\n\t\tif(state.backward) {\r\n\r\n\t\t\tthis.translateOnAxis(axes.z, step);\r\n\r\n\t\t} else if(state.forward) {\r\n\r\n\t\t\tthis.translateOnAxis(axes.z, -step);\r\n\r\n\t\t}\r\n\r\n\t\tif(state.right) {\r\n\r\n\t\t\tthis.translateOnAxis(axes.x, step);\r\n\r\n\t\t} else if(state.left) {\r\n\r\n\t\t\tthis.translateOnAxis(axes.x, -step);\r\n\r\n\t\t}\r\n\r\n\t\tif(state.up) {\r\n\r\n\t\t\tthis.translateOnAxis(axes.y, step);\r\n\r\n\t\t} else if(state.down) {\r\n\r\n\t\t\tthis.translateOnAxis(axes.y, -step);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Updates movement calculations based on time.\r\n\t *\r\n\t * @param {Number} delta - The time since the last update in seconds.\r\n\t */\r\n\r\n\tupdate(delta) {\r\n\r\n\t\tif(this.settings.translation.enabled) {\r\n\r\n\t\t\tthis.translate(delta);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Moves to the given position.\r\n\t *\r\n\t * @param {Vector3} position - The position.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tmoveTo(position) {\r\n\r\n\t\tif(this.settings.general.orbit) {\r\n\r\n\t\t\tthis.target.copy(position);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tthis.position.copy(position);\r\n\r\n\t\t}\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n}\r\n",
+    "content": "import { Vector3 } from \"math-ds\";\r\nimport { MovementState } from \"./MovementState.js\";\r\nimport * as axes from \"../core/axes.js\";\r\n\r\n/**\r\n * A vector.\r\n *\r\n * @type {Vector3}\r\n * @private\r\n */\r\n\r\nconst v = new Vector3();\r\n\r\n/**\r\n * A translation manager.\r\n */\r\n\r\nexport class TranslationManager {\r\n\r\n\t/**\r\n\t * Constructs a new translation manager.\r\n\t *\r\n\t * @param {Vector3} position - A position.\r\n\t * @param {Quaternion} quaternion - A quaternion.\r\n\t * @param {Vector3} target - A target.\r\n\t * @param {Settings} settings - The settings.\r\n\t */\r\n\r\n\tconstructor(position, quaternion, target, settings) {\r\n\r\n\t\t/**\r\n\t\t * The position that will be modified.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.position = position;\r\n\r\n\t\t/**\r\n\t\t * The quaternion that will be modified.\r\n\t\t *\r\n\t\t * @type {Quaternion}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\r\n\t\t/**\r\n\t\t * A target.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.target = target;\r\n\r\n\t\t/**\r\n\t\t * The settings.\r\n\t\t *\r\n\t\t * @type {Settings}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.settings = settings;\r\n\r\n\t\t/**\r\n\t\t * The current movement state.\r\n\t\t *\r\n\t\t * @type {MovementState}\r\n\t\t */\r\n\r\n\t\tthis.movementState = new MovementState();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the position.\r\n\t *\r\n\t * @param {Vector3} position - A position.\r\n\t * @return {RotationManager} This manager.\r\n\t */\r\n\r\n\tsetPosition(position) {\r\n\r\n\t\tthis.position = position;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the quaternion.\r\n\t *\r\n\t * @param {Quaternion} quaternion - A quaternion.\r\n\t * @return {RotationManager} This manager.\r\n\t */\r\n\r\n\tsetQuaternion(quaternion) {\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the target.\r\n\t *\r\n\t * @param {Vector3} target - A target.\r\n\t * @return {RotationManager} This manager.\r\n\t */\r\n\r\n\tsetTarget(target) {\r\n\r\n\t\tthis.target = target;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Translates a position by a specific distance along a given axis.\r\n\t *\r\n\t * @private\r\n\t * @param {Vector3} axis - The axis.\r\n\t * @param {Vector3} distance - The distance.\r\n\t */\r\n\r\n\ttranslateOnAxis(axis, distance) {\r\n\r\n\t\tv.copy(axis).applyQuaternion(this.quaternion).multiplyScalar(distance);\r\n\r\n\t\tthis.position.add(v);\r\n\r\n\t\tif(this.settings.general.orbit) {\r\n\r\n\t\t\tthis.target.add(v);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Modifies the position based on the current movement state and elapsed time.\r\n\t *\r\n\t * @private\r\n\t * @param {Number} delta - The time since the last update in seconds.\r\n\t */\r\n\r\n\ttranslate(delta) {\r\n\r\n\t\tconst sensitivity = this.settings.sensitivity;\r\n\t\tconst state = this.movementState;\r\n\r\n\t\tconst step = delta * sensitivity.translation;\r\n\r\n\t\tif(state.backward) {\r\n\r\n\t\t\tthis.translateOnAxis(axes.z, step);\r\n\r\n\t\t} else if(state.forward) {\r\n\r\n\t\t\tthis.translateOnAxis(axes.z, -step);\r\n\r\n\t\t}\r\n\r\n\t\tif(state.right) {\r\n\r\n\t\t\tthis.translateOnAxis(axes.x, step);\r\n\r\n\t\t} else if(state.left) {\r\n\r\n\t\t\tthis.translateOnAxis(axes.x, -step);\r\n\r\n\t\t}\r\n\r\n\t\tif(state.up) {\r\n\r\n\t\t\tthis.translateOnAxis(axes.y, step);\r\n\r\n\t\t} else if(state.down) {\r\n\r\n\t\t\tthis.translateOnAxis(axes.y, -step);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Updates movement calculations based on time.\r\n\t *\r\n\t * @param {Number} delta - The time since the last update in seconds.\r\n\t */\r\n\r\n\tupdate(delta) {\r\n\r\n\t\tif(this.settings.translation.enabled) {\r\n\r\n\t\t\tthis.translate(delta);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Moves to the given position.\r\n\t *\r\n\t * @param {Vector3} position - The position.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tmoveTo(position) {\r\n\r\n\t\tif(this.settings.general.orbit) {\r\n\r\n\t\t\tthis.target.copy(position);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tthis.position.copy(position);\r\n\r\n\t\t}\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n}\r\n",
     "static": true,
     "longname": "C:/Users/Raoul/Sourcecode/JavaScript/delta-controls/src/managers/TranslationManager.js",
     "access": "public",
@@ -3240,7 +3386,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 142,
+    "__docId__": 154,
     "kind": "variable",
     "name": "v",
     "memberof": "src/managers/TranslationManager.js",
@@ -3263,7 +3409,7 @@
     "ignore": true
   },
   {
-    "__docId__": 143,
+    "__docId__": 155,
     "kind": "class",
     "name": "TranslationManager",
     "memberof": "src/managers/TranslationManager.js",
@@ -3278,7 +3424,7 @@
     "interface": false
   },
   {
-    "__docId__": 144,
+    "__docId__": 156,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/managers/TranslationManager.js~TranslationManager",
@@ -3333,7 +3479,7 @@
     ]
   },
   {
-    "__docId__": 145,
+    "__docId__": 157,
     "kind": "member",
     "name": "position",
     "memberof": "src/managers/TranslationManager.js~TranslationManager",
@@ -3352,7 +3498,7 @@
     }
   },
   {
-    "__docId__": 146,
+    "__docId__": 158,
     "kind": "member",
     "name": "quaternion",
     "memberof": "src/managers/TranslationManager.js~TranslationManager",
@@ -3371,7 +3517,7 @@
     }
   },
   {
-    "__docId__": 147,
+    "__docId__": 159,
     "kind": "member",
     "name": "target",
     "memberof": "src/managers/TranslationManager.js~TranslationManager",
@@ -3390,7 +3536,7 @@
     }
   },
   {
-    "__docId__": 148,
+    "__docId__": 160,
     "kind": "member",
     "name": "settings",
     "memberof": "src/managers/TranslationManager.js~TranslationManager",
@@ -3409,7 +3555,7 @@
     }
   },
   {
-    "__docId__": 149,
+    "__docId__": 161,
     "kind": "member",
     "name": "movementState",
     "memberof": "src/managers/TranslationManager.js~TranslationManager",
@@ -3428,7 +3574,106 @@
     }
   },
   {
-    "__docId__": 150,
+    "__docId__": 162,
+    "kind": "method",
+    "name": "setPosition",
+    "memberof": "src/managers/TranslationManager.js~TranslationManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/managers/TranslationManager.js~TranslationManager#setPosition",
+    "access": "public",
+    "description": "Sets the position.",
+    "lineNumber": 84,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Vector3"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "position",
+        "description": "A position."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "RotationManager"
+      ],
+      "spread": false,
+      "description": "This manager."
+    }
+  },
+  {
+    "__docId__": 164,
+    "kind": "method",
+    "name": "setQuaternion",
+    "memberof": "src/managers/TranslationManager.js~TranslationManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/managers/TranslationManager.js~TranslationManager#setQuaternion",
+    "access": "public",
+    "description": "Sets the quaternion.",
+    "lineNumber": 99,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Quaternion"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "quaternion",
+        "description": "A quaternion."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "RotationManager"
+      ],
+      "spread": false,
+      "description": "This manager."
+    }
+  },
+  {
+    "__docId__": 166,
+    "kind": "method",
+    "name": "setTarget",
+    "memberof": "src/managers/TranslationManager.js~TranslationManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/managers/TranslationManager.js~TranslationManager#setTarget",
+    "access": "public",
+    "description": "Sets the target.",
+    "lineNumber": 114,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Vector3"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "target",
+        "description": "A target."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "RotationManager"
+      ],
+      "spread": false,
+      "description": "This manager."
+    }
+  },
+  {
+    "__docId__": 168,
     "kind": "method",
     "name": "translateOnAxis",
     "memberof": "src/managers/TranslationManager.js~TranslationManager",
@@ -3438,7 +3683,7 @@
     "longname": "src/managers/TranslationManager.js~TranslationManager#translateOnAxis",
     "access": "private",
     "description": "Translates a position by a specific distance along a given axis.",
-    "lineNumber": 85,
+    "lineNumber": 130,
     "params": [
       {
         "nullable": null,
@@ -3464,7 +3709,7 @@
     "return": null
   },
   {
-    "__docId__": 151,
+    "__docId__": 169,
     "kind": "method",
     "name": "translate",
     "memberof": "src/managers/TranslationManager.js~TranslationManager",
@@ -3474,32 +3719,6 @@
     "longname": "src/managers/TranslationManager.js~TranslationManager#translate",
     "access": "private",
     "description": "Modifies the position based on the current movement state and elapsed time.",
-    "lineNumber": 106,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Number"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "delta",
-        "description": "The time since the last update in seconds."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 152,
-    "kind": "method",
-    "name": "update",
-    "memberof": "src/managers/TranslationManager.js~TranslationManager",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/managers/TranslationManager.js~TranslationManager#update",
-    "access": "public",
-    "description": "Updates movement calculations based on time.",
     "lineNumber": 151,
     "params": [
       {
@@ -3516,7 +3735,33 @@
     "return": null
   },
   {
-    "__docId__": 153,
+    "__docId__": 170,
+    "kind": "method",
+    "name": "update",
+    "memberof": "src/managers/TranslationManager.js~TranslationManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/managers/TranslationManager.js~TranslationManager#update",
+    "access": "public",
+    "description": "Updates movement calculations based on time.",
+    "lineNumber": 196,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "delta",
+        "description": "The time since the last update in seconds."
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 171,
     "kind": "method",
     "name": "moveTo",
     "memberof": "src/managers/TranslationManager.js~TranslationManager",
@@ -3526,7 +3771,7 @@
     "longname": "src/managers/TranslationManager.js~TranslationManager#moveTo",
     "access": "public",
     "description": "Moves to the given position.",
-    "lineNumber": 168,
+    "lineNumber": 213,
     "params": [
       {
         "nullable": null,
@@ -3549,7 +3794,7 @@
     }
   },
   {
-    "__docId__": 154,
+    "__docId__": 172,
     "kind": "file",
     "name": "src/settings/GeneralSettings.js",
     "content": "/**\r\n * General settings.\r\n */\r\n\r\nexport class GeneralSettings {\r\n\r\n\t/**\r\n\t * Constructs new general settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * Indicates whether third person perspective is active.\r\n\t\t *\r\n\t\t * Should not be modified directly. See {@link DeltaControls#setOrbit}.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.orbit = true;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given general settings.\r\n\t *\r\n\t * @param {GeneralSettings} settings - General settings.\r\n\t * @return {GeneralSettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.orbit = settings.orbit;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this general settings instance.\r\n\t *\r\n\t * @return {GeneralSettings} The cloned general settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -3560,7 +3805,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 155,
+    "__docId__": 173,
     "kind": "class",
     "name": "GeneralSettings",
     "memberof": "src/settings/GeneralSettings.js",
@@ -3575,7 +3820,7 @@
     "interface": false
   },
   {
-    "__docId__": 156,
+    "__docId__": 174,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/GeneralSettings.js~GeneralSettings",
@@ -3588,7 +3833,7 @@
     "lineNumber": 11
   },
   {
-    "__docId__": 157,
+    "__docId__": 175,
     "kind": "member",
     "name": "orbit",
     "memberof": "src/settings/GeneralSettings.js~GeneralSettings",
@@ -3607,7 +3852,7 @@
     }
   },
   {
-    "__docId__": 158,
+    "__docId__": 176,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/GeneralSettings.js~GeneralSettings",
@@ -3640,7 +3885,7 @@
     }
   },
   {
-    "__docId__": 160,
+    "__docId__": 178,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/GeneralSettings.js~GeneralSettings",
@@ -3662,7 +3907,7 @@
     "params": []
   },
   {
-    "__docId__": 161,
+    "__docId__": 179,
     "kind": "file",
     "name": "src/settings/index.js",
     "content": "/**\r\n * A collection of specialised settings.\r\n *\r\n * @module delta-controls/settings\r\n */\r\n\r\nexport { GeneralSettings } from \"./GeneralSettings.js\";\r\nexport { KeyBindings } from \"./KeyBindings.js\";\r\nexport { PointerSettings } from \"./PointerSettings.js\";\r\nexport { RotationSettings } from \"./RotationSettings.js\";\r\nexport { SensitivitySettings } from \"./SensitivitySettings.js\";\r\nexport { TranslationSettings } from \"./TranslationSettings.js\";\r\nexport { Settings } from \"./Settings.js\";\r\nexport { ZoomSettings } from \"./ZoomSettings.js\";\r\n",
@@ -3673,7 +3918,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 162,
+    "__docId__": 180,
     "kind": "file",
     "name": "src/settings/KeyBindings.js",
     "content": "/**\r\n * Key bindings.\r\n */\r\n\r\nexport class KeyBindings {\r\n\r\n\t/**\r\n\t * Constructs new key bindings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * The default key bindings.\r\n\t\t *\r\n\t\t * @type {Map}\r\n\t\t */\r\n\r\n\t\tthis.defaultActions = new Map();\r\n\r\n\t\t/**\r\n\t\t * The current key bindings.\r\n\t\t *\r\n\t\t * @type {Map}\r\n\t\t */\r\n\r\n\t\tthis.actions = new Map();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Resets the current bindings to match the default bindings.\r\n\t *\r\n\t * @return {KeyBindings} This key bindings instance.\r\n\t */\r\n\r\n\treset() {\r\n\r\n\t\tthis.actions = new Map(this.defaultActions);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Establishes default key bindings and resets the current bindings.\r\n\t *\r\n\t * @param {Map} map - A map. Each key must be a key code and each value must be a number.\r\n\t * @return {KeyBindings} This key bindings instance.\r\n\t */\r\n\r\n\tsetDefault(actions) {\r\n\r\n\t\tthis.defaultActions = actions;\r\n\r\n\t\treturn this.reset();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given key bindings, including the default bindings.\r\n\t *\r\n\t * @param {KeyBindings} keyBindings - Key bindings.\r\n\t * @return {KeyBindings} This key bindings instance.\r\n\t */\r\n\r\n\tcopy(keyBindings) {\r\n\r\n\t\tthis.defaultActions = new Map(keyBindings.defaultActions);\r\n\t\tthis.actions = new Map(keyBindings.actions);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clears the default key bindings.\r\n\t *\r\n\t * @return {KeyBindings} This key bindings instance.\r\n\t */\r\n\r\n\tclearDefault() {\r\n\r\n\t\tthis.defaultActions.clear();\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clears the current key bindings.\r\n\t *\r\n\t * @return {KeyBindings} This key bindings instance.\r\n\t */\r\n\r\n\tclear() {\r\n\r\n\t\tthis.actions.clear();\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones these key bindings.\r\n\t *\r\n\t * @return {KeyBindings} The cloned key bindings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Checks if the given key is bound to an action.\r\n\t *\r\n\t * @param {KeyCode} keyCode - A key code.\r\n\t * @return {Boolean} Whether the given key is bound to an action.\r\n\t */\r\n\r\n\thas(keyCode) {\r\n\r\n\t\treturn this.actions.has(keyCode);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the action that is bound to the given key.\r\n\t *\r\n\t * @param {KeyCode} keyCode - A key code.\r\n\t * @return {Number} The action, or undefined if the key is not bound to any action.\r\n\t */\r\n\r\n\tget(keyCode) {\r\n\r\n\t\treturn this.actions.get(keyCode);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Binds a key to an action.\r\n\t *\r\n\t * @param {KeyCode} keyCode - A key code.\r\n\t * @param {Number} action - An action.\r\n\t * @return {KeyBindings} This instance.\r\n\t */\r\n\r\n\tset(keyCode, action) {\r\n\r\n\t\tthis.actions.set(keyCode, action);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Unbinds a key.\r\n\t *\r\n\t * @param {KeyCode} keyCode - A key code.\r\n\t * @return {Boolean} Whether the key bindings existed or not.\r\n\t */\r\n\r\n\tdelete(keyCode) {\r\n\r\n\t\treturn this.actions.delete(keyCode);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Creates a plain representation of this instance.\r\n\t *\r\n\t * @return {String} The plain representation.\r\n\t */\r\n\r\n\ttoJSON() {\r\n\r\n\t\treturn {\r\n\t\t\tdefaultActions: [...this.defaultActions],\r\n\t\t\tactions: [...this.actions]\r\n\t\t};\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -3684,7 +3929,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 163,
+    "__docId__": 181,
     "kind": "class",
     "name": "KeyBindings",
     "memberof": "src/settings/KeyBindings.js",
@@ -3699,7 +3944,7 @@
     "interface": false
   },
   {
-    "__docId__": 164,
+    "__docId__": 182,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3712,7 +3957,7 @@
     "lineNumber": 11
   },
   {
-    "__docId__": 165,
+    "__docId__": 183,
     "kind": "member",
     "name": "defaultActions",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3731,7 +3976,7 @@
     }
   },
   {
-    "__docId__": 166,
+    "__docId__": 184,
     "kind": "member",
     "name": "actions",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3750,7 +3995,7 @@
     }
   },
   {
-    "__docId__": 167,
+    "__docId__": 185,
     "kind": "method",
     "name": "reset",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3772,7 +4017,7 @@
     "params": []
   },
   {
-    "__docId__": 169,
+    "__docId__": 187,
     "kind": "method",
     "name": "setDefault",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3805,7 +4050,7 @@
     }
   },
   {
-    "__docId__": 171,
+    "__docId__": 189,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3838,7 +4083,7 @@
     }
   },
   {
-    "__docId__": 174,
+    "__docId__": 192,
     "kind": "method",
     "name": "clearDefault",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3860,7 +4105,7 @@
     "params": []
   },
   {
-    "__docId__": 175,
+    "__docId__": 193,
     "kind": "method",
     "name": "clear",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3882,7 +4127,7 @@
     "params": []
   },
   {
-    "__docId__": 176,
+    "__docId__": 194,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3904,7 +4149,7 @@
     "params": []
   },
   {
-    "__docId__": 177,
+    "__docId__": 195,
     "kind": "method",
     "name": "has",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3937,7 +4182,7 @@
     }
   },
   {
-    "__docId__": 178,
+    "__docId__": 196,
     "kind": "method",
     "name": "get",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -3970,7 +4215,7 @@
     }
   },
   {
-    "__docId__": 179,
+    "__docId__": 197,
     "kind": "method",
     "name": "set",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -4013,7 +4258,7 @@
     }
   },
   {
-    "__docId__": 180,
+    "__docId__": 198,
     "kind": "method",
     "name": "delete",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -4046,7 +4291,7 @@
     }
   },
   {
-    "__docId__": 181,
+    "__docId__": 199,
     "kind": "method",
     "name": "toJSON",
     "memberof": "src/settings/KeyBindings.js~KeyBindings",
@@ -4068,7 +4313,7 @@
     "params": []
   },
   {
-    "__docId__": 182,
+    "__docId__": 200,
     "kind": "file",
     "name": "src/settings/PointerSettings.js",
     "content": "/**\r\n * Pointer settings.\r\n */\r\n\r\nexport class PointerSettings {\r\n\r\n\t/**\r\n\t * Constructs new pointer settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * Whether the pointer buttons must be held down to have an effect.\r\n\t\t *\r\n\t\t * This setting only applies when the pointer is locked.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.hold = false;\r\n\r\n\t\t/**\r\n\t\t * Whether the pointer should be locked on click events.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.lock = true;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given pointer settings.\r\n\t *\r\n\t * @param {PointerSettings} settings - Pointer settings.\r\n\t * @return {PointerSettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.hold = settings.hold;\r\n\t\tthis.lock = settings.lock;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this pointer settings instance.\r\n\t *\r\n\t * @return {PointerSettings} The cloned pointer settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -4079,7 +4324,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 183,
+    "__docId__": 201,
     "kind": "class",
     "name": "PointerSettings",
     "memberof": "src/settings/PointerSettings.js",
@@ -4094,7 +4339,7 @@
     "interface": false
   },
   {
-    "__docId__": 184,
+    "__docId__": 202,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/PointerSettings.js~PointerSettings",
@@ -4107,7 +4352,7 @@
     "lineNumber": 11
   },
   {
-    "__docId__": 185,
+    "__docId__": 203,
     "kind": "member",
     "name": "hold",
     "memberof": "src/settings/PointerSettings.js~PointerSettings",
@@ -4126,7 +4371,7 @@
     }
   },
   {
-    "__docId__": 186,
+    "__docId__": 204,
     "kind": "member",
     "name": "lock",
     "memberof": "src/settings/PointerSettings.js~PointerSettings",
@@ -4145,7 +4390,7 @@
     }
   },
   {
-    "__docId__": 187,
+    "__docId__": 205,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/PointerSettings.js~PointerSettings",
@@ -4178,7 +4423,7 @@
     }
   },
   {
-    "__docId__": 190,
+    "__docId__": 208,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/PointerSettings.js~PointerSettings",
@@ -4200,10 +4445,10 @@
     "params": []
   },
   {
-    "__docId__": 191,
+    "__docId__": 209,
     "kind": "file",
     "name": "src/settings/RotationSettings.js",
-    "content": "/**\r\n * Rotation settings.\r\n */\r\n\r\nexport class RotationSettings {\r\n\r\n\t/**\r\n\t * Constructs new rotation settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * The minimum azimuth angle in radians. Range: [-Math.PI, Math.PI].\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.minTheta = -Infinity;\r\n\r\n\t\t/**\r\n\t\t * The maximum azimuth angle in radians. Range: [-Math.PI, Math.PI].\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.maxTheta = Infinity;\r\n\r\n\t\t/**\r\n\t\t * The minimum polar angle in radians. Range: [0, Math.PI].\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.minPhi = 0.0;\r\n\r\n\t\t/**\r\n\t\t * The maximum polar angle in radians. Range: [0, Math.PI].\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.maxPhi = Math.PI;\r\n\r\n\t\t/**\r\n\t\t * Indicates whether the horizontal rotation should be inverted.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.invertX = false;\r\n\r\n\t\t/**\r\n\t\t * Indicates whether the vertical rotation should be inverted.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.invertY = false;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given rotation settings.\r\n\t *\r\n\t * @param {RotationSettings} settings - Rotation settings.\r\n\t * @return {RotationSettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.minTheta = (settings.minTheta !== null) ? settings.minTheta : -Infinity;\r\n\t\tthis.maxTheta = (settings.maxTheta !== null) ? settings.maxTheta : Infinity;\r\n\r\n\t\tthis.minPhi = settings.minPhi;\r\n\t\tthis.maxPhi = settings.maxPhi;\r\n\r\n\t\tthis.invertX = settings.invertX;\r\n\t\tthis.invertY = settings.invertY;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this rotation settings instance.\r\n\t *\r\n\t * @return {RotationSettings} The cloned rotation settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
+    "content": "import { Vector3 } from \"math-ds\";\r\nimport * as axes from \"../core/axes.js\";\r\n\r\n/**\r\n * Rotation settings.\r\n */\r\n\r\nexport class RotationSettings {\r\n\r\n\t/**\r\n\t * Constructs new rotation settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * The up vector. Must be normalized.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t */\r\n\r\n\t\tthis.up = new Vector3();\r\n\t\tthis.up.copy(axes.y);\r\n\r\n\t\t/**\r\n\t\t * A pivot offset. Only affects third person orbiting.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t */\r\n\r\n\t\tthis.pivotOffset = new Vector3();\r\n\r\n\t\t/**\r\n\t\t * The minimum azimuthal angle in radians. Range: [-Math.PI, Math.PI].\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.minAzimuthalAngle = -Infinity;\r\n\r\n\t\t/**\r\n\t\t * The maximum azimuthal angle in radians. Range: [-Math.PI, Math.PI].\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.maxAzimuthalAngle = Infinity;\r\n\r\n\t\t/**\r\n\t\t * The minimum polar angle in radians. Range: [0, Math.PI].\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.minPolarAngle = 0.0;\r\n\r\n\t\t/**\r\n\t\t * The maximum polar angle in radians. Range: [0, Math.PI].\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.maxPolarAngle = Math.PI;\r\n\r\n\t\t/**\r\n\t\t * Indicates whether the horizontal rotation should be inverted.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.invertX = false;\r\n\r\n\t\t/**\r\n\t\t * Indicates whether the vertical rotation should be inverted.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.invertY = false;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given rotation settings.\r\n\t *\r\n\t * @param {RotationSettings} settings - Rotation settings.\r\n\t * @return {RotationSettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.up.copy(settings.up);\r\n\t\tthis.pivotOffset.copy(settings.pivotOffset);\r\n\r\n\t\tthis.minAzimuthalAngle = (settings.minAzimuthalAngle !== null) ? settings.minAzimuthalAngle : -Infinity;\r\n\t\tthis.maxAzimuthalAngle = (settings.maxAzimuthalAngle !== null) ? settings.maxAzimuthalAngle : Infinity;\r\n\r\n\t\tthis.minPolarAngle = settings.minPolarAngle;\r\n\t\tthis.maxPolarAngle = settings.maxPolarAngle;\r\n\r\n\t\tthis.invertX = settings.invertX;\r\n\t\tthis.invertY = settings.invertY;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this rotation settings instance.\r\n\t *\r\n\t * @return {RotationSettings} The cloned rotation settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
     "static": true,
     "longname": "C:/Users/Raoul/Sourcecode/JavaScript/delta-controls/src/settings/RotationSettings.js",
     "access": "public",
@@ -4211,7 +4456,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 192,
+    "__docId__": 210,
     "kind": "class",
     "name": "RotationSettings",
     "memberof": "src/settings/RotationSettings.js",
@@ -4222,11 +4467,11 @@
     "importPath": "delta-controls/src/settings/RotationSettings.js",
     "importStyle": "{RotationSettings}",
     "description": "Rotation settings.",
-    "lineNumber": 5,
+    "lineNumber": 8,
     "interface": false
   },
   {
-    "__docId__": 193,
+    "__docId__": 211,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4236,18 +4481,56 @@
     "longname": "src/settings/RotationSettings.js~RotationSettings#constructor",
     "access": "public",
     "description": "Constructs new rotation settings.",
-    "lineNumber": 11
+    "lineNumber": 14
   },
   {
-    "__docId__": 194,
+    "__docId__": 212,
     "kind": "member",
-    "name": "minTheta",
+    "name": "up",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
     "static": false,
-    "longname": "src/settings/RotationSettings.js~RotationSettings#minTheta",
+    "longname": "src/settings/RotationSettings.js~RotationSettings#up",
     "access": "public",
-    "description": "The minimum azimuth angle in radians. Range: [-Math.PI, Math.PI].",
-    "lineNumber": 19,
+    "description": "The up vector. Must be normalized.",
+    "lineNumber": 22,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Vector3"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 213,
+    "kind": "member",
+    "name": "pivotOffset",
+    "memberof": "src/settings/RotationSettings.js~RotationSettings",
+    "static": false,
+    "longname": "src/settings/RotationSettings.js~RotationSettings#pivotOffset",
+    "access": "public",
+    "description": "A pivot offset. Only affects third person orbiting.",
+    "lineNumber": 31,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Vector3"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 214,
+    "kind": "member",
+    "name": "minAzimuthalAngle",
+    "memberof": "src/settings/RotationSettings.js~RotationSettings",
+    "static": false,
+    "longname": "src/settings/RotationSettings.js~RotationSettings#minAzimuthalAngle",
+    "access": "public",
+    "description": "The minimum azimuthal angle in radians. Range: [-Math.PI, Math.PI].",
+    "lineNumber": 39,
     "type": {
       "nullable": null,
       "types": [
@@ -4258,15 +4541,15 @@
     }
   },
   {
-    "__docId__": 195,
+    "__docId__": 215,
     "kind": "member",
-    "name": "maxTheta",
+    "name": "maxAzimuthalAngle",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
     "static": false,
-    "longname": "src/settings/RotationSettings.js~RotationSettings#maxTheta",
+    "longname": "src/settings/RotationSettings.js~RotationSettings#maxAzimuthalAngle",
     "access": "public",
-    "description": "The maximum azimuth angle in radians. Range: [-Math.PI, Math.PI].",
-    "lineNumber": 27,
+    "description": "The maximum azimuthal angle in radians. Range: [-Math.PI, Math.PI].",
+    "lineNumber": 47,
     "type": {
       "nullable": null,
       "types": [
@@ -4277,15 +4560,15 @@
     }
   },
   {
-    "__docId__": 196,
+    "__docId__": 216,
     "kind": "member",
-    "name": "minPhi",
+    "name": "minPolarAngle",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
     "static": false,
-    "longname": "src/settings/RotationSettings.js~RotationSettings#minPhi",
+    "longname": "src/settings/RotationSettings.js~RotationSettings#minPolarAngle",
     "access": "public",
     "description": "The minimum polar angle in radians. Range: [0, Math.PI].",
-    "lineNumber": 35,
+    "lineNumber": 55,
     "type": {
       "nullable": null,
       "types": [
@@ -4296,15 +4579,15 @@
     }
   },
   {
-    "__docId__": 197,
+    "__docId__": 217,
     "kind": "member",
-    "name": "maxPhi",
+    "name": "maxPolarAngle",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
     "static": false,
-    "longname": "src/settings/RotationSettings.js~RotationSettings#maxPhi",
+    "longname": "src/settings/RotationSettings.js~RotationSettings#maxPolarAngle",
     "access": "public",
     "description": "The maximum polar angle in radians. Range: [0, Math.PI].",
-    "lineNumber": 43,
+    "lineNumber": 63,
     "type": {
       "nullable": null,
       "types": [
@@ -4315,7 +4598,7 @@
     }
   },
   {
-    "__docId__": 198,
+    "__docId__": 218,
     "kind": "member",
     "name": "invertX",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4323,7 +4606,7 @@
     "longname": "src/settings/RotationSettings.js~RotationSettings#invertX",
     "access": "public",
     "description": "Indicates whether the horizontal rotation should be inverted.",
-    "lineNumber": 51,
+    "lineNumber": 71,
     "type": {
       "nullable": null,
       "types": [
@@ -4334,7 +4617,7 @@
     }
   },
   {
-    "__docId__": 199,
+    "__docId__": 219,
     "kind": "member",
     "name": "invertY",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4342,7 +4625,7 @@
     "longname": "src/settings/RotationSettings.js~RotationSettings#invertY",
     "access": "public",
     "description": "Indicates whether the vertical rotation should be inverted.",
-    "lineNumber": 59,
+    "lineNumber": 79,
     "type": {
       "nullable": null,
       "types": [
@@ -4353,7 +4636,7 @@
     }
   },
   {
-    "__docId__": 200,
+    "__docId__": 220,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4363,7 +4646,7 @@
     "longname": "src/settings/RotationSettings.js~RotationSettings#copy",
     "access": "public",
     "description": "Copies the given rotation settings.",
-    "lineNumber": 70,
+    "lineNumber": 90,
     "params": [
       {
         "nullable": null,
@@ -4386,7 +4669,7 @@
     }
   },
   {
-    "__docId__": 207,
+    "__docId__": 227,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/RotationSettings.js~RotationSettings",
@@ -4396,7 +4679,7 @@
     "longname": "src/settings/RotationSettings.js~RotationSettings#clone",
     "access": "public",
     "description": "Clones this rotation settings instance.",
-    "lineNumber": 91,
+    "lineNumber": 114,
     "return": {
       "nullable": null,
       "types": [
@@ -4408,10 +4691,10 @@
     "params": []
   },
   {
-    "__docId__": 208,
+    "__docId__": 228,
     "kind": "file",
     "name": "src/settings/SensitivitySettings.js",
-    "content": "/**\r\n * Sensitivity settings.\r\n */\r\n\r\nexport class SensitivitySettings {\r\n\r\n\t/**\r\n\t * Constructs new sensitivity settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * The rotation sensitivity.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.rotation = 0.0025;\r\n\r\n\t\t/**\r\n\t\t * The translation sensitivity.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.translation = 1.0;\r\n\r\n\t\t/**\r\n\t\t * The zoom sensitivity.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.zoom = 0.01;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given sensitivity settings.\r\n\t *\r\n\t * @param {SensitivitySettings} settings - Sensitivity settings.\r\n\t * @return {SensitivitySettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.rotation = settings.rotation;\r\n\t\tthis.translation = settings.translation;\r\n\t\tthis.zoom = settings.zoom;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones these sensitivity settings.\r\n\t *\r\n\t * @return {SensitivitySettings} The cloned sensitivity settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
+    "content": "/**\r\n * Sensitivity settings.\r\n */\r\n\r\nexport class SensitivitySettings {\r\n\r\n\t/**\r\n\t * Constructs new sensitivity settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * The rotation sensitivity.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.rotation = 0.0025;\r\n\r\n\t\t/**\r\n\t\t * The translation sensitivity.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.translation = 1.0;\r\n\r\n\t\t/**\r\n\t\t * The zoom sensitivity.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.zoom = 0.1;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given sensitivity settings.\r\n\t *\r\n\t * @param {SensitivitySettings} settings - Sensitivity settings.\r\n\t * @return {SensitivitySettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.rotation = settings.rotation;\r\n\t\tthis.translation = settings.translation;\r\n\t\tthis.zoom = settings.zoom;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones these sensitivity settings.\r\n\t *\r\n\t * @return {SensitivitySettings} The cloned sensitivity settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
     "static": true,
     "longname": "C:/Users/Raoul/Sourcecode/JavaScript/delta-controls/src/settings/SensitivitySettings.js",
     "access": "public",
@@ -4419,7 +4702,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 209,
+    "__docId__": 229,
     "kind": "class",
     "name": "SensitivitySettings",
     "memberof": "src/settings/SensitivitySettings.js",
@@ -4434,7 +4717,7 @@
     "interface": false
   },
   {
-    "__docId__": 210,
+    "__docId__": 230,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/SensitivitySettings.js~SensitivitySettings",
@@ -4447,7 +4730,7 @@
     "lineNumber": 11
   },
   {
-    "__docId__": 211,
+    "__docId__": 231,
     "kind": "member",
     "name": "rotation",
     "memberof": "src/settings/SensitivitySettings.js~SensitivitySettings",
@@ -4466,7 +4749,7 @@
     }
   },
   {
-    "__docId__": 212,
+    "__docId__": 232,
     "kind": "member",
     "name": "translation",
     "memberof": "src/settings/SensitivitySettings.js~SensitivitySettings",
@@ -4485,7 +4768,7 @@
     }
   },
   {
-    "__docId__": 213,
+    "__docId__": 233,
     "kind": "member",
     "name": "zoom",
     "memberof": "src/settings/SensitivitySettings.js~SensitivitySettings",
@@ -4504,7 +4787,7 @@
     }
   },
   {
-    "__docId__": 214,
+    "__docId__": 234,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/SensitivitySettings.js~SensitivitySettings",
@@ -4537,7 +4820,7 @@
     }
   },
   {
-    "__docId__": 218,
+    "__docId__": 238,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/SensitivitySettings.js~SensitivitySettings",
@@ -4559,7 +4842,7 @@
     "params": []
   },
   {
-    "__docId__": 219,
+    "__docId__": 239,
     "kind": "file",
     "name": "src/settings/Settings.js",
     "content": "import { Action } from \"../core/Action.js\";\r\nimport { KeyCode } from \"../input/KeyCode.js\";\r\nimport { GeneralSettings } from \"./GeneralSettings.js\";\r\nimport { KeyBindings } from \"./KeyBindings.js\";\r\nimport { PointerSettings } from \"./PointerSettings.js\";\r\nimport { RotationSettings } from \"./RotationSettings.js\";\r\nimport { SensitivitySettings } from \"./SensitivitySettings.js\";\r\nimport { TranslationSettings } from \"./TranslationSettings.js\";\r\nimport { ZoomSettings } from \"./ZoomSettings.js\";\r\n\r\n/**\r\n * Control settings.\r\n */\r\n\r\nexport class Settings {\r\n\r\n\t/**\r\n\t * Constructs new settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * General settings.\r\n\t\t *\r\n\t\t * @type {GeneralSettings}\r\n\t\t */\r\n\r\n\t\tthis.general = new GeneralSettings();\r\n\r\n\t\t/**\r\n\t\t * Key bindings.\r\n\t\t *\r\n\t\t * @type {KeyBindings}\r\n\t\t */\r\n\r\n\t\tthis.keyBindings = new KeyBindings();\r\n\t\tthis.keyBindings.setDefault(new Map([\r\n\r\n\t\t\t[KeyCode.W, Action.MOVE_FORWARD],\r\n\t\t\t[KeyCode.UP, Action.MOVE_FORWARD],\r\n\r\n\t\t\t[KeyCode.A, Action.MOVE_LEFT],\r\n\t\t\t[KeyCode.LEFT, Action.MOVE_LEFT],\r\n\r\n\t\t\t[KeyCode.S, Action.MOVE_BACKWARD],\r\n\t\t\t[KeyCode.DOWN, Action.MOVE_BACKWARD],\r\n\r\n\t\t\t[KeyCode.D, Action.MOVE_RIGHT],\r\n\t\t\t[KeyCode.RIGHT, Action.MOVE_RIGHT],\r\n\r\n\t\t\t[KeyCode.X, Action.MOVE_DOWN],\r\n\t\t\t[KeyCode.SPACE, Action.MOVE_UP],\r\n\r\n\t\t\t[KeyCode.PAGE_DOWN, Action.ZOOM_OUT],\r\n\t\t\t[KeyCode.PAGE_UP, Action.ZOOM_IN]\r\n\r\n\t\t]));\r\n\r\n\t\t/**\r\n\t\t * Pointer settings.\r\n\t\t *\r\n\t\t * @type {PointerSettings}\r\n\t\t */\r\n\r\n\t\tthis.pointer = new PointerSettings();\r\n\r\n\t\t/**\r\n\t\t * Rotation settings.\r\n\t\t *\r\n\t\t * @type {RotationSettings}\r\n\t\t */\r\n\r\n\t\tthis.rotation = new RotationSettings();\r\n\r\n\t\t/**\r\n\t\t * Sensitivity settings.\r\n\t\t *\r\n\t\t * @type {SensitivitySettings}\r\n\t\t */\r\n\r\n\t\tthis.sensitivity = new SensitivitySettings();\r\n\r\n\t\t/**\r\n\t\t * Translation settings.\r\n\t\t *\r\n\t\t * @type {TranslationSettings}\r\n\t\t */\r\n\r\n\t\tthis.translation = new TranslationSettings();\r\n\r\n\t\t/**\r\n\t\t * Zoom settings.\r\n\t\t *\r\n\t\t * @type {ZoomSettings}\r\n\t\t */\r\n\r\n\t\tthis.zoom = new ZoomSettings();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given settings.\r\n\t *\r\n\t * @param {Settings} settings - Settings.\r\n\t * @return {Settings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.general.copy(settings.general);\r\n\t\tthis.keyBindings.copy(settings.keyBindings);\r\n\t\tthis.pointer.copy(settings.pointer);\r\n\t\tthis.rotation.copy(settings.rotation);\r\n\t\tthis.sensitivity.copy(settings.sensitivity);\r\n\t\tthis.translation.copy(settings.translation);\r\n\t\tthis.zoom.copy(settings.zoom);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones these settings.\r\n\t *\r\n\t * @return {Settings} The cloned settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Saves the current settings in the form of a JSON blob.\r\n\t *\r\n\t * @return {DOMString} A URL to the exported settings.\r\n\t */\r\n\r\n\ttoDataURL() {\r\n\r\n\t\treturn URL.createObjectURL(new Blob([JSON.stringify(this)], { type: \"text/json\" }));\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -4570,7 +4853,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 220,
+    "__docId__": 240,
     "kind": "class",
     "name": "Settings",
     "memberof": "src/settings/Settings.js",
@@ -4585,7 +4868,7 @@
     "interface": false
   },
   {
-    "__docId__": 221,
+    "__docId__": 241,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4598,7 +4881,7 @@
     "lineNumber": 21
   },
   {
-    "__docId__": 222,
+    "__docId__": 242,
     "kind": "member",
     "name": "general",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4617,7 +4900,7 @@
     }
   },
   {
-    "__docId__": 223,
+    "__docId__": 243,
     "kind": "member",
     "name": "keyBindings",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4636,7 +4919,7 @@
     }
   },
   {
-    "__docId__": 224,
+    "__docId__": 244,
     "kind": "member",
     "name": "pointer",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4655,7 +4938,7 @@
     }
   },
   {
-    "__docId__": 225,
+    "__docId__": 245,
     "kind": "member",
     "name": "rotation",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4674,7 +4957,7 @@
     }
   },
   {
-    "__docId__": 226,
+    "__docId__": 246,
     "kind": "member",
     "name": "sensitivity",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4693,7 +4976,7 @@
     }
   },
   {
-    "__docId__": 227,
+    "__docId__": 247,
     "kind": "member",
     "name": "translation",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4712,7 +4995,7 @@
     }
   },
   {
-    "__docId__": 228,
+    "__docId__": 248,
     "kind": "member",
     "name": "zoom",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4731,7 +5014,7 @@
     }
   },
   {
-    "__docId__": 229,
+    "__docId__": 249,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4764,7 +5047,7 @@
     }
   },
   {
-    "__docId__": 230,
+    "__docId__": 250,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4786,7 +5069,7 @@
     "params": []
   },
   {
-    "__docId__": 231,
+    "__docId__": 251,
     "kind": "method",
     "name": "toDataURL",
     "memberof": "src/settings/Settings.js~Settings",
@@ -4808,7 +5091,7 @@
     "params": []
   },
   {
-    "__docId__": 232,
+    "__docId__": 252,
     "kind": "file",
     "name": "src/settings/TranslationSettings.js",
     "content": "/**\r\n * Translation settings.\r\n */\r\n\r\nexport class TranslationSettings {\r\n\r\n\t/**\r\n\t * Constructs new translation settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * Whether positional translation is enabled.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.enabled = true;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given translation settings.\r\n\t *\r\n\t * @param {TranslationSettings} settings - Translation settings.\r\n\t * @return {TranslationSettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.enabled = settings.enabled;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this translation settings instance.\r\n\t *\r\n\t * @return {RotationSettings} The cloned translation settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -4819,7 +5102,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 233,
+    "__docId__": 253,
     "kind": "class",
     "name": "TranslationSettings",
     "memberof": "src/settings/TranslationSettings.js",
@@ -4834,7 +5117,7 @@
     "interface": false
   },
   {
-    "__docId__": 234,
+    "__docId__": 254,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/TranslationSettings.js~TranslationSettings",
@@ -4847,7 +5130,7 @@
     "lineNumber": 11
   },
   {
-    "__docId__": 235,
+    "__docId__": 255,
     "kind": "member",
     "name": "enabled",
     "memberof": "src/settings/TranslationSettings.js~TranslationSettings",
@@ -4866,7 +5149,7 @@
     }
   },
   {
-    "__docId__": 236,
+    "__docId__": 256,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/TranslationSettings.js~TranslationSettings",
@@ -4899,7 +5182,7 @@
     }
   },
   {
-    "__docId__": 238,
+    "__docId__": 258,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/TranslationSettings.js~TranslationSettings",
@@ -4921,10 +5204,10 @@
     "params": []
   },
   {
-    "__docId__": 239,
+    "__docId__": 259,
     "kind": "file",
     "name": "src/settings/ZoomSettings.js",
-    "content": "/**\r\n * Zoom settings.\r\n */\r\n\r\nexport class ZoomSettings {\r\n\r\n\t/**\r\n\t * Constructs new zoom settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * Whether zooming is enabled.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.enabled = true;\r\n\r\n\t\t/**\r\n\t\t * Indicates whether the zoom controls should be inverted.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.invert = false;\r\n\r\n\t\t/**\r\n\t\t * The minimum zoom distance.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.minDistance = 1e-6;\r\n\r\n\t\t/**\r\n\t\t * The maximum zoom distance.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.maxDistance = Infinity;\r\n\r\n\t\t/**\r\n\t\t * The base zoom step.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.step = 10.0;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given zoom settings.\r\n\t *\r\n\t * @param {ZoomSettings} settings - Zoom settings.\r\n\t * @return {ZoomSettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.enabled = settings.enabled;\r\n\t\tthis.invert = settings.invert;\r\n\t\tthis.minDistance = settings.minDistance;\r\n\t\tthis.maxDistance = settings.maxDistance;\r\n\t\tthis.step = settings.step;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this zoom settings instance.\r\n\t *\r\n\t * @return {ZoomSettings} The cloned zoom settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
+    "content": "/**\r\n * Zoom settings.\r\n */\r\n\r\nexport class ZoomSettings {\r\n\r\n\t/**\r\n\t * Constructs new zoom settings.\r\n\t */\r\n\r\n\tconstructor() {\r\n\r\n\t\t/**\r\n\t\t * Whether zooming is enabled.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.enabled = true;\r\n\r\n\t\t/**\r\n\t\t * Indicates whether the zoom controls should be inverted.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t */\r\n\r\n\t\tthis.invert = false;\r\n\r\n\t\t/**\r\n\t\t * The minimum zoom distance.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.minDistance = 1e-6;\r\n\r\n\t\t/**\r\n\t\t * The maximum zoom distance.\r\n\t\t *\r\n\t\t * @type {Number}\r\n\t\t */\r\n\r\n\t\tthis.maxDistance = Infinity;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given zoom settings.\r\n\t *\r\n\t * @param {ZoomSettings} settings - Zoom settings.\r\n\t * @return {ZoomSettings} This instance.\r\n\t */\r\n\r\n\tcopy(settings) {\r\n\r\n\t\tthis.enabled = settings.enabled;\r\n\t\tthis.invert = settings.invert;\r\n\t\tthis.minDistance = settings.minDistance;\r\n\t\tthis.maxDistance = settings.maxDistance;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this zoom settings instance.\r\n\t *\r\n\t * @return {ZoomSettings} The cloned zoom settings.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n}\r\n",
     "static": true,
     "longname": "C:/Users/Raoul/Sourcecode/JavaScript/delta-controls/src/settings/ZoomSettings.js",
     "access": "public",
@@ -4932,7 +5215,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 240,
+    "__docId__": 260,
     "kind": "class",
     "name": "ZoomSettings",
     "memberof": "src/settings/ZoomSettings.js",
@@ -4947,7 +5230,7 @@
     "interface": false
   },
   {
-    "__docId__": 241,
+    "__docId__": 261,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -4960,7 +5243,7 @@
     "lineNumber": 11
   },
   {
-    "__docId__": 242,
+    "__docId__": 262,
     "kind": "member",
     "name": "enabled",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -4979,7 +5262,7 @@
     }
   },
   {
-    "__docId__": 243,
+    "__docId__": 263,
     "kind": "member",
     "name": "invert",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -4998,7 +5281,7 @@
     }
   },
   {
-    "__docId__": 244,
+    "__docId__": 264,
     "kind": "member",
     "name": "minDistance",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -5017,7 +5300,7 @@
     }
   },
   {
-    "__docId__": 245,
+    "__docId__": 265,
     "kind": "member",
     "name": "maxDistance",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -5036,26 +5319,7 @@
     }
   },
   {
-    "__docId__": 246,
-    "kind": "member",
-    "name": "step",
-    "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
-    "static": false,
-    "longname": "src/settings/ZoomSettings.js~ZoomSettings#step",
-    "access": "public",
-    "description": "The base zoom step.",
-    "lineNumber": 51,
-    "type": {
-      "nullable": null,
-      "types": [
-        "Number"
-      ],
-      "spread": false,
-      "description": null
-    }
-  },
-  {
-    "__docId__": 247,
+    "__docId__": 266,
     "kind": "method",
     "name": "copy",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -5065,7 +5329,7 @@
     "longname": "src/settings/ZoomSettings.js~ZoomSettings#copy",
     "access": "public",
     "description": "Copies the given zoom settings.",
-    "lineNumber": 62,
+    "lineNumber": 54,
     "params": [
       {
         "nullable": null,
@@ -5088,7 +5352,7 @@
     }
   },
   {
-    "__docId__": 253,
+    "__docId__": 271,
     "kind": "method",
     "name": "clone",
     "memberof": "src/settings/ZoomSettings.js~ZoomSettings",
@@ -5098,7 +5362,7 @@
     "longname": "src/settings/ZoomSettings.js~ZoomSettings#clone",
     "access": "public",
     "description": "Clones this zoom settings instance.",
-    "lineNumber": 80,
+    "lineNumber": 71,
     "return": {
       "nullable": null,
       "types": [
@@ -5110,7 +5374,7 @@
     "params": []
   },
   {
-    "__docId__": 254,
+    "__docId__": 272,
     "kind": "file",
     "name": "src/strategies/index.js",
     "content": "/**\r\n * A collection of control strategies.\r\n *\r\n * @module delta-controls/strategies\r\n */\r\n\r\nexport { Direction, MovementStrategy } from \"./MovementStrategy.js\";\r\nexport { Strategy } from \"./Strategy.js\";\r\nexport { ZoomStrategy } from \"./ZoomStrategy.js\";\r\n",
@@ -5121,7 +5385,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 255,
+    "__docId__": 273,
     "kind": "file",
     "name": "src/strategies/MovementStrategy.js",
     "content": "import { Strategy } from \"./Strategy.js\";\r\n\r\n/**\r\n * A movement strategy.\r\n */\r\n\r\nexport class MovementStrategy extends Strategy {\r\n\r\n\t/**\r\n\t * Constructs a new movement strategy.\r\n\t *\r\n\t * @param {MovementState} movementState - A movement state.\r\n\t * @param {Direction} direction - A direction.\r\n\t */\r\n\r\n\tconstructor(movementState, direction) {\r\n\r\n\t\tsuper();\r\n\r\n\t\t/**\r\n\t\t * A movement state.\r\n\t\t *\r\n\t\t * @type {MovementState}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.movementState = movementState;\r\n\r\n\t\t/**\r\n\t\t * A direction.\r\n\t\t *\r\n\t\t * @type {Direction}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.direction = direction;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Executes this strategy.\r\n\t *\r\n\t * @param {Boolean} flag - A flag.\r\n\t */\r\n\r\n\texecute(flag) {\r\n\r\n\t\tconst state = this.movementState;\r\n\r\n\t\tswitch(this.direction) {\r\n\r\n\t\t\tcase Direction.FORWARD:\r\n\t\t\t\tstate.forward = flag;\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase Direction.LEFT:\r\n\t\t\t\tstate.left = flag;\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase Direction.BACKWARD:\r\n\t\t\t\tstate.backward = flag;\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase Direction.RIGHT:\r\n\t\t\t\tstate.right = flag;\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase Direction.DOWN:\r\n\t\t\t\tstate.down = flag;\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase Direction.UP:\r\n\t\t\t\tstate.up = flag;\r\n\t\t\t\tbreak;\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n}\r\n/**\r\n * An enumeration of movement directions.\r\n *\r\n * @type {Object}\r\n * @property {Number} FORWARD - Move forward.\r\n * @property {Number} LEFT - Move left.\r\n * @property {Number} BACKWARD - Move backward.\r\n * @property {Number} RIGHT - Move right.\r\n * @property {Number} DOWN - Move down.\r\n * @property {Number} UP - Move up.\r\n */\r\n\r\nexport const Direction = {\r\n\r\n\tFORWARD: 0,\r\n\tLEFT: 1,\r\n\tBACKWARD: 2,\r\n\tRIGHT: 3,\r\n\tDOWN: 4,\r\n\tUP: 5\r\n\r\n};\r\n",
@@ -5132,7 +5396,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 256,
+    "__docId__": 274,
     "kind": "class",
     "name": "MovementStrategy",
     "memberof": "src/strategies/MovementStrategy.js",
@@ -5150,7 +5414,7 @@
     ]
   },
   {
-    "__docId__": 257,
+    "__docId__": 275,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/strategies/MovementStrategy.js~MovementStrategy",
@@ -5185,7 +5449,7 @@
     ]
   },
   {
-    "__docId__": 258,
+    "__docId__": 276,
     "kind": "member",
     "name": "movementState",
     "memberof": "src/strategies/MovementStrategy.js~MovementStrategy",
@@ -5204,7 +5468,7 @@
     }
   },
   {
-    "__docId__": 259,
+    "__docId__": 277,
     "kind": "member",
     "name": "direction",
     "memberof": "src/strategies/MovementStrategy.js~MovementStrategy",
@@ -5223,7 +5487,7 @@
     }
   },
   {
-    "__docId__": 260,
+    "__docId__": 278,
     "kind": "method",
     "name": "execute",
     "memberof": "src/strategies/MovementStrategy.js~MovementStrategy",
@@ -5249,7 +5513,7 @@
     "return": null
   },
   {
-    "__docId__": 261,
+    "__docId__": 279,
     "kind": "variable",
     "name": "Direction",
     "memberof": "src/strategies/MovementStrategy.js",
@@ -5333,7 +5597,7 @@
     }
   },
   {
-    "__docId__": 262,
+    "__docId__": 280,
     "kind": "file",
     "name": "src/strategies/Strategy.js",
     "content": "/**\r\n * The Strategy interface.\r\n */\r\n\r\nexport class Strategy {\r\n\r\n\t/**\r\n\t * Executes this strategy.\r\n\t *\r\n\t * @throws {Error} An error is thrown if the method is not overridden.\r\n\t * @param {Boolean} flag - A flag.\r\n\t */\r\n\r\n\texecute(flag) {\r\n\r\n\t\tthrow new Error(\"Strategy#execute method not implemented!\");\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -5344,7 +5608,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 263,
+    "__docId__": 281,
     "kind": "class",
     "name": "Strategy",
     "memberof": "src/strategies/Strategy.js",
@@ -5359,7 +5623,7 @@
     "interface": false
   },
   {
-    "__docId__": 264,
+    "__docId__": 282,
     "kind": "method",
     "name": "execute",
     "memberof": "src/strategies/Strategy.js~Strategy",
@@ -5393,7 +5657,7 @@
     "return": null
   },
   {
-    "__docId__": 265,
+    "__docId__": 283,
     "kind": "file",
     "name": "src/strategies/ZoomStrategy.js",
     "content": "import { Strategy } from \"./Strategy.js\";\r\n\r\n/**\r\n * A zoom strategy.\r\n */\r\n\r\nexport class ZoomStrategy extends Strategy {\r\n\r\n\t/**\r\n\t * Constructs a new zoom strategy.\r\n\t *\r\n\t * @param {RotationManager} rotationManager - A rotation manager.\r\n\t * @param {Boolean} zoomIn - Whether this strategy should zoom in.\r\n\t */\r\n\r\n\tconstructor(rotationManager, zoomIn) {\r\n\r\n\t\tsuper();\r\n\r\n\t\t/**\r\n\t\t * A rotation manager.\r\n\t\t *\r\n\t\t * @type {RotationManager}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.rotationManager = rotationManager;\r\n\r\n\t\t/**\r\n\t\t * Whether this strategy should zoom in.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.zoomIn = zoomIn;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Executes this strategy.\r\n\t *\r\n\t * @param {Boolean} flag - A flag.\r\n\t */\r\n\r\n\texecute(flag) {\r\n\r\n\t\t// Only act on key down events.\r\n\t\tif(flag) {\r\n\r\n\t\t\tthis.rotationManager.zoom(this.zoomIn ? -1 : 1);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n}\r\n",
@@ -5404,7 +5668,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 266,
+    "__docId__": 284,
     "kind": "class",
     "name": "ZoomStrategy",
     "memberof": "src/strategies/ZoomStrategy.js",
@@ -5422,7 +5686,7 @@
     ]
   },
   {
-    "__docId__": 267,
+    "__docId__": 285,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/strategies/ZoomStrategy.js~ZoomStrategy",
@@ -5457,7 +5721,7 @@
     ]
   },
   {
-    "__docId__": 268,
+    "__docId__": 286,
     "kind": "member",
     "name": "rotationManager",
     "memberof": "src/strategies/ZoomStrategy.js~ZoomStrategy",
@@ -5476,7 +5740,7 @@
     }
   },
   {
-    "__docId__": 269,
+    "__docId__": 287,
     "kind": "member",
     "name": "zoomIn",
     "memberof": "src/strategies/ZoomStrategy.js~ZoomStrategy",
@@ -5495,7 +5759,7 @@
     }
   },
   {
-    "__docId__": 270,
+    "__docId__": 288,
     "kind": "method",
     "name": "execute",
     "memberof": "src/strategies/ZoomStrategy.js~ZoomStrategy",
@@ -5530,7 +5794,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\r\n\t\"name\": \"delta-controls\",\r\n\t\"version\": \"0.4.0\",\r\n\t\"description\": \"A 3D movement controller.\",\r\n\t\"homepage\": \"https://github.com/vanruesc/delta-controls\",\r\n\t\"main\": \"build/delta-controls.js\",\r\n\t\"module\": \"src/index.js\",\r\n\t\"license\": \"Zlib\",\r\n\r\n\t\"keywords\": [\r\n\t\t\"movement\",\r\n\t\t\"translation\",\r\n\t\t\"rotation\",\r\n\t\t\"object\",\r\n\t\t\"controls\",\r\n\t\t\"keybindings\",\r\n\t\t\"3d\"\r\n\t],\r\n\r\n\t\"author\": {\r\n\t\t\"name\": \"Raoul van Rüschen\",\r\n\t\t\"email\": \"vanruesc@outlook.de\"\r\n\t},\r\n\r\n\t\"repository\": {\r\n\t\t\"type\": \"git\",\r\n\t\t\"url\": \"https://github.com/vanruesc/delta-controls.git\"\r\n\t},\r\n\r\n\t\"bugs\": {\r\n\t\t\"url\": \"https://github.com/vanruesc/delta-controls/issues\"\r\n\t},\r\n\r\n\t\"files\": [\r\n\t\t\"src\",\r\n\t\t\"build\"\r\n\t],\r\n\r\n\t\"scripts\": {\r\n\t\t\"test\": \"grunt --production\"\r\n\t},\r\n\r\n\t\"engines\": {\r\n\t\t\"node\": \">=4.0.0\"\r\n\t},\r\n\r\n\t\"eslintConfig\": {\r\n\t\t\"extends\": \"delta\"\r\n\t},\r\n\r\n\t\"dependencies\": {\r\n\t\t\"math-ds\": \"0.x.x\"\r\n\t},\r\n\r\n\t\"devDependencies\": {\r\n\t\t\"@vanruesc/grunt-esdoc\": \"0.x.x\",\r\n\t\t\"babel-core\": \"6.x.x\",\r\n\t\t\"babel-plugin-external-helpers\": \"6.x.x\",\r\n\t\t\"babel-preset-env\": \"1.x.x\",\r\n\t\t\"esdoc-standard-plugin\": \"1.x.x\",\r\n\t\t\"eslint-config-delta\": \"0.x.x\",\r\n\t\t\"grunt\": \"1.x.x\",\r\n\t\t\"grunt-cli\": \"1.x.x\",\r\n\t\t\"grunt-contrib-nodeunit\": \"1.x.x\",\r\n\t\t\"grunt-contrib-uglify\": \"3.x.x\",\r\n\t\t\"grunt-contrib-copy\": \"1.x.x\",\r\n\t\t\"grunt-eslint\": \"20.x.x\",\r\n\t\t\"grunt-rollup\": \"8.x.x\",\r\n\t\t\"jit-grunt\": \"0.x.x\",\r\n\t\t\"load-grunt-config\": \"0.x.x\",\r\n\t\t\"postprocessing\": \"4.x.x\",\r\n\t\t\"rollup-plugin-babel\": \"3.x.x\",\r\n\t\t\"rollup-plugin-node-resolve\": \"3.x.x\",\r\n\t\t\"synthetic-event\": \"0.x.x\",\r\n\t\t\"three\": \"0.89.x\",\r\n\t\t\"three-demo\": \"0.x.x\",\r\n\t\t\"time-grunt\": \"1.x.x\"\r\n\t}\r\n}\r\n",
+    "content": "{\r\n\t\"name\": \"delta-controls\",\r\n\t\"version\": \"1.0.0\",\r\n\t\"description\": \"A 3D movement controller.\",\r\n\t\"homepage\": \"https://github.com/vanruesc/delta-controls\",\r\n\t\"main\": \"build/delta-controls.js\",\r\n\t\"module\": \"src/index.js\",\r\n\t\"license\": \"Zlib\",\r\n\r\n\t\"keywords\": [\r\n\t\t\"movement\",\r\n\t\t\"translation\",\r\n\t\t\"rotation\",\r\n\t\t\"object\",\r\n\t\t\"controls\",\r\n\t\t\"keybindings\",\r\n\t\t\"3d\"\r\n\t],\r\n\r\n\t\"author\": {\r\n\t\t\"name\": \"Raoul van Rüschen\",\r\n\t\t\"email\": \"vanruesc@outlook.de\"\r\n\t},\r\n\r\n\t\"repository\": {\r\n\t\t\"type\": \"git\",\r\n\t\t\"url\": \"https://github.com/vanruesc/delta-controls.git\"\r\n\t},\r\n\r\n\t\"bugs\": {\r\n\t\t\"url\": \"https://github.com/vanruesc/delta-controls/issues\"\r\n\t},\r\n\r\n\t\"files\": [\r\n\t\t\"src\",\r\n\t\t\"build\"\r\n\t],\r\n\r\n\t\"scripts\": {\r\n\t\t\"test\": \"grunt --production\"\r\n\t},\r\n\r\n\t\"engines\": {\r\n\t\t\"node\": \">=4.0.0\"\r\n\t},\r\n\r\n\t\"eslintConfig\": {\r\n\t\t\"extends\": \"delta\"\r\n\t},\r\n\r\n\t\"dependencies\": {\r\n\t\t\"math-ds\": \"0.x.x\"\r\n\t},\r\n\r\n\t\"devDependencies\": {\r\n\t\t\"@vanruesc/grunt-esdoc\": \"0.x.x\",\r\n\t\t\"babel-core\": \"6.x.x\",\r\n\t\t\"babel-plugin-external-helpers\": \"6.x.x\",\r\n\t\t\"babel-preset-env\": \"1.x.x\",\r\n\t\t\"esdoc-standard-plugin\": \"1.x.x\",\r\n\t\t\"eslint-config-delta\": \"0.x.x\",\r\n\t\t\"grunt\": \"1.x.x\",\r\n\t\t\"grunt-cli\": \"1.x.x\",\r\n\t\t\"grunt-contrib-nodeunit\": \"1.x.x\",\r\n\t\t\"grunt-contrib-uglify\": \"3.x.x\",\r\n\t\t\"grunt-contrib-copy\": \"1.x.x\",\r\n\t\t\"grunt-eslint\": \"20.x.x\",\r\n\t\t\"grunt-rollup\": \"8.x.x\",\r\n\t\t\"jit-grunt\": \"0.x.x\",\r\n\t\t\"load-grunt-config\": \"0.x.x\",\r\n\t\t\"postprocessing\": \"4.x.x\",\r\n\t\t\"rollup-plugin-babel\": \"3.x.x\",\r\n\t\t\"rollup-plugin-node-resolve\": \"3.x.x\",\r\n\t\t\"synthetic-event\": \"0.x.x\",\r\n\t\t\"three\": \"0.89.x\",\r\n\t\t\"three-demo\": \"0.x.x\",\r\n\t\t\"time-grunt\": \"1.x.x\"\r\n\t}\r\n}\r\n",
     "longname": "C:\\Users\\Raoul\\Sourcecode\\JavaScript\\delta-controls\\package.json",
     "name": "package.json",
     "static": true,

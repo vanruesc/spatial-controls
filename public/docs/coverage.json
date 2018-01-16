@@ -1,16 +1,21 @@
 {
   "coverage": "100%",
-  "expectCount": 165,
-  "actualCount": 165,
+  "expectCount": 174,
+  "actualCount": 174,
   "files": {
     "src/core/Action.js": {
       "expectCount": 1,
       "actualCount": 1,
       "undocumentLines": []
     },
+    "src/core/axes.js": {
+      "expectCount": 3,
+      "actualCount": 3,
+      "undocumentLines": []
+    },
     "src/core/DeltaControls.js": {
-      "expectCount": 37,
-      "actualCount": 37,
+      "expectCount": 41,
+      "actualCount": 41,
       "undocumentLines": []
     },
     "src/input/KeyCode.js": {
@@ -23,24 +28,19 @@
       "actualCount": 1,
       "undocumentLines": []
     },
-    "src/managers/axes.js": {
-      "expectCount": 3,
-      "actualCount": 3,
-      "undocumentLines": []
-    },
     "src/managers/MovementState.js": {
       "expectCount": 9,
       "actualCount": 9,
       "undocumentLines": []
     },
     "src/managers/RotationManager.js": {
-      "expectCount": 18,
-      "actualCount": 18,
+      "expectCount": 19,
+      "actualCount": 19,
       "undocumentLines": []
     },
     "src/managers/TranslationManager.js": {
-      "expectCount": 12,
-      "actualCount": 12,
+      "expectCount": 15,
+      "actualCount": 15,
       "undocumentLines": []
     },
     "src/settings/GeneralSettings.js": {
@@ -59,8 +59,8 @@
       "undocumentLines": []
     },
     "src/settings/RotationSettings.js": {
-      "expectCount": 10,
-      "actualCount": 10,
+      "expectCount": 12,
+      "actualCount": 12,
       "undocumentLines": []
     },
     "src/settings/SensitivitySettings.js": {
@@ -79,8 +79,8 @@
       "undocumentLines": []
     },
     "src/settings/ZoomSettings.js": {
-      "expectCount": 9,
-      "actualCount": 9,
+      "expectCount": 8,
+      "actualCount": 8,
       "undocumentLines": []
     },
     "src/strategies/MovementStrategy.js": {

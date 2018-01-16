@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../">
-  <title data-ice="title">src/settings/RotationSettings.js | delta-controls</title>
+  <title data-ice="title">src/core/axes.js | delta-controls</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -52,127 +52,35 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><h1 data-ice="title">src/settings/RotationSettings.js</h1>
+<div class="content" data-ice="content"><h1 data-ice="title">src/core/axes.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Vector3 } from &quot;math-ds&quot;;
-import * as axes from &quot;../core/axes.js&quot;;
 
 /**
- * Rotation settings.
+ * The X-axis.
+ *
+ * @type {Vector3}
+ * @ignore
  */
 
-export class RotationSettings {
+export const x = new Vector3(1, 0, 0);
 
-	/**
-	 * Constructs new rotation settings.
-	 */
+/**
+ * The Y-axis.
+ *
+ * @type {Vector3}
+ * @ignore
+ */
 
-	constructor() {
+export const y = new Vector3(0, 1, 0);
 
-		/**
-		 * The up vector. Must be normalized.
-		 *
-		 * @type {Vector3}
-		 */
+/**
+ * The Z-axis.
+ *
+ * @type {Vector3}
+ * @ignore
+ */
 
-		this.up = new Vector3();
-		this.up.copy(axes.y);
-
-		/**
-		 * A pivot offset. Only affects third person orbiting.
-		 *
-		 * @type {Vector3}
-		 */
-
-		this.pivotOffset = new Vector3();
-
-		/**
-		 * The minimum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
-		 *
-		 * @type {Number}
-		 */
-
-		this.minAzimuthalAngle = -Infinity;
-
-		/**
-		 * The maximum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
-		 *
-		 * @type {Number}
-		 */
-
-		this.maxAzimuthalAngle = Infinity;
-
-		/**
-		 * The minimum polar angle in radians. Range: [0, Math.PI].
-		 *
-		 * @type {Number}
-		 */
-
-		this.minPolarAngle = 0.0;
-
-		/**
-		 * The maximum polar angle in radians. Range: [0, Math.PI].
-		 *
-		 * @type {Number}
-		 */
-
-		this.maxPolarAngle = Math.PI;
-
-		/**
-		 * Indicates whether the horizontal rotation should be inverted.
-		 *
-		 * @type {Boolean}
-		 */
-
-		this.invertX = false;
-
-		/**
-		 * Indicates whether the vertical rotation should be inverted.
-		 *
-		 * @type {Boolean}
-		 */
-
-		this.invertY = false;
-
-	}
-
-	/**
-	 * Copies the given rotation settings.
-	 *
-	 * @param {RotationSettings} settings - Rotation settings.
-	 * @return {RotationSettings} This instance.
-	 */
-
-	copy(settings) {
-
-		this.up.copy(settings.up);
-		this.pivotOffset.copy(settings.pivotOffset);
-
-		this.minAzimuthalAngle = (settings.minAzimuthalAngle !== null) ? settings.minAzimuthalAngle : -Infinity;
-		this.maxAzimuthalAngle = (settings.maxAzimuthalAngle !== null) ? settings.maxAzimuthalAngle : Infinity;
-
-		this.minPolarAngle = settings.minPolarAngle;
-		this.maxPolarAngle = settings.maxPolarAngle;
-
-		this.invertX = settings.invertX;
-		this.invertY = settings.invertY;
-
-		return this;
-
-	}
-
-	/**
-	 * Clones this rotation settings instance.
-	 *
-	 * @return {RotationSettings} The cloned rotation settings.
-	 */
-
-	clone() {
-
-		return new this.constructor().copy(this);
-
-	}
-
-}
+export const z = new Vector3(0, 0, 1);
 </code></pre>
 
 </div>
