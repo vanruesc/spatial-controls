@@ -186,7 +186,7 @@ export class RotationManager {
 
 		if(general.orbit && zoom.enabled) {
 
-			amount = sign * zoom.step * sensitivity.zoom;
+			amount = sign * sensitivity.zoom;
 
 			if(zoom.invert) {
 
