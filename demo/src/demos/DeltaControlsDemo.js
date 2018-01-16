@@ -168,7 +168,7 @@ export class DeltaControlsDemo extends Demo {
 		folder.add(params, "orbit").onChange(() => {
 
 			mesh.visible = params.orbit;
-			controls.setOrbit(params.orbit);
+			controls.setOrbitEnabled(params.orbit);
 
 		});
 		folder.open();
@@ -181,14 +181,14 @@ export class DeltaControlsDemo extends Demo {
 		folder = menu.addFolder("Sensitivity");
 		folder.add(controls.settings.sensitivity, "rotation").min(0.0001).max(0.01).step(0.0001);
 		folder.add(controls.settings.sensitivity, "translation").min(0.01).max(5.0).step(0.01);
-		folder.add(controls.settings.sensitivity, "zoom").min(0.0001).max(0.1).step(0.0001);
+		folder.add(controls.settings.sensitivity, "zoom").min(0.001).max(1.0).step(0.001);
 		folder.open();
 
 		folder = menu.addFolder("Rotation");
-		folder.add(controls.settings.rotation, "minTheta").min(-Math.PI).max(Math.PI).step(0.0001);
-		folder.add(controls.settings.rotation, "maxTheta").min(-Math.PI).max(Math.PI).step(0.0001);
-		folder.add(controls.settings.rotation, "minPhi").min(0.0).max(Math.PI).step(0.0001);
-		folder.add(controls.settings.rotation, "maxPhi").min(0.0).max(Math.PI).step(0.0001);
+		folder.add(controls.settings.rotation, "minAzimuthalAngle").min(-Math.PI).max(Math.PI).step(0.0001);
+		folder.add(controls.settings.rotation, "maxAzimuthalAngle").min(-Math.PI).max(Math.PI).step(0.0001);
+		folder.add(controls.settings.rotation, "minPolarAngle").min(0.0).max(Math.PI).step(0.0001);
+		folder.add(controls.settings.rotation, "maxPolarAngle").min(0.0).max(Math.PI).step(0.0001);
 		folder.add(controls.settings.rotation, "invertX");
 		folder.add(controls.settings.rotation, "invertY");
 
@@ -200,7 +200,6 @@ export class DeltaControlsDemo extends Demo {
 		folder.add(controls.settings.zoom, "invert");
 		folder.add(controls.settings.zoom, "minDistance").min(0.1).max(1.0).step(0.01);
 		folder.add(controls.settings.zoom, "maxDistance").min(1.0).max(10.0).step(0.01);
-		folder.add(controls.settings.zoom, "step").min(1.0).max(20.0).step(0.25);
 
 	}
 
