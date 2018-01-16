@@ -275,6 +275,28 @@ export class DeltaControls {
 	}
 
 	/**
+	 * Changes the control mode to first or third person perspective.
+	 *
+	 * @param {Boolean} orbit - Whether the third person perspective should be enabled.
+	 * @return {DeltaControls} This instance.
+	 */
+
+	setOrbitEnabled(orbit) {
+
+		const general = this.settings.general;
+
+		if(general.orbit !== orbit) {
+
+			this.getTarget(this.target);
+			general.orbit = orbit;
+			this.lookAt(this.target);
+
+		}
+
+		return this;
+
+	}
+	/**
 	 * Handles pointer move events.
 	 *
 	 * @private
@@ -613,29 +635,6 @@ export class DeltaControls {
 	lookAt(point) {
 
 		this.rotationManager.lookAt(point);
-
-		return this;
-
-	}
-
-	/**
-	 * Changes the control mode to first or third person perspective.
-	 *
-	 * @param {Boolean} orbit - Enable third person perspective.
-	 * @return {DeltaControls} This instance.
-	 */
-
-	setOrbit(orbit) {
-
-		const general = this.settings.general;
-
-		if(general.orbit !== orbit) {
-
-			this.getTarget(this.target);
-			general.orbit = orbit;
-			this.lookAt(this.target);
-
-		}
 
 		return this;
 
