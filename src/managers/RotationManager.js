@@ -151,8 +151,8 @@ export class RotationManager {
 		s.phi = ((orbit || rotation.invertY) && !(orbit && rotation.invertY)) ? s.phi - phi : s.phi + phi;
 
 		// Restrict theta and phi.
-		s.theta = Math.min(Math.max(s.theta, rotation.minTheta), rotation.maxTheta);
-		s.phi = Math.min(Math.max(s.phi, rotation.minPhi), rotation.maxPhi);
+		s.theta = Math.min(Math.max(s.theta, rotation.minAzimuthalAngle), rotation.maxAzimuthalAngle);
+		s.phi = Math.min(Math.max(s.phi, rotation.minPolarAngle), rotation.maxPolarAngle);
 		s.theta %= TWO_PI;
 		s.makeSafe();
 

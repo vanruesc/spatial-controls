@@ -16,15 +16,15 @@ export class RotationSettings {
 		 * @type {Number}
 		 */
 
-		this.minTheta = -Infinity;
+		this.minAzimuthalAngle = -Infinity;
 
 		/**
-		 * The maximum azimuth angle in radians. Range: [-Math.PI, Math.PI].
+		 * The maximum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
 		 *
 		 * @type {Number}
 		 */
 
-		this.maxTheta = Infinity;
+		this.maxAzimuthalAngle = Infinity;
 
 		/**
 		 * The minimum polar angle in radians. Range: [0, Math.PI].
@@ -32,7 +32,7 @@ export class RotationSettings {
 		 * @type {Number}
 		 */
 
-		this.minPhi = 0.0;
+		this.minPolarAngle = 0.0;
 
 		/**
 		 * The maximum polar angle in radians. Range: [0, Math.PI].
@@ -40,7 +40,7 @@ export class RotationSettings {
 		 * @type {Number}
 		 */
 
-		this.maxPhi = Math.PI;
+		this.maxPolarAngle = Math.PI;
 
 		/**
 		 * Indicates whether the horizontal rotation should be inverted.
@@ -69,11 +69,11 @@ export class RotationSettings {
 
 	copy(settings) {
 
-		this.minTheta = (settings.minTheta !== null) ? settings.minTheta : -Infinity;
-		this.maxTheta = (settings.maxTheta !== null) ? settings.maxTheta : Infinity;
+		this.minAzimuthalAngle = (settings.minAzimuthalAngle !== null) ? settings.minAzimuthalAngle : -Infinity;
+		this.maxAzimuthalAngle = (settings.maxAzimuthalAngle !== null) ? settings.maxAzimuthalAngle : Infinity;
 
-		this.minPhi = settings.minPhi;
-		this.maxPhi = settings.maxPhi;
+		this.minPolarAngle = settings.minPolarAngle;
+		this.maxPolarAngle = settings.maxPolarAngle;
 
 		this.invertX = settings.invertX;
 		this.invertY = settings.invertY;
