@@ -1,5 +1,5 @@
 /**
- * delta-controls v1.0.1 build Jan 16 2018
+ * delta-controls v1.0.2 build Jan 16 2018
  * https://github.com/vanruesc/delta-controls
  * Copyright 2018 Raoul van Rüschen, Zlib
  */
@@ -6116,6 +6116,25 @@
 
 
   			return this.rotationManager.getViewDirection(view);
+  		}
+  	}, {
+  		key: "setDom",
+  		value: function setDom(dom) {
+
+  			var enabled = this.enabled;
+
+  			if (dom !== null) {
+
+  				if (enabled) {
+
+  					this.setEnabled(false);
+  				}
+
+  				this.dom = dom;
+  				this.setEnabled(enabled);
+  			}
+
+  			return this;
   		}
   	}, {
   		key: "setPosition",

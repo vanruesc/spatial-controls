@@ -10454,6 +10454,25 @@
   			return this.rotationManager.getViewDirection(view);
   		}
   	}, {
+  		key: "setDom",
+  		value: function setDom(dom) {
+
+  			var enabled = this.enabled;
+
+  			if (dom !== null) {
+
+  				if (enabled) {
+
+  					this.setEnabled(false);
+  				}
+
+  				this.dom = dom;
+  				this.setEnabled(enabled);
+  			}
+
+  			return this;
+  		}
+  	}, {
   		key: "setPosition",
   		value: function setPosition(position) {
 
