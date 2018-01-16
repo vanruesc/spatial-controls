@@ -10368,7 +10368,9 @@
   }(Strategy);
 
   var DeltaControls = function () {
-  	function DeltaControls(position, quaternion) {
+  	function DeltaControls() {
+  		var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+  		var quaternion = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
   		var dom = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : document.body;
   		classCallCheck(this, DeltaControls);
 
@@ -10385,8 +10387,6 @@
 
   		this.rotationManager = new RotationManager(position, quaternion, this.target, this.settings);
 
-  		this.lookAt(this.target);
-
   		this.translationManager = new TranslationManager(position, quaternion, this.target, this.settings);
 
   		this.strategies = function (rotationManager, translationManager) {
@@ -10402,9 +10402,14 @@
 
   		this.enabled = false;
 
-  		if (dom !== null) {
+  		if (position !== null && quaternion !== null) {
 
-  			this.setEnabled();
+  			this.lookAt(this.target);
+
+  			if (dom !== null) {
+
+  				this.setEnabled();
+  			}
   		}
   	}
 
