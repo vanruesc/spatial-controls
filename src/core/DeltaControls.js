@@ -296,6 +296,42 @@ export class DeltaControls {
 		return this;
 
 	}
+
+	/**
+	 * Copies the given controls.
+	 *
+	 * @param {DeltaControls} controls - A controls instance.
+	 * @return {DeltaControls} This instance.
+	 */
+
+	copy(controls) {
+
+		this.dom = controls.getDom();
+		this.position = controls.getPosition();
+		this.quaternion = controls.getQuaternion();
+		this.target = controls.getTarget();
+
+		this.settings.copy(controls.settings);
+
+		this.rotationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);
+		this.translationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);
+
+		return this.lookAt(this.target);
+
+	}
+
+	/**
+	 * Clones this instance.
+	 *
+	 * @return {DeltaControls} the cloned controls.
+	 */
+
+	clone() {
+
+		return new this.constructor().copy(this);
+
+	}
+
 	/**
 	 * Handles pointer move events.
 	 *
