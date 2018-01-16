@@ -1,6 +1,6 @@
 import { Vector3 } from "math-ds";
 import { MovementState } from "./MovementState.js";
-import * as axes from "./axes.js";
+import * as axes from "../core/axes.js";
 
 /**
  * A vector.
