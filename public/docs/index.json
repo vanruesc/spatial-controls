@@ -762,7 +762,7 @@
     "__docId__": 54,
     "kind": "file",
     "name": "src/core/DeltaControls.js",
-    "content": "import { Vector2, Vector3 } from \"math-ds\";\r\nimport { PointerButton } from \"../input/PointerButton.js\";\r\nimport { RotationManager } from \"../managers/RotationManager.js\";\r\nimport { TranslationManager } from \"../managers/TranslationManager.js\";\r\nimport { Settings } from \"../settings/Settings.js\";\r\nimport { Direction, MovementStrategy } from \"../strategies/MovementStrategy.js\";\r\nimport { ZoomStrategy } from \"../strategies/ZoomStrategy.js\";\r\nimport { Action } from \"./Action.js\";\r\n\r\n/**\r\n * Movement controls driven by user input.\r\n *\r\n * @implements {Disposable}\r\n * @implements {EventListener}\r\n */\r\n\r\nexport class DeltaControls {\r\n\r\n\t/**\r\n\t * Constructs new controls.\r\n\t *\r\n\t * @param {Vector3} position - A position.\r\n\t * @param {Quaternion} quaternion - A quaternion.\r\n\t * @param {HTMLElement} [dom=document.body] - A DOM element. Acts as the primary event target.\r\n\t */\r\n\r\n\tconstructor(position, quaternion, dom = document.body) {\r\n\r\n\t\t/**\r\n\t\t * A DOM element. Acts as the primary event target.\r\n\t\t *\r\n\t\t * @type {HTMLElement}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.dom = dom;\r\n\r\n\t\t/**\r\n\t\t * The position that will be modified.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.position = position;\r\n\r\n\t\t/**\r\n\t\t * The quaternion that will be modified.\r\n\t\t *\r\n\t\t * @type {Quaternion}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\r\n\t\t/**\r\n\t\t * The target.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.target = new Vector3();\r\n\r\n\t\t/**\r\n\t\t * The control settings.\r\n\t\t *\r\n\t\t * @type {Settings}\r\n\t\t */\r\n\r\n\t\tthis.settings = new Settings();\r\n\r\n\t\t/**\r\n\t\t * A rotation manager.\r\n\t\t *\r\n\t\t * @type {RotationManager}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.rotationManager = new RotationManager(position, quaternion, this.target, this.settings);\r\n\r\n\t\t// Update the orientation right away.\r\n\t\tthis.lookAt(this.target);\r\n\r\n\t\t/**\r\n\t\t * A translation manager.\r\n\t\t *\r\n\t\t * @type {TranslationManager}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.translationManager = new TranslationManager(position, quaternion, this.target, this.settings);\r\n\r\n\t\t/**\r\n\t\t * A map that links actions to specific strategies.\r\n\t\t *\r\n\t\t * @type {Map}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.strategies = ((rotationManager, translationManager) => {\r\n\r\n\t\t\tconst state = translationManager.movementState;\r\n\r\n\t\t\treturn new Map([\r\n\r\n\t\t\t\t[Action.MOVE_FORWARD, new MovementStrategy(state, Direction.FORWARD)],\r\n\t\t\t\t[Action.MOVE_LEFT, new MovementStrategy(state, Direction.LEFT)],\r\n\t\t\t\t[Action.MOVE_BACKWARD, new MovementStrategy(state, Direction.BACKWARD)],\r\n\t\t\t\t[Action.MOVE_RIGHT, new MovementStrategy(state, Direction.RIGHT)],\r\n\t\t\t\t[Action.MOVE_DOWN, new MovementStrategy(state, Direction.DOWN)],\r\n\t\t\t\t[Action.MOVE_UP, new MovementStrategy(state, Direction.UP)],\r\n\t\t\t\t[Action.ZOOM_OUT, new ZoomStrategy(rotationManager, false)],\r\n\t\t\t\t[Action.ZOOM_IN, new ZoomStrategy(rotationManager, true)]\r\n\r\n\t\t\t]);\r\n\r\n\t\t})(this.rotationManager, this.translationManager);\r\n\r\n\t\t/**\r\n\t\t * A screen position.\r\n\t\t *\r\n\t\t * @type {Vector2}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.lastScreenPosition = new Vector2();\r\n\r\n\t\t/**\r\n\t\t * Indicates whether the user is currently holding the pointer button down.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.dragging = false;\r\n\r\n\t\t/**\r\n\t\t * The internal enabled state.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.enabled = false;\r\n\r\n\t\tif(dom !== null) {\r\n\r\n\t\t\tthis.setEnabled();\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the DOM element.\r\n\t *\r\n\t * @return {HTMLElement} The DOM element.\r\n\t */\r\n\r\n\tgetDom() {\r\n\r\n\t\treturn this.dom;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the position.\r\n\t *\r\n\t * @return {Vector3} The position.\r\n\t */\r\n\r\n\tgetPosition() {\r\n\r\n\t\treturn this.position;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the quaternion.\r\n\t *\r\n\t * @return {Quaternion} The quaternion.\r\n\t */\r\n\r\n\tgetQuaternion() {\r\n\r\n\t\treturn this.quaternion;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the current target.\r\n\t *\r\n\t * @param {Vector3} [target] - A vector to store the target in. If none is provided, a new one will be created.\r\n\t * @return {Vector3} The current target.\r\n\t */\r\n\r\n\tgetTarget(target = new Vector3()) {\r\n\r\n\t\ttarget.copy(this.target);\r\n\r\n\t\tif(!this.settings.general.orbit) {\r\n\r\n\t\t\t// The target is relative to the position.\r\n\t\t\ttarget.add(this.position);\r\n\r\n\t\t}\r\n\r\n\t\treturn target;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the current view direction.\r\n\t *\r\n\t * @param {Vector3} [view] - A vector to store the direction in. If none is provided, a new one will be created.\r\n\t * @return {Vector3} The normalized view direction.\r\n\t */\r\n\r\n\tgetViewDirection(view = new Vector3()) {\r\n\r\n\t\treturn this.rotationManager.getViewDirection(view);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the position vector.\r\n\t *\r\n\t * @param {Vector3} position - The new position vector.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetPosition(position) {\r\n\r\n\t\tthis.position = position;\r\n\t\tthis.rotationManager.setPosition(position);\r\n\t\tthis.translationManager.setPosition(position);\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the quaternion.\r\n\t *\r\n\t * @param {Quaternion} quaternion - The new quaternion.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetQuaternion(quaternion) {\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\t\tthis.rotationManager.setQuaternion(quaternion);\r\n\t\tthis.translationManager.setQuaternion(quaternion);\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the target.\r\n\t *\r\n\t * @param {Vector3} target - The new target.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetTarget(target) {\r\n\r\n\t\tthis.target = target;\r\n\t\tthis.rotationManager.setTarget(target);\r\n\t\tthis.translationManager.setTarget(target);\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Changes the control mode to first or third person perspective.\r\n\t *\r\n\t * @param {Boolean} orbit - Whether the third person perspective should be enabled.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetOrbitEnabled(orbit) {\r\n\r\n\t\tconst general = this.settings.general;\r\n\r\n\t\tif(general.orbit !== orbit) {\r\n\r\n\t\t\tthis.getTarget(this.target);\r\n\t\t\tgeneral.orbit = orbit;\r\n\t\t\tthis.lookAt(this.target);\r\n\r\n\t\t}\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given controls.\r\n\t *\r\n\t * @param {DeltaControls} controls - A controls instance.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tcopy(controls) {\r\n\r\n\t\tthis.dom = controls.getDom();\r\n\t\tthis.position = controls.getPosition();\r\n\t\tthis.quaternion = controls.getQuaternion();\r\n\t\tthis.target = controls.getTarget();\r\n\r\n\t\tthis.settings.copy(controls.settings);\r\n\r\n\t\tthis.rotationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);\r\n\t\tthis.translationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this instance.\r\n\t *\r\n\t * @return {DeltaControls} the cloned controls.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles pointer move events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t */\r\n\r\n\thandlePointerMoveEvent(event) {\r\n\r\n\t\tconst settings = this.settings;\r\n\t\tconst pointer = settings.pointer;\r\n\t\tconst sensitivity = settings.sensitivity;\r\n\t\tconst rotationManager = this.rotationManager;\r\n\t\tconst lastScreenPosition = this.lastScreenPosition;\r\n\r\n\t\tlet movementX, movementY;\r\n\r\n\t\tif(document.pointerLockElement === this.dom) {\r\n\r\n\t\t\tif(!pointer.hold || this.dragging) {\r\n\r\n\t\t\t\trotationManager.adjustSpherical(\r\n\t\t\t\t\tevent.movementX * sensitivity.rotation,\r\n\t\t\t\t\tevent.movementY * sensitivity.rotation\r\n\t\t\t\t).updateQuaternion();\r\n\r\n\t\t\t}\r\n\r\n\t\t} else {\r\n\r\n\t\t\t// Compensate for inconsistent web APIs.\r\n\t\t\tmovementX = event.screenX - lastScreenPosition.x;\r\n\t\t\tmovementY = event.screenY - lastScreenPosition.y;\r\n\r\n\t\t\tlastScreenPosition.set(event.screenX, event.screenY);\r\n\r\n\t\t\trotationManager.adjustSpherical(\r\n\t\t\t\tmovementX * sensitivity.rotation,\r\n\t\t\t\tmovementY * sensitivity.rotation\r\n\t\t\t).updateQuaternion();\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles touch move events.\r\n\t *\r\n\t * @private\r\n\t * @param {TouchEvent} event - A touch event.\r\n\t */\r\n\r\n\thandleTouchMoveEvent(event) {\r\n\r\n\t\tconst sensitivity = this.settings.sensitivity;\r\n\t\tconst rotationManager = this.rotationManager;\r\n\t\tconst lastScreenPosition = this.lastScreenPosition;\r\n\t\tconst touch = event.touches[0];\r\n\r\n\t\t// Compensate for inconsistent web APIs.\r\n\t\tconst movementX = touch.screenX - lastScreenPosition.x;\r\n\t\tconst movementY = touch.screenY - lastScreenPosition.y;\r\n\r\n\t\tlastScreenPosition.set(touch.screenX, touch.screenY);\r\n\r\n\t\t// Don't produce a mouse move event.\r\n\t\tevent.preventDefault();\r\n\r\n\t\trotationManager.adjustSpherical(\r\n\t\t\tmovementX * sensitivity.rotation,\r\n\t\t\tmovementY * sensitivity.rotation\r\n\t\t).updateQuaternion();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles main pointer button events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandleMainPointerButton(event, pressed) {\r\n\r\n\t\tthis.dragging = pressed;\r\n\r\n\t\tif(this.settings.pointer.lock) {\r\n\r\n\t\t\tthis.setPointerLocked();\r\n\r\n\t\t} else {\r\n\r\n\t\t\tif(pressed) {\r\n\r\n\t\t\t\tthis.lastScreenPosition.set(event.screenX, event.screenY);\r\n\t\t\t\tthis.dom.addEventListener(\"mousemove\", this);\r\n\r\n\t\t\t} else {\r\n\r\n\t\t\t\tthis.dom.removeEventListener(\"mousemove\", this);\r\n\r\n\t\t\t}\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles auxiliary pointer button events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandleAuxiliaryPointerButton(event, pressed) {\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles secondary pointer button events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandleSecondaryPointerButton(event, pressed) {\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles pointer events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandlePointerButtonEvent(event, pressed) {\r\n\r\n\t\tevent.preventDefault();\r\n\r\n\t\tswitch(event.button) {\r\n\r\n\t\t\tcase PointerButton.MAIN:\r\n\t\t\t\tthis.handleMainPointerButton(event, pressed);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase PointerButton.AUXILIARY:\r\n\t\t\t\tthis.handleAuxiliaryPointerButton(event, pressed);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase PointerButton.SECONDARY:\r\n\t\t\t\tthis.handleSecondaryPointerButton(event, pressed);\r\n\t\t\t\tbreak;\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles touch start and end events.\r\n\t *\r\n\t * @private\r\n\t * @param {TouchEvent} event - A touch event.\r\n\t * @param {Boolean} start - Whether the event is a touch start event.\r\n\t */\r\n\r\n\thandleTouchEvent(event, start) {\r\n\r\n\t\tconst touch = event.touches[0];\r\n\r\n\t\t// Don't produce mouse events.\r\n\t\tevent.preventDefault();\r\n\r\n\t\tif(start) {\r\n\r\n\t\t\tthis.lastScreenPosition.set(touch.screenX, touch.screenY);\r\n\t\t\tthis.dom.addEventListener(\"touchmove\", this);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tthis.dom.removeEventListener(\"touchmove\", this);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles keyboard events.\r\n\t *\r\n\t * @private\r\n\t * @param {KeyboardEvent} event - A keyboard event.\r\n\t * @param {Boolean} pressed - Whether the key has been pressed down.\r\n\t */\r\n\r\n\thandleKeyboardEvent(event, pressed) {\r\n\r\n\t\tconst keyBindings = this.settings.keyBindings;\r\n\r\n\t\tif(keyBindings.has(event.keyCode)) {\r\n\r\n\t\t\tevent.preventDefault();\r\n\r\n\t\t\tthis.strategies.get(keyBindings.get(event.keyCode)).execute(pressed);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles wheel events.\r\n\t *\r\n\t * @private\r\n\t * @param {WheelEvent} event - A wheel event.\r\n\t */\r\n\r\n\thandleWheelEvent(event) {\r\n\r\n\t\tthis.rotationManager.zoom(Math.sign(event.deltaY));\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Enables or disables controls based on the pointer lock state.\r\n\t *\r\n\t * @private\r\n\t */\r\n\r\n\thandlePointerLockEvent() {\r\n\r\n\t\tif(document.pointerLockElement === this.dom) {\r\n\r\n\t\t\tthis.dom.addEventListener(\"mousemove\", this);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tthis.dom.removeEventListener(\"mousemove\", this);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles events.\r\n\t *\r\n\t * @param {Event} event - An event.\r\n\t */\r\n\r\n\thandleEvent(event) {\r\n\r\n\t\tswitch(event.type) {\r\n\r\n\t\t\tcase \"mousemove\":\r\n\t\t\t\tthis.handlePointerMoveEvent(event);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"touchmove\":\r\n\t\t\t\tthis.handleTouchMoveEvent(event);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"mousedown\":\r\n\t\t\t\tthis.handlePointerButtonEvent(event, true);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"mouseup\":\r\n\t\t\t\tthis.handlePointerButtonEvent(event, false);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"touchstart\":\r\n\t\t\t\tthis.handleTouchEvent(event, true);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"touchend\":\r\n\t\t\t\tthis.handleTouchEvent(event, false);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"keydown\":\r\n\t\t\t\tthis.handleKeyboardEvent(event, true);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"keyup\":\r\n\t\t\t\tthis.handleKeyboardEvent(event, false);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"wheel\":\r\n\t\t\t\tthis.handleWheelEvent(event);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"pointerlockchange\":\r\n\t\t\t\tthis.handlePointerLockEvent();\r\n\t\t\t\tbreak;\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Updates movement and rotation calculations based on time.\r\n\t *\r\n\t * This method should be called before a new frame is rendered.\r\n\t *\r\n\t * @param {Number} delta - The time since the last update in seconds.\r\n\t */\r\n\r\n\tupdate(delta) {\r\n\r\n\t\tthis.rotationManager.update(delta);\r\n\t\tthis.translationManager.update(delta);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Moves to the given position.\r\n\t *\r\n\t * @param {Vector3} position - The position.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tmoveTo(position) {\r\n\r\n\t\tthis.rotationManager.moveTo(position);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Looks at the given point.\r\n\t *\r\n\t * @param {Vector3} point - The target point.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tlookAt(point) {\r\n\r\n\t\tthis.rotationManager.lookAt(point);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Locks or unlocks the pointer.\r\n\t *\r\n\t * @private\r\n\t * @param {Boolean} [locked=true] - Whether the pointer should be locked.\r\n\t */\r\n\r\n\tsetPointerLocked(locked = true) {\r\n\r\n\t\tif(locked) {\r\n\r\n\t\t\tif(document.pointerLockElement !== this.dom && this.dom.requestPointerLock !== undefined) {\r\n\r\n\t\t\t\tthis.dom.requestPointerLock();\r\n\r\n\t\t\t}\r\n\r\n\t\t} else if(document.exitPointerLock !== undefined) {\r\n\r\n\t\t\tdocument.exitPointerLock();\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Enables or disables the controls.\r\n\t *\r\n\t * @param {Boolean} [enabled=true] - Whether the controls should be enabled or disabled.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetEnabled(enabled = true) {\r\n\r\n\t\tconst dom = this.dom;\r\n\r\n\t\tthis.translationManager.movementState.reset();\r\n\r\n\t\tif(enabled && !this.enabled) {\r\n\r\n\t\t\tdocument.addEventListener(\"pointerlockchange\", this);\r\n\t\t\tdocument.body.addEventListener(\"keyup\", this);\r\n\t\t\tdocument.body.addEventListener(\"keydown\", this);\r\n\t\t\tdom.addEventListener(\"mousedown\", this);\r\n\t\t\tdom.addEventListener(\"mouseup\", this);\r\n\t\t\tdom.addEventListener(\"touchstart\", this);\r\n\t\t\tdom.addEventListener(\"touchend\", this);\r\n\t\t\tdom.addEventListener(\"wheel\", this);\r\n\r\n\t\t} else if(!enabled && this.enabled) {\r\n\r\n\t\t\tdocument.removeEventListener(\"pointerlockchange\", this);\r\n\t\t\tdocument.body.removeEventListener(\"keyup\", this);\r\n\t\t\tdocument.body.removeEventListener(\"keydown\", this);\r\n\t\t\tdom.removeEventListener(\"mousedown\", this);\r\n\t\t\tdom.removeEventListener(\"mouseup\", this);\r\n\t\t\tdom.removeEventListener(\"touchstart\", this);\r\n\t\t\tdom.removeEventListener(\"touchend\", this);\r\n\t\t\tdom.removeEventListener(\"wheel\", this);\r\n\t\t\tdom.removeEventListener(\"mousemove\", this);\r\n\t\t\tdom.removeEventListener(\"touchmove\", this);\r\n\r\n\t\t}\r\n\r\n\t\tthis.setPointerLocked(false);\r\n\t\tthis.enabled = enabled;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Removes all event listeners and unlocks the pointer.\r\n\t */\r\n\r\n\tdispose() {\r\n\r\n\t\tthis.setEnabled(false);\r\n\r\n\t}\r\n\r\n}\r\n",
+    "content": "import { Vector2, Vector3 } from \"math-ds\";\r\nimport { PointerButton } from \"../input/PointerButton.js\";\r\nimport { RotationManager } from \"../managers/RotationManager.js\";\r\nimport { TranslationManager } from \"../managers/TranslationManager.js\";\r\nimport { Settings } from \"../settings/Settings.js\";\r\nimport { Direction, MovementStrategy } from \"../strategies/MovementStrategy.js\";\r\nimport { ZoomStrategy } from \"../strategies/ZoomStrategy.js\";\r\nimport { Action } from \"./Action.js\";\r\n\r\n/**\r\n * Movement controls driven by user input.\r\n *\r\n * @implements {Disposable}\r\n * @implements {EventListener}\r\n */\r\n\r\nexport class DeltaControls {\r\n\r\n\t/**\r\n\t * Constructs new controls.\r\n\t *\r\n\t * @param {Vector3} position - A position.\r\n\t * @param {Quaternion} quaternion - A quaternion.\r\n\t * @param {HTMLElement} [dom=document.body] - A DOM element. Acts as the primary event target.\r\n\t */\r\n\r\n\tconstructor(position = null, quaternion = null, dom = document.body) {\r\n\r\n\t\t/**\r\n\t\t * A DOM element. Acts as the primary event target.\r\n\t\t *\r\n\t\t * @type {HTMLElement}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.dom = dom;\r\n\r\n\t\t/**\r\n\t\t * The position that will be modified.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.position = position;\r\n\r\n\t\t/**\r\n\t\t * The quaternion that will be modified.\r\n\t\t *\r\n\t\t * @type {Quaternion}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\r\n\t\t/**\r\n\t\t * The target.\r\n\t\t *\r\n\t\t * @type {Vector3}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.target = new Vector3();\r\n\r\n\t\t/**\r\n\t\t * The control settings.\r\n\t\t *\r\n\t\t * @type {Settings}\r\n\t\t */\r\n\r\n\t\tthis.settings = new Settings();\r\n\r\n\t\t/**\r\n\t\t * A rotation manager.\r\n\t\t *\r\n\t\t * @type {RotationManager}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.rotationManager = new RotationManager(position, quaternion, this.target, this.settings);\r\n\r\n\t\t/**\r\n\t\t * A translation manager.\r\n\t\t *\r\n\t\t * @type {TranslationManager}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.translationManager = new TranslationManager(position, quaternion, this.target, this.settings);\r\n\r\n\t\t/**\r\n\t\t * A map that links actions to specific strategies.\r\n\t\t *\r\n\t\t * @type {Map}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.strategies = ((rotationManager, translationManager) => {\r\n\r\n\t\t\tconst state = translationManager.movementState;\r\n\r\n\t\t\treturn new Map([\r\n\r\n\t\t\t\t[Action.MOVE_FORWARD, new MovementStrategy(state, Direction.FORWARD)],\r\n\t\t\t\t[Action.MOVE_LEFT, new MovementStrategy(state, Direction.LEFT)],\r\n\t\t\t\t[Action.MOVE_BACKWARD, new MovementStrategy(state, Direction.BACKWARD)],\r\n\t\t\t\t[Action.MOVE_RIGHT, new MovementStrategy(state, Direction.RIGHT)],\r\n\t\t\t\t[Action.MOVE_DOWN, new MovementStrategy(state, Direction.DOWN)],\r\n\t\t\t\t[Action.MOVE_UP, new MovementStrategy(state, Direction.UP)],\r\n\t\t\t\t[Action.ZOOM_OUT, new ZoomStrategy(rotationManager, false)],\r\n\t\t\t\t[Action.ZOOM_IN, new ZoomStrategy(rotationManager, true)]\r\n\r\n\t\t\t]);\r\n\r\n\t\t})(this.rotationManager, this.translationManager);\r\n\r\n\t\t/**\r\n\t\t * A screen position.\r\n\t\t *\r\n\t\t * @type {Vector2}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.lastScreenPosition = new Vector2();\r\n\r\n\t\t/**\r\n\t\t * Indicates whether the user is currently holding the pointer button down.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.dragging = false;\r\n\r\n\t\t/**\r\n\t\t * The internal enabled state.\r\n\t\t *\r\n\t\t * @type {Boolean}\r\n\t\t * @private\r\n\t\t */\r\n\r\n\t\tthis.enabled = false;\r\n\r\n\t\tif(position !== null && quaternion !== null) {\r\n\r\n\t\t\tthis.lookAt(this.target);\r\n\r\n\t\t\tif(dom !== null) {\r\n\r\n\t\t\t\tthis.setEnabled();\r\n\r\n\t\t\t}\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the DOM element.\r\n\t *\r\n\t * @return {HTMLElement} The DOM element.\r\n\t */\r\n\r\n\tgetDom() {\r\n\r\n\t\treturn this.dom;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the position.\r\n\t *\r\n\t * @return {Vector3} The position.\r\n\t */\r\n\r\n\tgetPosition() {\r\n\r\n\t\treturn this.position;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the quaternion.\r\n\t *\r\n\t * @return {Quaternion} The quaternion.\r\n\t */\r\n\r\n\tgetQuaternion() {\r\n\r\n\t\treturn this.quaternion;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the current target.\r\n\t *\r\n\t * @param {Vector3} [target] - A vector to store the target in. If none is provided, a new one will be created.\r\n\t * @return {Vector3} The current target.\r\n\t */\r\n\r\n\tgetTarget(target = new Vector3()) {\r\n\r\n\t\ttarget.copy(this.target);\r\n\r\n\t\tif(!this.settings.general.orbit) {\r\n\r\n\t\t\t// The target is relative to the position.\r\n\t\t\ttarget.add(this.position);\r\n\r\n\t\t}\r\n\r\n\t\treturn target;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Returns the current view direction.\r\n\t *\r\n\t * @param {Vector3} [view] - A vector to store the direction in. If none is provided, a new one will be created.\r\n\t * @return {Vector3} The normalized view direction.\r\n\t */\r\n\r\n\tgetViewDirection(view = new Vector3()) {\r\n\r\n\t\treturn this.rotationManager.getViewDirection(view);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the position vector.\r\n\t *\r\n\t * @param {Vector3} position - The new position vector.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetPosition(position) {\r\n\r\n\t\tthis.position = position;\r\n\t\tthis.rotationManager.setPosition(position);\r\n\t\tthis.translationManager.setPosition(position);\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the quaternion.\r\n\t *\r\n\t * @param {Quaternion} quaternion - The new quaternion.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetQuaternion(quaternion) {\r\n\r\n\t\tthis.quaternion = quaternion;\r\n\t\tthis.rotationManager.setQuaternion(quaternion);\r\n\t\tthis.translationManager.setQuaternion(quaternion);\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Sets the target.\r\n\t *\r\n\t * @param {Vector3} target - The new target.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetTarget(target) {\r\n\r\n\t\tthis.target = target;\r\n\t\tthis.rotationManager.setTarget(target);\r\n\t\tthis.translationManager.setTarget(target);\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Changes the control mode to first or third person perspective.\r\n\t *\r\n\t * @param {Boolean} orbit - Whether the third person perspective should be enabled.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetOrbitEnabled(orbit) {\r\n\r\n\t\tconst general = this.settings.general;\r\n\r\n\t\tif(general.orbit !== orbit) {\r\n\r\n\t\t\tthis.getTarget(this.target);\r\n\t\t\tgeneral.orbit = orbit;\r\n\t\t\tthis.lookAt(this.target);\r\n\r\n\t\t}\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Copies the given controls.\r\n\t *\r\n\t * @param {DeltaControls} controls - A controls instance.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tcopy(controls) {\r\n\r\n\t\tthis.dom = controls.getDom();\r\n\t\tthis.position = controls.getPosition();\r\n\t\tthis.quaternion = controls.getQuaternion();\r\n\t\tthis.target = controls.getTarget();\r\n\r\n\t\tthis.settings.copy(controls.settings);\r\n\r\n\t\tthis.rotationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);\r\n\t\tthis.translationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);\r\n\r\n\t\treturn this.lookAt(this.target);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Clones this instance.\r\n\t *\r\n\t * @return {DeltaControls} the cloned controls.\r\n\t */\r\n\r\n\tclone() {\r\n\r\n\t\treturn new this.constructor().copy(this);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles pointer move events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t */\r\n\r\n\thandlePointerMoveEvent(event) {\r\n\r\n\t\tconst settings = this.settings;\r\n\t\tconst pointer = settings.pointer;\r\n\t\tconst sensitivity = settings.sensitivity;\r\n\t\tconst rotationManager = this.rotationManager;\r\n\t\tconst lastScreenPosition = this.lastScreenPosition;\r\n\r\n\t\tlet movementX, movementY;\r\n\r\n\t\tif(document.pointerLockElement === this.dom) {\r\n\r\n\t\t\tif(!pointer.hold || this.dragging) {\r\n\r\n\t\t\t\trotationManager.adjustSpherical(\r\n\t\t\t\t\tevent.movementX * sensitivity.rotation,\r\n\t\t\t\t\tevent.movementY * sensitivity.rotation\r\n\t\t\t\t).updateQuaternion();\r\n\r\n\t\t\t}\r\n\r\n\t\t} else {\r\n\r\n\t\t\t// Compensate for inconsistent web APIs.\r\n\t\t\tmovementX = event.screenX - lastScreenPosition.x;\r\n\t\t\tmovementY = event.screenY - lastScreenPosition.y;\r\n\r\n\t\t\tlastScreenPosition.set(event.screenX, event.screenY);\r\n\r\n\t\t\trotationManager.adjustSpherical(\r\n\t\t\t\tmovementX * sensitivity.rotation,\r\n\t\t\t\tmovementY * sensitivity.rotation\r\n\t\t\t).updateQuaternion();\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles touch move events.\r\n\t *\r\n\t * @private\r\n\t * @param {TouchEvent} event - A touch event.\r\n\t */\r\n\r\n\thandleTouchMoveEvent(event) {\r\n\r\n\t\tconst sensitivity = this.settings.sensitivity;\r\n\t\tconst rotationManager = this.rotationManager;\r\n\t\tconst lastScreenPosition = this.lastScreenPosition;\r\n\t\tconst touch = event.touches[0];\r\n\r\n\t\t// Compensate for inconsistent web APIs.\r\n\t\tconst movementX = touch.screenX - lastScreenPosition.x;\r\n\t\tconst movementY = touch.screenY - lastScreenPosition.y;\r\n\r\n\t\tlastScreenPosition.set(touch.screenX, touch.screenY);\r\n\r\n\t\t// Don't produce a mouse move event.\r\n\t\tevent.preventDefault();\r\n\r\n\t\trotationManager.adjustSpherical(\r\n\t\t\tmovementX * sensitivity.rotation,\r\n\t\t\tmovementY * sensitivity.rotation\r\n\t\t).updateQuaternion();\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles main pointer button events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandleMainPointerButton(event, pressed) {\r\n\r\n\t\tthis.dragging = pressed;\r\n\r\n\t\tif(this.settings.pointer.lock) {\r\n\r\n\t\t\tthis.setPointerLocked();\r\n\r\n\t\t} else {\r\n\r\n\t\t\tif(pressed) {\r\n\r\n\t\t\t\tthis.lastScreenPosition.set(event.screenX, event.screenY);\r\n\t\t\t\tthis.dom.addEventListener(\"mousemove\", this);\r\n\r\n\t\t\t} else {\r\n\r\n\t\t\t\tthis.dom.removeEventListener(\"mousemove\", this);\r\n\r\n\t\t\t}\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles auxiliary pointer button events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandleAuxiliaryPointerButton(event, pressed) {\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles secondary pointer button events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandleSecondaryPointerButton(event, pressed) {\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles pointer events.\r\n\t *\r\n\t * @private\r\n\t * @param {MouseEvent} event - A pointer event.\r\n\t * @param {Boolean} pressed - Whether the pointer button has been pressed down.\r\n\t */\r\n\r\n\thandlePointerButtonEvent(event, pressed) {\r\n\r\n\t\tevent.preventDefault();\r\n\r\n\t\tswitch(event.button) {\r\n\r\n\t\t\tcase PointerButton.MAIN:\r\n\t\t\t\tthis.handleMainPointerButton(event, pressed);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase PointerButton.AUXILIARY:\r\n\t\t\t\tthis.handleAuxiliaryPointerButton(event, pressed);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase PointerButton.SECONDARY:\r\n\t\t\t\tthis.handleSecondaryPointerButton(event, pressed);\r\n\t\t\t\tbreak;\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles touch start and end events.\r\n\t *\r\n\t * @private\r\n\t * @param {TouchEvent} event - A touch event.\r\n\t * @param {Boolean} start - Whether the event is a touch start event.\r\n\t */\r\n\r\n\thandleTouchEvent(event, start) {\r\n\r\n\t\tconst touch = event.touches[0];\r\n\r\n\t\t// Don't produce mouse events.\r\n\t\tevent.preventDefault();\r\n\r\n\t\tif(start) {\r\n\r\n\t\t\tthis.lastScreenPosition.set(touch.screenX, touch.screenY);\r\n\t\t\tthis.dom.addEventListener(\"touchmove\", this);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tthis.dom.removeEventListener(\"touchmove\", this);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles keyboard events.\r\n\t *\r\n\t * @private\r\n\t * @param {KeyboardEvent} event - A keyboard event.\r\n\t * @param {Boolean} pressed - Whether the key has been pressed down.\r\n\t */\r\n\r\n\thandleKeyboardEvent(event, pressed) {\r\n\r\n\t\tconst keyBindings = this.settings.keyBindings;\r\n\r\n\t\tif(keyBindings.has(event.keyCode)) {\r\n\r\n\t\t\tevent.preventDefault();\r\n\r\n\t\t\tthis.strategies.get(keyBindings.get(event.keyCode)).execute(pressed);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles wheel events.\r\n\t *\r\n\t * @private\r\n\t * @param {WheelEvent} event - A wheel event.\r\n\t */\r\n\r\n\thandleWheelEvent(event) {\r\n\r\n\t\tthis.rotationManager.zoom(Math.sign(event.deltaY));\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Enables or disables controls based on the pointer lock state.\r\n\t *\r\n\t * @private\r\n\t */\r\n\r\n\thandlePointerLockEvent() {\r\n\r\n\t\tif(document.pointerLockElement === this.dom) {\r\n\r\n\t\t\tthis.dom.addEventListener(\"mousemove\", this);\r\n\r\n\t\t} else {\r\n\r\n\t\t\tthis.dom.removeEventListener(\"mousemove\", this);\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Handles events.\r\n\t *\r\n\t * @param {Event} event - An event.\r\n\t */\r\n\r\n\thandleEvent(event) {\r\n\r\n\t\tswitch(event.type) {\r\n\r\n\t\t\tcase \"mousemove\":\r\n\t\t\t\tthis.handlePointerMoveEvent(event);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"touchmove\":\r\n\t\t\t\tthis.handleTouchMoveEvent(event);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"mousedown\":\r\n\t\t\t\tthis.handlePointerButtonEvent(event, true);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"mouseup\":\r\n\t\t\t\tthis.handlePointerButtonEvent(event, false);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"touchstart\":\r\n\t\t\t\tthis.handleTouchEvent(event, true);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"touchend\":\r\n\t\t\t\tthis.handleTouchEvent(event, false);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"keydown\":\r\n\t\t\t\tthis.handleKeyboardEvent(event, true);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"keyup\":\r\n\t\t\t\tthis.handleKeyboardEvent(event, false);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"wheel\":\r\n\t\t\t\tthis.handleWheelEvent(event);\r\n\t\t\t\tbreak;\r\n\r\n\t\t\tcase \"pointerlockchange\":\r\n\t\t\t\tthis.handlePointerLockEvent();\r\n\t\t\t\tbreak;\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Updates movement and rotation calculations based on time.\r\n\t *\r\n\t * This method should be called before a new frame is rendered.\r\n\t *\r\n\t * @param {Number} delta - The time since the last update in seconds.\r\n\t */\r\n\r\n\tupdate(delta) {\r\n\r\n\t\tthis.rotationManager.update(delta);\r\n\t\tthis.translationManager.update(delta);\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Moves to the given position.\r\n\t *\r\n\t * @param {Vector3} position - The position.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tmoveTo(position) {\r\n\r\n\t\tthis.rotationManager.moveTo(position);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Looks at the given point.\r\n\t *\r\n\t * @param {Vector3} point - The target point.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tlookAt(point) {\r\n\r\n\t\tthis.rotationManager.lookAt(point);\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Locks or unlocks the pointer.\r\n\t *\r\n\t * @private\r\n\t * @param {Boolean} [locked=true] - Whether the pointer should be locked.\r\n\t */\r\n\r\n\tsetPointerLocked(locked = true) {\r\n\r\n\t\tif(locked) {\r\n\r\n\t\t\tif(document.pointerLockElement !== this.dom && this.dom.requestPointerLock !== undefined) {\r\n\r\n\t\t\t\tthis.dom.requestPointerLock();\r\n\r\n\t\t\t}\r\n\r\n\t\t} else if(document.exitPointerLock !== undefined) {\r\n\r\n\t\t\tdocument.exitPointerLock();\r\n\r\n\t\t}\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Enables or disables the controls.\r\n\t *\r\n\t * @param {Boolean} [enabled=true] - Whether the controls should be enabled or disabled.\r\n\t * @return {DeltaControls} This instance.\r\n\t */\r\n\r\n\tsetEnabled(enabled = true) {\r\n\r\n\t\tconst dom = this.dom;\r\n\r\n\t\tthis.translationManager.movementState.reset();\r\n\r\n\t\tif(enabled && !this.enabled) {\r\n\r\n\t\t\tdocument.addEventListener(\"pointerlockchange\", this);\r\n\t\t\tdocument.body.addEventListener(\"keyup\", this);\r\n\t\t\tdocument.body.addEventListener(\"keydown\", this);\r\n\t\t\tdom.addEventListener(\"mousedown\", this);\r\n\t\t\tdom.addEventListener(\"mouseup\", this);\r\n\t\t\tdom.addEventListener(\"touchstart\", this);\r\n\t\t\tdom.addEventListener(\"touchend\", this);\r\n\t\t\tdom.addEventListener(\"wheel\", this);\r\n\r\n\t\t} else if(!enabled && this.enabled) {\r\n\r\n\t\t\tdocument.removeEventListener(\"pointerlockchange\", this);\r\n\t\t\tdocument.body.removeEventListener(\"keyup\", this);\r\n\t\t\tdocument.body.removeEventListener(\"keydown\", this);\r\n\t\t\tdom.removeEventListener(\"mousedown\", this);\r\n\t\t\tdom.removeEventListener(\"mouseup\", this);\r\n\t\t\tdom.removeEventListener(\"touchstart\", this);\r\n\t\t\tdom.removeEventListener(\"touchend\", this);\r\n\t\t\tdom.removeEventListener(\"wheel\", this);\r\n\t\t\tdom.removeEventListener(\"mousemove\", this);\r\n\t\t\tdom.removeEventListener(\"touchmove\", this);\r\n\r\n\t\t}\r\n\r\n\t\tthis.setPointerLocked(false);\r\n\t\tthis.enabled = enabled;\r\n\r\n\t\treturn this;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Removes all event listeners and unlocks the pointer.\r\n\t */\r\n\r\n\tdispose() {\r\n\r\n\t\tthis.setEnabled(false);\r\n\r\n\t}\r\n\r\n}\r\n",
     "static": true,
     "longname": "C:/Users/Raoul/Sourcecode/JavaScript/delta-controls/src/core/DeltaControls.js",
     "access": "public",
@@ -958,7 +958,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#translationManager",
     "access": "private",
     "description": "A translation manager.",
-    "lineNumber": 92,
+    "lineNumber": 89,
     "type": {
       "nullable": null,
       "types": [
@@ -977,7 +977,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#strategies",
     "access": "private",
     "description": "A map that links actions to specific strategies.",
-    "lineNumber": 101,
+    "lineNumber": 98,
     "type": {
       "nullable": null,
       "types": [
@@ -996,7 +996,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#lastScreenPosition",
     "access": "private",
     "description": "A screen position.",
-    "lineNumber": 127,
+    "lineNumber": 124,
     "type": {
       "nullable": null,
       "types": [
@@ -1015,7 +1015,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#dragging",
     "access": "private",
     "description": "Indicates whether the user is currently holding the pointer button down.",
-    "lineNumber": 136,
+    "lineNumber": 133,
     "type": {
       "nullable": null,
       "types": [
@@ -1034,7 +1034,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#enabled",
     "access": "private",
     "description": "The internal enabled state.",
-    "lineNumber": 145,
+    "lineNumber": 142,
     "type": {
       "nullable": null,
       "types": [
@@ -1055,7 +1055,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#getDom",
     "access": "public",
     "description": "Returns the DOM element.",
-    "lineNumber": 161,
+    "lineNumber": 164,
     "return": {
       "nullable": null,
       "types": [
@@ -1077,7 +1077,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#getPosition",
     "access": "public",
     "description": "Returns the position.",
-    "lineNumber": 173,
+    "lineNumber": 176,
     "return": {
       "nullable": null,
       "types": [
@@ -1099,7 +1099,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#getQuaternion",
     "access": "public",
     "description": "Returns the quaternion.",
-    "lineNumber": 185,
+    "lineNumber": 188,
     "return": {
       "nullable": null,
       "types": [
@@ -1121,7 +1121,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#getTarget",
     "access": "public",
     "description": "Returns the current target.",
-    "lineNumber": 198,
+    "lineNumber": 201,
     "params": [
       {
         "nullable": null,
@@ -1154,7 +1154,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#getViewDirection",
     "access": "public",
     "description": "Returns the current view direction.",
-    "lineNumber": 220,
+    "lineNumber": 223,
     "params": [
       {
         "nullable": null,
@@ -1187,7 +1187,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#setPosition",
     "access": "public",
     "description": "Sets the position vector.",
-    "lineNumber": 233,
+    "lineNumber": 236,
     "params": [
       {
         "nullable": null,
@@ -1220,7 +1220,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#setQuaternion",
     "access": "public",
     "description": "Sets the quaternion.",
-    "lineNumber": 250,
+    "lineNumber": 253,
     "params": [
       {
         "nullable": null,
@@ -1253,7 +1253,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#setTarget",
     "access": "public",
     "description": "Sets the target.",
-    "lineNumber": 267,
+    "lineNumber": 270,
     "params": [
       {
         "nullable": null,
@@ -1286,7 +1286,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#setOrbitEnabled",
     "access": "public",
     "description": "Changes the control mode to first or third person perspective.",
-    "lineNumber": 284,
+    "lineNumber": 287,
     "params": [
       {
         "nullable": null,
@@ -1319,7 +1319,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#copy",
     "access": "public",
     "description": "Copies the given controls.",
-    "lineNumber": 307,
+    "lineNumber": 310,
     "params": [
       {
         "nullable": null,
@@ -1352,7 +1352,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#clone",
     "access": "public",
     "description": "Clones this instance.",
-    "lineNumber": 329,
+    "lineNumber": 332,
     "return": {
       "nullable": null,
       "types": [
@@ -1374,7 +1374,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handlePointerMoveEvent",
     "access": "private",
     "description": "Handles pointer move events.",
-    "lineNumber": 342,
+    "lineNumber": 345,
     "params": [
       {
         "nullable": null,
@@ -1400,7 +1400,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleTouchMoveEvent",
     "access": "private",
     "description": "Handles touch move events.",
-    "lineNumber": 387,
+    "lineNumber": 390,
     "params": [
       {
         "nullable": null,
@@ -1426,7 +1426,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleMainPointerButton",
     "access": "private",
     "description": "Handles main pointer button events.",
-    "lineNumber": 418,
+    "lineNumber": 421,
     "params": [
       {
         "nullable": null,
@@ -1462,7 +1462,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleAuxiliaryPointerButton",
     "access": "private",
     "description": "Handles auxiliary pointer button events.",
-    "lineNumber": 451,
+    "lineNumber": 454,
     "params": [
       {
         "nullable": null,
@@ -1498,7 +1498,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleSecondaryPointerButton",
     "access": "private",
     "description": "Handles secondary pointer button events.",
-    "lineNumber": 463,
+    "lineNumber": 466,
     "params": [
       {
         "nullable": null,
@@ -1534,7 +1534,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handlePointerButtonEvent",
     "access": "private",
     "description": "Handles pointer events.",
-    "lineNumber": 475,
+    "lineNumber": 478,
     "params": [
       {
         "nullable": null,
@@ -1570,7 +1570,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleTouchEvent",
     "access": "private",
     "description": "Handles touch start and end events.",
-    "lineNumber": 505,
+    "lineNumber": 508,
     "params": [
       {
         "nullable": null,
@@ -1606,7 +1606,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleKeyboardEvent",
     "access": "private",
     "description": "Handles keyboard events.",
-    "lineNumber": 533,
+    "lineNumber": 536,
     "params": [
       {
         "nullable": null,
@@ -1642,7 +1642,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleWheelEvent",
     "access": "private",
     "description": "Handles wheel events.",
-    "lineNumber": 554,
+    "lineNumber": 557,
     "params": [
       {
         "nullable": null,
@@ -1668,7 +1668,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handlePointerLockEvent",
     "access": "private",
     "description": "Enables or disables controls based on the pointer lock state.",
-    "lineNumber": 566,
+    "lineNumber": 569,
     "params": [],
     "return": null
   },
@@ -1683,7 +1683,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#handleEvent",
     "access": "public",
     "description": "Handles events.",
-    "lineNumber": 586,
+    "lineNumber": 589,
     "params": [
       {
         "nullable": null,
@@ -1709,7 +1709,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#update",
     "access": "public",
     "description": "Updates movement and rotation calculations based on time.\n\nThis method should be called before a new frame is rendered.",
-    "lineNumber": 642,
+    "lineNumber": 645,
     "params": [
       {
         "nullable": null,
@@ -1735,7 +1735,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#moveTo",
     "access": "public",
     "description": "Moves to the given position.",
-    "lineNumber": 656,
+    "lineNumber": 659,
     "params": [
       {
         "nullable": null,
@@ -1768,7 +1768,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#lookAt",
     "access": "public",
     "description": "Looks at the given point.",
-    "lineNumber": 671,
+    "lineNumber": 674,
     "params": [
       {
         "nullable": null,
@@ -1801,7 +1801,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#setPointerLocked",
     "access": "private",
     "description": "Locks or unlocks the pointer.",
-    "lineNumber": 686,
+    "lineNumber": 689,
     "params": [
       {
         "nullable": null,
@@ -1829,7 +1829,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#setEnabled",
     "access": "public",
     "description": "Enables or disables the controls.",
-    "lineNumber": 711,
+    "lineNumber": 714,
     "params": [
       {
         "nullable": null,
@@ -1864,7 +1864,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls#dispose",
     "access": "public",
     "description": "Removes all event listeners and unlocks the pointer.",
-    "lineNumber": 754,
+    "lineNumber": 757,
     "params": [],
     "return": null
   },
@@ -5786,7 +5786,7 @@
   },
   {
     "kind": "index",
-    "content": "# &Delta;c&omicron;n&tau;r&omicron;&iota;s\r\n\r\n[![Build status](https://travis-ci.org/vanruesc/delta-controls.svg?branch=master)](https://travis-ci.org/vanruesc/delta-controls) \r\n[![npm version](https://badge.fury.io/js/delta-controls.svg)](http://badge.fury.io/js/delta-controls) \r\n[![Dependencies](https://david-dm.org/vanruesc/delta-controls.svg?branch=master)](https://david-dm.org/vanruesc/delta-controls)\r\n\r\nA 3D movement controller that supports multiple movement modes and configurable input settings.\r\n\r\n*[Demo](https://vanruesc.github.io/delta-controls/public/demo) &there4;\r\n[API Reference](https://vanruesc.github.io/delta-controls/public/docs)*\r\n\r\n\r\n## Installation\r\n\r\n```sh\r\nnpm install delta-controls\r\n``` \r\n\r\n\r\n## Usage\r\n\r\n_Note: The math classes from [math-ds](https://github.com/vanruesc/math-ds) are interchangeable with those from [three.js](https://threejs.org/)._\r\n\r\n```javascript\r\nimport { Quaternion, Vector3 } from \"math-ds\";\r\nimport { DeltaControls } from \"delta-controls\";\r\n\r\nconst position = new Vector3();\r\nconst rotation = new Quaternion();\r\nconst domElement = document.getElementById(\"viewport\");\r\nconst controls = new DeltaControls(position, rotation, domElement);\r\n\r\nlet t0 = performance.now();\r\n\r\n(function render(t) {\r\n\r\n\trequestAnimationFrame(render);\r\n\tcontrols.update(t0 - t);\r\n\tt0 = t;\r\n\r\n\t// Render things.\r\n\r\n}());\r\n```\r\n\r\n\r\n## Settings\r\n\r\n#### Adjusting\r\n\r\n```js\r\nimport { Action, KeyCode } from \"delta-controls\";\r\n\r\nconst settings = controls.settings;\r\nconst keyBindings = settings.keyBindings;\r\n\r\n// Activate or deactivate third person controls. Enabled by default.\r\ncontrols.setOrbit(true|false);\r\n\r\nsettings.pointer.hold = true;\r\nsettings.rotation.minPhi = 0.125;\r\nsettings.sensitivity.rotation = 0.075;\r\nsettings.translation.enabled = true;\r\nsettings.zoom.minDistance = 1.0;\r\n\r\nkeyBindings.delete(KeyCode.X);\r\nkeyBindings.set(KeyCode.V, Action.MOVE_DOWN);\r\n\r\n```\r\n\r\n#### Saving\r\n\r\n```js\r\nconst settingsURL = settings.toDataURL();\r\nconst a = document.createElement(\"a\");\r\na.href = settingsURL;\r\na.setAttribute(\"download\", \"controls.json\");\r\na.click();\r\nURL.revokeObjectURL(settingsURL);\r\n```\r\n\r\n#### Loading\r\n\r\n```js\r\nconst request = new XMLHttpRequest();\r\n\r\nrequest.addEventListener(\"readystatechange\", function() {\r\n\r\n\tif(this.readyState === 4 && this.status === 200) {\r\n\r\n\t\tcontrols.settings.copy(JSON.parse(this.responseText));\r\n\r\n\t}\r\n\r\n});\r\n\r\nrequest.open(\"GET\", \"./controls.json\");\r\nrequest.send();\r\n```\r\n\r\n\r\n## Contributing\r\n\r\nPlease refer to the [contribution guidelines](https://github.com/vanruesc/delta-controls/blob/master/CONTRIBUTING.md) for details.\r\n",
+    "content": "# &Delta;c&omicron;n&tau;r&omicron;&iota;s\r\n\r\n[![Build status](https://travis-ci.org/vanruesc/delta-controls.svg?branch=master)](https://travis-ci.org/vanruesc/delta-controls) \r\n[![npm version](https://badge.fury.io/js/delta-controls.svg)](http://badge.fury.io/js/delta-controls) \r\n[![Dependencies](https://david-dm.org/vanruesc/delta-controls.svg?branch=master)](https://david-dm.org/vanruesc/delta-controls)\r\n\r\nA 3D movement controller that supports multiple movement modes and configurable input settings.\r\n\r\n*[Demo](https://vanruesc.github.io/delta-controls/public/demo) &there4;\r\n[API Reference](https://vanruesc.github.io/delta-controls/public/docs)*\r\n\r\n\r\n## Installation\r\n\r\n```sh\r\nnpm install delta-controls\r\n``` \r\n\r\n\r\n## Usage\r\n\r\n_Note: The math classes from [math-ds](https://github.com/vanruesc/math-ds) are interchangeable with those from [three.js](https://threejs.org/)._\r\n\r\n```javascript\r\nimport { Quaternion, Vector3 } from \"math-ds\";\r\nimport { DeltaControls } from \"delta-controls\";\r\n\r\nconst position = new Vector3();\r\nconst rotation = new Quaternion();\r\nconst domElement = document.getElementById(\"viewport\");\r\nconst controls = new DeltaControls(position, rotation, domElement);\r\n\r\nlet t0 = performance.now();\r\n\r\n(function render(t) {\r\n\r\n\trequestAnimationFrame(render);\r\n\tcontrols.update(t0 - t);\r\n\tt0 = t;\r\n\r\n\t// Render things.\r\n\r\n}());\r\n```\r\n\r\n\r\n## Settings\r\n\r\n#### Adjusting\r\n\r\n```js\r\nimport { Action, KeyCode } from \"delta-controls\";\r\n\r\nconst settings = controls.settings;\r\nconst keyBindings = settings.keyBindings;\r\n\r\n// Activate or deactivate third person controls. Enabled by default.\r\ncontrols.setOrbitEnabled(true|false);\r\n\r\nsettings.pointer.hold = true;\r\nsettings.rotation.minPolarAngle = 0.125;\r\nsettings.sensitivity.rotation = 0.075;\r\nsettings.translation.enabled = true;\r\nsettings.zoom.minDistance = 1.0;\r\n\r\nkeyBindings.delete(KeyCode.X);\r\nkeyBindings.set(KeyCode.V, Action.MOVE_DOWN);\r\n\r\n```\r\n\r\n#### Saving\r\n\r\n```js\r\nconst settingsURL = settings.toDataURL();\r\nconst a = document.createElement(\"a\");\r\na.href = settingsURL;\r\na.setAttribute(\"download\", \"controls.json\");\r\na.click();\r\nURL.revokeObjectURL(settingsURL);\r\n```\r\n\r\n#### Loading\r\n\r\n```js\r\nconst request = new XMLHttpRequest();\r\n\r\nrequest.addEventListener(\"readystatechange\", function() {\r\n\r\n\tif(this.readyState === 4 && this.status === 200) {\r\n\r\n\t\tcontrols.settings.copy(JSON.parse(this.responseText));\r\n\r\n\t}\r\n\r\n});\r\n\r\nrequest.open(\"GET\", \"./controls.json\");\r\nrequest.send();\r\n```\r\n\r\n\r\n## Contributing\r\n\r\nPlease refer to the [contribution guidelines](https://github.com/vanruesc/delta-controls/blob/master/CONTRIBUTING.md) for details.\r\n",
     "longname": "C:\\Users\\Raoul\\Sourcecode\\JavaScript\\delta-controls\\README.md",
     "name": "./README.md",
     "static": true,
@@ -5794,7 +5794,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\r\n\t\"name\": \"delta-controls\",\r\n\t\"version\": \"1.0.0\",\r\n\t\"description\": \"A 3D movement controller.\",\r\n\t\"homepage\": \"https://github.com/vanruesc/delta-controls\",\r\n\t\"main\": \"build/delta-controls.js\",\r\n\t\"module\": \"src/index.js\",\r\n\t\"license\": \"Zlib\",\r\n\r\n\t\"keywords\": [\r\n\t\t\"movement\",\r\n\t\t\"translation\",\r\n\t\t\"rotation\",\r\n\t\t\"object\",\r\n\t\t\"controls\",\r\n\t\t\"keybindings\",\r\n\t\t\"3d\"\r\n\t],\r\n\r\n\t\"author\": {\r\n\t\t\"name\": \"Raoul van Rüschen\",\r\n\t\t\"email\": \"vanruesc@outlook.de\"\r\n\t},\r\n\r\n\t\"repository\": {\r\n\t\t\"type\": \"git\",\r\n\t\t\"url\": \"https://github.com/vanruesc/delta-controls.git\"\r\n\t},\r\n\r\n\t\"bugs\": {\r\n\t\t\"url\": \"https://github.com/vanruesc/delta-controls/issues\"\r\n\t},\r\n\r\n\t\"files\": [\r\n\t\t\"src\",\r\n\t\t\"build\"\r\n\t],\r\n\r\n\t\"scripts\": {\r\n\t\t\"test\": \"grunt --production\"\r\n\t},\r\n\r\n\t\"engines\": {\r\n\t\t\"node\": \">=4.0.0\"\r\n\t},\r\n\r\n\t\"eslintConfig\": {\r\n\t\t\"extends\": \"delta\"\r\n\t},\r\n\r\n\t\"dependencies\": {\r\n\t\t\"math-ds\": \"0.x.x\"\r\n\t},\r\n\r\n\t\"devDependencies\": {\r\n\t\t\"@vanruesc/grunt-esdoc\": \"0.x.x\",\r\n\t\t\"babel-core\": \"6.x.x\",\r\n\t\t\"babel-plugin-external-helpers\": \"6.x.x\",\r\n\t\t\"babel-preset-env\": \"1.x.x\",\r\n\t\t\"esdoc-standard-plugin\": \"1.x.x\",\r\n\t\t\"eslint-config-delta\": \"0.x.x\",\r\n\t\t\"grunt\": \"1.x.x\",\r\n\t\t\"grunt-cli\": \"1.x.x\",\r\n\t\t\"grunt-contrib-nodeunit\": \"1.x.x\",\r\n\t\t\"grunt-contrib-uglify\": \"3.x.x\",\r\n\t\t\"grunt-contrib-copy\": \"1.x.x\",\r\n\t\t\"grunt-eslint\": \"20.x.x\",\r\n\t\t\"grunt-rollup\": \"8.x.x\",\r\n\t\t\"jit-grunt\": \"0.x.x\",\r\n\t\t\"load-grunt-config\": \"0.x.x\",\r\n\t\t\"postprocessing\": \"4.x.x\",\r\n\t\t\"rollup-plugin-babel\": \"3.x.x\",\r\n\t\t\"rollup-plugin-node-resolve\": \"3.x.x\",\r\n\t\t\"synthetic-event\": \"0.x.x\",\r\n\t\t\"three\": \"0.89.x\",\r\n\t\t\"three-demo\": \"0.x.x\",\r\n\t\t\"time-grunt\": \"1.x.x\"\r\n\t}\r\n}\r\n",
+    "content": "{\r\n\t\"name\": \"delta-controls\",\r\n\t\"version\": \"1.0.1\",\r\n\t\"description\": \"A 3D movement controller.\",\r\n\t\"homepage\": \"https://github.com/vanruesc/delta-controls\",\r\n\t\"main\": \"build/delta-controls.js\",\r\n\t\"module\": \"src/index.js\",\r\n\t\"license\": \"Zlib\",\r\n\r\n\t\"keywords\": [\r\n\t\t\"movement\",\r\n\t\t\"translation\",\r\n\t\t\"rotation\",\r\n\t\t\"object\",\r\n\t\t\"controls\",\r\n\t\t\"keybindings\",\r\n\t\t\"3d\"\r\n\t],\r\n\r\n\t\"author\": {\r\n\t\t\"name\": \"Raoul van Rüschen\",\r\n\t\t\"email\": \"vanruesc@outlook.de\"\r\n\t},\r\n\r\n\t\"repository\": {\r\n\t\t\"type\": \"git\",\r\n\t\t\"url\": \"https://github.com/vanruesc/delta-controls.git\"\r\n\t},\r\n\r\n\t\"bugs\": {\r\n\t\t\"url\": \"https://github.com/vanruesc/delta-controls/issues\"\r\n\t},\r\n\r\n\t\"files\": [\r\n\t\t\"src\",\r\n\t\t\"build\"\r\n\t],\r\n\r\n\t\"scripts\": {\r\n\t\t\"test\": \"grunt --production\"\r\n\t},\r\n\r\n\t\"engines\": {\r\n\t\t\"node\": \">=4.0.0\"\r\n\t},\r\n\r\n\t\"eslintConfig\": {\r\n\t\t\"extends\": \"delta\"\r\n\t},\r\n\r\n\t\"dependencies\": {\r\n\t\t\"math-ds\": \"0.x.x\"\r\n\t},\r\n\r\n\t\"devDependencies\": {\r\n\t\t\"@vanruesc/grunt-esdoc\": \"0.x.x\",\r\n\t\t\"babel-core\": \"6.x.x\",\r\n\t\t\"babel-plugin-external-helpers\": \"6.x.x\",\r\n\t\t\"babel-preset-env\": \"1.x.x\",\r\n\t\t\"esdoc-standard-plugin\": \"1.x.x\",\r\n\t\t\"eslint-config-delta\": \"0.x.x\",\r\n\t\t\"grunt\": \"1.x.x\",\r\n\t\t\"grunt-cli\": \"1.x.x\",\r\n\t\t\"grunt-contrib-nodeunit\": \"1.x.x\",\r\n\t\t\"grunt-contrib-uglify\": \"3.x.x\",\r\n\t\t\"grunt-contrib-copy\": \"1.x.x\",\r\n\t\t\"grunt-eslint\": \"20.x.x\",\r\n\t\t\"grunt-rollup\": \"8.x.x\",\r\n\t\t\"jit-grunt\": \"0.x.x\",\r\n\t\t\"load-grunt-config\": \"0.x.x\",\r\n\t\t\"postprocessing\": \"4.x.x\",\r\n\t\t\"rollup-plugin-babel\": \"3.x.x\",\r\n\t\t\"rollup-plugin-node-resolve\": \"3.x.x\",\r\n\t\t\"synthetic-event\": \"0.x.x\",\r\n\t\t\"three\": \"0.89.x\",\r\n\t\t\"three-demo\": \"0.x.x\",\r\n\t\t\"time-grunt\": \"1.x.x\"\r\n\t}\r\n}\r\n",
     "longname": "C:\\Users\\Raoul\\Sourcecode\\JavaScript\\delta-controls\\package.json",
     "name": "package.json",
     "static": true,
