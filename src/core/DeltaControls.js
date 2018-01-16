@@ -153,14 +153,124 @@ export class DeltaControls {
 	}
 
 	/**
-	 * A pivot offset. Only affects third person orbiting.
+	 * Returns the DOM element.
 	 *
-	 * @type {Vector3}
+	 * @return {HTMLElement} The DOM element.
 	 */
 
-	get pivotOffset() {
+	getDom() {
 
-		return this.rotationManager.pivotOffset;
+		return this.dom;
+
+	}
+
+	/**
+	 * Returns the position.
+	 *
+	 * @return {Vector3} The position.
+	 */
+
+	getPosition() {
+
+		return this.position;
+
+	}
+
+	/**
+	 * Returns the quaternion.
+	 *
+	 * @return {Quaternion} The quaternion.
+	 */
+
+	getQuaternion() {
+
+		return this.quaternion;
+
+	}
+
+	/**
+	 * Returns the current target.
+	 *
+	 * @param {Vector3} [target] - A vector to store the target in. If none is provided, a new one will be created.
+	 * @return {Vector3} The current target.
+	 */
+
+	getTarget(target = new Vector3()) {
+
+		target.copy(this.target);
+
+		if(!this.settings.general.orbit) {
+
+			// The target is relative to the position.
+			target.add(this.position);
+
+		}
+
+		return target;
+
+	}
+
+	/**
+	 * Returns the current view direction.
+	 *
+	 * @param {Vector3} [view] - A vector to store the direction in. If none is provided, a new one will be created.
+	 * @return {Vector3} The normalized view direction.
+	 */
+
+	getViewDirection(view = new Vector3()) {
+
+		return this.rotationManager.getViewDirection(view);
+
+	}
+
+	/**
+	 * Sets the position vector.
+	 *
+	 * @param {Vector3} position - The new position vector.
+	 * @return {DeltaControls} This instance.
+	 */
+
+	setPosition(position) {
+
+		this.position = position;
+		this.rotationManager.setPosition(position);
+		this.translationManager.setPosition(position);
+
+		return this.lookAt(this.target);
+
+	}
+
+	/**
+	 * Sets the quaternion.
+	 *
+	 * @param {Quaternion} quaternion - The new quaternion.
+	 * @return {DeltaControls} This instance.
+	 */
+
+	setQuaternion(quaternion) {
+
+		this.quaternion = quaternion;
+		this.rotationManager.setQuaternion(quaternion);
+		this.translationManager.setQuaternion(quaternion);
+
+		return this.lookAt(this.target);
+
+	}
+
+	/**
+	 * Sets the target.
+	 *
+	 * @param {Vector3} target - The new target.
+	 * @return {DeltaControls} This instance.
+	 */
+
+	setTarget(target) {
+
+		this.target = target;
+		this.rotationManager.setTarget(target);
+		this.translationManager.setTarget(target);
+
+		return this.lookAt(this.target);
 
 	}
 
@@ -505,92 +615,6 @@ export class DeltaControls {
 		this.rotationManager.lookAt(point);
 
 		return this;
-
-	}
-
-	/**
-	 * Returns the current view direction.
-	 *
-	 * @param {Vector3} [view] - A vector to store the direction in. If none is provided, a new vector will be created.
-	 * @return {Vector3} The normalized view direction.
-	 */
-
-	getViewDirection(view = new Vector3()) {
-
-		return this.rotationManager.getViewDirection(view);
-
-	}
-
-	/**
-	 * Returns the current target.
-	 *
-	 * @param {Vector3} [target] - A vector to store the target in. If none is provided, a new vector will be created.
-	 * @return {Vector3} The current target.
-	 */
-
-	getTarget(target = new Vector3()) {
-
-		target.copy(this.target);
-
-		if(!this.settings.general.orbit) {
-
-			// The target is relative to the position.
-			target.add(this.position);
-
-		}
-
-		return target;
-
-	}
-
-	/**
-	 * Sets the target.
-	 *
-	 * @param {Vector3} target - The new target.
-	 * @return {DeltaControls} This instance.
-	 */
-
-	setTarget(target) {
-
-		this.target = target;
-		this.rotationManager.target = target;
-		this.translationManager.target = target;
-
-		return this.lookAt(this.target);
-
-	}
-
-	/**
-	 * Sets the position vector.
-	 *
-	 * @param {Vector3} position - The new position vector.
-	 * @return {DeltaControls} This instance.
-	 */
-
-	setPosition(position) {
-
-		this.position = position;
-		this.rotationManager.position = position;
-		this.translationManager.position = position;
-
-		return this.lookAt(this.target);
-
-	}
-
-	/**
-	 * Sets the quaternion.
-	 *
-	 * @param {Quaternion} quaternion - The new quaternion.
-	 * @return {DeltaControls} This instance.
-	 */
-
-	setQuaternion(quaternion) {
-
-		this.quaternion = quaternion;
-		this.rotationManager.quaternion = quaternion;
-		this.translationManager.quaternion = quaternion;
-
-		return this.lookAt(this.target);
 
 	}
 
