@@ -94,7 +94,7 @@ export class DeltaControlsDemo extends Demo {
 
 		const scene = this.scene;
 		const assets = this.assets;
-		const renderer = this.composer.renderer;
+		const renderer = this.renderer;
 
 		// Sky.
 
@@ -138,14 +138,16 @@ export class DeltaControlsDemo extends Demo {
 	}
 
 	/**
-	 * Updates this demo.
+	 * Renders this demo.
 	 *
 	 * @param {Number} delta - The time since the last frame in seconds.
 	 */
 
-	update(delta) {
+	render(delta) {
 
 		this.controls.update(delta);
+
+		super.render(delta);
 
 	}
 
