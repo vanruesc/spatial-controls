@@ -45,7 +45,7 @@ export class KeyBindings {
 	/**
 	 * Establishes default key bindings and resets the current bindings.
 	 *
-	 * @param {Map} map - A map. Each key must be a key code and each value must be a number.
+	 * @param {Map} actions - A map of actions. Each key must be a key code and each value must be a number.
 	 * @return {KeyBindings} This key bindings instance.
 	 */
 
