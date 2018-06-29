@@ -101,4 +101,4 @@ request.send();
 
 ## Contributing
 
-Please refer to the [contribution guidelines](https://github.com/vanruesc/delta-controls/blob/master/CONTRIBUTING.md) for details.
+Please refer to the [contribution guidelines](https://github.com/vanruesc/delta-controls/blob/master/.github/CONTRIBUTING.md) for details.
