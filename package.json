@@ -60,8 +60,7 @@
 	},
 
 	"peerDependencies": {
-		"math-ds": "1.x.x",
-		"synthetic-event": "0.x.x"
+		"math-ds": "1.x.x"
 	},
 
 	"devDependencies": {

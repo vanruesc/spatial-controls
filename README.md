@@ -12,10 +12,10 @@ A 3D movement controller that supports multiple movement modes and configurable 
 
 ## Installation
 
-This library requires the peer dependencies [math-ds](https://github.com/vanruesc/math-ds) and [synthetic-event](https://github.com/vanruesc/synthetic-event).
+This library requires the peer dependency [math-ds](https://github.com/vanruesc/math-ds).
 
 ```sh
-npm install math-ds synthetic-event delta-controls
+npm install math-ds delta-controls
 ```
 
 
