@@ -1,9 +1,9 @@
 {
 	"name": "delta-controls",
-	"version": "1.0.3",
+	"version": "2.0.0",
 	"description": "A 3D movement controller.",
 	"homepage": "https://github.com/vanruesc/delta-controls",
-	"main": "build/delta-controls.js",
+	"main": "build/bundle.js",
 	"module": "src/index.js",
 	"sideEffects": false,
 	"license": "Zlib",
