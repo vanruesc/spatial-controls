@@ -12,14 +12,18 @@ A 3D movement controller that supports multiple movement modes and configurable 
 
 ## Installation
 
+This library requires the peer dependencies [math-ds](https://github.com/vanruesc/math-ds) and [synthetic-event](https://github.com/vanruesc/synthetic-event).
+
+```sh
+npm install math-ds synthetic-event
+```
+
 ```sh
 npm install delta-controls
-``` 
+```
 
 
 ## Usage
-
-_Note: The math classes from [math-ds](https://github.com/vanruesc/math-ds) are interchangeable with those from [three.js](https://threejs.org/)._
 
 ```javascript
 import { Quaternion, Vector3 } from "math-ds";
