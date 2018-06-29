@@ -1,27 +1,18 @@
-"use strict";
+import test from "ava";
+import { RotationSettings } from "../../build/bundle.js";
 
-const RotationSettings = require("../../build/delta-controls").RotationSettings;
+test("can be instantiated", t => {
 
-module.exports = {
+	const object = new RotationSettings();
 
-	"RotationSettings": {
+	t.truthy(object);
 
-		"can be instantiated": function(test) {
+});
 
-			const settings = new RotationSettings();
-			test.ok(settings);
-			test.done();
+test("can be cloned", t => {
 
-		},
+	const object = new RotationSettings();
 
-		"can be cloned": function(test) {
+	t.truthy(object.clone());
 
-			const settings = new RotationSettings();
-			test.ok(settings.clone());
-			test.done();
-
-		}
-
-	}
-
-};
+});

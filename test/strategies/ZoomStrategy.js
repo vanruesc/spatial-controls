@@ -1,19 +1,10 @@
-"use strict";
+import test from "ava";
+import { ZoomStrategy } from "../../build/bundle.js";
 
-const ZoomStrategy = require("../../build/delta-controls").ZoomStrategy;
+test("can be instantiated", t => {
 
-module.exports = {
+	const object = new ZoomStrategy();
 
-	"ZoomStrategy": {
+	t.truthy(object);
 
-		"can be instantiated": function(test) {
-
-			const strategy = new ZoomStrategy();
-			test.ok(strategy);
-			test.done();
-
-		}
-
-	}
-
-};
+});

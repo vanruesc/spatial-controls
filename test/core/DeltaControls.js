@@ -1,31 +1,20 @@
-"use strict";
+import test from "ava";
+import { Quaternion, Vector3 } from "math-ds";
+import { DeltaControls } from "../../build/bundle.js";
 
-const DeltaControls = require("../../build/delta-controls").DeltaControls;
-const three = require("three");
-const Vector3 = three.Vector3;
-const Quaternion = three.Quaternion;
+test("can be instantiated", t => {
 
-module.exports = {
+	const object = new DeltaControls(new Vector3(), new Quaternion(), null);
 
-	"DeltaControls": {
+	t.truthy(object);
 
-		"can be instantiated": function(test) {
+});
 
-			const controls = new DeltaControls(new Vector3(), new Quaternion(), null);
-			test.ok(controls);
-			test.done();
+test("can copy another instance", t => {
 
-		},
+	const controls1 = new DeltaControls(new Vector3(), new Quaternion(), null);
+	const controls2 = new DeltaControls(new Vector3(), new Quaternion(), null);
 
-		"can copy another instance": function(test) {
+	t.truthy(controls1.copy(controls2));
 
-			const controls1 = new DeltaControls(new Vector3(), new Quaternion(), null);
-			const controls2 = new DeltaControls(new Vector3(), new Quaternion(), null);
-			test.ok(controls1.copy(controls2));
-			test.done();
-
-		}
-
-	}
-
-};
+});

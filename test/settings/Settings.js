@@ -1,27 +1,18 @@
-"use strict";
+import test from "ava";
+import { Settings } from "../../build/bundle.js";
 
-const Settings = require("../../build/delta-controls").Settings;
+test("can be instantiated", t => {
 
-module.exports = {
+	const object = new Settings();
 
-	"Settings": {
+	t.truthy(object);
 
-		"can be instantiated": function(test) {
+});
 
-			const settings = new Settings();
-			test.ok(settings);
-			test.done();
+test("can be cloned", t => {
 
-		},
+	const object = new Settings();
 
-		"can be cloned": function(test) {
+	t.truthy(object.clone());
 
-			const settings = new Settings();
-			test.ok(settings.clone());
-			test.done();
-
-		}
-
-	}
-
-};
+});

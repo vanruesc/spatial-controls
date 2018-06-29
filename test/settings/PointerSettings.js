@@ -1,27 +1,18 @@
-"use strict";
+import test from "ava";
+import { PointerSettings } from "../../build/bundle.js";
 
-const PointerSettings = require("../../build/delta-controls").PointerSettings;
+test("can be instantiated", t => {
 
-module.exports = {
+	const object = new PointerSettings();
 
-	"PointerSettings": {
+	t.truthy(object);
 
-		"can be instantiated": function(test) {
+});
 
-			const settings = new PointerSettings();
-			test.ok(settings);
-			test.done();
+test("can be cloned", t => {
 
-		},
+	const object = new PointerSettings();
 
-		"can be cloned": function(test) {
+	t.truthy(object.clone());
 
-			const settings = new PointerSettings();
-			test.ok(settings.clone());
-			test.done();
-
-		}
-
-	}
-
-};
+});

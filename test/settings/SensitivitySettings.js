@@ -1,27 +1,18 @@
-"use strict";
+import test from "ava";
+import { SensitivitySettings } from "../../build/bundle.js";
 
-const SensitivitySettings = require("../../build/delta-controls").SensitivitySettings;
+test("can be instantiated", t => {
 
-module.exports = {
+	const object = new SensitivitySettings();
 
-	"SensitivitySettings": {
+	t.truthy(object);
 
-		"can be instantiated": function(test) {
+});
 
-			const settings = new SensitivitySettings();
-			test.ok(settings);
-			test.done();
+test("can be cloned", t => {
 
-		},
+	const object = new SensitivitySettings();
 
-		"can be cloned": function(test) {
+	t.truthy(object.clone());
 
-			const settings = new SensitivitySettings();
-			test.ok(settings.clone());
-			test.done();
-
-		}
-
-	}
-
-};
+});

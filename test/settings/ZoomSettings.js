@@ -1,27 +1,18 @@
-"use strict";
+import test from "ava";
+import { ZoomSettings } from "../../build/bundle.js";
 
-const ZoomSettings = require("../../build/delta-controls").ZoomSettings;
+test("can be instantiated", t => {
 
-module.exports = {
+	const object = new ZoomSettings();
 
-	"ZoomSettings": {
+	t.truthy(object);
 
-		"can be instantiated": function(test) {
+});
 
-			const settings = new ZoomSettings();
-			test.ok(settings);
-			test.done();
+test("can be cloned", t => {
 
-		},
+	const object = new ZoomSettings();
 
-		"can be cloned": function(test) {
+	t.truthy(object.clone());
 
-			const settings = new ZoomSettings();
-			test.ok(settings.clone());
-			test.done();
-
-		}
-
-	}
-
-};
+});

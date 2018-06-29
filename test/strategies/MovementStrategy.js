@@ -1,19 +1,10 @@
-"use strict";
+import test from "ava";
+import { MovementStrategy } from "../../build/bundle.js";
 
-const MovementStrategy = require("../../build/delta-controls").MovementStrategy;
+test("can be instantiated", t => {
 
-module.exports = {
+	const object = new MovementStrategy();
 
-	"MovementStrategy": {
+	t.truthy(object);
 
-		"can be instantiated": function(test) {
-
-			const strategy = new MovementStrategy();
-			test.ok(strategy);
-			test.done();
-
-		}
-
-	}
-
-};
+});

@@ -1,19 +1,10 @@
-"use strict";
+import test from "ava";
+import { RotationManager } from "../../build/bundle.js";
 
-const RotationManager = require("../../build/delta-controls").RotationManager;
+test("can be instantiated", t => {
 
-module.exports = {
+	const object = new RotationManager();
 
-	"RotationManager": {
+	t.truthy(object);
 
-		"can be instantiated": function(test) {
-
-			const manager = new RotationManager();
-			test.ok(manager);
-			test.done();
-
-		}
-
-	}
-
-};
+});

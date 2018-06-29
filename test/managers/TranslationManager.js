@@ -1,19 +1,10 @@
-"use strict";
+import test from "ava";
+import { TranslationManager } from "../../build/bundle.js";
 
-const TranslationManager = require("../../build/delta-controls").TranslationManager;
+test("can be instantiated", t => {
 
-module.exports = {
+	const object = new TranslationManager();
 
-	"TranslationManager": {
+	t.truthy(object);
 
-		"can be instantiated": function(test) {
-
-			const manager = new TranslationManager();
-			test.ok(manager);
-			test.done();
-
-		}
-
-	}
-
-};
+});

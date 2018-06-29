@@ -1,27 +1,18 @@
-"use strict";
+import test from "ava";
+import { KeyBindings } from "../../build/bundle.js";
 
-const KeyBindings = require("../../build/delta-controls").KeyBindings;
+test("can be instantiated", t => {
 
-module.exports = {
+	const object = new KeyBindings();
 
-	"KeyBindings": {
+	t.truthy(object);
 
-		"can be instantiated": function(test) {
+});
 
-			const settings = new KeyBindings();
-			test.ok(settings);
-			test.done();
+test("can be cloned", t => {
 
-		},
+	const object = new KeyBindings();
 
-		"can be cloned": function(test) {
+	t.truthy(object.clone());
 
-			const settings = new KeyBindings();
-			test.ok(settings.clone());
-			test.done();
-
-		}
-
-	}
-
-};
+});
