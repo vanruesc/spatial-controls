@@ -1,6 +1,6 @@
 {
 	"name": "delta-controls",
-	"version": "2.0.1",
+	"version": "2.0.2",
 	"description": "A 3D movement controller.",
 	"homepage": "https://github.com/vanruesc/delta-controls",
 	"main": "build/bundle.js",
