@@ -1,5 +1,5 @@
 import test from "ava";
-import { RotationManager } from "../../build/bundle.js";
+import { RotationManager } from "../../build/delta-controls.js";
 
 test("can be instantiated", t => {
 

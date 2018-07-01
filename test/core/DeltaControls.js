@@ -1,6 +1,6 @@
 import test from "ava";
 import { Quaternion, Vector3 } from "math-ds";
-import { DeltaControls } from "../../build/bundle.js";
+import { DeltaControls } from "../../build/delta-controls.js";
 
 test("can be instantiated", t => {
 

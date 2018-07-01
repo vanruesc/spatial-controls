@@ -1,5 +1,5 @@
 import test from "ava";
-import { RotationSettings } from "../../build/bundle.js";
+import { RotationSettings } from "../../build/delta-controls.js";
 
 test("can be instantiated", t => {
 

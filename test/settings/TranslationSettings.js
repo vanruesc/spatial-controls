@@ -1,5 +1,5 @@
 import test from "ava";
-import { TranslationSettings } from "../../build/bundle.js";
+import { TranslationSettings } from "../../build/delta-controls.js";
 
 test("can be instantiated", t => {
 

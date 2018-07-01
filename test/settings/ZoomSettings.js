@@ -1,5 +1,5 @@
 import test from "ava";
-import { ZoomSettings } from "../../build/bundle.js";
+import { ZoomSettings } from "../../build/delta-controls.js";
 
 test("can be instantiated", t => {
 

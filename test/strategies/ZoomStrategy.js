@@ -1,5 +1,5 @@
 import test from "ava";
-import { ZoomStrategy } from "../../build/bundle.js";
+import { ZoomStrategy } from "../../build/delta-controls.js";
 
 test("can be instantiated", t => {
 

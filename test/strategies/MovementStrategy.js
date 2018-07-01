@@ -1,5 +1,5 @@
 import test from "ava";
-import { MovementStrategy } from "../../build/bundle.js";
+import { MovementStrategy } from "../../build/delta-controls.js";
 
 test("can be instantiated", t => {
 

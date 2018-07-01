@@ -1,5 +1,5 @@
 import test from "ava";
-import { KeyBindings } from "../../build/bundle.js";
+import { KeyBindings } from "../../build/delta-controls.js";
 
 test("can be instantiated", t => {
 

@@ -1,5 +1,5 @@
 import test from "ava";
-import { PointerSettings } from "../../build/bundle.js";
+import { PointerSettings } from "../../build/delta-controls.js";
 
 test("can be instantiated", t => {
 

@@ -3,7 +3,7 @@
 	"version": "2.0.2",
 	"description": "A 3D movement controller.",
 	"homepage": "https://github.com/vanruesc/delta-controls",
-	"main": "build/bundle.js",
+	"main": "build/delta-controls.js",
 	"module": "src/index.js",
 	"sideEffects": false,
 	"license": "Zlib",
@@ -39,11 +39,12 @@
 
 	"scripts": {
 		"lint": "npm run lint:lib && npm run lint:demo && npm run lint:test",
+		"lint:config": "eslint rollup.config.js",
 		"lint:lib": "eslint src",
 		"lint:demo": "eslint demo/src",
 		"lint:test": "eslint test",
 		"build": "rollup -c",
-		"build:production": "cross-env BABEL_ENV=production rollup -c",
+		"build:production": "cross-env NODE_ENV=production rollup -c",
 		"doc": "esdoc",
 		"deploy": "cpx demo/assets/** public/demo",
 		"test": "ava",
@@ -53,6 +54,11 @@
 	"engines": {
 		"node": ">=4.0.0",
 		"npm": ">=4.0.0"
+	},
+
+	"ava": {
+		"failFast": true,
+		"files": ["test/**/*.js"]
 	},
 
 	"eslintConfig": {

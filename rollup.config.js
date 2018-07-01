@@ -15,19 +15,15 @@ const lib = {
 
 	input: pkg.module,
 	output: {
-		file: "build/bundle.js",
+		file: "build/" + pkg.name + ".js",
 		format: "umd",
 		name: pkg.name.replace(/-/g, "").toUpperCase(),
-		banner: banner
+		banner: banner,
+		globals: { three: "THREE" }
 	},
 
-	plugins: [resolve()].concat(process.env.BABEL_ENV === "production" ?
-		[babel(), minify({
-			bannerNewLine: true,
-			sourceMap: false,
-			comments: false
-		})] : []
-	)
+	external: ["three"],
+	plugins: [resolve()]
 
 };
 
@@ -37,22 +33,41 @@ const demo = {
 	output: {
 		file: "public/demo/index.js",
 		format: "iife",
-		globals: {
-			"dat.gui": "dat",
-			"stats.js": "Stats",
-			"three": "THREE"
-		}
+		globals: { three: "THREE" }
 	},
 
-	external: ["dat.gui", "stats.js", "three"],
-
-	plugins: [resolve()].concat(process.env.BABEL_ENV === "production" ?
-		[babel(), minify({
-			sourceMap: false,
-			comments: false
-		})] : []
-	)
+	external: ["three"],
+	plugins: lib.plugins
 
 };
 
-export default [lib, demo];
+export default [lib, demo].concat((process.env.NODE_ENV === "production") ? [
+
+	Object.assign({}, lib, {
+
+		output: Object.assign({}, lib.output, {
+			file: "build/" + pkg.name + ".min.js"
+		}),
+
+		plugins: lib.plugins.concat([babel(), minify({
+			bannerNewLine: true,
+			sourceMap: false,
+			comments: false
+		})])
+
+	}),
+
+	Object.assign({}, demo, {
+
+		output: Object.assign({}, demo.output, {
+			file: "public/demo/index.min.js"
+		}),
+
+		plugins: demo.plugins.concat([babel(), minify({
+			sourceMap: false,
+			comments: false
+		})])
+
+	})
+
+] : []);

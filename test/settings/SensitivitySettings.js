@@ -1,5 +1,5 @@
 import test from "ava";
-import { SensitivitySettings } from "../../build/bundle.js";
+import { SensitivitySettings } from "../../build/delta-controls.js";
 
 test("can be instantiated", t => {
 

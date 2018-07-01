@@ -1,5 +1,5 @@
 import test from "ava";
-import { Settings } from "../../build/bundle.js";
+import { Settings } from "../../build/delta-controls.js";
 
 test("can be instantiated", t => {
 
