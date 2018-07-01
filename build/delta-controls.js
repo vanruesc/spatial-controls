@@ -9,4670 +9,5968 @@
 	(factory((global.DELTACONTROLS = {})));
 }(this, (function (exports) { 'use strict';
 
-	/**
-	 * An enumeration of control actions.
-	 *
-	 * This enum can be used to bind keys to specific control actions.
-	 *
-	 * @type {Object}
-	 * @property {Number} MOVE_FORWARD - Move forward.
-	 * @property {Number} MOVE_LEFT - Move left.
-	 * @property {Number} MOVE_BACKWARD - Move backward.
-	 * @property {Number} MOVE_RIGHT - Move right.
-	 * @property {Number} MOVE_DOWN - Move down.
-	 * @property {Number} MOVE_UP - Move up.
-	 * @property {Number} ZOOM_OUT - Zoom out.
-	 * @property {Number} ZOOM_IN - Zoom in.
-	 */
+	var Action = {
 
-	const Action = {
-
-		MOVE_FORWARD: 0,
-		MOVE_LEFT: 1,
-		MOVE_BACKWARD: 2,
-		MOVE_RIGHT: 3,
-		MOVE_DOWN: 4,
-		MOVE_UP: 5,
-		ZOOM_OUT: 6,
-		ZOOM_IN: 7
+	  MOVE_FORWARD: 0,
+	  MOVE_LEFT: 1,
+	  MOVE_BACKWARD: 2,
+	  MOVE_RIGHT: 3,
+	  MOVE_DOWN: 4,
+	  MOVE_UP: 5,
+	  ZOOM_OUT: 6,
+	  ZOOM_IN: 7
 
 	};
 
-	/**
-	 * A vector with three components.
-	 */
-
-	class Vector3 {
-
-		/**
-		 * Constructs a new vector.
-		 *
-		 * @param {Number} [x=0] - The X component.
-		 * @param {Number} [y=0] - The Y component.
-		 * @param {Number} [z=0] - The Z component.
-		 */
-
-		constructor(x = 0, y = 0, z = 0) {
-
-			/**
-			 * The X component.
-			 *
-			 * @type {Number}
-			 */
-
-			this.x = x;
-
-			/**
-			 * The Y component.
-			 *
-			 * @type {Number}
-			 */
-
-			this.y = y;
-
-			/**
-			 * The Z component.
-			 *
-			 * @type {Number}
-			 */
-
-			this.z = z;
-
-		}
-
-		/**
-		 * Sets the values of this vector
-		 *
-		 * @param {Number} x - The X component.
-		 * @param {Number} y - The Y component.
-		 * @param {Number} z - The Z component.
-		 * @return {Vector3} This vector.
-		 */
-
-		set(x, y, z) {
-
-			this.x = x;
-			this.y = y;
-			this.z = z;
-
-			return this;
-
-		}
-
-		/**
-		 * Copies the values of another vector.
-		 *
-		 * @param {Vector3} v - A vector.
-		 * @return {Vector3} This vector.
-		 */
-
-		copy(v) {
-
-			this.x = v.x;
-			this.y = v.y;
-			this.z = v.z;
-
-			return this;
-
-		}
-
-		/**
-		 * Clones this vector.
-		 *
-		 * @return {Vector3} A clone of this vector.
-		 */
-
-		clone() {
-
-			return new this.constructor(this.x, this.y, this.z);
-
-		}
-
-		/**
-		 * Copies values from an array.
-		 *
-		 * @param {Number[]} array - An array.
-		 * @param {Number} offset - An offset.
-		 * @return {Vector3} This vector.
-		 */
-
-		fromArray(array, offset = 0) {
-
-			this.x = array[offset];
-			this.y = array[offset + 1];
-			this.z = array[offset + 2];
-
-			return this;
-
-		}
-
-		/**
-		 * Stores this vector in an array.
-		 *
-		 * @param {Array} [array] - A target array.
-		 * @param {Number} offset - An offset.
-		 * @return {Number[]} The array.
-		 */
-
-		toArray(array = [], offset = 0) {
-
-			array[offset] = this.x;
-			array[offset + 1] = this.y;
-			array[offset + 2] = this.z;
-
-			return array;
-
-		}
-
-		/**
-		 * Sets the values of this vector based on a spherical description.
-		 *
-		 * @param {Spherical} s - A spherical description.
-		 * @return {Vector3} This vector.
-		 */
-
-		setFromSpherical(s) {
-
-			const sinPhiRadius = Math.sin(s.phi) * s.radius;
-
-			this.x = sinPhiRadius * Math.sin(s.theta);
-			this.y = Math.cos(s.phi) * s.radius;
-			this.z = sinPhiRadius * Math.cos(s.theta);
-
-			return this;
-
-		}
-
-		/**
-		 * Sets the values of this vector based on a cylindrical description.
-		 *
-		 * @param {Cylindrical} c - A cylindrical description.
-		 * @return {Vector3} This vector.
-		 */
-
-		setFromCylindrical(c) {
-
-			this.x = c.radius * Math.sin(c.theta);
-			this.y = c.y;
-			this.z = c.radius * Math.cos(c.theta);
-
-			return this;
-
-		}
-
-		/**
-		 * Copies the values of a matrix column.
-		 *
-		 * @param {Matrix4} m - A 4x4 matrix.
-		 * @param {Number} index - A column index of the range [0, 2].
-		 * @return {Vector3} This vector.
-		 */
-
-		setFromMatrixColumn(m, index) {
-
-			return this.fromArray(m.elements, index * 4);
-
-		}
-
-		/**
-		 * Extracts the position from a matrix.
-		 *
-		 * @param {Matrix4} m - A 4x4 matrix.
-		 * @return {Vector3} This vector.
-		 */
-
-		setFromMatrixPosition(m) {
-
-			const me = m.elements;
-
-			this.x = me[12];
-			this.y = me[13];
-			this.z = me[14];
-
-			return this;
-
-		}
-
-		/**
-		 * Extracts the scale from a matrix.
-		 *
-		 * @param {Matrix4} m - A 4x4 matrix.
-		 * @return {Vector3} This vector.
-		 */
-
-		setFromMatrixScale(m) {
-
-			const sx = this.setFromMatrixColumn(m, 0).length();
-			const sy = this.setFromMatrixColumn(m, 1).length();
-			const sz = this.setFromMatrixColumn(m, 2).length();
-
-			this.x = sx;
-			this.y = sy;
-			this.z = sz;
-
-			return this;
-
-		}
-
-		/**
-		 * Adds a vector to this one.
-		 *
-		 * @param {Vector3} v - The vector to add.
-		 * @return {Vector3} This vector.
-		 */
-
-		add(v) {
-
-			this.x += v.x;
-			this.y += v.y;
-			this.z += v.z;
-
-			return this;
-
-		}
-
-		/**
-		 * Adds a scalar to this vector.
-		 *
-		 * @param {Number} s - The scalar to add.
-		 * @return {Vector3} This vector.
-		 */
-
-		addScalar(s) {
-
-			this.x += s;
-			this.y += s;
-			this.z += s;
-
-			return this;
-
-		}
-
-		/**
-		 * Sets this vector to the sum of two given vectors.
-		 *
-		 * @param {Vector3} a - A vector.
-		 * @param {Vector3} b - Another vector.
-		 * @return {Vector3} This vector.
-		 */
-
-		addVectors(a, b) {
-
-			this.x = a.x + b.x;
-			this.y = a.y + b.y;
-			this.z = a.z + b.z;
-
-			return this;
-
-		}
-
-		/**
-		 * Adds a scaled vector to this one.
-		 *
-		 * @param {Vector3} v - The vector to scale and add.
-		 * @param {Number} s - A scalar.
-		 * @return {Vector3} This vector.
-		 */
-
-		addScaledVector(v, s) {
-
-			this.x += v.x * s;
-			this.y += v.y * s;
-			this.z += v.z * s;
-
-			return this;
-
-		}
-
-		/**
-		 * Subtracts a vector from this vector.
-		 *
-		 * @param {Vector3} v - The vector to subtract.
-		 * @return {Vector3} This vector.
-		 */
-
-		sub(v) {
-
-			this.x -= v.x;
-			this.y -= v.y;
-			this.z -= v.z;
-
-			return this;
-
-		}
-
-		/**
-		 * Subtracts a scalar from this vector.
-		 *
-		 * @param {Number} s - The scalar to subtract.
-		 * @return {Vector3} This vector.
-		 */
-
-		subScalar(s) {
-
-			this.x -= s;
-			this.y -= s;
-			this.z -= s;
-
-			return this;
-
-		}
-
-		/**
-		 * Sets this vector to the difference between two given vectors.
-		 *
-		 * @param {Vector3} a - A vector.
-		 * @param {Vector3} b - A second vector.
-		 * @return {Vector3} This vector.
-		 */
-
-		subVectors(a, b) {
-
-			this.x = a.x - b.x;
-			this.y = a.y - b.y;
-			this.z = a.z - b.z;
-
-			return this;
-
-		}
-
-		/**
-		 * Multiplies this vector with another vector.
-		 *
-		 * @param {Vector3} v - A vector.
-		 * @return {Vector3} This vector.
-		 */
-
-		multiply(v) {
-
-			this.x *= v.x;
-			this.y *= v.y;
-			this.z *= v.z;
-
-			return this;
-
-		}
-
-		/**
-		 * Multiplies this vector with a given scalar.
-		 *
-		 * @param {Number} s - A scalar.
-		 * @return {Vector3} This vector.
-		 */
-
-		multiplyScalar(s) {
-
-			this.x *= s;
-			this.y *= s;
-			this.z *= s;
-
-			return this;
-
-		}
-
-		/**
-		 * Sets this vector to the product of two given vectors.
-		 *
-		 * @param {Vector3} a - A vector.
-		 * @param {Vector3} b - Another vector.
-		 * @return {Vector3} This vector.
-		 */
-
-		multiplyVectors(a, b) {
-
-			this.x = a.x * b.x;
-			this.y = a.y * b.y;
-			this.z = a.z * b.z;
-
-			return this;
-
-		}
-
-		/**
-		 * Divides this vector by another vector.
-		 *
-		 * @param {Vector3} v - A vector.
-		 * @return {Vector3} This vector.
-		 */
-
-		divide(v) {
-
-			this.x /= v.x;
-			this.y /= v.y;
-			this.z /= v.z;
-
-			return this;
-
-		}
-
-		/**
-		 * Divides this vector by a given scalar.
-		 *
-		 * @param {Number} s - A scalar.
-		 * @return {Vector3} This vector.
-		 */
-
-		divideScalar(s) {
-
-			this.x /= s;
-			this.y /= s;
-			this.z /= s;
-
-			return this;
-
-		}
-
-		/**
-		 * Sets this vector to the cross product of the given vectors.
-		 *
-		 * @param {Vector3} a - A vector.
-		 * @param {Vector3} b - Another vector.
-		 * @return {Vector3} This vector.
-		 */
-
-		crossVectors(a, b) {
-
-			const ax = a.x, ay = a.y, az = a.z;
-			const bx = b.x, by = b.y, bz = b.z;
-
-			this.x = ay * bz - az * by;
-			this.y = az * bx - ax * bz;
-			this.z = ax * by - ay * bx;
-
-			return this;
-
-		}
-
-		/**
-		 * Calculates the cross product of this vector and the given one.
-		 *
-		 * @param {Vector3} v - A vector.
-		 * @return {Vector3} This vector.
-		 */
-
-		cross(v) {
-
-			return this.crossVectors(this, v);
-
-		}
-
-		/**
-		 * Applies a matrix to this direction vector.
-		 *
-		 * @param {Matrix4} m - A matrix.
-		 * @return {Vector3} This vector.
-		 */
-
-		transformDirection(m) {
-
-			const x = this.x, y = this.y, z = this.z;
-			const e = m.elements;
-
-			this.x = e[0] * x + e[4] * y + e[8] * z;
-			this.y = e[1] * x + e[5] * y + e[9] * z;
-			this.z = e[2] * x + e[6] * y + e[10] * z;
-
-			return this.normalize();
-
-		}
-
-		/**
-		 * Applies a matrix to this vector.
-		 *
-		 * @param {Matrix3} m - A matrix.
-		 * @return {Vector3} This vector.
-		 */
-
-		applyMatrix3(m) {
-
-			const x = this.x, y = this.y, z = this.z;
-			const e = m.elements;
-
-			this.x = e[0] * x + e[3] * y + e[6] * z;
-			this.y = e[1] * x + e[4] * y + e[7] * z;
-			this.z = e[2] * x + e[5] * y + e[8] * z;
-
-			return this;
-
-		}
-
-		/**
-		 * Applies a matrix to this vector.
-		 *
-		 * @param {Matrix4} m - A matrix.
-		 * @return {Vector3} This vector.
-		 */
-
-		applyMatrix4(m) {
-
-			const x = this.x, y = this.y, z = this.z;
-			const e = m.elements;
-
-			this.x = e[0] * x + e[4] * y + e[8] * z + e[12];
-			this.y = e[1] * x + e[5] * y + e[9] * z + e[13];
-			this.z = e[2] * x + e[6] * y + e[10] * z + e[14];
-
-			return this;
-
-		}
-
-		/**
-		 * Applies a quaternion to this vector.
-		 *
-		 * @param {Quaternion} q - A quaternion.
-		 * @return {Vector3} This vector.
-		 */
-
-		applyQuaternion(q) {
-
-			const x = this.x, y = this.y, z = this.z;
-			const qx = q.x, qy = q.y, qz = q.z, qw = q.w;
-
-			// Calculate: quaternion * vector.
-			const ix = qw * x + qy * z - qz * y;
-			const iy = qw * y + qz * x - qx * z;
-			const iz = qw * z + qx * y - qy * x;
-			const iw = -qx * x - qy * y - qz * z;
-
-			// Calculate: result * inverse quaternion.
-			this.x = ix * qw + iw * -qx + iy * -qz - iz * -qy;
-			this.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
-			this.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
-
-			return this;
-
-		}
-
-		/**
-		 * Negates this vector.
-		 *
-		 * @return {Vector3} This vector.
-		 */
-
-		negate() {
-
-			this.x = -this.x;
-			this.y = -this.y;
-			this.z = -this.z;
-
-			return this;
-
-		}
-
-		/**
-		 * Calculates the dot product with another vector.
-		 *
-		 * @param {Vector3} v - A vector.
-		 * @return {Number} The dot product.
-		 */
-
-		dot(v) {
-
-			return this.x * v.x + this.y * v.y + this.z * v.z;
-
-		}
-
-		/**
-		 * Reflects this vector. The given plane normal is assumed to be normalized.
-		 *
-		 * @param {Vector3} n - A normal.
-		 * @return {Vector3} This vector.
-		 */
-
-		reflect(n) {
-
-			const nx = n.x;
-			const ny = n.y;
-			const nz = n.z;
-
-			this.sub(n.multiplyScalar(2 * this.dot(n)));
-
-			// Restore the normal.
-			n.set(nx, ny, nz);
-
-			return this;
-
-		}
-
-		/**
-		 * Computes the angle to the given vector.
-		 *
-		 * @param {Vector3} v - A vector.
-		 * @return {Number} The angle in radians.
-		 */
-
-		angleTo(v) {
-
-			const theta = this.dot(v) / (Math.sqrt(this.lengthSquared() * v.lengthSquared()));
-
-			// Clamp to avoid numerical problems.
-			return Math.acos(Math.min(Math.max(theta, -1), 1));
-
-		}
-
-		/**
-		 * Calculates the Manhattan length of this vector.
-		 *
-		 * @return {Number} The length.
-		 */
-
-		manhattanLength() {
-
-			return Math.abs(this.x) + Math.abs(this.y) + Math.abs(this.z);
-
-		}
-
-		/**
-		 * Calculates the squared length of this vector.
-		 *
-		 * @return {Number} The squared length.
-		 */
-
-		lengthSquared() {
-
-			return this.x * this.x + this.y * this.y + this.z * this.z;
-
-		}
-
-		/**
-		 * Calculates the length of this vector.
-		 *
-		 * @return {Number} The length.
-		 */
-
-		length() {
-
-			return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
-
-		}
-
-		/**
-		 * Calculates the Manhattan distance to a given vector.
-		 *
-		 * @param {Vector3} v - A vector.
-		 * @return {Number} The distance.
-		 */
-
-		manhattanDistanceTo(v) {
-
-			return Math.abs(this.x - v.x) + Math.abs(this.y - v.y) + Math.abs(this.z - v.z);
-
-		}
-
-		/**
-		 * Calculates the squared distance to a given vector.
-		 *
-		 * @param {Vector3} v - A vector.
-		 * @return {Number} The squared distance.
-		 */
-
-		distanceToSquared(v) {
-
-			const dx = this.x - v.x;
-			const dy = this.y - v.y;
-			const dz = this.z - v.z;
-
-			return dx * dx + dy * dy + dz * dz;
-
-		}
-
-		/**
-		 * Calculates the distance to a given vector.
-		 *
-		 * @param {Vector3} v - A vector.
-		 * @return {Number} The distance.
-		 */
-
-		distanceTo(v) {
-
-			return Math.sqrt(this.distanceToSquared(v));
-
-		}
-
-		/**
-		 * Normalizes this vector.
-		 *
-		 * @return {Vector3} This vector.
-		 */
-
-		normalize() {
-
-			return this.divideScalar(this.length());
-
-		}
-
-		/**
-		 * Sets the length of this vector.
-		 *
-		 * @param {Number} length - The new length.
-		 * @return {Vector3} This vector.
-		 */
-
-		setLength(length) {
-
-			return this.normalize().multiplyScalar(length);
-
-		}
-
-		/**
-		 * Adopts the min value for each component of this vector and the given one.
-		 *
-		 * @param {Vector3} v - A vector.
-		 * @return {Vector3} This vector.
-		 */
-
-		min(v) {
-
-			this.x = Math.min(this.x, v.x);
-			this.y = Math.min(this.y, v.y);
-			this.z = Math.min(this.z, v.z);
-
-			return this;
-
-		}
-
-		/**
-		 * Adopts the max value for each component of this vector and the given one.
-		 *
-		 * @param {Vector3} v - A vector.
-		 * @return {Vector3} This vector.
-		 */
-
-		max(v) {
-
-			this.x = Math.max(this.x, v.x);
-			this.y = Math.max(this.y, v.y);
-			this.z = Math.max(this.z, v.z);
-
-			return this;
-
-		}
-
-		/**
-		 * Clamps this vector.
-		 *
-		 * @param {Vector3} min - The lower bounds. Assumed to be smaller than max.
-		 * @param {Vector3} max - The upper bounds. Assumed to be greater than min.
-		 * @return {Vector3} This vector.
-		 */
-
-		clamp(min, max) {
-
-			this.x = Math.max(min.x, Math.min(max.x, this.x));
-			this.y = Math.max(min.y, Math.min(max.y, this.y));
-			this.z = Math.max(min.z, Math.min(max.z, this.z));
-
-			return this;
-
-		}
-
-		/**
-		 * Floors this vector.
-		 *
-		 * @return {Vector3} This vector.
-		 */
-
-		floor() {
-
-			this.x = Math.floor(this.x);
-			this.y = Math.floor(this.y);
-			this.z = Math.floor(this.z);
-
-			return this;
-
-		}
-
-		/**
-		 * Ceils this vector.
-		 *
-		 * @return {Vector3} This vector.
-		 */
-
-		ceil() {
-
-			this.x = Math.ceil(this.x);
-			this.y = Math.ceil(this.y);
-			this.z = Math.ceil(this.z);
-
-			return this;
-
-		}
-
-		/**
-		 * Rounds this vector.
-		 *
-		 * @return {Vector3} This vector.
-		 */
-
-		round() {
-
-			this.x = Math.round(this.x);
-			this.y = Math.round(this.y);
-			this.z = Math.round(this.z);
-
-			return this;
-
-		}
-
-		/**
-		 * Lerps towards the given vector.
-		 *
-		 * @param {Vector3} v - The target vector.
-		 * @param {Number} alpha - The lerp factor.
-		 * @return {Vector3} This vector.
-		 */
-
-		lerp(v, alpha) {
-
-			this.x += (v.x - this.x) * alpha;
-			this.y += (v.y - this.y) * alpha;
-			this.z += (v.z - this.z) * alpha;
-
-			return this;
-
-		}
-
-		/**
-		 * Sets this vector to the lerp result of the given vectors.
-		 *
-		 * @param {Vector3} v1 - A base vector.
-		 * @param {Vector3} v2 - The target vector.
-		 * @param {Number} alpha - The lerp factor.
-		 * @return {Vector3} This vector.
-		 */
-
-		lerpVectors(v1, v2, alpha) {
-
-			return this.subVectors(v2, v1).multiplyScalar(alpha).add(v1);
-
-		}
-
-		/**
-		 * Checks if this vector equals the given one.
-		 *
-		 * @param {Vector3} v - A vector.
-		 * @return {Boolean} Whether this vector equals the given one.
-		 */
-
-		equals(v) {
-
-			return (v.x === this.x && v.y === this.y && v.z === this.z);
-
-		}
-
-	}
-
-	/**
-	 * A vector with two components.
-	 */
-
-	class Vector2 {
-
-		/**
-		 * Constructs a new vector.
-		 *
-		 * @param {Number} [x=0] - The X component.
-		 * @param {Number} [y=0] - The Y component.
-		 */
-
-		constructor(x = 0, y = 0) {
-
-			/**
-			 * The X component.
-			 *
-			 * @type {Number}
-			 */
-
-			this.x = x;
-
-			/**
-			 * The Y component.
-			 *
-			 * @type {Number}
-			 */
-
-			this.y = y;
-
-		}
-
-		/**
-		 * The width. This is an alias for X.
-		 *
-		 * @type {Number}
-		 */
-
-		get width() {
-
-			return this.x;
-
-		}
-
-		/**
-		 * Sets the width.
-		 *
-		 * @type {Number}
-		 */
-
-		set width(value) {
-
-			return this.x = value;
-
-		}
-
-		/**
-		 * The height. This is an alias for Y.
-		 *
-		 * @type {Number}
-		 */
-
-		get height() {
-
-			return this.y;
-
-		}
-
-		/**
-		 * Sets the height.
-		 *
-		 * @type {Number}
-		 */
-
-		set height(value) {
-
-			return this.y = value;
-
-		}
-
-		/**
-		 * Sets the values of this vector
-		 *
-		 * @param {Number} x - The X component.
-		 * @param {Number} y - The Y component.
-		 * @return {Vector2} This vector.
-		 */
-
-		set(x, y) {
-
-			this.x = x;
-			this.y = y;
-
-			return this;
-
-		}
-
-		/**
-		 * Copies the values of another vector.
-		 *
-		 * @param {Vector2} v - A vector.
-		 * @return {Vector2} This vector.
-		 */
-
-		copy(v) {
-
-			this.x = v.x;
-			this.y = v.y;
-
-			return this;
-
-		}
-
-		/**
-		 * Clones this vector.
-		 *
-		 * @return {Vector2} A clone of this vector.
-		 */
-
-		clone() {
-
-			return new this.constructor(this.x, this.y);
-
-		}
-
-		/**
-		 * Copies values from an array.
-		 *
-		 * @param {Number[]} array - An array.
-		 * @param {Number} offset - An offset.
-		 * @return {Vector2} This vector.
-		 */
-
-		fromArray(array, offset = 0) {
-
-			this.x = array[offset];
-			this.y = array[offset + 1];
-
-			return this;
-
-		}
-
-		/**
-		 * Stores this vector in an array.
-		 *
-		 * @param {Array} [array] - A target array.
-		 * @param {Number} offset - An offset.
-		 * @return {Number[]} The array.
-		 */
-
-		toArray(array = [], offset = 0) {
-
-			array[offset] = this.x;
-			array[offset + 1] = this.y;
-
-			return array;
-
-		}
-
-		/**
-		 * Adds a vector to this one.
-		 *
-		 * @param {Vector2} v - The vector to add.
-		 * @return {Vector2} This vector.
-		 */
-
-		add(v) {
-
-			this.x += v.x;
-			this.y += v.y;
-
-			return this;
-
-		}
-
-		/**
-		 * Adds a scalar to this vector.
-		 *
-		 * @param {Number} s - The scalar to add.
-		 * @return {Vector2} This vector.
-		 */
-
-		addScalar(s) {
-
-			this.x += s;
-			this.y += s;
-
-			return this;
-
-		}
-
-		/**
-		 * Sets this vector to the sum of two given vectors.
-		 *
-		 * @param {Vector2} a - A vector.
-		 * @param {Vector2} b - Another vector.
-		 * @return {Vector2} This vector.
-		 */
-
-		addVectors(a, b) {
-
-			this.x = a.x + b.x;
-			this.y = a.y + b.y;
-
-			return this;
-
-		}
-
-		/**
-		 * Adds a scaled vector to this one.
-		 *
-		 * @param {Vector2} v - The vector to scale and add.
-		 * @param {Number} s - A scalar.
-		 * @return {Vector2} This vector.
-		 */
-
-		addScaledVector(v, s) {
-
-			this.x += v.x * s;
-			this.y += v.y * s;
-
-			return this;
-
-		}
-
-		/**
-		 * Subtracts a vector from this vector.
-		 *
-		 * @param {Vector2} v - The vector to subtract.
-		 * @return {Vector2} This vector.
-		 */
-
-		sub(v) {
-
-			this.x -= v.x;
-			this.y -= v.y;
-
-			return this;
-
-		}
-
-		/**
-		 * Subtracts a scalar from this vector.
-		 *
-		 * @param {Number} s - The scalar to subtract.
-		 * @return {Vector2} This vector.
-		 */
-
-		subScalar(s) {
-
-			this.x -= s;
-			this.y -= s;
-
-			return this;
-
-		}
-
-		/**
-		 * Sets this vector to the difference between two given vectors.
-		 *
-		 * @param {Vector2} a - A vector.
-		 * @param {Vector2} b - A second vector.
-		 * @return {Vector2} This vector.
-		 */
-
-		subVectors(a, b) {
-
-			this.x = a.x - b.x;
-			this.y = a.y - b.y;
-
-			return this;
-
-		}
-
-		/**
-		 * Multiplies this vector with another vector.
-		 *
-		 * @param {Vector2} v - A vector.
-		 * @return {Vector2} This vector.
-		 */
-
-		multiply(v) {
-
-			this.x *= v.x;
-			this.y *= v.y;
-
-			return this;
-
-		}
-
-		/**
-		 * Multiplies this vector with a given scalar.
-		 *
-		 * @param {Number} s - A scalar.
-		 * @return {Vector2} This vector.
-		 */
-
-		multiplyScalar(s) {
-
-			this.x *= s;
-			this.y *= s;
-
-			return this;
-
-		}
-
-		/**
-		 * Divides this vector by another vector.
-		 *
-		 * @param {Vector2} v - A vector.
-		 * @return {Vector2} This vector.
-		 */
-
-		divide(v) {
-
-			this.x /= v.x;
-			this.y /= v.y;
-
-			return this;
-
-		}
-
-		/**
-		 * Divides this vector by a given scalar.
-		 *
-		 * @param {Number} s - A scalar.
-		 * @return {Vector2} This vector.
-		 */
-
-		divideScalar(s) {
-
-			this.x /= s;
-			this.y /= s;
-
-			return this;
-
-		}
-
-		/**
-		 * Applies the given matrix to this vector.
-		 *
-		 * @param {Matrix3} m - A matrix.
-		 * @return {Vector2} This vector.
-		 */
-
-		applyMatrix3(m) {
-
-			const x = this.x, y = this.y;
-			const e = m.elements;
-
-			this.x = e[0] * x + e[3] * y + e[6];
-			this.y = e[1] * x + e[4] * y + e[7];
-
-			return this;
-
-		}
-
-		/**
-		 * Calculates the dot product with another vector.
-		 *
-		 * @param {Vector2} v - A vector.
-		 * @return {Number} The dot product.
-		 */
-
-		dot(v) {
-
-			return this.x * v.x + this.y * v.y;
-
-		}
-
-		/**
-		 * Calculates the Manhattan length of this vector.
-		 *
-		 * @return {Number} The length.
-		 */
-
-		manhattanLength() {
-
-			return Math.abs(this.x) + Math.abs(this.y);
-
-		}
-
-		/**
-		 * Calculates the squared length of this vector.
-		 *
-		 * @return {Number} The squared length.
-		 */
-
-		lengthSquared() {
-
-			return this.x * this.x + this.y * this.y;
-
-		}
-
-		/**
-		 * Calculates the length of this vector.
-		 *
-		 * @return {Number} The length.
-		 */
-
-		length() {
-
-			return Math.sqrt(this.x * this.x + this.y * this.y);
-
-		}
-
-		/**
-		 * Calculates the Manhattan distance to a given vector.
-		 *
-		 * @param {Vector2} v - A vector.
-		 * @return {Number} The squared distance.
-		 */
-
-		manhattanDistanceTo(v) {
-
-			return Math.abs(this.x - v.x) + Math.abs(this.y - v.y);
-
-		}
-
-		/**
-		 * Calculates the squared distance to a given vector.
-		 *
-		 * @param {Vector2} v - A vector.
-		 * @return {Number} The squared distance.
-		 */
-
-		distanceToSquared(v) {
-
-			const dx = this.x - v.x;
-			const dy = this.y - v.y;
-
-			return dx * dx + dy * dy;
-
-		}
-
-		/**
-		 * Calculates the distance to a given vector.
-		 *
-		 * @param {Vector2} v - A vector.
-		 * @return {Number} The distance.
-		 */
-
-		distanceTo(v) {
-
-			return Math.sqrt(this.distanceToSquared(v));
-
-		}
-
-		/**
-		 * Normalizes this vector.
-		 *
-		 * @return {Vector2} This vector.
-		 */
-
-		normalize() {
-
-			return this.divideScalar(this.length());
-
-		}
-
-		/**
-		 * Sets the length of this vector.
-		 *
-		 * @param {Number} length - The new length.
-		 * @return {Vector2} This vector.
-		 */
-
-		setLength(length) {
-
-			return this.normalize().multiplyScalar(length);
-
-		}
-
-		/**
-		 * Adopts the min value for each component of this vector and the given one.
-		 *
-		 * @param {Vector2} v - A vector.
-		 * @return {Vector2} This vector.
-		 */
-
-		min(v) {
-
-			this.x = Math.min(this.x, v.x);
-			this.y = Math.min(this.y, v.y);
-
-			return this;
-
-		}
-
-		/**
-		 * adopts the max value for each component of this vector and the given one.
-		 *
-		 * @param {Vector2} v - A vector.
-		 * @return {Vector2} This vector.
-		 */
-
-		max(v) {
-
-			this.x = Math.max(this.x, v.x);
-			this.y = Math.max(this.y, v.y);
-
-			return this;
-
-		}
-
-		/**
-		 * Clamps this vector.
-		 *
-		 * @param {Vector2} min - A vector, assumed to be smaller than max.
-		 * @param {Vector2} max - A vector, assumed to be greater than min.
-		 * @return {Vector2} This vector.
-		 */
-
-		clamp(min, max) {
-
-			this.x = Math.max(min.x, Math.min(max.x, this.x));
-			this.y = Math.max(min.y, Math.min(max.y, this.y));
-
-			return this;
-
-		}
-
-		/**
-		 * Floors this vector.
-		 *
-		 * @return {Vector2} This vector.
-		 */
-
-		floor() {
-
-			this.x = Math.floor(this.x);
-			this.y = Math.floor(this.y);
-
-			return this;
-
-		}
-
-		/**
-		 * Ceils this vector.
-		 *
-		 * @return {Vector2} This vector.
-		 */
-
-		ceil() {
-
-			this.x = Math.ceil(this.x);
-			this.y = Math.ceil(this.y);
-
-			return this;
-
-		}
-
-		/**
-		 * Rounds this vector.
-		 *
-		 * @return {Vector2} This vector.
-		 */
-
-		round() {
-
-			this.x = Math.round(this.x);
-			this.y = Math.round(this.y);
-
-			return this;
-
-		}
-
-		/**
-		 * Negates this vector.
-		 *
-		 * @return {Vector2} This vector.
-		 */
-
-		negate() {
-
-			this.x = -this.x;
-			this.y = -this.y;
-
-			return this;
-
-		}
-
-		/**
-		 * Computes the angle in radians with respect to the positive X-axis.
-		 *
-		 * @return {Number} The angle.
-		 */
-
-		angle() {
-
-			let angle = Math.atan2(this.y, this.x);
-
-			if(angle < 0) {
-
-				angle += 2 * Math.PI;
-
-			}
-
-			return angle;
-
-		}
-
-		/**
-		 * Lerps towards the given vector.
-		 *
-		 * @param {Vector2} v - The target vector.
-		 * @param {Number} alpha - The lerp factor.
-		 * @return {Vector2} This vector.
-		 */
-
-		lerp(v, alpha) {
-
-			this.x += (v.x - this.x) * alpha;
-			this.y += (v.y - this.y) * alpha;
-
-			return this;
-
-		}
-
-		/**
-		 * Sets this vector to the lerp result of the given vectors.
-		 *
-		 * @param {Vector2} v1 - A base vector.
-		 * @param {Vector2} v2 - The target vector.
-		 * @param {Number} alpha - The lerp factor.
-		 * @return {Vector2} This vector.
-		 */
-
-		lerpVectors(v1, v2, alpha) {
-
-			return this.subVectors(v2, v1).multiplyScalar(alpha).add(v1);
-
-		}
-
-		/**
-		 * Rotates this vector around a given center.
-		 *
-		 * @param {Vector2} center - The center.
-		 * @param {Number} angle - The rotation in radians.
-		 * @return {Vector2} This vector.
-		 */
-
-		rotateAround(center, angle) {
-
-			const c = Math.cos(angle), s = Math.sin(angle);
-
-			const x = this.x - center.x;
-			const y = this.y - center.y;
-
-			this.x = x * c - y * s + center.x;
-			this.y = x * s + y * c + center.y;
-
-			return this;
-
-		}
-
-		/**
-		 * Checks if this vector equals the given one.
-		 *
-		 * @param {Vector2} v - A vector.
-		 * @return {Boolean} Whether this vector equals the given one.
-		 */
-
-		equals(v) {
-
-			return (v.x === this.x && v.y === this.y);
-
-		}
-
-	}
-
-	/**
-	 * A cylindrical coordinate system.
-	 *
-	 * For details see: https://en.wikipedia.org/wiki/Cylindrical_coordinate_system
-	 */
-
-	/**
-	 * A 3x3 matrix.
-	 */
-
-	/**
-	 * An enumeration of Euler rotation orders.
-	 *
-	 * @type {Object}
-	 * @property {String} XYZ - X -> Y -> Z.
-	 * @property {String} YZX - Y -> Z -> X.
-	 * @property {String} ZXY - Z -> X -> Y.
-	 * @property {String} XZY - X -> Z -> Y.
-	 * @property {String} YXZ - Y -> X -> Z.
-	 * @property {String} ZYX - Z -> Y -> X.
-	 */
-
-	const RotationOrder = {
-
-		XYZ: "XYZ",
-		YZX: "YZX",
-		ZXY: "ZXY",
-		XZY: "XZY",
-		YXZ: "YXZ",
-		ZYX: "ZYX"
-
+	var classCallCheck = function (instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
 	};
 
-	/**
-	 * A vector.
-	 *
-	 * @type {Vector3}
-	 * @private
-	 */
+	var createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];
+	      descriptor.enumerable = descriptor.enumerable || false;
+	      descriptor.configurable = true;
+	      if ("value" in descriptor) descriptor.writable = true;
+	      Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }
 
-	const a$2 = new Vector3();
+	  return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+	    if (staticProps) defineProperties(Constructor, staticProps);
+	    return Constructor;
+	  };
+	}();
 
-	/**
-	 * A vector.
-	 *
-	 * @type {Vector3}
-	 * @private
-	 */
+	var inherits = function (subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+	  }
 
-	const b$2 = new Vector3();
+	  subClass.prototype = Object.create(superClass && superClass.prototype, {
+	    constructor: {
+	      value: subClass,
+	      enumerable: false,
+	      writable: true,
+	      configurable: true
+	    }
+	  });
+	  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	};
 
-	/**
-	 * A vector.
-	 *
-	 * @type {Vector3}
-	 * @private
-	 */
+	var possibleConstructorReturn = function (self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }
 
-	const c = new Vector3();
+	  return call && (typeof call === "object" || typeof call === "function") ? call : self;
+	};
 
-	/**
-	 * A 4x4 matrix.
-	 */
+	var toConsumableArray = function (arr) {
+	  if (Array.isArray(arr)) {
+	    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
 
-	class Matrix4 {
+	    return arr2;
+	  } else {
+	    return Array.from(arr);
+	  }
+	};
 
-		/**
-		 * Constructs a new matrix.
-		 */
+	var Vector3 = function () {
+		function Vector3() {
+			var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+			var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+			var z = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+			classCallCheck(this, Vector3);
 
-		constructor() {
 
-			/**
-			 * The matrix elements.
-			 *
-			 * @type {Float32Array}
-			 */
+			this.x = x;
 
-			this.elements = new Float32Array([
+			this.y = y;
 
-				1, 0, 0, 0,
-				0, 1, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1
-
-			]);
-
+			this.z = z;
 		}
 
-		/**
-		 * Sets the values of this matrix.
-		 *
-		 * @param {Number} n00 - The value of the first row, first column.
-		 * @param {Number} n01 - The value of the first row, second column.
-		 * @param {Number} n02 - The value of the first row, third column.
-		 * @param {Number} n03 - The value of the first row, fourth column.
-		 * @param {Number} n10 - The value of the second row, first column.
-		 * @param {Number} n11 - The value of the second row, second column.
-		 * @param {Number} n12 - The value of the second row, third column.
-		 * @param {Number} n13 - The value of the second row, fourth column.
-		 * @param {Number} n20 - The value of the third row, first column.
-		 * @param {Number} n21 - The value of the third row, second column.
-		 * @param {Number} n22 - The value of the third row, third column.
-		 * @param {Number} n23 - The value of the third row, fourth column.
-		 * @param {Number} n30 - The value of the fourth row, first column.
-		 * @param {Number} n31 - The value of the fourth row, second column.
-		 * @param {Number} n32 - The value of the fourth row, third column.
-		 * @param {Number} n33 - The value of the fourth row, fourth column.
-		 * @return {Matrix4} This matrix.
-		 */
+		createClass(Vector3, [{
+			key: "set",
+			value: function set$$1(x, y, z) {
 
-		set(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33) {
+				this.x = x;
+				this.y = y;
+				this.z = z;
 
-			const te = this.elements;
-
-			te[0] = n00; te[4] = n01; te[8] = n02; te[12] = n03;
-			te[1] = n10; te[5] = n11; te[9] = n12; te[13] = n13;
-			te[2] = n20; te[6] = n21; te[10] = n22; te[14] = n23;
-			te[3] = n30; te[7] = n31; te[11] = n32; te[15] = n33;
-
-			return this;
-
-		}
-
-		/**
-		 * Sets this matrix to the identity matrix.
-		 *
-		 * @return {Matrix4} This matrix.
-		 */
-
-		identity() {
-
-			this.set(
-
-				1, 0, 0, 0,
-				0, 1, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1
-
-			);
-
-			return this;
-
-		}
-
-		/**
-		 * Copies the values of a given matrix.
-		 *
-		 * @param {Matrix4} matrix - A matrix.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		copy(matrix) {
-
-			const me = matrix.elements;
-			const te = this.elements;
-
-			te[0] = me[0]; te[1] = me[1]; te[2] = me[2]; te[3] = me[3];
-			te[4] = me[4]; te[5] = me[5]; te[6] = me[6]; te[7] = me[7];
-			te[8] = me[8]; te[9] = me[9]; te[10] = me[10]; te[11] = me[11];
-			te[12] = me[12]; te[13] = me[13]; te[14] = me[14]; te[15] = me[15];
-
-			return this;
-
-		}
-
-		/**
-		 * Clones this matrix.
-		 *
-		 * @return {Matrix4} A clone of this matrix.
-		 */
-
-		clone() {
-
-			return new this.constructor().fromArray(this.elements);
-
-		}
-
-		/**
-		 * Copies the values of a given array.
-		 *
-		 * @param {Number[]} array - An array.
-		 * @param {Number} [offset=0] - An offset into the array.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		fromArray(array, offset = 0) {
-
-			const te = this.elements;
-
-			let i;
-
-			for(i = 0; i < 16; ++i) {
-
-				te[i] = array[i + offset];
-
+				return this;
 			}
+		}, {
+			key: "copy",
+			value: function copy(v) {
 
-			return this;
+				this.x = v.x;
+				this.y = v.y;
+				this.z = v.z;
 
-		}
-
-		/**
-		 * Stores this matrix in an array.
-		 *
-		 * @param {Number[]} [array] - A target array.
-		 * @param {Number} [offset=0] - An offset into the array.
-		 * @return {Number[]} The array.
-		 */
-
-		toArray(array = [], offset = 0) {
-
-			const te = this.elements;
-
-			let i;
-
-			for(i = 0; i < 16; ++i) {
-
-				array[i + offset] = te[i];
-
+				return this;
 			}
-
-			return array;
-
-		}
-
-		/**
-		 * Returns the largest scale.
-		 *
-		 * @return {Number} The largest scale of the three axes.
-		 */
-
-		getMaxScaleOnAxis() {
-
-			const te = this.elements;
-
-			const scaleXSq = te[0] * te[0] + te[1] * te[1] + te[2] * te[2];
-			const scaleYSq = te[4] * te[4] + te[5] * te[5] + te[6] * te[6];
-			const scaleZSq = te[8] * te[8] + te[9] * te[9] + te[10] * te[10];
-
-			return Math.sqrt(Math.max(scaleXSq, scaleYSq, scaleZSq));
-
-		}
-
-		/**
-		 * Copies the position values of a given matrix.
-		 *
-		 * @param {Matrix4} matrix - A matrix.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		copyPosition(matrix) {
-
-			const te = this.elements;
-			const me = matrix.elements;
-
-			te[12] = me[12];
-			te[13] = me[13];
-			te[14] = me[14];
-
-			return this;
-
-		}
-
-		/**
-		 * Sets the position values of this matrix.
-		 *
-		 * @param {Vector3} p - A position.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		setPosition(p) {
-
-			const te = this.elements;
-
-			te[12] = p.x;
-			te[13] = p.y;
-			te[14] = p.z;
-
-			return this;
-
-		}
-
-		/**
-		 * Extracts the basis from this matrix.
-		 *
-		 * @param {Vector3} xAxis - A vector to store the X-axis column in.
-		 * @param {Vector3} yAxis - A vector to store the Y-axis column in.
-		 * @param {Vector3} zAxis - A vector to store the Z-axis column in.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		extractBasis(xAxis, yAxis, zAxis) {
-
-			xAxis.setFromMatrixColumn(this, 0);
-			yAxis.setFromMatrixColumn(this, 1);
-			zAxis.setFromMatrixColumn(this, 2);
-
-			return this;
-
-		}
-
-		/**
-		 * Sets the basis of this matrix.
-		 *
-		 * @param {Vector3} xAxis - The X-axis.
-		 * @param {Vector3} yAxis - The Y-axis.
-		 * @param {Vector3} zAxis - The Z-axis.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		makeBasis(xAxis, yAxis, zAxis) {
-
-			this.set(
-
-				xAxis.x, yAxis.x, zAxis.x, 0,
-				xAxis.y, yAxis.y, zAxis.y, 0,
-				xAxis.z, yAxis.z, zAxis.z, 0,
-				0, 0, 0, 1
-
-			);
-
-			return this;
-
-		}
-
-		/**
-		 * Extracts the rotation from a given matrix.
-		 *
-		 * This method does not support reflection matrices.
-		 *
-		 * @param {Matrix4} m - A matrix.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		extractRotation(m) {
-
-			const te = this.elements;
-			const me = m.elements;
-
-			const scaleX = 1.0 / a$2.setFromMatrixColumn(m, 0).length();
-			const scaleY = 1.0 / a$2.setFromMatrixColumn(m, 1).length();
-			const scaleZ = 1.0 / a$2.setFromMatrixColumn(m, 2).length();
-
-			te[0] = me[0] * scaleX;
-			te[1] = me[1] * scaleX;
-			te[2] = me[2] * scaleX;
-			te[3] = 0;
-
-			te[4] = me[4] * scaleY;
-			te[5] = me[5] * scaleY;
-			te[6] = me[6] * scaleY;
-			te[7] = 0;
-
-			te[8] = me[8] * scaleZ;
-			te[9] = me[9] * scaleZ;
-			te[10] = me[10] * scaleZ;
-			te[11] = 0;
-
-			te[12] = 0;
-			te[13] = 0;
-			te[14] = 0;
-			te[15] = 1;
-
-			return this;
-
-		}
-
-		/**
-		 * Sets the matrix rotation based on the given Euler angles.
-		 *
-		 * @param {Euler} euler - The euler angles.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		makeRotationFromEuler(euler) {
-
-			const te = this.elements;
-
-			const x = euler.x;
-			const y = euler.y;
-			const z = euler.z;
-
-			const a = Math.cos(x), b = Math.sin(x);
-			const c = Math.cos(y), d = Math.sin(y);
-			const e = Math.cos(z), f = Math.sin(z);
-
-			let ae, af, be, bf;
-			let ce, cf, de, df;
-			let ac, ad, bc, bd;
-
-			switch(euler.order) {
-
-				case RotationOrder.XYZ: {
-
-					ae = a * e, af = a * f, be = b * e, bf = b * f;
-
-					te[0] = c * e;
-					te[4] = -c * f;
-					te[8] = d;
-
-					te[1] = af + be * d;
-					te[5] = ae - bf * d;
-					te[9] = -b * c;
-
-					te[2] = bf - ae * d;
-					te[6] = be + af * d;
-					te[10] = a * c;
-
-					break;
-
-				}
-
-				case RotationOrder.YXZ: {
-
-					ce = c * e, cf = c * f, de = d * e, df = d * f;
-
-					te[0] = ce + df * b;
-					te[4] = de * b - cf;
-					te[8] = a * d;
-
-					te[1] = a * f;
-					te[5] = a * e;
-					te[9] = -b;
-
-					te[2] = cf * b - de;
-					te[6] = df + ce * b;
-					te[10] = a * c;
-
-					break;
-
-				}
-
-				case RotationOrder.ZXY: {
-
-					ce = c * e, cf = c * f, de = d * e, df = d * f;
-
-					te[0] = ce - df * b;
-					te[4] = -a * f;
-					te[8] = de + cf * b;
-
-					te[1] = cf + de * b;
-					te[5] = a * e;
-					te[9] = df - ce * b;
-
-					te[2] = -a * d;
-					te[6] = b;
-					te[10] = a * c;
-
-					break;
-
-				}
-
-				case RotationOrder.ZYX: {
-
-					ae = a * e, af = a * f, be = b * e, bf = b * f;
-
-					te[0] = c * e;
-					te[4] = be * d - af;
-					te[8] = ae * d + bf;
-
-					te[1] = c * f;
-					te[5] = bf * d + ae;
-					te[9] = af * d - be;
-
-					te[2] = -d;
-					te[6] = b * c;
-					te[10] = a * c;
-
-					break;
-
-				}
-
-				case RotationOrder.YZX: {
-
-					ac = a * c, ad = a * d, bc = b * c, bd = b * d;
-
-					te[0] = c * e;
-					te[4] = bd - ac * f;
-					te[8] = bc * f + ad;
-
-					te[1] = f;
-					te[5] = a * e;
-					te[9] = -b * e;
-
-					te[2] = -d * e;
-					te[6] = ad * f + bc;
-					te[10] = ac - bd * f;
-
-					break;
-
-				}
-
-				case RotationOrder.XZY: {
-
-					ac = a * c, ad = a * d, bc = b * c, bd = b * d;
-
-					te[0] = c * e;
-					te[4] = -f;
-					te[8] = d * e;
-
-					te[1] = ac * f + bd;
-					te[5] = a * e;
-					te[9] = ad * f - bc;
-
-					te[2] = bc * f - ad;
-					te[6] = b * e;
-					te[10] = bd * f + ac;
-
-					break;
-
-				}
-
+		}, {
+			key: "clone",
+			value: function clone() {
+
+				return new this.constructor(this.x, this.y, this.z);
 			}
+		}, {
+			key: "fromArray",
+			value: function fromArray(array) {
+				var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-			// Bottom row.
-			te[3] = 0;
-			te[7] = 0;
-			te[11] = 0;
 
-			// Last column.
-			te[12] = 0;
-			te[13] = 0;
-			te[14] = 0;
-			te[15] = 1;
+				this.x = array[offset];
+				this.y = array[offset + 1];
+				this.z = array[offset + 2];
 
-			return this;
-
-		}
-
-		/**
-		 * Sets the matrix rotation based on the given quaternion.
-		 *
-		 * @param {Quaternion} q - The quaternion.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		makeRotationFromQuaternion(q) {
-
-			return this.compose(a$2.set(0, 0, 0), q, b$2.set(1, 1, 1));
-
-		}
-
-		/**
-		 * Creates a rotation that looks at the given target.
-		 *
-		 * @param {Vector3} eye - The position of the eye.
-		 * @param {Vector3} target - The target to look at.
-		 * @param {Vector3} up - The up vector.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		lookAt(eye, target, up) {
-
-			const te = this.elements;
-			const x = a$2, y = b$2, z = c;
-
-			z.subVectors(eye, target);
-
-			if(z.lengthSquared() === 0) {
-
-				// Eye and target are at the same position.
-				z.z = 1;
-
+				return this;
 			}
+		}, {
+			key: "toArray",
+			value: function toArray$$1() {
+				var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+				var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-			z.normalize();
-			x.crossVectors(up, z);
 
-			if(x.lengthSquared() === 0) {
+				array[offset] = this.x;
+				array[offset + 1] = this.y;
+				array[offset + 2] = this.z;
 
-				// Up and z are parallel.
-				if(Math.abs(up.z) === 1) {
+				return array;
+			}
+		}, {
+			key: "setFromSpherical",
+			value: function setFromSpherical(s) {
 
-					z.x += 1e-4;
+				var sinPhiRadius = Math.sin(s.phi) * s.radius;
 
+				this.x = sinPhiRadius * Math.sin(s.theta);
+				this.y = Math.cos(s.phi) * s.radius;
+				this.z = sinPhiRadius * Math.cos(s.theta);
+
+				return this;
+			}
+		}, {
+			key: "setFromCylindrical",
+			value: function setFromCylindrical(c) {
+
+				this.x = c.radius * Math.sin(c.theta);
+				this.y = c.y;
+				this.z = c.radius * Math.cos(c.theta);
+
+				return this;
+			}
+		}, {
+			key: "setFromMatrixColumn",
+			value: function setFromMatrixColumn(m, index) {
+
+				return this.fromArray(m.elements, index * 4);
+			}
+		}, {
+			key: "setFromMatrixPosition",
+			value: function setFromMatrixPosition(m) {
+
+				var me = m.elements;
+
+				this.x = me[12];
+				this.y = me[13];
+				this.z = me[14];
+
+				return this;
+			}
+		}, {
+			key: "setFromMatrixScale",
+			value: function setFromMatrixScale(m) {
+
+				var sx = this.setFromMatrixColumn(m, 0).length();
+				var sy = this.setFromMatrixColumn(m, 1).length();
+				var sz = this.setFromMatrixColumn(m, 2).length();
+
+				this.x = sx;
+				this.y = sy;
+				this.z = sz;
+
+				return this;
+			}
+		}, {
+			key: "add",
+			value: function add(v) {
+
+				this.x += v.x;
+				this.y += v.y;
+				this.z += v.z;
+
+				return this;
+			}
+		}, {
+			key: "addScalar",
+			value: function addScalar(s) {
+
+				this.x += s;
+				this.y += s;
+				this.z += s;
+
+				return this;
+			}
+		}, {
+			key: "addVectors",
+			value: function addVectors(a, b) {
+
+				this.x = a.x + b.x;
+				this.y = a.y + b.y;
+				this.z = a.z + b.z;
+
+				return this;
+			}
+		}, {
+			key: "addScaledVector",
+			value: function addScaledVector(v, s) {
+
+				this.x += v.x * s;
+				this.y += v.y * s;
+				this.z += v.z * s;
+
+				return this;
+			}
+		}, {
+			key: "sub",
+			value: function sub(v) {
+
+				this.x -= v.x;
+				this.y -= v.y;
+				this.z -= v.z;
+
+				return this;
+			}
+		}, {
+			key: "subScalar",
+			value: function subScalar(s) {
+
+				this.x -= s;
+				this.y -= s;
+				this.z -= s;
+
+				return this;
+			}
+		}, {
+			key: "subVectors",
+			value: function subVectors(a, b) {
+
+				this.x = a.x - b.x;
+				this.y = a.y - b.y;
+				this.z = a.z - b.z;
+
+				return this;
+			}
+		}, {
+			key: "multiply",
+			value: function multiply(v) {
+
+				this.x *= v.x;
+				this.y *= v.y;
+				this.z *= v.z;
+
+				return this;
+			}
+		}, {
+			key: "multiplyScalar",
+			value: function multiplyScalar(s) {
+
+				this.x *= s;
+				this.y *= s;
+				this.z *= s;
+
+				return this;
+			}
+		}, {
+			key: "multiplyVectors",
+			value: function multiplyVectors(a, b) {
+
+				this.x = a.x * b.x;
+				this.y = a.y * b.y;
+				this.z = a.z * b.z;
+
+				return this;
+			}
+		}, {
+			key: "divide",
+			value: function divide(v) {
+
+				this.x /= v.x;
+				this.y /= v.y;
+				this.z /= v.z;
+
+				return this;
+			}
+		}, {
+			key: "divideScalar",
+			value: function divideScalar(s) {
+
+				this.x /= s;
+				this.y /= s;
+				this.z /= s;
+
+				return this;
+			}
+		}, {
+			key: "crossVectors",
+			value: function crossVectors(a, b) {
+
+				var ax = a.x,
+				    ay = a.y,
+				    az = a.z;
+				var bx = b.x,
+				    by = b.y,
+				    bz = b.z;
+
+				this.x = ay * bz - az * by;
+				this.y = az * bx - ax * bz;
+				this.z = ax * by - ay * bx;
+
+				return this;
+			}
+		}, {
+			key: "cross",
+			value: function cross(v) {
+
+				return this.crossVectors(this, v);
+			}
+		}, {
+			key: "transformDirection",
+			value: function transformDirection(m) {
+
+				var x = this.x,
+				    y = this.y,
+				    z = this.z;
+				var e = m.elements;
+
+				this.x = e[0] * x + e[4] * y + e[8] * z;
+				this.y = e[1] * x + e[5] * y + e[9] * z;
+				this.z = e[2] * x + e[6] * y + e[10] * z;
+
+				return this.normalize();
+			}
+		}, {
+			key: "applyMatrix3",
+			value: function applyMatrix3(m) {
+
+				var x = this.x,
+				    y = this.y,
+				    z = this.z;
+				var e = m.elements;
+
+				this.x = e[0] * x + e[3] * y + e[6] * z;
+				this.y = e[1] * x + e[4] * y + e[7] * z;
+				this.z = e[2] * x + e[5] * y + e[8] * z;
+
+				return this;
+			}
+		}, {
+			key: "applyMatrix4",
+			value: function applyMatrix4(m) {
+
+				var x = this.x,
+				    y = this.y,
+				    z = this.z;
+				var e = m.elements;
+
+				this.x = e[0] * x + e[4] * y + e[8] * z + e[12];
+				this.y = e[1] * x + e[5] * y + e[9] * z + e[13];
+				this.z = e[2] * x + e[6] * y + e[10] * z + e[14];
+
+				return this;
+			}
+		}, {
+			key: "applyQuaternion",
+			value: function applyQuaternion(q) {
+
+				var x = this.x,
+				    y = this.y,
+				    z = this.z;
+				var qx = q.x,
+				    qy = q.y,
+				    qz = q.z,
+				    qw = q.w;
+
+				var ix = qw * x + qy * z - qz * y;
+				var iy = qw * y + qz * x - qx * z;
+				var iz = qw * z + qx * y - qy * x;
+				var iw = -qx * x - qy * y - qz * z;
+
+				this.x = ix * qw + iw * -qx + iy * -qz - iz * -qy;
+				this.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
+				this.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
+
+				return this;
+			}
+		}, {
+			key: "negate",
+			value: function negate() {
+
+				this.x = -this.x;
+				this.y = -this.y;
+				this.z = -this.z;
+
+				return this;
+			}
+		}, {
+			key: "dot",
+			value: function dot(v) {
+
+				return this.x * v.x + this.y * v.y + this.z * v.z;
+			}
+		}, {
+			key: "reflect",
+			value: function reflect(n) {
+
+				var nx = n.x;
+				var ny = n.y;
+				var nz = n.z;
+
+				this.sub(n.multiplyScalar(2 * this.dot(n)));
+
+				n.set(nx, ny, nz);
+
+				return this;
+			}
+		}, {
+			key: "angleTo",
+			value: function angleTo(v) {
+
+				var theta = this.dot(v) / Math.sqrt(this.lengthSquared() * v.lengthSquared());
+
+				return Math.acos(Math.min(Math.max(theta, -1), 1));
+			}
+		}, {
+			key: "manhattanLength",
+			value: function manhattanLength() {
+
+				return Math.abs(this.x) + Math.abs(this.y) + Math.abs(this.z);
+			}
+		}, {
+			key: "lengthSquared",
+			value: function lengthSquared() {
+
+				return this.x * this.x + this.y * this.y + this.z * this.z;
+			}
+		}, {
+			key: "length",
+			value: function length() {
+
+				return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+			}
+		}, {
+			key: "manhattanDistanceTo",
+			value: function manhattanDistanceTo(v) {
+
+				return Math.abs(this.x - v.x) + Math.abs(this.y - v.y) + Math.abs(this.z - v.z);
+			}
+		}, {
+			key: "distanceToSquared",
+			value: function distanceToSquared(v) {
+
+				var dx = this.x - v.x;
+				var dy = this.y - v.y;
+				var dz = this.z - v.z;
+
+				return dx * dx + dy * dy + dz * dz;
+			}
+		}, {
+			key: "distanceTo",
+			value: function distanceTo(v) {
+
+				return Math.sqrt(this.distanceToSquared(v));
+			}
+		}, {
+			key: "normalize",
+			value: function normalize() {
+
+				return this.divideScalar(this.length());
+			}
+		}, {
+			key: "setLength",
+			value: function setLength(length) {
+
+				return this.normalize().multiplyScalar(length);
+			}
+		}, {
+			key: "min",
+			value: function min(v) {
+
+				this.x = Math.min(this.x, v.x);
+				this.y = Math.min(this.y, v.y);
+				this.z = Math.min(this.z, v.z);
+
+				return this;
+			}
+		}, {
+			key: "max",
+			value: function max(v) {
+
+				this.x = Math.max(this.x, v.x);
+				this.y = Math.max(this.y, v.y);
+				this.z = Math.max(this.z, v.z);
+
+				return this;
+			}
+		}, {
+			key: "clamp",
+			value: function clamp(min, max) {
+
+				this.x = Math.max(min.x, Math.min(max.x, this.x));
+				this.y = Math.max(min.y, Math.min(max.y, this.y));
+				this.z = Math.max(min.z, Math.min(max.z, this.z));
+
+				return this;
+			}
+		}, {
+			key: "floor",
+			value: function floor() {
+
+				this.x = Math.floor(this.x);
+				this.y = Math.floor(this.y);
+				this.z = Math.floor(this.z);
+
+				return this;
+			}
+		}, {
+			key: "ceil",
+			value: function ceil() {
+
+				this.x = Math.ceil(this.x);
+				this.y = Math.ceil(this.y);
+				this.z = Math.ceil(this.z);
+
+				return this;
+			}
+		}, {
+			key: "round",
+			value: function round() {
+
+				this.x = Math.round(this.x);
+				this.y = Math.round(this.y);
+				this.z = Math.round(this.z);
+
+				return this;
+			}
+		}, {
+			key: "lerp",
+			value: function lerp(v, alpha) {
+
+				this.x += (v.x - this.x) * alpha;
+				this.y += (v.y - this.y) * alpha;
+				this.z += (v.z - this.z) * alpha;
+
+				return this;
+			}
+		}, {
+			key: "lerpVectors",
+			value: function lerpVectors(v1, v2, alpha) {
+
+				return this.subVectors(v2, v1).multiplyScalar(alpha).add(v1);
+			}
+		}, {
+			key: "equals",
+			value: function equals(v) {
+
+				return v.x === this.x && v.y === this.y && v.z === this.z;
+			}
+		}]);
+		return Vector3;
+	}();
+
+	var v = new Vector3();
+
+	var Box3 = function () {
+		function Box3() {
+			var min = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3(Infinity, Infinity, Infinity);
+			var max = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Vector3(-Infinity, -Infinity, -Infinity);
+			classCallCheck(this, Box3);
+
+
+			this.min = min;
+
+			this.max = max;
+		}
+
+		createClass(Box3, [{
+			key: "set",
+			value: function set$$1(min, max) {
+
+				this.min.copy(min);
+				this.max.copy(max);
+
+				return this;
+			}
+		}, {
+			key: "copy",
+			value: function copy(b) {
+
+				this.min.copy(b.min);
+				this.max.copy(b.max);
+
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
+
+				return new this.constructor().copy(this);
+			}
+		}, {
+			key: "makeEmpty",
+			value: function makeEmpty() {
+
+				this.min.x = this.min.y = this.min.z = Infinity;
+				this.max.x = this.max.y = this.max.z = -Infinity;
+
+				return this;
+			}
+		}, {
+			key: "isEmpty",
+			value: function isEmpty() {
+
+				return this.max.x < this.min.x || this.max.y < this.min.y || this.max.z < this.min.z;
+			}
+		}, {
+			key: "getCenter",
+			value: function getCenter() {
+				var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3();
+
+
+				return !this.isEmpty() ? target.addVectors(this.min, this.max).multiplyScalar(0.5) : target.set(0, 0, 0);
+			}
+		}, {
+			key: "getSize",
+			value: function getSize() {
+				var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3();
+
+
+				return !this.isEmpty() ? target.subVectors(this.max, this.min) : target.set(0, 0, 0);
+			}
+		}, {
+			key: "setFromSphere",
+			value: function setFromSphere(sphere) {
+
+				this.set(sphere.center, sphere.center);
+				this.expandByScalar(sphere.radius);
+
+				return this;
+			}
+		}, {
+			key: "expandByPoint",
+			value: function expandByPoint(p) {
+
+				this.min.min(p);
+				this.max.max(p);
+
+				return this;
+			}
+		}, {
+			key: "expandByVector",
+			value: function expandByVector(v) {
+
+				this.min.sub(v);
+				this.max.add(v);
+
+				return this;
+			}
+		}, {
+			key: "expandByScalar",
+			value: function expandByScalar(s) {
+
+				this.min.addScalar(-s);
+				this.max.addScalar(s);
+
+				return this;
+			}
+		}, {
+			key: "setFromPoints",
+			value: function setFromPoints(points) {
+
+				var i = void 0,
+				    l = void 0;
+
+				this.min.set(0, 0, 0);
+				this.max.set(0, 0, 0);
+
+				for (i = 0, l = points.length; i < l; ++i) {
+
+					this.expandByPoint(points[i]);
+				}
+
+				return this;
+			}
+		}, {
+			key: "setFromCenterAndSize",
+			value: function setFromCenterAndSize(center, size) {
+
+				var halfSize = v.copy(size).multiplyScalar(0.5);
+
+				this.min.copy(center).sub(halfSize);
+				this.max.copy(center).add(halfSize);
+
+				return this;
+			}
+		}, {
+			key: "clampPoint",
+			value: function clampPoint(point) {
+				var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Vector3();
+
+
+				return target.copy(point).clamp(this.min, this.max);
+			}
+		}, {
+			key: "distanceToPoint",
+			value: function distanceToPoint(p) {
+
+				var clampedPoint = v.copy(p).clamp(this.min, this.max);
+
+				return clampedPoint.sub(p).length();
+			}
+		}, {
+			key: "applyMatrix4",
+			value: function applyMatrix4(matrix) {
+
+				var min = this.min;
+				var max = this.max;
+
+				if (!this.isEmpty()) {
+
+					var me = matrix.elements;
+
+					var xax = me[0] * min.x;
+					var xay = me[1] * min.x;
+					var xaz = me[2] * min.x;
+
+					var xbx = me[0] * max.x;
+					var xby = me[1] * max.x;
+					var xbz = me[2] * max.x;
+
+					var yax = me[4] * min.y;
+					var yay = me[5] * min.y;
+					var yaz = me[6] * min.y;
+
+					var ybx = me[4] * max.y;
+					var yby = me[5] * max.y;
+					var ybz = me[6] * max.y;
+
+					var zax = me[8] * min.z;
+					var zay = me[9] * min.z;
+					var zaz = me[10] * min.z;
+
+					var zbx = me[8] * max.z;
+					var zby = me[9] * max.z;
+					var zbz = me[10] * max.z;
+
+					min.x = Math.min(xax, xbx) + Math.min(yax, ybx) + Math.min(zax, zbx) + me[12];
+					min.y = Math.min(xay, xby) + Math.min(yay, yby) + Math.min(zay, zby) + me[13];
+					min.z = Math.min(xaz, xbz) + Math.min(yaz, ybz) + Math.min(zaz, zbz) + me[14];
+					max.x = Math.max(xax, xbx) + Math.max(yax, ybx) + Math.max(zax, zbx) + me[12];
+					max.y = Math.max(xay, xby) + Math.max(yay, yby) + Math.max(zay, zby) + me[13];
+					max.z = Math.max(xaz, xbz) + Math.max(yaz, ybz) + Math.max(zaz, zbz) + me[14];
+				}
+
+				return this;
+			}
+		}, {
+			key: "translate",
+			value: function translate(offset) {
+
+				this.min.add(offset);
+				this.max.add(offset);
+
+				return this;
+			}
+		}, {
+			key: "intersect",
+			value: function intersect(b) {
+
+				this.min.max(b.min);
+				this.max.min(b.max);
+
+				if (this.isEmpty()) {
+
+					this.makeEmpty();
+				}
+
+				return this;
+			}
+		}, {
+			key: "union",
+			value: function union(b) {
+
+				this.min.min(b.min);
+				this.max.max(b.max);
+
+				return this;
+			}
+		}, {
+			key: "containsPoint",
+			value: function containsPoint(p) {
+
+				var min = this.min;
+				var max = this.max;
+
+				return p.x >= min.x && p.y >= min.y && p.z >= min.z && p.x <= max.x && p.y <= max.y && p.z <= max.z;
+			}
+		}, {
+			key: "containsBox",
+			value: function containsBox(b) {
+
+				var tMin = this.min;
+				var tMax = this.max;
+				var bMin = b.min;
+				var bMax = b.max;
+
+				return tMin.x <= bMin.x && bMax.x <= tMax.x && tMin.y <= bMin.y && bMax.y <= tMax.y && tMin.z <= bMin.z && bMax.z <= tMax.z;
+			}
+		}, {
+			key: "intersectsBox",
+			value: function intersectsBox(b) {
+
+				var tMin = this.min;
+				var tMax = this.max;
+				var bMin = b.min;
+				var bMax = b.max;
+
+				return bMax.x >= tMin.x && bMax.y >= tMin.y && bMax.z >= tMin.z && bMin.x <= tMax.x && bMin.y <= tMax.y && bMin.z <= tMax.z;
+			}
+		}, {
+			key: "intersectsSphere",
+			value: function intersectsSphere(s) {
+				var closestPoint = this.clampPoint(s.center, v);
+
+				return closestPoint.distanceToSquared(s.center) <= s.radius * s.radius;
+			}
+		}, {
+			key: "intersectsPlane",
+			value: function intersectsPlane(p) {
+
+				var min = void 0,
+				    max = void 0;
+
+				if (p.normal.x > 0) {
+
+					min = p.normal.x * this.min.x;
+					max = p.normal.x * this.max.x;
 				} else {
 
-					z.z += 1e-4;
-
+					min = p.normal.x * this.max.x;
+					max = p.normal.x * this.min.x;
 				}
 
-				z.normalize();
-				x.crossVectors(up, z);
+				if (p.normal.y > 0) {
 
-			}
+					min += p.normal.y * this.min.y;
+					max += p.normal.y * this.max.y;
+				} else {
 
-			x.normalize();
-			y.crossVectors(z, x);
-
-			te[0] = x.x; te[4] = y.x; te[8] = z.x;
-			te[1] = x.y; te[5] = y.y; te[9] = z.y;
-			te[2] = x.z; te[6] = y.z; te[10] = z.z;
-
-			return this;
-
-		}
-
-		/**
-		 * Sets this matrix to the product of the given matrices.
-		 *
-		 * @param {Matrix4} a - A matrix.
-		 * @param {Matrix4} b - A matrix.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		multiplyMatrices(a, b) {
-
-			const te = this.elements;
-			const ae = a.elements;
-			const be = b.elements;
-
-			const a00 = ae[0], a01 = ae[4], a02 = ae[8], a03 = ae[12];
-			const a10 = ae[1], a11 = ae[5], a12 = ae[9], a13 = ae[13];
-			const a20 = ae[2], a21 = ae[6], a22 = ae[10], a23 = ae[14];
-			const a30 = ae[3], a31 = ae[7], a32 = ae[11], a33 = ae[15];
-
-			const b00 = be[0], b01 = be[4], b02 = be[8], b03 = be[12];
-			const b10 = be[1], b11 = be[5], b12 = be[9], b13 = be[13];
-			const b20 = be[2], b21 = be[6], b22 = be[10], b23 = be[14];
-			const b30 = be[3], b31 = be[7], b32 = be[11], b33 = be[15];
-
-			te[0] = a00 * b00 + a01 * b10 + a02 * b20 + a03 * b30;
-			te[4] = a00 * b01 + a01 * b11 + a02 * b21 + a03 * b31;
-			te[8] = a00 * b02 + a01 * b12 + a02 * b22 + a03 * b32;
-			te[12] = a00 * b03 + a01 * b13 + a02 * b23 + a03 * b33;
-
-			te[1] = a10 * b00 + a11 * b10 + a12 * b20 + a13 * b30;
-			te[5] = a10 * b01 + a11 * b11 + a12 * b21 + a13 * b31;
-			te[9] = a10 * b02 + a11 * b12 + a12 * b22 + a13 * b32;
-			te[13] = a10 * b03 + a11 * b13 + a12 * b23 + a13 * b33;
-
-			te[2] = a20 * b00 + a21 * b10 + a22 * b20 + a23 * b30;
-			te[6] = a20 * b01 + a21 * b11 + a22 * b21 + a23 * b31;
-			te[10] = a20 * b02 + a21 * b12 + a22 * b22 + a23 * b32;
-			te[14] = a20 * b03 + a21 * b13 + a22 * b23 + a23 * b33;
-
-			te[3] = a30 * b00 + a31 * b10 + a32 * b20 + a33 * b30;
-			te[7] = a30 * b01 + a31 * b11 + a32 * b21 + a33 * b31;
-			te[11] = a30 * b02 + a31 * b12 + a32 * b22 + a33 * b32;
-			te[15] = a30 * b03 + a31 * b13 + a32 * b23 + a33 * b33;
-
-			return this;
-
-		}
-
-		/**
-		 * Multiplies this matrix with the given one.
-		 *
-		 * @param {Matrix4} m - A matrix.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		multiply(m) {
-
-			return this.multiplyMatrices(this, m);
-
-		}
-
-		/**
-		 * Multiplies a given matrix with this one.
-		 *
-		 * @param {Matrix4} m - A matrix.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		premultiply(m) {
-
-			return this.multiplyMatrices(m, this);
-
-		}
-
-		/**
-		 * Multiplies this matrix with a given scalar.
-		 *
-		 * @param {Number} s - A scalar.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		multiplyScalar(s) {
-
-			const te = this.elements;
-
-			te[0] *= s; te[4] *= s; te[8] *= s; te[12] *= s;
-			te[1] *= s; te[5] *= s; te[9] *= s; te[13] *= s;
-			te[2] *= s; te[6] *= s; te[10] *= s; te[14] *= s;
-			te[3] *= s; te[7] *= s; te[11] *= s; te[15] *= s;
-
-			return this;
-
-		}
-
-		/**
-		 * Calculates the determinant of this matrix.
-		 *
-		 * For more details see:
-		 *  http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
-		 *
-		 * @return {Number} The determinant.
-		 */
-
-		determinant() {
-
-			const te = this.elements;
-
-			const n00 = te[0], n01 = te[4], n02 = te[8], n03 = te[12];
-			const n10 = te[1], n11 = te[5], n12 = te[9], n13 = te[13];
-			const n20 = te[2], n21 = te[6], n22 = te[10], n23 = te[14];
-			const n30 = te[3], n31 = te[7], n32 = te[11], n33 = te[15];
-
-			const n00n11 = n00 * n11, n00n12 = n00 * n12, n00n13 = n00 * n13;
-			const n01n10 = n01 * n10, n01n12 = n01 * n12, n01n13 = n01 * n13;
-			const n02n10 = n02 * n10, n02n11 = n02 * n11, n02n13 = n02 * n13;
-			const n03n10 = n03 * n10, n03n11 = n03 * n11, n03n12 = n03 * n12;
-
-			return (
-
-				n30 * (
-					n03n12 * n21 -
-					n02n13 * n21 -
-					n03n11 * n22 +
-					n01n13 * n22 +
-					n02n11 * n23 -
-					n01n12 * n23
-				) +
-
-				n31 * (
-					n00n12 * n23 -
-					n00n13 * n22 +
-					n03n10 * n22 -
-					n02n10 * n23 +
-					n02n13 * n20 -
-					n03n12 * n20
-				) +
-
-				n32 * (
-					n00n13 * n21 -
-					n00n11 * n23 -
-					n03n10 * n21 +
-					n01n10 * n23 +
-					n03n11 * n20 -
-					n01n13 * n20
-				) +
-
-				n33 * (
-					-n02n11 * n20 -
-					n00n12 * n21 +
-					n00n11 * n22 +
-					n02n10 * n21 -
-					n01n10 * n22 +
-					n01n12 * n20
-				)
-
-			);
-
-		}
-
-		/**
-		 * Inverts the given matrix and stores the result in this matrix.
-		 *
-		 * For details see:
-		 *  http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
-		 *
-		 * @param {Matrix4} matrix - The matrix that should be inverted.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		getInverse(matrix) {
-
-			const te = this.elements;
-			const me = matrix.elements;
-
-			const n00 = me[0], n10 = me[1], n20 = me[2], n30 = me[3];
-			const n01 = me[4], n11 = me[5], n21 = me[6], n31 = me[7];
-			const n02 = me[8], n12 = me[9], n22 = me[10], n32 = me[11];
-			const n03 = me[12], n13 = me[13], n23 = me[14], n33 = me[15];
-
-			const t00 = n12 * n23 * n31 - n13 * n22 * n31 + n13 * n21 * n32 - n11 * n23 * n32 - n12 * n21 * n33 + n11 * n22 * n33;
-			const t01 = n03 * n22 * n31 - n02 * n23 * n31 - n03 * n21 * n32 + n01 * n23 * n32 + n02 * n21 * n33 - n01 * n22 * n33;
-			const t02 = n02 * n13 * n31 - n03 * n12 * n31 + n03 * n11 * n32 - n01 * n13 * n32 - n02 * n11 * n33 + n01 * n12 * n33;
-			const t03 = n03 * n12 * n21 - n02 * n13 * n21 - n03 * n11 * n22 + n01 * n13 * n22 + n02 * n11 * n23 - n01 * n12 * n23;
-
-			const det = n00 * t00 + n10 * t01 + n20 * t02 + n30 * t03;
-
-			let invDet;
-
-			if(det !== 0) {
-
-				invDet = 1.0 / det;
-
-				te[0] = t00 * invDet;
-				te[1] = (n13 * n22 * n30 - n12 * n23 * n30 - n13 * n20 * n32 + n10 * n23 * n32 + n12 * n20 * n33 - n10 * n22 * n33) * invDet;
-				te[2] = (n11 * n23 * n30 - n13 * n21 * n30 + n13 * n20 * n31 - n10 * n23 * n31 - n11 * n20 * n33 + n10 * n21 * n33) * invDet;
-				te[3] = (n12 * n21 * n30 - n11 * n22 * n30 - n12 * n20 * n31 + n10 * n22 * n31 + n11 * n20 * n32 - n10 * n21 * n32) * invDet;
-
-				te[4] = t01 * invDet;
-				te[5] = (n02 * n23 * n30 - n03 * n22 * n30 + n03 * n20 * n32 - n00 * n23 * n32 - n02 * n20 * n33 + n00 * n22 * n33) * invDet;
-				te[6] = (n03 * n21 * n30 - n01 * n23 * n30 - n03 * n20 * n31 + n00 * n23 * n31 + n01 * n20 * n33 - n00 * n21 * n33) * invDet;
-				te[7] = (n01 * n22 * n30 - n02 * n21 * n30 + n02 * n20 * n31 - n00 * n22 * n31 - n01 * n20 * n32 + n00 * n21 * n32) * invDet;
-
-				te[8] = t02 * invDet;
-				te[9] = (n03 * n12 * n30 - n02 * n13 * n30 - n03 * n10 * n32 + n00 * n13 * n32 + n02 * n10 * n33 - n00 * n12 * n33) * invDet;
-				te[10] = (n01 * n13 * n30 - n03 * n11 * n30 + n03 * n10 * n31 - n00 * n13 * n31 - n01 * n10 * n33 + n00 * n11 * n33) * invDet;
-				te[11] = (n02 * n11 * n30 - n01 * n12 * n30 - n02 * n10 * n31 + n00 * n12 * n31 + n01 * n10 * n32 - n00 * n11 * n32) * invDet;
-
-				te[12] = t03 * invDet;
-				te[13] = (n02 * n13 * n20 - n03 * n12 * n20 + n03 * n10 * n22 - n00 * n13 * n22 - n02 * n10 * n23 + n00 * n12 * n23) * invDet;
-				te[14] = (n03 * n11 * n20 - n01 * n13 * n20 - n03 * n10 * n21 + n00 * n13 * n21 + n01 * n10 * n23 - n00 * n11 * n23) * invDet;
-				te[15] = (n01 * n12 * n20 - n02 * n11 * n20 + n02 * n10 * n21 - n00 * n12 * n21 - n01 * n10 * n22 + n00 * n11 * n22) * invDet;
-
-			} else {
-
-				console.error("Can't invert matrix, determinant is zero", matrix);
-
-				this.identity();
-
-			}
-
-			return this;
-
-		}
-
-		/**
-		 * Transposes this matrix.
-		 *
-		 * @return {Matrix4} This matrix.
-		 */
-
-		transpose() {
-
-			const te = this.elements;
-
-			let t;
-
-			t = te[1]; te[1] = te[4]; te[4] = t;
-			t = te[2]; te[2] = te[8]; te[8] = t;
-			t = te[6]; te[6] = te[9]; te[9] = t;
-
-			t = te[3]; te[3] = te[12]; te[12] = t;
-			t = te[7]; te[7] = te[13]; te[13] = t;
-			t = te[11]; te[11] = te[14]; te[14] = t;
-
-			return this;
-
-		}
-
-		/**
-		 * Scales this matrix.
-		 *
-		 * @param {Number} sx - The X scale.
-		 * @param {Number} sy - The Y scale.
-		 * @param {Number} sz - The Z scale.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		scale(sx, sy, sz) {
-
-			const te = this.elements;
-
-			te[0] *= sx; te[4] *= sy; te[8] *= sz;
-			te[1] *= sx; te[5] *= sy; te[9] *= sz;
-			te[2] *= sx; te[6] *= sy; te[10] *= sz;
-			te[3] *= sx; te[7] *= sy; te[11] *= sz;
-
-			return this;
-
-		}
-
-		/**
-		 * Makes this matrix a scale matrix.
-		 *
-		 * @param {Number} x - The X scale.
-		 * @param {Number} y - The Y scale.
-		 * @param {Number} z - The Z scale.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		makeScale(x, y, z) {
-
-			this.set(
-
-				x, 0, 0, 0,
-				0, y, 0, 0,
-				0, 0, z, 0,
-				0, 0, 0, 1
-
-			);
-
-			return this;
-
-		}
-
-		/**
-		 * Makes this matrix a translation matrix.
-		 *
-		 * @param {Number} x - The X offset.
-		 * @param {Number} y - The Y offset.
-		 * @param {Number} z - The Z offset.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		makeTranslation(x, y, z) {
-
-			this.set(
-
-				1, 0, 0, x,
-				0, 1, 0, y,
-				0, 0, 1, z,
-				0, 0, 0, 1
-
-			);
-
-			return this;
-
-		}
-
-		/**
-		 * Makes this matrix a rotation matrix.
-		 *
-		 * @param {Number} theta - The angle in radians.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		makeRotationX(theta) {
-
-			const c = Math.cos(theta), s = Math.sin(theta);
-
-			this.set(
-
-				1, 0, 0, 0,
-				0, c, -s, 0,
-				0, s, c, 0,
-				0, 0, 0, 1
-
-			);
-
-			return this;
-
-		}
-
-		/**
-		 * Makes this matrix a rotation matrix with respect to the Y-axis.
-		 *
-		 * @param {Number} theta - The angle in radians.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		makeRotationY(theta) {
-
-			const c = Math.cos(theta), s = Math.sin(theta);
-
-			this.set(
-
-				c, 0, s, 0,
-				0, 1, 0, 0,
-				-s, 0, c, 0,
-				0, 0, 0, 1
-
-			);
-
-			return this;
-
-		}
-
-		/**
-		 * Makes this matrix a rotation matrix with respect to the Z-axis.
-		 *
-		 * @param {Number} theta - The angle in radians.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		makeRotationZ(theta) {
-
-			const c = Math.cos(theta), s = Math.sin(theta);
-
-			this.set(
-
-				c, -s, 0, 0,
-				s, c, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1
-
-			);
-
-			return this;
-
-		}
-
-		/**
-		 * Makes this matrix a translation matrix with respect to a specific axis.
-		 *
-		 * For mor einformation see:
-		 *  http://www.gamedev.net/reference/articles/article1199.asp
-		 *
-		 * @param {Vector3} axis - The axis. Assumed to be normalized.
-		 * @param {Number} angle - The angle in radians.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		makeRotationAxis(axis, angle) {
-
-			const c = Math.cos(angle);
-			const s = Math.sin(angle);
-
-			const t = 1.0 - c;
-
-			const x = axis.x, y = axis.y, z = axis.z;
-			const tx = t * x, ty = t * y;
-
-			this.set(
-
-				tx * x + c, tx * y - s * z, tx * z + s * y, 0,
-				tx * y + s * z, ty * y + c, ty * z - s * x, 0,
-				tx * z - s * y, ty * z + s * x, t * z * z + c, 0,
-				0, 0, 0, 1
-
-			);
-
-			return this;
-
-		}
-
-		/**
-		 * Makes this matrix a shear matrix.
-		 *
-		 * @param {Number} x - The X shear value.
-		 * @param {Number} y - The Y shear value.
-		 * @param {Number} z - The Z shear value.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		makeShear(x, y, z) {
-
-			this.set(
-
-				1, y, z, 0,
-				x, 1, z, 0,
-				x, y, 1, 0,
-				0, 0, 0, 1
-
-			);
-
-			return this;
-
-		}
-
-		/**
-		 * Sets this matrix based on the given position, rotation and scale.
-		 *
-		 * @param {Vector3} position - The position.
-		 * @param {Quaternion} quaternion - The rotation.
-		 * @param {Vector3} scale - The scale.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		compose(position, quaternion, scale) {
-
-			const te = this.elements;
-
-			const x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;
-			const x2 = x + x,	y2 = y + y, z2 = z + z;
-			const xx = x * x2, xy = x * y2, xz = x * z2;
-			const yy = y * y2, yz = y * z2, zz = z * z2;
-			const wx = w * x2, wy = w * y2, wz = w * z2;
-
-			const sx = scale.x, sy = scale.y, sz = scale.z;
-
-			te[0] = (1 - (yy + zz)) * sx;
-			te[1] = (xy + wz) * sx;
-			te[2] = (xz - wy) * sx;
-			te[3] = 0;
-
-			te[4] = (xy - wz) * sy;
-			te[5] = (1 - (xx + zz)) * sy;
-			te[6] = (yz + wx) * sy;
-			te[7] = 0;
-
-			te[8] = (xz + wy) * sz;
-			te[9] = (yz - wx) * sz;
-			te[10] = (1 - (xx + yy)) * sz;
-			te[11] = 0;
-
-			te[12] = position.x;
-			te[13] = position.y;
-			te[14] = position.z;
-			te[15] = 1;
-
-			return this;
-
-		}
-
-		/**
-		 * Decomposes this matrix into a position, rotation and scale vector.
-		 *
-		 * @param {Vector3} position - The target position.
-		 * @param {Quaternion} quaternion - The target rotation.
-		 * @param {Vector3} scale - The target scale.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		decompose(position, quaternion, scale) {
-
-			const te = this.elements;
-
-			const n00 = te[0], n10 = te[1], n20 = te[2];
-			const n01 = te[4], n11 = te[5], n21 = te[6];
-			const n02 = te[8], n12 = te[9], n22 = te[10];
-
-			const det = this.determinant();
-
-			// If the determinant is negative, one scale must be inverted.
-			const sx = a$2.set(n00, n10, n20).length() * ((det < 0) ? -1 : 1);
-			const sy = a$2.set(n01, n11, n21).length();
-			const sz = a$2.set(n02, n12, n22).length();
-
-			const invSX = 1.0 / sx;
-			const invSY = 1.0 / sy;
-			const invSZ = 1.0 / sz;
-
-			// Export the position.
-			position.x = te[12];
-			position.y = te[13];
-			position.z = te[14];
-
-			// Scale the rotation part.
-			te[0] *= invSX; te[1] *= invSX; te[2] *= invSX;
-			te[4] *= invSY; te[5] *= invSY; te[6] *= invSY;
-			te[8] *= invSZ; te[9] *= invSZ; te[10] *= invSZ;
-
-			// Export the rotation.
-			quaternion.setFromRotationMatrix(this);
-
-			// Restore the original values.
-			te[0] = n00; te[1] = n10; te[2] = n20;
-			te[4] = n01; te[5] = n11; te[6] = n21;
-			te[8] = n02; te[9] = n12; te[10] = n22;
-
-			// Export the scale.
-			scale.x = sx;
-			scale.y = sy;
-			scale.z = sz;
-
-			return this;
-
-		}
-
-		/**
-		 * Creates a perspective matrix.
-		 *
-		 * @param {Number} left - The distance to the left plane.
-		 * @param {Number} right - The distance to the right plane.
-		 * @param {Number} top - The distance to the top plane.
-		 * @param {Number} bottom - The distance to the bottom plane.
-		 * @param {Number} near - The distance to the near plane.
-		 * @param {Number} far - The distance to the far plane.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		makePerspective(left, right, top, bottom, near, far) {
-
-			const te = this.elements;
-			const x = 2 * near / (right - left);
-			const y = 2 * near / (top - bottom);
-
-			const a = (right + left) / (right - left);
-			const b = (top + bottom) / (top - bottom);
-			const c = -(far + near) / (far - near);
-			const d = -2 * far * near / (far - near);
-
-			te[0] = x; te[4] = 0; te[8] = a; te[12] = 0;
-			te[1] = 0; te[5] = y; te[9] = b; te[13] = 0;
-			te[2] = 0; te[6] = 0; te[10] = c; te[14] = d;
-			te[3] = 0; te[7] = 0; te[11] = -1; te[15] = 0;
-
-			return this;
-
-		}
-
-		/**
-		 * Creates an orthographic matrix.
-		 *
-		 * @param {Number} left - The distance to the left plane.
-		 * @param {Number} right - The distance to the right plane.
-		 * @param {Number} top - The distance to the top plane.
-		 * @param {Number} bottom - The distance to the bottom plane.
-		 * @param {Number} near - The distance to the near plane.
-		 * @param {Number} far - The distance to the far plane.
-		 * @return {Matrix4} This matrix.
-		 */
-
-		makeOrthographic(left, right, top, bottom, near, far) {
-
-			const te = this.elements;
-			const w = 1.0 / (right - left);
-			const h = 1.0 / (top - bottom);
-			const p = 1.0 / (far - near);
-
-			const x = (right + left) * w;
-			const y = (top + bottom) * h;
-			const z = (far + near) * p;
-
-			te[0] = 2 * w; te[4] = 0; te[8] = 0; te[12] = -x;
-			te[1] = 0; te[5] = 2 * h; te[9] = 0; te[13] = -y;
-			te[2] = 0; te[6] = 0; te[10] = -2 * p; te[14] = -z;
-			te[3] = 0; te[7] = 0; te[11] = 0; te[15] = 1;
-
-			return this;
-
-		}
-
-		/**
-		 * Checks if this matrix equals the given one.
-		 *
-		 * @param {Matrix4} m - A matrix.
-		 * @return {Boolean} Whether the matrix are equal.
-		 */
-
-		equals(m) {
-
-			const te = this.elements;
-			const me = m.elements;
-
-			let result = true;
-			let i;
-
-			for(i = 0; result && i < 16; ++i) {
-
-				if(te[i] !== me[i]) {
-
-					result = false;
-
+					min += p.normal.y * this.max.y;
+					max += p.normal.y * this.min.y;
 				}
 
+				if (p.normal.z > 0) {
+
+					min += p.normal.z * this.min.z;
+					max += p.normal.z * this.max.z;
+				} else {
+
+					min += p.normal.z * this.max.z;
+					max += p.normal.z * this.min.z;
+				}
+
+				return min <= p.constant && max >= p.constant;
 			}
+		}, {
+			key: "equals",
+			value: function equals(b) {
 
-			return result;
+				return b.min.equals(this.min) && b.max.equals(this.max);
+			}
+		}]);
+		return Box3;
+	}();
 
+	var box = new Box3();
+
+	var v$1 = new Vector3();
+
+	var Sphere = function () {
+		function Sphere() {
+			var center = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3();
+			var radius = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+			classCallCheck(this, Sphere);
+
+
+			this.center = center;
+
+			this.radius = radius;
 		}
 
-	}
+		createClass(Sphere, [{
+			key: "set",
+			value: function set$$1(center, radius) {
 
-	/**
-	 * A spherical coordinate system.
-	 *
-	 * For details see: https://en.wikipedia.org/wiki/Spherical_coordinate_system
-	 *
-	 * The poles (phi) are at the positive and negative Y-axis. The equator starts
-	 * at positive Z.
-	 */
+				this.center.copy(center);
+				this.radius = radius;
 
-	class Spherical {
+				return this;
+			}
+		}, {
+			key: "copy",
+			value: function copy(s) {
 
-		/**
-		 * Constructs a new spherical system.
-		 *
-		 * @param {Number} [radius=1] - The radius of the sphere.
-		 * @param {Number} [phi=0] - The polar angle phi.
-		 * @param {Number} [theta=0] - The equator angle theta.
-		 */
+				this.center.copy(s.center);
+				this.radius = s.radius;
 
-		constructor(radius = 1, phi = 0, theta = 0) {
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
 
-			/**
-			 * The radius of the sphere.
-			 *
-			 * @type {Number}
-			 */
+				return new this.constructor().copy(this);
+			}
+		}, {
+			key: "setFromPoints",
+			value: function setFromPoints(points) {
+				var center = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : box.setFromPoints(points).getCenter(this.center);
+
+
+				var maxRadiusSq = 0;
+				var i = void 0,
+				    l = void 0;
+
+				for (i = 0, l = points.length; i < l; ++i) {
+
+					maxRadiusSq = Math.max(maxRadiusSq, center.distanceToSquared(points[i]));
+				}
+
+				this.radius = Math.sqrt(maxRadiusSq);
+
+				return this;
+			}
+		}, {
+			key: "setFromBox",
+			value: function setFromBox(box) {
+
+				box.getCenter(this.center);
+				this.radius = box.getSize(v$1).length() * 0.5;
+
+				return this;
+			}
+		}, {
+			key: "isEmpty",
+			value: function isEmpty() {
+
+				return this.radius <= 0;
+			}
+		}, {
+			key: "translate",
+			value: function translate(offset) {
+
+				this.center.add(offset);
+
+				return this;
+			}
+		}, {
+			key: "clampPoint",
+			value: function clampPoint(p) {
+				var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Vector3();
+
+
+				var deltaLengthSq = this.center.distanceToSquared(p);
+
+				target.copy(p);
+
+				if (deltaLengthSq > this.radius * this.radius) {
+
+					target.sub(this.center).normalize();
+					target.multiplyScalar(this.radius).add(this.center);
+				}
+
+				return target;
+			}
+		}, {
+			key: "distanceToPoint",
+			value: function distanceToPoint(p) {
+
+				return p.distanceTo(this.center) - this.radius;
+			}
+		}, {
+			key: "containsPoint",
+			value: function containsPoint(p) {
+
+				return p.distanceToSquared(this.center) <= this.radius * this.radius;
+			}
+		}, {
+			key: "intersectsSphere",
+			value: function intersectsSphere(s) {
+
+				var radiusSum = this.radius + s.radius;
+
+				return s.center.distanceToSquared(this.center) <= radiusSum * radiusSum;
+			}
+		}, {
+			key: "intersectsBox",
+			value: function intersectsBox(b) {
+
+				return b.intersectsSphere(this);
+			}
+		}, {
+			key: "intersectsPlane",
+			value: function intersectsPlane(p) {
+
+				return Math.abs(p.distanceToPoint(this.center)) <= this.radius;
+			}
+		}, {
+			key: "equals",
+			value: function equals(s) {
+
+				return s.center.equals(this.center) && s.radius === this.radius;
+			}
+		}]);
+		return Sphere;
+	}();
+
+	var Vector2 = function () {
+		function Vector2() {
+			var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+			var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+			classCallCheck(this, Vector2);
+
+
+			this.x = x;
+
+			this.y = y;
+		}
+
+		createClass(Vector2, [{
+			key: "set",
+			value: function set$$1(x, y) {
+
+				this.x = x;
+				this.y = y;
+
+				return this;
+			}
+		}, {
+			key: "copy",
+			value: function copy(v) {
+
+				this.x = v.x;
+				this.y = v.y;
+
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
+
+				return new this.constructor(this.x, this.y);
+			}
+		}, {
+			key: "fromArray",
+			value: function fromArray(array) {
+				var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+
+				this.x = array[offset];
+				this.y = array[offset + 1];
+
+				return this;
+			}
+		}, {
+			key: "toArray",
+			value: function toArray$$1() {
+				var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+				var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+
+				array[offset] = this.x;
+				array[offset + 1] = this.y;
+
+				return array;
+			}
+		}, {
+			key: "add",
+			value: function add(v) {
+
+				this.x += v.x;
+				this.y += v.y;
+
+				return this;
+			}
+		}, {
+			key: "addScalar",
+			value: function addScalar(s) {
+
+				this.x += s;
+				this.y += s;
+
+				return this;
+			}
+		}, {
+			key: "addVectors",
+			value: function addVectors(a, b) {
+
+				this.x = a.x + b.x;
+				this.y = a.y + b.y;
+
+				return this;
+			}
+		}, {
+			key: "addScaledVector",
+			value: function addScaledVector(v, s) {
+
+				this.x += v.x * s;
+				this.y += v.y * s;
+
+				return this;
+			}
+		}, {
+			key: "sub",
+			value: function sub(v) {
+
+				this.x -= v.x;
+				this.y -= v.y;
+
+				return this;
+			}
+		}, {
+			key: "subScalar",
+			value: function subScalar(s) {
+
+				this.x -= s;
+				this.y -= s;
+
+				return this;
+			}
+		}, {
+			key: "subVectors",
+			value: function subVectors(a, b) {
+
+				this.x = a.x - b.x;
+				this.y = a.y - b.y;
+
+				return this;
+			}
+		}, {
+			key: "multiply",
+			value: function multiply(v) {
+
+				this.x *= v.x;
+				this.y *= v.y;
+
+				return this;
+			}
+		}, {
+			key: "multiplyScalar",
+			value: function multiplyScalar(s) {
+
+				this.x *= s;
+				this.y *= s;
+
+				return this;
+			}
+		}, {
+			key: "divide",
+			value: function divide(v) {
+
+				this.x /= v.x;
+				this.y /= v.y;
+
+				return this;
+			}
+		}, {
+			key: "divideScalar",
+			value: function divideScalar(s) {
+
+				this.x /= s;
+				this.y /= s;
+
+				return this;
+			}
+		}, {
+			key: "applyMatrix3",
+			value: function applyMatrix3(m) {
+
+				var x = this.x,
+				    y = this.y;
+				var e = m.elements;
+
+				this.x = e[0] * x + e[3] * y + e[6];
+				this.y = e[1] * x + e[4] * y + e[7];
+
+				return this;
+			}
+		}, {
+			key: "dot",
+			value: function dot(v) {
+
+				return this.x * v.x + this.y * v.y;
+			}
+		}, {
+			key: "manhattanLength",
+			value: function manhattanLength() {
+
+				return Math.abs(this.x) + Math.abs(this.y);
+			}
+		}, {
+			key: "lengthSquared",
+			value: function lengthSquared() {
+
+				return this.x * this.x + this.y * this.y;
+			}
+		}, {
+			key: "length",
+			value: function length() {
+
+				return Math.sqrt(this.x * this.x + this.y * this.y);
+			}
+		}, {
+			key: "manhattanDistanceTo",
+			value: function manhattanDistanceTo(v) {
+
+				return Math.abs(this.x - v.x) + Math.abs(this.y - v.y);
+			}
+		}, {
+			key: "distanceToSquared",
+			value: function distanceToSquared(v) {
+
+				var dx = this.x - v.x;
+				var dy = this.y - v.y;
+
+				return dx * dx + dy * dy;
+			}
+		}, {
+			key: "distanceTo",
+			value: function distanceTo(v) {
+
+				return Math.sqrt(this.distanceToSquared(v));
+			}
+		}, {
+			key: "normalize",
+			value: function normalize() {
+
+				return this.divideScalar(this.length());
+			}
+		}, {
+			key: "setLength",
+			value: function setLength(length) {
+
+				return this.normalize().multiplyScalar(length);
+			}
+		}, {
+			key: "min",
+			value: function min(v) {
+
+				this.x = Math.min(this.x, v.x);
+				this.y = Math.min(this.y, v.y);
+
+				return this;
+			}
+		}, {
+			key: "max",
+			value: function max(v) {
+
+				this.x = Math.max(this.x, v.x);
+				this.y = Math.max(this.y, v.y);
+
+				return this;
+			}
+		}, {
+			key: "clamp",
+			value: function clamp(min, max) {
+
+				this.x = Math.max(min.x, Math.min(max.x, this.x));
+				this.y = Math.max(min.y, Math.min(max.y, this.y));
+
+				return this;
+			}
+		}, {
+			key: "floor",
+			value: function floor() {
+
+				this.x = Math.floor(this.x);
+				this.y = Math.floor(this.y);
+
+				return this;
+			}
+		}, {
+			key: "ceil",
+			value: function ceil() {
+
+				this.x = Math.ceil(this.x);
+				this.y = Math.ceil(this.y);
+
+				return this;
+			}
+		}, {
+			key: "round",
+			value: function round() {
+
+				this.x = Math.round(this.x);
+				this.y = Math.round(this.y);
+
+				return this;
+			}
+		}, {
+			key: "negate",
+			value: function negate() {
+
+				this.x = -this.x;
+				this.y = -this.y;
+
+				return this;
+			}
+		}, {
+			key: "angle",
+			value: function angle() {
+
+				var angle = Math.atan2(this.y, this.x);
+
+				if (angle < 0) {
+
+					angle += 2 * Math.PI;
+				}
+
+				return angle;
+			}
+		}, {
+			key: "lerp",
+			value: function lerp(v, alpha) {
+
+				this.x += (v.x - this.x) * alpha;
+				this.y += (v.y - this.y) * alpha;
+
+				return this;
+			}
+		}, {
+			key: "lerpVectors",
+			value: function lerpVectors(v1, v2, alpha) {
+
+				return this.subVectors(v2, v1).multiplyScalar(alpha).add(v1);
+			}
+		}, {
+			key: "rotateAround",
+			value: function rotateAround(center, angle) {
+
+				var c = Math.cos(angle),
+				    s = Math.sin(angle);
+
+				var x = this.x - center.x;
+				var y = this.y - center.y;
+
+				this.x = x * c - y * s + center.x;
+				this.y = x * s + y * c + center.y;
+
+				return this;
+			}
+		}, {
+			key: "equals",
+			value: function equals(v) {
+
+				return v.x === this.x && v.y === this.y;
+			}
+		}, {
+			key: "width",
+			get: function get$$1() {
+
+				return this.x;
+			},
+			set: function set$$1(value) {
+
+				return this.x = value;
+			}
+		}, {
+			key: "height",
+			get: function get$$1() {
+
+				return this.y;
+			},
+			set: function set$$1(value) {
+
+				return this.y = value;
+			}
+		}]);
+		return Vector2;
+	}();
+
+	var v$2 = new Vector2();
+
+	var Box2 = function () {
+		function Box2() {
+			var min = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector2(Infinity, Infinity);
+			var max = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Vector2(-Infinity, -Infinity);
+			classCallCheck(this, Box2);
+
+
+			this.min = min;
+
+			this.max = max;
+		}
+
+		createClass(Box2, [{
+			key: "set",
+			value: function set$$1(min, max) {
+
+				this.min.copy(min);
+				this.max.copy(max);
+
+				return this;
+			}
+		}, {
+			key: "copy",
+			value: function copy(b) {
+
+				this.min.copy(b.min);
+				this.max.copy(b.max);
+
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
+
+				return new this.constructor().copy(this);
+			}
+		}, {
+			key: "makeEmpty",
+			value: function makeEmpty() {
+
+				this.min.x = this.min.y = Infinity;
+				this.max.x = this.max.y = -Infinity;
+
+				return this;
+			}
+		}, {
+			key: "isEmpty",
+			value: function isEmpty() {
+
+				return this.max.x < this.min.x || this.max.y < this.min.y;
+			}
+		}, {
+			key: "getCenter",
+			value: function getCenter() {
+				var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector2();
+
+
+				return !this.isEmpty() ? target.addVectors(this.min, this.max).multiplyScalar(0.5) : target.set(0, 0);
+			}
+		}, {
+			key: "getSize",
+			value: function getSize() {
+				var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector2();
+
+
+				return !this.isEmpty() ? target.subVectors(this.max, this.min) : target.set(0, 0);
+			}
+		}, {
+			key: "getBoundingSphere",
+			value: function getBoundingSphere() {
+				var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Sphere();
+
+
+				this.getCenter(target.center);
+
+				target.radius = this.getSize(v$2).length() * 0.5;
+
+				return target;
+			}
+		}, {
+			key: "expandByPoint",
+			value: function expandByPoint(p) {
+
+				this.min.min(p);
+				this.max.max(p);
+
+				return this;
+			}
+		}, {
+			key: "expandByVector",
+			value: function expandByVector(v) {
+
+				this.min.sub(v);
+				this.max.add(v);
+
+				return this;
+			}
+		}, {
+			key: "expandByScalar",
+			value: function expandByScalar(s) {
+
+				this.min.addScalar(-s);
+				this.max.addScalar(s);
+
+				return this;
+			}
+		}, {
+			key: "setFromPoints",
+			value: function setFromPoints(points) {
+
+				var i = void 0,
+				    l = void 0;
+
+				this.min.set(0, 0);
+				this.max.set(0, 0);
+
+				for (i = 0, l = points.length; i < l; ++i) {
+
+					this.expandByPoint(points[i]);
+				}
+
+				return this;
+			}
+		}, {
+			key: "setFromCenterAndSize",
+			value: function setFromCenterAndSize(center, size) {
+
+				var halfSize = v$2.copy(size).multiplyScalar(0.5);
+
+				this.min.copy(center).sub(halfSize);
+				this.max.copy(center).add(halfSize);
+
+				return this;
+			}
+		}, {
+			key: "clampPoint",
+			value: function clampPoint(point) {
+				var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Vector2();
+
+
+				return target.copy(point).clamp(this.min, this.max);
+			}
+		}, {
+			key: "distanceToPoint",
+			value: function distanceToPoint(p) {
+
+				var clampedPoint = v$2.copy(p).clamp(this.min, this.max);
+
+				return clampedPoint.sub(p).length();
+			}
+		}, {
+			key: "translate",
+			value: function translate(offset) {
+
+				this.min.add(offset);
+				this.max.add(offset);
+
+				return this;
+			}
+		}, {
+			key: "intersect",
+			value: function intersect(b) {
+
+				this.min.max(b.min);
+				this.max.min(b.max);
+
+				if (this.isEmpty()) {
+
+					this.makeEmpty();
+				}
+
+				return this;
+			}
+		}, {
+			key: "union",
+			value: function union(b) {
+
+				this.min.min(b.min);
+				this.max.max(b.max);
+
+				return this;
+			}
+		}, {
+			key: "containsPoint",
+			value: function containsPoint(p) {
+
+				var min = this.min;
+				var max = this.max;
+
+				return p.x >= min.x && p.y >= min.y && p.x <= max.x && p.y <= max.y;
+			}
+		}, {
+			key: "containsBox",
+			value: function containsBox(b) {
+
+				var tMin = this.min;
+				var tMax = this.max;
+				var bMin = b.min;
+				var bMax = b.max;
+
+				return tMin.x <= bMin.x && bMax.x <= tMax.x && tMin.y <= bMin.y && bMax.y <= tMax.y;
+			}
+		}, {
+			key: "intersectsBox",
+			value: function intersectsBox(b) {
+
+				var tMin = this.min;
+				var tMax = this.max;
+				var bMin = b.min;
+				var bMax = b.max;
+
+				return bMax.x >= tMin.x && bMax.y >= tMin.y && bMin.x <= tMax.x && bMin.y <= tMax.y;
+			}
+		}, {
+			key: "equals",
+			value: function equals(b) {
+
+				return b.min.equals(this.min) && b.max.equals(this.max);
+			}
+		}]);
+		return Box2;
+	}();
+
+	var Cylindrical = function () {
+		function Cylindrical() {
+			var radius = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+			var theta = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+			var y = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+			classCallCheck(this, Cylindrical);
+
 
 			this.radius = radius;
 
-			/**
-			 * The polar angle, up and down towards the top and bottom pole.
-			 *
-			 * @type {Number}
-			 */
-
-			this.phi = phi;
-
-			/**
-			 * The angle around the equator of the sphere.
-			 *
-			 * @type {Number}
-			 */
-
 			this.theta = theta;
 
+			this.y = y;
 		}
 
-		/**
-		 * Sets the values of this spherical system.
-		 *
-		 * @param {Number} radius - The radius.
-		 * @param {Number} phi - Phi.
-		 * @param {Number} theta - Theta.
-		 * @return {Spherical} This spherical system.
-		 */
+		createClass(Cylindrical, [{
+			key: "set",
+			value: function set$$1(radius, theta, y) {
 
-		set(radius, phi, theta) {
+				this.radius = radius;
+				this.theta = theta;
+				this.y = y;
 
-			this.radius = radius;
-			this.phi = phi;
-			this.theta = theta;
+				return this;
+			}
+		}, {
+			key: "copy",
+			value: function copy(c) {
 
-			return this;
+				this.radius = c.radius;
+				this.theta = c.theta;
+				this.y = c.y;
 
-		}
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
 
-		/**
-		 * Copies the values of the given spherical system.
-		 *
-		 * @param {Spherical} s - A spherical system.
-		 * @return {Spherical} This spherical system.
-		 */
+				return new this.constructor().copy(this);
+			}
+		}, {
+			key: "setFromVector3",
+			value: function setFromVector3(v) {
 
-		copy(s) {
-
-			this.radius = s.radius;
-			this.phi = s.phi;
-			this.theta = s.theta;
-
-			return this;
-
-		}
-
-		/**
-		 * Clones this spherical system.
-		 *
-		 * @return {Spherical} The cloned spherical system.
-		 */
-
-		clone() {
-
-			return new this.constructor().copy(this);
-
-		}
-
-		/**
-		 * Sets the values of this spherical system based on a vector.
-		 *
-		 * The radius is set to the vector's length while phi and theta are set from
-		 * its direction.
-		 *
-		 * @param {Vector3} v - The vector.
-		 * @return {Spherical} This spherical system.
-		 */
-
-		setFromVector3(v) {
-
-			this.radius = v.length();
-
-			if(this.radius === 0) {
-
-				this.theta = 0;
-				this.phi = 0;
-
-			} else {
-
-				// Calculate the equator angle around the positive Y-axis.
+				this.radius = Math.sqrt(v.x * v.x + v.z * v.z);
 				this.theta = Math.atan2(v.x, v.z);
+				this.y = v.y;
 
-				// Calculate the polar angle.
-				this.phi = Math.acos(Math.min(Math.max(v.y / this.radius, -1), 1));
+				return this;
+			}
+		}]);
+		return Cylindrical;
+	}();
 
+	var Matrix3 = function () {
+			function Matrix3() {
+					classCallCheck(this, Matrix3);
+
+
+					this.elements = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
 			}
 
-			return this.makeSafe();
+			createClass(Matrix3, [{
+					key: "set",
+					value: function set$$1(m00, m01, m02, m10, m11, m12, m20, m21, m22) {
 
-		}
+							var te = this.elements;
 
-		/**
-		 * Restricts phi to `[1e-6, PI - 1e-6]`.
-		 *
-		 * @return {Spherical} This spherical system.
-		 */
+							te[0] = m00;te[3] = m01;te[6] = m02;
+							te[1] = m10;te[4] = m11;te[7] = m12;
+							te[2] = m20;te[5] = m21;te[8] = m22;
 
-		makeSafe() {
+							return this;
+					}
+			}, {
+					key: "identity",
+					value: function identity() {
 
-			this.phi = Math.max(1e-6, Math.min(Math.PI - 1e-6, this.phi));
+							this.set(1, 0, 0, 0, 1, 0, 0, 0, 1);
 
-			return this;
+							return this;
+					}
+			}, {
+					key: "copy",
+					value: function copy(matrix) {
 
-		}
+							var me = matrix.elements;
+							var te = this.elements;
 
-	}
+							te[0] = me[0];te[1] = me[1];te[2] = me[2];
+							te[3] = me[3];te[4] = me[4];te[5] = me[5];
+							te[6] = me[6];te[7] = me[7];te[8] = me[8];
 
-	/**
-	 * A symmetric 3x3 matrix.
-	 */
+							return this;
+					}
+			}, {
+					key: "clone",
+					value: function clone() {
 
-	/**
-	 * A vector with four components.
-	 */
+							return new this.constructor().fromArray(this.elements);
+					}
+			}, {
+					key: "fromArray",
+					value: function fromArray(array) {
+							var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-	/**
-	 * Mathematical data structures.
-	 *
-	 * @module math-ds
-	 */
 
-	/**
-	 * An enumeration of pointer buttons.
-	 *
-	 * @type {Object}
-	 * @property {Number} MAIN - The main mouse button, usually the left one.
-	 * @property {Number} AUXILIARY - The auxiliary mouse button, usually the middle one.
-	 * @property {Number} SECONDARY - The secondary mouse button, usually the right one.
-	 */
+							var te = this.elements;
 
-	const PointerButton = {
+							var i = void 0;
 
-		MAIN: 0,
-		AUXILIARY: 1,
-		SECONDARY: 2
+							for (i = 0; i < 9; ++i) {
+
+									te[i] = array[i + offset];
+							}
+
+							return this;
+					}
+			}, {
+					key: "toArray",
+					value: function toArray$$1() {
+							var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+							var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+
+							var te = this.elements;
+
+							var i = void 0;
+
+							for (i = 0; i < 9; ++i) {
+
+									array[i + offset] = te[i];
+							}
+
+							return array;
+					}
+			}, {
+					key: "multiplyMatrices",
+					value: function multiplyMatrices(a, b) {
+
+							var ae = a.elements;
+							var be = b.elements;
+							var te = this.elements;
+
+							var a11 = ae[0],
+							    a12 = ae[3],
+							    a13 = ae[6];
+							var a21 = ae[1],
+							    a22 = ae[4],
+							    a23 = ae[7];
+							var a31 = ae[2],
+							    a32 = ae[5],
+							    a33 = ae[8];
+
+							var b11 = be[0],
+							    b12 = be[3],
+							    b13 = be[6];
+							var b21 = be[1],
+							    b22 = be[4],
+							    b23 = be[7];
+							var b31 = be[2],
+							    b32 = be[5],
+							    b33 = be[8];
+
+							te[0] = a11 * b11 + a12 * b21 + a13 * b31;
+							te[3] = a11 * b12 + a12 * b22 + a13 * b32;
+							te[6] = a11 * b13 + a12 * b23 + a13 * b33;
+
+							te[1] = a21 * b11 + a22 * b21 + a23 * b31;
+							te[4] = a21 * b12 + a22 * b22 + a23 * b32;
+							te[7] = a21 * b13 + a22 * b23 + a23 * b33;
+
+							te[2] = a31 * b11 + a32 * b21 + a33 * b31;
+							te[5] = a31 * b12 + a32 * b22 + a33 * b32;
+							te[8] = a31 * b13 + a32 * b23 + a33 * b33;
+
+							return this;
+					}
+			}, {
+					key: "multiply",
+					value: function multiply(m) {
+
+							return this.multiplyMatrices(this, m);
+					}
+			}, {
+					key: "premultiply",
+					value: function premultiply(m) {
+
+							return this.multiplyMatrices(m, this);
+					}
+			}, {
+					key: "multiplyScalar",
+					value: function multiplyScalar(s) {
+
+							var te = this.elements;
+
+							te[0] *= s;te[3] *= s;te[6] *= s;
+							te[1] *= s;te[4] *= s;te[7] *= s;
+							te[2] *= s;te[5] *= s;te[8] *= s;
+
+							return this;
+					}
+			}, {
+					key: "determinant",
+					value: function determinant() {
+
+							var te = this.elements;
+
+							var a = te[0],
+							    b = te[1],
+							    c = te[2];
+							var d = te[3],
+							    e = te[4],
+							    f = te[5];
+							var g = te[6],
+							    h = te[7],
+							    i = te[8];
+
+							return a * e * i - a * f * h - b * d * i + b * f * g + c * d * h - c * e * g;
+					}
+			}, {
+					key: "getInverse",
+					value: function getInverse(matrix) {
+
+							var me = matrix.elements;
+							var te = this.elements;
+
+							var n11 = me[0],
+							    n21 = me[1],
+							    n31 = me[2];
+							var n12 = me[3],
+							    n22 = me[4],
+							    n32 = me[5];
+							var n13 = me[6],
+							    n23 = me[7],
+							    n33 = me[8];
+
+							var t11 = n33 * n22 - n32 * n23;
+							var t12 = n32 * n13 - n33 * n12;
+							var t13 = n23 * n12 - n22 * n13;
+
+							var det = n11 * t11 + n21 * t12 + n31 * t13;
+
+							var invDet = void 0;
+
+							if (det !== 0) {
+
+									invDet = 1.0 / det;
+
+									te[0] = t11 * invDet;
+									te[1] = (n31 * n23 - n33 * n21) * invDet;
+									te[2] = (n32 * n21 - n31 * n22) * invDet;
+
+									te[3] = t12 * invDet;
+									te[4] = (n33 * n11 - n31 * n13) * invDet;
+									te[5] = (n31 * n12 - n32 * n11) * invDet;
+
+									te[6] = t13 * invDet;
+									te[7] = (n21 * n13 - n23 * n11) * invDet;
+									te[8] = (n22 * n11 - n21 * n12) * invDet;
+							} else {
+
+									console.error("Can't invert matrix, determinant is zero", matrix);
+
+									this.identity();
+							}
+
+							return this;
+					}
+			}, {
+					key: "transpose",
+					value: function transpose() {
+
+							var me = this.elements;
+
+							var t = void 0;
+
+							t = me[1];me[1] = me[3];me[3] = t;
+							t = me[2];me[2] = me[6];me[6] = t;
+							t = me[5];me[5] = me[7];me[7] = t;
+
+							return this;
+					}
+			}, {
+					key: "scale",
+					value: function scale(sx, sy) {
+
+							var te = this.elements;
+
+							te[0] *= sx;te[3] *= sx;te[6] *= sx;
+							te[1] *= sy;te[4] *= sy;te[7] *= sy;
+
+							return this;
+					}
+			}, {
+					key: "rotate",
+					value: function rotate(theta) {
+
+							var c = Math.cos(theta);
+							var s = Math.sin(theta);
+
+							var te = this.elements;
+
+							var a11 = te[0],
+							    a12 = te[3],
+							    a13 = te[6];
+							var a21 = te[1],
+							    a22 = te[4],
+							    a23 = te[7];
+
+							te[0] = c * a11 + s * a21;
+							te[3] = c * a12 + s * a22;
+							te[6] = c * a13 + s * a23;
+
+							te[1] = -s * a11 + c * a21;
+							te[4] = -s * a12 + c * a22;
+							te[7] = -s * a13 + c * a23;
+
+							return this;
+					}
+			}, {
+					key: "translate",
+					value: function translate(tx, ty) {
+
+							var te = this.elements;
+
+							te[0] += tx * te[2];te[3] += tx * te[5];te[6] += tx * te[8];
+							te[1] += ty * te[2];te[4] += ty * te[5];te[7] += ty * te[8];
+
+							return this;
+					}
+			}, {
+					key: "equals",
+					value: function equals(m) {
+
+							var te = this.elements;
+							var me = m.elements;
+
+							var result = true;
+							var i = void 0;
+
+							for (i = 0; result && i < 9; ++i) {
+
+									if (te[i] !== me[i]) {
+
+											result = false;
+									}
+							}
+
+							return result;
+					}
+			}]);
+			return Matrix3;
+	}();
+
+	var RotationOrder = {
+
+	  XYZ: "XYZ",
+	  YZX: "YZX",
+	  ZXY: "ZXY",
+	  XZY: "XZY",
+	  YXZ: "YXZ",
+	  ZYX: "ZYX"
 
 	};
 
-	/**
-	 * Two PI.
-	 *
-	 * @type {Number}
-	 * @private
-	 */
+	var v$3 = new Vector3();
 
-	const TWO_PI = Math.PI * 2;
+	var Quaternion = function () {
+		function Quaternion() {
+			var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+			var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+			var z = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+			var w = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+			classCallCheck(this, Quaternion);
 
-	/**
-	 * A vector.
-	 *
-	 * @type {Vector3}
-	 * @private
-	 */
 
-	const v$6 = new Vector3();
+			this.x = x;
 
-	/**
-	 * A matrix.
-	 *
-	 * @type {Matrix4}
-	 * @private
-	 */
+			this.y = y;
 
-	const m$1 = new Matrix4();
+			this.z = z;
 
-	/**
-	 * A rotation manager.
-	 */
-
-	class RotationManager {
-
-		/**
-		 * Constructs a new rotation manager.
-		 *
-		 * @param {Vector3} position - A position.
-		 * @param {Quaternion} quaternion - A quaternion.
-		 * @param {Vector3} target - A target.
-		 * @param {Settings} settings - The settings.
-		 */
-
-		constructor(position, quaternion, target, settings) {
-
-			/**
-			 * The position that will be modified.
-			 *
-			 * @type {Vector3}
-			 * @private
-			 */
-
-			this.position = position;
-
-			/**
-			 * The quaternion that will be modified.
-			 *
-			 * @type {Quaternion}
-			 * @private
-			 */
-
-			this.quaternion = quaternion;
-
-			/**
-			 * A target.
-			 *
-			 * @type {Vector3}
-			 * @private
-			 */
-
-			this.target = target;
-
-			/**
-			 * The settings.
-			 *
-			 * @type {Settings}
-			 * @private
-			 */
-
-			this.settings = settings;
-
-			/**
-			 * A spherical coordinate system.
-			 *
-			 * @type {Spherical}
-			 */
-
-			this.spherical = new Spherical();
-
+			this.w = w;
 		}
 
-		/**
-		 * Sets the position.
-		 *
-		 * @param {Vector3} position - A position.
-		 * @return {RotationManager} This manager.
-		 */
+		createClass(Quaternion, [{
+			key: "set",
+			value: function set$$1(x, y, z, w) {
 
-		setPosition(position) {
+				this.x = x;
+				this.y = y;
+				this.z = z;
+				this.w = w;
 
-			this.position = position;
-
-			return this;
-
-		}
-
-		/**
-		 * Sets the quaternion.
-		 *
-		 * @param {Quaternion} quaternion - A quaternion.
-		 * @return {RotationManager} This manager.
-		 */
-
-		setQuaternion(quaternion) {
-
-			this.quaternion = quaternion;
-
-			return this;
-
-		}
-
-		/**
-		 * Sets the target.
-		 *
-		 * @param {Vector3} target - A target.
-		 * @return {RotationManager} This manager.
-		 */
-
-		setTarget(target) {
-
-			this.target = target;
-
-			return this;
-
-		}
-
-		/**
-		 * Updates the quaternion.
-		 *
-		 * @return {RotationManager} This manager.
-		 */
-
-		updateQuaternion() {
-
-			const settings = this.settings;
-			const rotation = settings.rotation;
-
-			if(settings.general.orbit) {
-
-				m$1.lookAt(v$6.subVectors(this.position, this.target), rotation.pivotOffset, rotation.up);
-
-			} else {
-
-				m$1.lookAt(v$6.set(0, 0, 0), this.target.setFromSpherical(this.spherical), rotation.up);
-
+				return this;
 			}
+		}, {
+			key: "copy",
+			value: function copy(q) {
 
-			this.quaternion.setFromRotationMatrix(m$1);
+				this.x = q.x;
+				this.y = q.y;
+				this.z = q.z;
+				this.w = q.w;
 
-			return this;
-
-		}
-
-		/**
-		 * Adjusts the spherical system.
-		 *
-		 * @param {Number} theta - The angle to add to theta in radians.
-		 * @param {Number} phi - The angle to add to phi in radians.
-		 * @return {RotationManager} This manager.
-		 */
-
-		adjustSpherical(theta, phi) {
-
-			const settings = this.settings;
-			const orbit = settings.general.orbit;
-			const rotation = settings.rotation;
-			const s = this.spherical;
-
-			s.theta = !rotation.invertX ? s.theta - theta : s.theta + theta;
-			s.phi = ((orbit || rotation.invertY) && !(orbit && rotation.invertY)) ? s.phi - phi : s.phi + phi;
-
-			// Restrict theta and phi.
-			s.theta = Math.min(Math.max(s.theta, rotation.minAzimuthalAngle), rotation.maxAzimuthalAngle);
-			s.phi = Math.min(Math.max(s.phi, rotation.minPolarAngle), rotation.maxPolarAngle);
-			s.theta %= TWO_PI;
-			s.makeSafe();
-
-			if(orbit) {
-
-				// Keep the position up-to-date.
-				this.position.setFromSpherical(s).add(this.target);
-
+				return this;
 			}
+		}, {
+			key: "clone",
+			value: function clone() {
 
-			return this;
+				return new this.constructor(this.x, this.y, this.z, this.w);
+			}
+		}, {
+			key: "fromArray",
+			value: function fromArray(array) {
+				var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-		}
 
-		/**
-		 * Zooms in or out.
-		 *
-		 * @param {Number} sign - The zoom sign. Possible values are [-1, 0, 1].
-		 * @return {RotationManager} This manager.
-		 */
+				this.x = array[offset];
+				this.y = array[offset + 1];
+				this.z = array[offset + 2];
+				this.w = array[offset + 3];
 
-		zoom(sign) {
+				return this;
+			}
+		}, {
+			key: "toArray",
+			value: function toArray$$1() {
+				var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+				var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-			const settings = this.settings;
-			const general = settings.general;
-			const sensitivity = settings.sensitivity;
-			const zoom = settings.zoom;
-			const s = this.spherical;
 
-			let amount, min, max;
+				array[offset] = this.x;
+				array[offset + 1] = this.y;
+				array[offset + 2] = this.z;
+				array[offset + 3] = this.w;
 
-			if(general.orbit && zoom.enabled) {
+				return array;
+			}
+		}, {
+			key: "setFromEuler",
+			value: function setFromEuler(euler) {
 
-				amount = sign * sensitivity.zoom;
+				var x = euler.x;
+				var y = euler.y;
+				var z = euler.z;
 
-				if(zoom.invert) {
+				var cos = Math.cos;
+				var sin = Math.sin;
 
-					amount = -amount;
+				var c1 = cos(x / 2);
+				var c2 = cos(y / 2);
+				var c3 = cos(z / 2);
+
+				var s1 = sin(x / 2);
+				var s2 = sin(y / 2);
+				var s3 = sin(z / 2);
+
+				switch (euler.order) {
+
+					case RotationOrder.XYZ:
+						this.x = s1 * c2 * c3 + c1 * s2 * s3;
+						this.y = c1 * s2 * c3 - s1 * c2 * s3;
+						this.z = c1 * c2 * s3 + s1 * s2 * c3;
+						this.w = c1 * c2 * c3 - s1 * s2 * s3;
+						break;
+
+					case RotationOrder.YXZ:
+						this.x = s1 * c2 * c3 + c1 * s2 * s3;
+						this.y = c1 * s2 * c3 - s1 * c2 * s3;
+						this.z = c1 * c2 * s3 - s1 * s2 * c3;
+						this.w = c1 * c2 * c3 + s1 * s2 * s3;
+						break;
+
+					case RotationOrder.ZXY:
+						this.x = s1 * c2 * c3 - c1 * s2 * s3;
+						this.y = c1 * s2 * c3 + s1 * c2 * s3;
+						this.z = c1 * c2 * s3 + s1 * s2 * c3;
+						this.w = c1 * c2 * c3 - s1 * s2 * s3;
+						break;
+
+					case RotationOrder.ZYX:
+						this.x = s1 * c2 * c3 - c1 * s2 * s3;
+						this.y = c1 * s2 * c3 + s1 * c2 * s3;
+						this.z = c1 * c2 * s3 - s1 * s2 * c3;
+						this.w = c1 * c2 * c3 + s1 * s2 * s3;
+						break;
+
+					case RotationOrder.YZX:
+						this.x = s1 * c2 * c3 + c1 * s2 * s3;
+						this.y = c1 * s2 * c3 + s1 * c2 * s3;
+						this.z = c1 * c2 * s3 - s1 * s2 * c3;
+						this.w = c1 * c2 * c3 - s1 * s2 * s3;
+						break;
+
+					case RotationOrder.XZY:
+						this.x = s1 * c2 * c3 - c1 * s2 * s3;
+						this.y = c1 * s2 * c3 - s1 * c2 * s3;
+						this.z = c1 * c2 * s3 + s1 * s2 * c3;
+						this.w = c1 * c2 * c3 + s1 * s2 * s3;
+						break;
 
 				}
 
-				min = Math.max(zoom.minDistance, 1e-6);
-				max = Math.min(zoom.maxDistance, Infinity);
-
-				s.radius = Math.min(Math.max(s.radius + amount, min), max);
-				this.position.setFromSpherical(s).add(this.target);
-
+				return this;
 			}
+		}, {
+			key: "setFromAxisAngle",
+			value: function setFromAxisAngle(axis, angle) {
 
-			return this;
+				var halfAngle = angle / 2.0;
+				var s = Math.sin(halfAngle);
 
-		}
+				this.x = axis.x * s;
+				this.y = axis.y * s;
+				this.z = axis.z * s;
+				this.w = Math.cos(halfAngle);
 
-		/**
-		 * Updates rotation calculations based on time.
-		 *
-		 * @param {Number} delta - The time since the last update in seconds.
-		 */
-
-		update(delta) {
-
-		}
-
-		/**
-		 * Looks at the given point.
-		 *
-		 * @param {Vector3} point - The target point.
-		 * @return {RotationManager} This manager.
-		 */
-
-		lookAt(point) {
-
-			const spherical = this.spherical;
-			const position = this.position;
-			const target = this.target;
-
-			target.copy(point);
-
-			if(this.settings.general.orbit) {
-
-				v$6.subVectors(position, target);
-
-			} else {
-
-				v$6.subVectors(target, position).normalize();
-
+				return this;
 			}
+		}, {
+			key: "setFromRotationMatrix",
+			value: function setFromRotationMatrix(m) {
 
-			spherical.setFromVector3(v$6);
-			spherical.radius = Math.max(spherical.radius, 1e-6);
-			this.updateQuaternion();
+				var te = m.elements;
 
-			return this;
+				var m00 = te[0],
+				    m01 = te[4],
+				    m02 = te[8];
+				var m10 = te[1],
+				    m11 = te[5],
+				    m12 = te[9];
+				var m20 = te[2],
+				    m21 = te[6],
+				    m22 = te[10];
 
-		}
+				var trace = m00 + m11 + m22;
 
-		/**
-		 * Returns the current view direction.
-		 *
-		 * @param {Vector3} [view] - A vector to store the direction in. If none is provided, a new vector will be created.
-		 * @return {Vector3} The normalized view direction.
-		 */
+				var s = void 0;
 
-		getViewDirection(view = new Vector3()) {
+				if (trace > 0) {
 
-			view.setFromSpherical(this.spherical).normalize();
+					s = 0.5 / Math.sqrt(trace + 1.0);
 
-			if(this.settings.general.orbit) {
+					this.w = 0.25 / s;
+					this.x = (m21 - m12) * s;
+					this.y = (m02 - m20) * s;
+					this.z = (m10 - m01) * s;
+				} else if (m00 > m11 && m00 > m22) {
 
-				view.negate();
+					s = 2.0 * Math.sqrt(1.0 + m00 - m11 - m22);
 
+					this.w = (m21 - m12) / s;
+					this.x = 0.25 * s;
+					this.y = (m01 + m10) / s;
+					this.z = (m02 + m20) / s;
+				} else if (m11 > m22) {
+
+					s = 2.0 * Math.sqrt(1.0 + m11 - m00 - m22);
+
+					this.w = (m02 - m20) / s;
+					this.x = (m01 + m10) / s;
+					this.y = 0.25 * s;
+					this.z = (m12 + m21) / s;
+				} else {
+
+					s = 2.0 * Math.sqrt(1.0 + m22 - m00 - m11);
+
+					this.w = (m10 - m01) / s;
+					this.x = (m02 + m20) / s;
+					this.y = (m12 + m21) / s;
+					this.z = 0.25 * s;
+				}
+
+				return this;
 			}
+		}, {
+			key: "setFromUnitVectors",
+			value: function setFromUnitVectors(vFrom, vTo) {
 
-			return view;
+				var r = vFrom.dot(vTo) + 1;
 
-		}
+				if (r < 1e-6) {
 
+					r = 0;
+
+					if (Math.abs(vFrom.x) > Math.abs(vFrom.z)) {
+
+						v$3.set(-vFrom.y, vFrom.x, 0);
+					} else {
+
+						v$3.set(0, -vFrom.z, vFrom.y);
+					}
+				} else {
+
+					v$3.crossVectors(vFrom, vTo);
+				}
+
+				this.x = v$3.x;
+				this.y = v$3.y;
+				this.z = v$3.z;
+				this.w = r;
+
+				return this.normalize();
+			}
+		}, {
+			key: "invert",
+			value: function invert() {
+
+				return this.conjugate();
+			}
+		}, {
+			key: "conjugate",
+			value: function conjugate() {
+
+				this.x *= -1;
+				this.y *= -1;
+				this.z *= -1;
+
+				return this;
+			}
+		}, {
+			key: "lengthSquared",
+			value: function lengthSquared() {
+
+				return this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w;
+			}
+		}, {
+			key: "length",
+			value: function length() {
+
+				return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
+			}
+		}, {
+			key: "normalize",
+			value: function normalize() {
+
+				var l = this.length();
+
+				var invLength = void 0;
+
+				if (l === 0) {
+
+					this.x = 0;
+					this.y = 0;
+					this.z = 0;
+					this.w = 1;
+				} else {
+
+					invLength = 1.0 / l;
+
+					this.x = this.x * invLength;
+					this.y = this.y * invLength;
+					this.z = this.z * invLength;
+					this.w = this.w * invLength;
+				}
+
+				return this;
+			}
+		}, {
+			key: "dot",
+			value: function dot(v) {
+
+				return this.x * v.x + this.y * v.y + this.z * v.z + this.w * v.w;
+			}
+		}, {
+			key: "multiplyQuaternions",
+			value: function multiplyQuaternions(a, b) {
+
+				var qax = a.x,
+				    qay = a.y,
+				    qaz = a.z,
+				    qaw = a.w;
+				var qbx = b.x,
+				    qby = b.y,
+				    qbz = b.z,
+				    qbw = b.w;
+
+				this.x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
+				this.y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
+				this.z = qaz * qbw + qaw * qbz + qax * qby - qay * qbx;
+				this.w = qaw * qbw - qax * qbx - qay * qby - qaz * qbz;
+
+				return this;
+			}
+		}, {
+			key: "multiply",
+			value: function multiply(q) {
+
+				return this.multiplyQuaternions(this, q);
+			}
+		}, {
+			key: "premultiply",
+			value: function premultiply(q) {
+
+				return this.multiplyQuaternions(q, this);
+			}
+		}, {
+			key: "slerp",
+			value: function slerp(q, t) {
+
+				var x = this.x,
+				    y = this.y,
+				    z = this.z,
+				    w = this.w;
+
+				var cosHalfTheta = void 0,
+				    sinHalfThetaSquared = void 0,
+				    sinHalfTheta = void 0,
+				    halfTheta = void 0;
+				var s = void 0,
+				    ratioA = void 0,
+				    ratioB = void 0;
+
+				if (t === 1) {
+
+					this.copy(q);
+				} else if (t > 0) {
+
+					cosHalfTheta = w * q.w + x * q.x + y * q.y + z * q.z;
+
+					if (cosHalfTheta < 0.0) {
+
+						this.w = -q.w;
+						this.x = -q.x;
+						this.y = -q.y;
+						this.z = -q.z;
+
+						cosHalfTheta = -cosHalfTheta;
+					} else {
+
+						this.copy(q);
+					}
+
+					if (cosHalfTheta >= 1.0) {
+
+						this.w = w;
+						this.x = x;
+						this.y = y;
+						this.z = z;
+					} else {
+
+						sinHalfThetaSquared = 1.0 - cosHalfTheta * cosHalfTheta;
+						s = 1.0 - t;
+
+						if (sinHalfThetaSquared <= Number.EPSILON) {
+
+							this.w = s * w + t * this.w;
+							this.x = s * x + t * this.x;
+							this.y = s * y + t * this.y;
+							this.z = s * z + t * this.z;
+
+							this.normalize();
+						} else {
+
+							sinHalfTheta = Math.sqrt(sinHalfThetaSquared);
+							halfTheta = Math.atan2(sinHalfTheta, cosHalfTheta);
+							ratioA = Math.sin(s * halfTheta) / sinHalfTheta;
+							ratioB = Math.sin(t * halfTheta) / sinHalfTheta;
+
+							this.w = w * ratioA + this.w * ratioB;
+							this.x = x * ratioA + this.x * ratioB;
+							this.y = y * ratioA + this.y * ratioB;
+							this.z = z * ratioA + this.z * ratioB;
+						}
+					}
+				}
+
+				return this;
+			}
+		}, {
+			key: "equals",
+			value: function equals(q) {
+
+				return q.x === this.x && q.y === this.y && q.z === this.z && q.w === this.w;
+			}
+		}], [{
+			key: "slerp",
+			value: function slerp(qa, qb, qr, t) {
+
+				return qr.copy(qa).slerp(qb, t);
+			}
+		}, {
+			key: "slerpFlat",
+			value: function slerpFlat(dst, dstOffset, src0, srcOffset0, src1, srcOffset1, t) {
+
+				var x1 = src1[srcOffset1];
+				var y1 = src1[srcOffset1 + 1];
+				var z1 = src1[srcOffset1 + 2];
+				var w1 = src1[srcOffset1 + 3];
+
+				var x0 = src0[srcOffset0];
+				var y0 = src0[srcOffset0 + 1];
+				var z0 = src0[srcOffset0 + 2];
+				var w0 = src0[srcOffset0 + 3];
+
+				var s = void 0,
+				    f = void 0;
+				var sin = void 0,
+				    cos = void 0,
+				    sqrSin = void 0;
+				var dir = void 0,
+				    len = void 0,
+				    tDir = void 0;
+
+				if (w0 !== w1 || x0 !== x1 || y0 !== y1 || z0 !== z1) {
+
+					s = 1.0 - t;
+					cos = x0 * x1 + y0 * y1 + z0 * z1 + w0 * w1;
+
+					dir = cos >= 0 ? 1 : -1;
+					sqrSin = 1.0 - cos * cos;
+
+					if (sqrSin > Number.EPSILON) {
+
+						sin = Math.sqrt(sqrSin);
+						len = Math.atan2(sin, cos * dir);
+
+						s = Math.sin(s * len) / sin;
+						t = Math.sin(t * len) / sin;
+					}
+
+					tDir = t * dir;
+
+					x0 = x0 * s + x1 * tDir;
+					y0 = y0 * s + y1 * tDir;
+					z0 = z0 * s + z1 * tDir;
+					w0 = w0 * s + w1 * tDir;
+
+					if (s === 1.0 - t) {
+
+						f = 1.0 / Math.sqrt(x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0);
+
+						x0 *= f;
+						y0 *= f;
+						z0 *= f;
+						w0 *= f;
+					}
+				}
+
+				dst[dstOffset] = x0;
+				dst[dstOffset + 1] = y0;
+				dst[dstOffset + 2] = z0;
+				dst[dstOffset + 3] = w0;
+			}
+		}]);
+		return Quaternion;
+	}();
+
+	function clamp(value, min, max) {
+
+		return Math.max(Math.min(value, max), min);
 	}
 
-	/**
-	 * An collection of movement flags.
-	 */
+	var m = new Matrix3();
 
-	class MovementState {
+	var q = new Quaternion();
 
-		/**
-		 * Constructs a new movement state.
-		 */
+	var Euler = function () {
+		function Euler() {
+			var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+			var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+			var z = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+			classCallCheck(this, Euler);
 
-		constructor() {
 
-			/**
-			 * Movement to the left.
-			 *
-			 * @type {Boolean}
-			 */
+			this.x = x;
 
-			this.left = false;
+			this.y = y;
 
-			/**
-			 * Movement to the right.
-			 *
-			 * @type {Boolean}
-			 */
+			this.z = z;
 
-			this.right = false;
-
-			/**
-			 * Forward motion.
-			 *
-			 * @type {Boolean}
-			 */
-
-			this.forward = false;
-
-			/**
-			 * Backward motion.
-			 *
-			 * @type {Boolean}
-			 */
-
-			this.backward = false;
-
-			/**
-			 * Ascension.
-			 *
-			 * @type {Boolean}
-			 */
-
-			this.up = false;
-
-			/**
-			 * Descent.
-			 *
-			 * @type {Boolean}
-			 */
-
-			this.down = false;
-
+			this.order = Euler.defaultOrder;
 		}
 
-		/**
-		 * Resets this state.
-		 *
-		 * @return {MovementState} This state.
-		 */
+		createClass(Euler, [{
+			key: "set",
+			value: function set$$1(x, y, z, order) {
 
-		reset() {
+				this.x = x;
+				this.y = y;
+				this.z = z;
+				this.order = order;
 
-			this.left = false;
-			this.right = false;
-			this.forward = false;
-			this.backward = false;
-			this.up = false;
-			this.down = false;
+				return this;
+			}
+		}, {
+			key: "copy",
+			value: function copy(e) {
 
-			return this;
+				this.x = e.x;
+				this.y = e.y;
+				this.z = e.z;
+				this.order = e.order;
 
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
+
+				return new this.constructor(this.x, this.y, this.z, this.order);
+			}
+		}, {
+			key: "fromArray",
+			value: function fromArray(array) {
+				var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+
+				this.x = array[offset];
+				this.y = array[offset + 1];
+				this.z = array[offset + 2];
+				this.order = array[offset + 3];
+
+				return this;
+			}
+		}, {
+			key: "toArray",
+			value: function toArray$$1() {
+				var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+				var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+
+				array[offset] = this.x;
+				array[offset + 1] = this.y;
+				array[offset + 2] = this.z;
+				array[offset + 3] = this.order;
+
+				return array;
+			}
+		}, {
+			key: "toVector3",
+			value: function toVector3() {
+				var vector = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3();
+
+
+				return vector.set(this.x, this.y, this.z);
+			}
+		}, {
+			key: "setFromRotationMatrix",
+			value: function setFromRotationMatrix(m) {
+				var order = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.order;
+
+
+				var te = m.elements;
+				var m00 = te[0],
+				    m01 = te[4],
+				    m02 = te[8];
+				var m10 = te[1],
+				    m11 = te[5],
+				    m12 = te[9];
+				var m20 = te[2],
+				    m21 = te[6],
+				    m22 = te[10];
+
+				var THRESHOLD = 1.0 - 1e-5;
+
+				switch (order) {
+
+					case RotationOrder.XYZ:
+						{
+
+							this.y = Math.asin(clamp(m02, -1, 1));
+
+							if (Math.abs(m02) < THRESHOLD) {
+
+								this.x = Math.atan2(-m12, m22);
+								this.z = Math.atan2(-m01, m00);
+							} else {
+
+								this.x = Math.atan2(m21, m11);
+								this.z = 0;
+							}
+
+							break;
+						}
+
+					case RotationOrder.YXZ:
+						{
+
+							this.x = Math.asin(-clamp(m12, -1, 1));
+
+							if (Math.abs(m12) < THRESHOLD) {
+
+								this.y = Math.atan2(m02, m22);
+								this.z = Math.atan2(m10, m11);
+							} else {
+
+								this.y = Math.atan2(-m20, m00);
+								this.z = 0;
+							}
+
+							break;
+						}
+
+					case RotationOrder.ZXY:
+						{
+
+							this.x = Math.asin(clamp(m21, -1, 1));
+
+							if (Math.abs(m21) < THRESHOLD) {
+
+								this.y = Math.atan2(-m20, m22);
+								this.z = Math.atan2(-m01, m11);
+							} else {
+
+								this.y = 0;
+								this.z = Math.atan2(m10, m00);
+							}
+
+							break;
+						}
+
+					case RotationOrder.ZYX:
+						{
+
+							this.y = Math.asin(-clamp(m20, -1, 1));
+
+							if (Math.abs(m20) < THRESHOLD) {
+
+								this.x = Math.atan2(m21, m22);
+								this.z = Math.atan2(m10, m00);
+							} else {
+
+								this.x = 0;
+								this.z = Math.atan2(-m01, m11);
+							}
+
+							break;
+						}
+
+					case RotationOrder.YZX:
+						{
+
+							this.z = Math.asin(clamp(m10, -1, 1));
+
+							if (Math.abs(m10) < THRESHOLD) {
+
+								this.x = Math.atan2(-m12, m11);
+								this.y = Math.atan2(-m20, m00);
+							} else {
+
+								this.x = 0;
+								this.y = Math.atan2(m02, m22);
+							}
+
+							break;
+						}
+
+					case RotationOrder.XZY:
+						{
+
+							this.z = Math.asin(-clamp(m01, -1, 1));
+
+							if (Math.abs(m01) < THRESHOLD) {
+
+								this.x = Math.atan2(m21, m11);
+								this.y = Math.atan2(m02, m00);
+							} else {
+
+								this.x = Math.atan2(-m12, m22);
+								this.y = 0;
+							}
+
+							break;
+						}
+
+				}
+
+				this.order = order;
+
+				return this;
+			}
+		}, {
+			key: "setFromQuaternion",
+			value: function setFromQuaternion(q, order) {
+
+				m.makeRotationFromQuaternion(q);
+
+				return this.setFromRotationMatrix(m, order);
+			}
+		}, {
+			key: "setFromVector3",
+			value: function setFromVector3(v) {
+				var order = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.order;
+
+
+				return this.set(v.x, v.y, v.z, order);
+			}
+		}, {
+			key: "reorder",
+			value: function reorder(newOrder) {
+
+				q.setFromEuler(this);
+
+				return this.setFromQuaternion(q, newOrder);
+			}
+		}, {
+			key: "equals",
+			value: function equals(e) {
+
+				return e.x === this.x && e.y === this.y && e.z === this.z && e.order === this.order;
+			}
+		}], [{
+			key: "defaultOrder",
+			get: function get$$1() {
+
+				return RotationOrder.XYZ;
+			}
+		}]);
+		return Euler;
+	}();
+
+	var a = new Vector3();
+
+	var b = new Vector3();
+
+	var Plane = function () {
+		function Plane() {
+			var normal = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3(1, 0, 0);
+			var constant = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+			classCallCheck(this, Plane);
+
+
+			this.normal = normal;
+
+			this.constant = constant;
 		}
 
-	}
+		createClass(Plane, [{
+			key: "set",
+			value: function set$$1(normal, constant) {
 
-	/**
-	 * The X-axis.
-	 *
-	 * @type {Vector3}
-	 * @ignore
-	 */
+				this.normal.copy(normal);
+				this.constant = constant;
 
-	const x = new Vector3(1, 0, 0);
+				return this;
+			}
+		}, {
+			key: "setComponents",
+			value: function setComponents(x, y, z, w) {
 
-	/**
-	 * The Y-axis.
-	 *
-	 * @type {Vector3}
-	 * @ignore
-	 */
+				this.normal.set(x, y, z);
+				this.constant = w;
 
-	const y = new Vector3(0, 1, 0);
+				return this;
+			}
+		}, {
+			key: "copy",
+			value: function copy(p) {
 
-	/**
-	 * The Z-axis.
-	 *
-	 * @type {Vector3}
-	 * @ignore
-	 */
+				this.normal.copy(p.normal);
+				this.constant = p.constant;
 
-	const z = new Vector3(0, 0, 1);
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
 
-	/**
-	 * A vector.
-	 *
-	 * @type {Vector3}
-	 * @private
-	 */
+				return new this.constructor().copy(this);
+			}
+		}, {
+			key: "setFromNormalAndCoplanarPoint",
+			value: function setFromNormalAndCoplanarPoint(n, p) {
 
-	const v$7 = new Vector3();
+				this.normal.copy(n);
+				this.constant = -p.dot(this.normal);
 
-	/**
-	 * A translation manager.
-	 */
+				return this;
+			}
+		}, {
+			key: "setFromCoplanarPoints",
+			value: function setFromCoplanarPoints(p0, p1, p2) {
 
-	class TranslationManager {
+				var normal = a.subVectors(p2, p1).cross(b.subVectors(p0, p1)).normalize();
 
-		/**
-		 * Constructs a new translation manager.
-		 *
-		 * @param {Vector3} position - A position.
-		 * @param {Quaternion} quaternion - A quaternion.
-		 * @param {Vector3} target - A target.
-		 * @param {Settings} settings - The settings.
-		 */
+				this.setFromNormalAndCoplanarPoint(normal, a);
 
-		constructor(position, quaternion, target, settings) {
+				return this;
+			}
+		}, {
+			key: "normalize",
+			value: function normalize() {
 
-			/**
-			 * The position that will be modified.
-			 *
-			 * @type {Vector3}
-			 * @private
-			 */
+				var inverseNormalLength = 1.0 / this.normal.length();
 
-			this.position = position;
+				this.normal.multiplyScalar(inverseNormalLength);
+				this.constant *= inverseNormalLength;
 
-			/**
-			 * The quaternion that will be modified.
-			 *
-			 * @type {Quaternion}
-			 * @private
-			 */
+				return this;
+			}
+		}, {
+			key: "negate",
+			value: function negate() {
 
-			this.quaternion = quaternion;
+				this.normal.negate();
+				this.constant = -this.constant;
 
-			/**
-			 * A target.
-			 *
-			 * @type {Vector3}
-			 * @private
-			 */
+				return this;
+			}
+		}, {
+			key: "distanceToPoint",
+			value: function distanceToPoint(p) {
 
-			this.target = target;
+				return this.normal.dot(p) + this.constant;
+			}
+		}, {
+			key: "distanceToSphere",
+			value: function distanceToSphere(s) {
 
-			/**
-			 * The settings.
-			 *
-			 * @type {Settings}
-			 * @private
-			 */
+				return this.distanceToPoint(s.center) - s.radius;
+			}
+		}, {
+			key: "projectPoint",
+			value: function projectPoint(p, target) {
 
-			this.settings = settings;
+				return target.copy(this.normal).multiplyScalar(-this.distanceToPoint(p)).add(p);
+			}
+		}, {
+			key: "coplanarPoint",
+			value: function coplanarPoint(target) {
 
-			/**
-			 * The current movement state.
-			 *
-			 * @type {MovementState}
-			 */
+				return target.copy(this.normal).multiplyScalar(-this.constant);
+			}
+		}, {
+			key: "translate",
+			value: function translate(offset) {
 
-			this.movementState = new MovementState();
+				this.constant -= offset.dot(this.normal);
 
-		}
+				return this;
+			}
+		}, {
+			key: "intersectLine",
+			value: function intersectLine(l, target) {
 
-		/**
-		 * Sets the position.
-		 *
-		 * @param {Vector3} position - A position.
-		 * @return {RotationManager} This manager.
-		 */
+				var direction = l.delta(a);
+				var denominator = this.normal.dot(direction);
 
-		setPosition(position) {
+				if (denominator === 0) {
+					if (this.distanceToPoint(l.start) === 0) {
 
-			this.position = position;
+						target.copy(l.start);
+					}
+				} else {
 
-			return this;
+					var t = -(l.start.dot(this.normal) + this.constant) / denominator;
 
-		}
+					if (t >= 0 && t <= 1) {
 
-		/**
-		 * Sets the quaternion.
-		 *
-		 * @param {Quaternion} quaternion - A quaternion.
-		 * @return {RotationManager} This manager.
-		 */
+						target.copy(direction).multiplyScalar(t).add(l.start);
+					}
+				}
 
-		setQuaternion(quaternion) {
+				return target;
+			}
+		}, {
+			key: "intersectsLine",
+			value: function intersectsLine(l) {
 
-			this.quaternion = quaternion;
+				var startSign = this.distanceToPoint(l.start);
+				var endSign = this.distanceToPoint(l.end);
 
-			return this;
+				return startSign < 0 && endSign > 0 || endSign < 0 && startSign > 0;
+			}
+		}, {
+			key: "intersectsBox",
+			value: function intersectsBox(b) {
 
-		}
+				return b.intersectsPlane(this);
+			}
+		}, {
+			key: "intersectsSphere",
+			value: function intersectsSphere(s) {
 
-		/**
-		 * Sets the target.
-		 *
-		 * @param {Vector3} target - A target.
-		 * @return {RotationManager} This manager.
-		 */
+				return s.intersectsPlane(this);
+			}
+		}, {
+			key: "equals",
+			value: function equals(p) {
 
-		setTarget(target) {
+				return p.normal.equals(this.normal) && p.constant === this.constant;
+			}
+		}]);
+		return Plane;
+	}();
 
-			this.target = target;
+	var v$4 = new Vector3();
 
-			return this;
+	var Frustum = function () {
+			function Frustum() {
+					var p0 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Plane();
+					var p1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Plane();
+					var p2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new Plane();
+					var p3 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : new Plane();
+					var p4 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : new Plane();
+					var p5 = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : new Plane();
+					classCallCheck(this, Frustum);
 
-		}
 
-		/**
-		 * Translates a position by a specific distance along a given axis.
-		 *
-		 * @private
-		 * @param {Vector3} axis - The axis.
-		 * @param {Vector3} distance - The distance.
-		 */
-
-		translateOnAxis(axis, distance) {
-
-			v$7.copy(axis).applyQuaternion(this.quaternion).multiplyScalar(distance);
-
-			this.position.add(v$7);
-
-			if(this.settings.general.orbit) {
-
-				this.target.add(v$7);
-
+					this.planes = [p0, p1, p2, p3, p4, p5];
 			}
 
+			createClass(Frustum, [{
+					key: "set",
+					value: function set$$1(p0, p1, p2, p3, p4, p5) {
+
+							var planes = this.planes;
+
+							planes[0].copy(p0);
+							planes[1].copy(p1);
+							planes[2].copy(p2);
+							planes[3].copy(p3);
+							planes[4].copy(p4);
+							planes[5].copy(p5);
+
+							return this;
+					}
+			}, {
+					key: "clone",
+					value: function clone() {
+
+							return new this.constructor().copy(this);
+					}
+			}, {
+					key: "copy",
+					value: function copy(frustum) {
+
+							var planes = this.planes;
+
+							var i = void 0;
+
+							for (i = 0; i < 6; ++i) {
+
+									planes[i].copy(frustum.planes[i]);
+							}
+
+							return this;
+					}
+			}, {
+					key: "setFromMatrix",
+					value: function setFromMatrix(m) {
+
+							var planes = this.planes;
+
+							var me = m.elements;
+							var me0 = me[0],
+							    me1 = me[1],
+							    me2 = me[2],
+							    me3 = me[3];
+							var me4 = me[4],
+							    me5 = me[5],
+							    me6 = me[6],
+							    me7 = me[7];
+							var me8 = me[8],
+							    me9 = me[9],
+							    me10 = me[10],
+							    me11 = me[11];
+							var me12 = me[12],
+							    me13 = me[13],
+							    me14 = me[14],
+							    me15 = me[15];
+
+							planes[0].setComponents(me3 - me0, me7 - me4, me11 - me8, me15 - me12).normalize();
+							planes[1].setComponents(me3 + me0, me7 + me4, me11 + me8, me15 + me12).normalize();
+							planes[2].setComponents(me3 + me1, me7 + me5, me11 + me9, me15 + me13).normalize();
+							planes[3].setComponents(me3 - me1, me7 - me5, me11 - me9, me15 - me13).normalize();
+							planes[4].setComponents(me3 - me2, me7 - me6, me11 - me10, me15 - me14).normalize();
+							planes[5].setComponents(me3 + me2, me7 + me6, me11 + me10, me15 + me14).normalize();
+
+							return this;
+					}
+			}, {
+					key: "intersectsSphere",
+					value: function intersectsSphere(sphere) {
+
+							var planes = this.planes;
+							var center = sphere.center;
+							var negativeRadius = -sphere.radius;
+
+							var result = true;
+							var i = void 0,
+							    d = void 0;
+
+							for (i = 0; i < 6; ++i) {
+
+									d = planes[i].distanceToPoint(center);
+
+									if (d < negativeRadius) {
+
+											result = false;
+											break;
+									}
+							}
+
+							return result;
+					}
+			}, {
+					key: "intersectsBox",
+					value: function intersectsBox(box) {
+
+							var planes = this.planes;
+							var min = box.min,
+							    max = box.max;
+
+							var i = void 0,
+							    plane = void 0;
+
+							for (i = 0; i < 6; ++i) {
+
+									plane = planes[i];
+
+									v$4.x = plane.normal.x > 0.0 ? max.x : min.x;
+									v$4.y = plane.normal.y > 0.0 ? max.y : min.y;
+									v$4.z = plane.normal.z > 0.0 ? max.z : min.z;
+
+									if (plane.distanceToPoint(v$4) < 0.0) {
+
+											return false;
+									}
+							}
+
+							return true;
+					}
+			}, {
+					key: "containsPoint",
+					value: function containsPoint(point) {
+
+							var planes = this.planes;
+
+							var result = true;
+							var i = void 0;
+
+							for (i = 0; i < 6; ++i) {
+
+									if (planes[i].distanceToPoint(point) < 0) {
+
+											result = false;
+											break;
+									}
+							}
+
+							return result;
+					}
+			}]);
+			return Frustum;
+	}();
+
+	var a$1 = new Vector3();
+
+	var b$1 = new Vector3();
+
+	var Line3 = function () {
+		function Line3() {
+			var start = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3();
+			var end = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Vector3();
+			classCallCheck(this, Line3);
+
+
+			this.start = start;
+
+			this.end = end;
 		}
 
-		/**
-		 * Modifies the position based on the current movement state and elapsed time.
-		 *
-		 * @private
-		 * @param {Number} delta - The time since the last update in seconds.
-		 */
+		createClass(Line3, [{
+			key: "set",
+			value: function set$$1(start, end) {
 
-		translate(delta) {
+				this.start.copy(start);
+				this.end.copy(end);
 
-			const sensitivity = this.settings.sensitivity;
-			const state = this.movementState;
+				return this;
+			}
+		}, {
+			key: "copy",
+			value: function copy(l) {
 
-			const step = delta * sensitivity.translation;
+				this.start.copy(l.start);
+				this.end.copy(l.end);
 
-			if(state.backward) {
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
 
-				this.translateOnAxis(z, step);
+				return new this.constructor().copy(this);
+			}
+		}, {
+			key: "getCenter",
+			value: function getCenter() {
+				var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3();
 
-			} else if(state.forward) {
 
-				this.translateOnAxis(z, -step);
+				return target.addVectors(this.start, this.end).multiplyScalar(0.5);
+			}
+		}, {
+			key: "delta",
+			value: function delta() {
+				var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3();
 
+
+				return target.subVectors(this.end, this.start);
+			}
+		}, {
+			key: "lengthSquared",
+			value: function lengthSquared() {
+
+				return this.start.distanceToSquared(this.end);
+			}
+		}, {
+			key: "length",
+			value: function length() {
+
+				return this.start.distanceTo(this.end);
+			}
+		}, {
+			key: "at",
+			value: function at(d, target) {
+
+				return this.delta(target).multiplyScalar(d).add(this.start);
+			}
+		}, {
+			key: "closestPointToPointParameter",
+			value: function closestPointToPointParameter(p, clampToLine) {
+
+				a$1.subVectors(p, this.start);
+				b$1.subVectors(this.end, this.start);
+
+				var bb = b$1.dot(b$1);
+				var ba = b$1.dot(a$1);
+
+				var t = clampToLine ? Math.min(Math.max(ba / bb, 0), 1) : ba / bb;
+
+				return t;
+			}
+		}, {
+			key: "closestPointToPoint",
+			value: function closestPointToPoint(p) {
+				var clampToLine = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+				var target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new Vector3();
+
+
+				var t = this.closestPointToPointParameter(p, clampToLine);
+
+				return this.delta(target).multiplyScalar(t).add(this.start);
+			}
+		}, {
+			key: "equals",
+			value: function equals(l) {
+
+				return l.start.equals(this.start) && l.end.equals(this.end);
+			}
+		}]);
+		return Line3;
+	}();
+
+	var a$2 = new Vector3();
+
+	var b$2 = new Vector3();
+
+	var c = new Vector3();
+
+	var Matrix4 = function () {
+			function Matrix4() {
+					classCallCheck(this, Matrix4);
+
+
+					this.elements = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 			}
 
-			if(state.right) {
+			createClass(Matrix4, [{
+					key: "set",
+					value: function set$$1(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33) {
 
-				this.translateOnAxis(x, step);
+							var te = this.elements;
 
-			} else if(state.left) {
+							te[0] = n00;te[4] = n01;te[8] = n02;te[12] = n03;
+							te[1] = n10;te[5] = n11;te[9] = n12;te[13] = n13;
+							te[2] = n20;te[6] = n21;te[10] = n22;te[14] = n23;
+							te[3] = n30;te[7] = n31;te[11] = n32;te[15] = n33;
 
-				this.translateOnAxis(x, -step);
+							return this;
+					}
+			}, {
+					key: "identity",
+					value: function identity() {
 
-			}
+							this.set(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
-			if(state.up) {
+							return this;
+					}
+			}, {
+					key: "copy",
+					value: function copy(matrix) {
 
-				this.translateOnAxis(y, step);
+							var me = matrix.elements;
+							var te = this.elements;
 
-			} else if(state.down) {
+							te[0] = me[0];te[1] = me[1];te[2] = me[2];te[3] = me[3];
+							te[4] = me[4];te[5] = me[5];te[6] = me[6];te[7] = me[7];
+							te[8] = me[8];te[9] = me[9];te[10] = me[10];te[11] = me[11];
+							te[12] = me[12];te[13] = me[13];te[14] = me[14];te[15] = me[15];
 
-				this.translateOnAxis(y, -step);
+							return this;
+					}
+			}, {
+					key: "clone",
+					value: function clone() {
 
-			}
+							return new this.constructor().fromArray(this.elements);
+					}
+			}, {
+					key: "fromArray",
+					value: function fromArray(array) {
+							var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
+
+							var te = this.elements;
+
+							var i = void 0;
+
+							for (i = 0; i < 16; ++i) {
+
+									te[i] = array[i + offset];
+							}
+
+							return this;
+					}
+			}, {
+					key: "toArray",
+					value: function toArray$$1() {
+							var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+							var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+
+							var te = this.elements;
+
+							var i = void 0;
+
+							for (i = 0; i < 16; ++i) {
+
+									array[i + offset] = te[i];
+							}
+
+							return array;
+					}
+			}, {
+					key: "getMaxScaleOnAxis",
+					value: function getMaxScaleOnAxis() {
+
+							var te = this.elements;
+
+							var scaleXSq = te[0] * te[0] + te[1] * te[1] + te[2] * te[2];
+							var scaleYSq = te[4] * te[4] + te[5] * te[5] + te[6] * te[6];
+							var scaleZSq = te[8] * te[8] + te[9] * te[9] + te[10] * te[10];
+
+							return Math.sqrt(Math.max(scaleXSq, scaleYSq, scaleZSq));
+					}
+			}, {
+					key: "copyPosition",
+					value: function copyPosition(matrix) {
+
+							var te = this.elements;
+							var me = matrix.elements;
+
+							te[12] = me[12];
+							te[13] = me[13];
+							te[14] = me[14];
+
+							return this;
+					}
+			}, {
+					key: "setPosition",
+					value: function setPosition(p) {
+
+							var te = this.elements;
+
+							te[12] = p.x;
+							te[13] = p.y;
+							te[14] = p.z;
+
+							return this;
+					}
+			}, {
+					key: "extractBasis",
+					value: function extractBasis(xAxis, yAxis, zAxis) {
+
+							xAxis.setFromMatrixColumn(this, 0);
+							yAxis.setFromMatrixColumn(this, 1);
+							zAxis.setFromMatrixColumn(this, 2);
+
+							return this;
+					}
+			}, {
+					key: "makeBasis",
+					value: function makeBasis(xAxis, yAxis, zAxis) {
+
+							this.set(xAxis.x, yAxis.x, zAxis.x, 0, xAxis.y, yAxis.y, zAxis.y, 0, xAxis.z, yAxis.z, zAxis.z, 0, 0, 0, 0, 1);
+
+							return this;
+					}
+			}, {
+					key: "extractRotation",
+					value: function extractRotation(m) {
+
+							var te = this.elements;
+							var me = m.elements;
+
+							var scaleX = 1.0 / a$2.setFromMatrixColumn(m, 0).length();
+							var scaleY = 1.0 / a$2.setFromMatrixColumn(m, 1).length();
+							var scaleZ = 1.0 / a$2.setFromMatrixColumn(m, 2).length();
+
+							te[0] = me[0] * scaleX;
+							te[1] = me[1] * scaleX;
+							te[2] = me[2] * scaleX;
+							te[3] = 0;
+
+							te[4] = me[4] * scaleY;
+							te[5] = me[5] * scaleY;
+							te[6] = me[6] * scaleY;
+							te[7] = 0;
+
+							te[8] = me[8] * scaleZ;
+							te[9] = me[9] * scaleZ;
+							te[10] = me[10] * scaleZ;
+							te[11] = 0;
+
+							te[12] = 0;
+							te[13] = 0;
+							te[14] = 0;
+							te[15] = 1;
+
+							return this;
+					}
+			}, {
+					key: "makeRotationFromEuler",
+					value: function makeRotationFromEuler(euler) {
+
+							var te = this.elements;
+
+							var x = euler.x;
+							var y = euler.y;
+							var z = euler.z;
+
+							var a = Math.cos(x),
+							    b = Math.sin(x);
+							var c = Math.cos(y),
+							    d = Math.sin(y);
+							var e = Math.cos(z),
+							    f = Math.sin(z);
+
+							var ae = void 0,
+							    af = void 0,
+							    be = void 0,
+							    bf = void 0;
+							var ce = void 0,
+							    cf = void 0,
+							    de = void 0,
+							    df = void 0;
+							var ac = void 0,
+							    ad = void 0,
+							    bc = void 0,
+							    bd = void 0;
+
+							switch (euler.order) {
+
+									case RotationOrder.XYZ:
+											{
+
+													ae = a * e, af = a * f, be = b * e, bf = b * f;
+
+													te[0] = c * e;
+													te[4] = -c * f;
+													te[8] = d;
+
+													te[1] = af + be * d;
+													te[5] = ae - bf * d;
+													te[9] = -b * c;
+
+													te[2] = bf - ae * d;
+													te[6] = be + af * d;
+													te[10] = a * c;
+
+													break;
+											}
+
+									case RotationOrder.YXZ:
+											{
+
+													ce = c * e, cf = c * f, de = d * e, df = d * f;
+
+													te[0] = ce + df * b;
+													te[4] = de * b - cf;
+													te[8] = a * d;
+
+													te[1] = a * f;
+													te[5] = a * e;
+													te[9] = -b;
+
+													te[2] = cf * b - de;
+													te[6] = df + ce * b;
+													te[10] = a * c;
+
+													break;
+											}
+
+									case RotationOrder.ZXY:
+											{
+
+													ce = c * e, cf = c * f, de = d * e, df = d * f;
+
+													te[0] = ce - df * b;
+													te[4] = -a * f;
+													te[8] = de + cf * b;
+
+													te[1] = cf + de * b;
+													te[5] = a * e;
+													te[9] = df - ce * b;
+
+													te[2] = -a * d;
+													te[6] = b;
+													te[10] = a * c;
+
+													break;
+											}
+
+									case RotationOrder.ZYX:
+											{
+
+													ae = a * e, af = a * f, be = b * e, bf = b * f;
+
+													te[0] = c * e;
+													te[4] = be * d - af;
+													te[8] = ae * d + bf;
+
+													te[1] = c * f;
+													te[5] = bf * d + ae;
+													te[9] = af * d - be;
+
+													te[2] = -d;
+													te[6] = b * c;
+													te[10] = a * c;
+
+													break;
+											}
+
+									case RotationOrder.YZX:
+											{
+
+													ac = a * c, ad = a * d, bc = b * c, bd = b * d;
+
+													te[0] = c * e;
+													te[4] = bd - ac * f;
+													te[8] = bc * f + ad;
+
+													te[1] = f;
+													te[5] = a * e;
+													te[9] = -b * e;
+
+													te[2] = -d * e;
+													te[6] = ad * f + bc;
+													te[10] = ac - bd * f;
+
+													break;
+											}
+
+									case RotationOrder.XZY:
+											{
+
+													ac = a * c, ad = a * d, bc = b * c, bd = b * d;
+
+													te[0] = c * e;
+													te[4] = -f;
+													te[8] = d * e;
+
+													te[1] = ac * f + bd;
+													te[5] = a * e;
+													te[9] = ad * f - bc;
+
+													te[2] = bc * f - ad;
+													te[6] = b * e;
+													te[10] = bd * f + ac;
+
+													break;
+											}
+
+							}
+
+							te[3] = 0;
+							te[7] = 0;
+							te[11] = 0;
+
+							te[12] = 0;
+							te[13] = 0;
+							te[14] = 0;
+							te[15] = 1;
+
+							return this;
+					}
+			}, {
+					key: "makeRotationFromQuaternion",
+					value: function makeRotationFromQuaternion(q) {
+
+							return this.compose(a$2.set(0, 0, 0), q, b$2.set(1, 1, 1));
+					}
+			}, {
+					key: "lookAt",
+					value: function lookAt(eye, target, up) {
+
+							var te = this.elements;
+							var x = a$2,
+							    y = b$2,
+							    z = c;
+
+							z.subVectors(eye, target);
+
+							if (z.lengthSquared() === 0) {
+									z.z = 1;
+							}
+
+							z.normalize();
+							x.crossVectors(up, z);
+
+							if (x.lengthSquared() === 0) {
+									if (Math.abs(up.z) === 1) {
+
+											z.x += 1e-4;
+									} else {
+
+											z.z += 1e-4;
+									}
+
+									z.normalize();
+									x.crossVectors(up, z);
+							}
+
+							x.normalize();
+							y.crossVectors(z, x);
+
+							te[0] = x.x;te[4] = y.x;te[8] = z.x;
+							te[1] = x.y;te[5] = y.y;te[9] = z.y;
+							te[2] = x.z;te[6] = y.z;te[10] = z.z;
+
+							return this;
+					}
+			}, {
+					key: "multiplyMatrices",
+					value: function multiplyMatrices(a, b) {
+
+							var te = this.elements;
+							var ae = a.elements;
+							var be = b.elements;
+
+							var a00 = ae[0],
+							    a01 = ae[4],
+							    a02 = ae[8],
+							    a03 = ae[12];
+							var a10 = ae[1],
+							    a11 = ae[5],
+							    a12 = ae[9],
+							    a13 = ae[13];
+							var a20 = ae[2],
+							    a21 = ae[6],
+							    a22 = ae[10],
+							    a23 = ae[14];
+							var a30 = ae[3],
+							    a31 = ae[7],
+							    a32 = ae[11],
+							    a33 = ae[15];
+
+							var b00 = be[0],
+							    b01 = be[4],
+							    b02 = be[8],
+							    b03 = be[12];
+							var b10 = be[1],
+							    b11 = be[5],
+							    b12 = be[9],
+							    b13 = be[13];
+							var b20 = be[2],
+							    b21 = be[6],
+							    b22 = be[10],
+							    b23 = be[14];
+							var b30 = be[3],
+							    b31 = be[7],
+							    b32 = be[11],
+							    b33 = be[15];
+
+							te[0] = a00 * b00 + a01 * b10 + a02 * b20 + a03 * b30;
+							te[4] = a00 * b01 + a01 * b11 + a02 * b21 + a03 * b31;
+							te[8] = a00 * b02 + a01 * b12 + a02 * b22 + a03 * b32;
+							te[12] = a00 * b03 + a01 * b13 + a02 * b23 + a03 * b33;
+
+							te[1] = a10 * b00 + a11 * b10 + a12 * b20 + a13 * b30;
+							te[5] = a10 * b01 + a11 * b11 + a12 * b21 + a13 * b31;
+							te[9] = a10 * b02 + a11 * b12 + a12 * b22 + a13 * b32;
+							te[13] = a10 * b03 + a11 * b13 + a12 * b23 + a13 * b33;
+
+							te[2] = a20 * b00 + a21 * b10 + a22 * b20 + a23 * b30;
+							te[6] = a20 * b01 + a21 * b11 + a22 * b21 + a23 * b31;
+							te[10] = a20 * b02 + a21 * b12 + a22 * b22 + a23 * b32;
+							te[14] = a20 * b03 + a21 * b13 + a22 * b23 + a23 * b33;
+
+							te[3] = a30 * b00 + a31 * b10 + a32 * b20 + a33 * b30;
+							te[7] = a30 * b01 + a31 * b11 + a32 * b21 + a33 * b31;
+							te[11] = a30 * b02 + a31 * b12 + a32 * b22 + a33 * b32;
+							te[15] = a30 * b03 + a31 * b13 + a32 * b23 + a33 * b33;
+
+							return this;
+					}
+			}, {
+					key: "multiply",
+					value: function multiply(m) {
+
+							return this.multiplyMatrices(this, m);
+					}
+			}, {
+					key: "premultiply",
+					value: function premultiply(m) {
+
+							return this.multiplyMatrices(m, this);
+					}
+			}, {
+					key: "multiplyScalar",
+					value: function multiplyScalar(s) {
+
+							var te = this.elements;
+
+							te[0] *= s;te[4] *= s;te[8] *= s;te[12] *= s;
+							te[1] *= s;te[5] *= s;te[9] *= s;te[13] *= s;
+							te[2] *= s;te[6] *= s;te[10] *= s;te[14] *= s;
+							te[3] *= s;te[7] *= s;te[11] *= s;te[15] *= s;
+
+							return this;
+					}
+			}, {
+					key: "determinant",
+					value: function determinant() {
+
+							var te = this.elements;
+
+							var n00 = te[0],
+							    n01 = te[4],
+							    n02 = te[8],
+							    n03 = te[12];
+							var n10 = te[1],
+							    n11 = te[5],
+							    n12 = te[9],
+							    n13 = te[13];
+							var n20 = te[2],
+							    n21 = te[6],
+							    n22 = te[10],
+							    n23 = te[14];
+							var n30 = te[3],
+							    n31 = te[7],
+							    n32 = te[11],
+							    n33 = te[15];
+
+							var n00n11 = n00 * n11,
+							    n00n12 = n00 * n12,
+							    n00n13 = n00 * n13;
+							var n01n10 = n01 * n10,
+							    n01n12 = n01 * n12,
+							    n01n13 = n01 * n13;
+							var n02n10 = n02 * n10,
+							    n02n11 = n02 * n11,
+							    n02n13 = n02 * n13;
+							var n03n10 = n03 * n10,
+							    n03n11 = n03 * n11,
+							    n03n12 = n03 * n12;
+
+							return n30 * (n03n12 * n21 - n02n13 * n21 - n03n11 * n22 + n01n13 * n22 + n02n11 * n23 - n01n12 * n23) + n31 * (n00n12 * n23 - n00n13 * n22 + n03n10 * n22 - n02n10 * n23 + n02n13 * n20 - n03n12 * n20) + n32 * (n00n13 * n21 - n00n11 * n23 - n03n10 * n21 + n01n10 * n23 + n03n11 * n20 - n01n13 * n20) + n33 * (-n02n11 * n20 - n00n12 * n21 + n00n11 * n22 + n02n10 * n21 - n01n10 * n22 + n01n12 * n20);
+					}
+			}, {
+					key: "getInverse",
+					value: function getInverse(matrix) {
+
+							var te = this.elements;
+							var me = matrix.elements;
+
+							var n00 = me[0],
+							    n10 = me[1],
+							    n20 = me[2],
+							    n30 = me[3];
+							var n01 = me[4],
+							    n11 = me[5],
+							    n21 = me[6],
+							    n31 = me[7];
+							var n02 = me[8],
+							    n12 = me[9],
+							    n22 = me[10],
+							    n32 = me[11];
+							var n03 = me[12],
+							    n13 = me[13],
+							    n23 = me[14],
+							    n33 = me[15];
+
+							var t00 = n12 * n23 * n31 - n13 * n22 * n31 + n13 * n21 * n32 - n11 * n23 * n32 - n12 * n21 * n33 + n11 * n22 * n33;
+							var t01 = n03 * n22 * n31 - n02 * n23 * n31 - n03 * n21 * n32 + n01 * n23 * n32 + n02 * n21 * n33 - n01 * n22 * n33;
+							var t02 = n02 * n13 * n31 - n03 * n12 * n31 + n03 * n11 * n32 - n01 * n13 * n32 - n02 * n11 * n33 + n01 * n12 * n33;
+							var t03 = n03 * n12 * n21 - n02 * n13 * n21 - n03 * n11 * n22 + n01 * n13 * n22 + n02 * n11 * n23 - n01 * n12 * n23;
+
+							var det = n00 * t00 + n10 * t01 + n20 * t02 + n30 * t03;
+
+							var invDet = void 0;
+
+							if (det !== 0) {
+
+									invDet = 1.0 / det;
+
+									te[0] = t00 * invDet;
+									te[1] = (n13 * n22 * n30 - n12 * n23 * n30 - n13 * n20 * n32 + n10 * n23 * n32 + n12 * n20 * n33 - n10 * n22 * n33) * invDet;
+									te[2] = (n11 * n23 * n30 - n13 * n21 * n30 + n13 * n20 * n31 - n10 * n23 * n31 - n11 * n20 * n33 + n10 * n21 * n33) * invDet;
+									te[3] = (n12 * n21 * n30 - n11 * n22 * n30 - n12 * n20 * n31 + n10 * n22 * n31 + n11 * n20 * n32 - n10 * n21 * n32) * invDet;
+
+									te[4] = t01 * invDet;
+									te[5] = (n02 * n23 * n30 - n03 * n22 * n30 + n03 * n20 * n32 - n00 * n23 * n32 - n02 * n20 * n33 + n00 * n22 * n33) * invDet;
+									te[6] = (n03 * n21 * n30 - n01 * n23 * n30 - n03 * n20 * n31 + n00 * n23 * n31 + n01 * n20 * n33 - n00 * n21 * n33) * invDet;
+									te[7] = (n01 * n22 * n30 - n02 * n21 * n30 + n02 * n20 * n31 - n00 * n22 * n31 - n01 * n20 * n32 + n00 * n21 * n32) * invDet;
+
+									te[8] = t02 * invDet;
+									te[9] = (n03 * n12 * n30 - n02 * n13 * n30 - n03 * n10 * n32 + n00 * n13 * n32 + n02 * n10 * n33 - n00 * n12 * n33) * invDet;
+									te[10] = (n01 * n13 * n30 - n03 * n11 * n30 + n03 * n10 * n31 - n00 * n13 * n31 - n01 * n10 * n33 + n00 * n11 * n33) * invDet;
+									te[11] = (n02 * n11 * n30 - n01 * n12 * n30 - n02 * n10 * n31 + n00 * n12 * n31 + n01 * n10 * n32 - n00 * n11 * n32) * invDet;
+
+									te[12] = t03 * invDet;
+									te[13] = (n02 * n13 * n20 - n03 * n12 * n20 + n03 * n10 * n22 - n00 * n13 * n22 - n02 * n10 * n23 + n00 * n12 * n23) * invDet;
+									te[14] = (n03 * n11 * n20 - n01 * n13 * n20 - n03 * n10 * n21 + n00 * n13 * n21 + n01 * n10 * n23 - n00 * n11 * n23) * invDet;
+									te[15] = (n01 * n12 * n20 - n02 * n11 * n20 + n02 * n10 * n21 - n00 * n12 * n21 - n01 * n10 * n22 + n00 * n11 * n22) * invDet;
+							} else {
+
+									console.error("Can't invert matrix, determinant is zero", matrix);
+
+									this.identity();
+							}
+
+							return this;
+					}
+			}, {
+					key: "transpose",
+					value: function transpose() {
+
+							var te = this.elements;
+
+							var t = void 0;
+
+							t = te[1];te[1] = te[4];te[4] = t;
+							t = te[2];te[2] = te[8];te[8] = t;
+							t = te[6];te[6] = te[9];te[9] = t;
+
+							t = te[3];te[3] = te[12];te[12] = t;
+							t = te[7];te[7] = te[13];te[13] = t;
+							t = te[11];te[11] = te[14];te[14] = t;
+
+							return this;
+					}
+			}, {
+					key: "scale",
+					value: function scale(sx, sy, sz) {
+
+							var te = this.elements;
+
+							te[0] *= sx;te[4] *= sy;te[8] *= sz;
+							te[1] *= sx;te[5] *= sy;te[9] *= sz;
+							te[2] *= sx;te[6] *= sy;te[10] *= sz;
+							te[3] *= sx;te[7] *= sy;te[11] *= sz;
+
+							return this;
+					}
+			}, {
+					key: "makeScale",
+					value: function makeScale(x, y, z) {
+
+							this.set(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
+
+							return this;
+					}
+			}, {
+					key: "makeTranslation",
+					value: function makeTranslation(x, y, z) {
+
+							this.set(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
+
+							return this;
+					}
+			}, {
+					key: "makeRotationX",
+					value: function makeRotationX(theta) {
+
+							var c = Math.cos(theta),
+							    s = Math.sin(theta);
+
+							this.set(1, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0, 0, 0, 0, 1);
+
+							return this;
+					}
+			}, {
+					key: "makeRotationY",
+					value: function makeRotationY(theta) {
+
+							var c = Math.cos(theta),
+							    s = Math.sin(theta);
+
+							this.set(c, 0, s, 0, 0, 1, 0, 0, -s, 0, c, 0, 0, 0, 0, 1);
+
+							return this;
+					}
+			}, {
+					key: "makeRotationZ",
+					value: function makeRotationZ(theta) {
+
+							var c = Math.cos(theta),
+							    s = Math.sin(theta);
+
+							this.set(c, -s, 0, 0, s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+
+							return this;
+					}
+			}, {
+					key: "makeRotationAxis",
+					value: function makeRotationAxis(axis, angle) {
+
+							var c = Math.cos(angle);
+							var s = Math.sin(angle);
+
+							var t = 1.0 - c;
+
+							var x = axis.x,
+							    y = axis.y,
+							    z = axis.z;
+							var tx = t * x,
+							    ty = t * y;
+
+							this.set(tx * x + c, tx * y - s * z, tx * z + s * y, 0, tx * y + s * z, ty * y + c, ty * z - s * x, 0, tx * z - s * y, ty * z + s * x, t * z * z + c, 0, 0, 0, 0, 1);
+
+							return this;
+					}
+			}, {
+					key: "makeShear",
+					value: function makeShear(x, y, z) {
+
+							this.set(1, y, z, 0, x, 1, z, 0, x, y, 1, 0, 0, 0, 0, 1);
+
+							return this;
+					}
+			}, {
+					key: "compose",
+					value: function compose(position, quaternion, scale) {
+
+							var te = this.elements;
+
+							var x = quaternion.x,
+							    y = quaternion.y,
+							    z = quaternion.z,
+							    w = quaternion.w;
+							var x2 = x + x,
+							    y2 = y + y,
+							    z2 = z + z;
+							var xx = x * x2,
+							    xy = x * y2,
+							    xz = x * z2;
+							var yy = y * y2,
+							    yz = y * z2,
+							    zz = z * z2;
+							var wx = w * x2,
+							    wy = w * y2,
+							    wz = w * z2;
+
+							var sx = scale.x,
+							    sy = scale.y,
+							    sz = scale.z;
+
+							te[0] = (1 - (yy + zz)) * sx;
+							te[1] = (xy + wz) * sx;
+							te[2] = (xz - wy) * sx;
+							te[3] = 0;
+
+							te[4] = (xy - wz) * sy;
+							te[5] = (1 - (xx + zz)) * sy;
+							te[6] = (yz + wx) * sy;
+							te[7] = 0;
+
+							te[8] = (xz + wy) * sz;
+							te[9] = (yz - wx) * sz;
+							te[10] = (1 - (xx + yy)) * sz;
+							te[11] = 0;
+
+							te[12] = position.x;
+							te[13] = position.y;
+							te[14] = position.z;
+							te[15] = 1;
+
+							return this;
+					}
+			}, {
+					key: "decompose",
+					value: function decompose(position, quaternion, scale) {
+
+							var te = this.elements;
+
+							var n00 = te[0],
+							    n10 = te[1],
+							    n20 = te[2];
+							var n01 = te[4],
+							    n11 = te[5],
+							    n21 = te[6];
+							var n02 = te[8],
+							    n12 = te[9],
+							    n22 = te[10];
+
+							var det = this.determinant();
+
+							var sx = a$2.set(n00, n10, n20).length() * (det < 0 ? -1 : 1);
+							var sy = a$2.set(n01, n11, n21).length();
+							var sz = a$2.set(n02, n12, n22).length();
+
+							var invSX = 1.0 / sx;
+							var invSY = 1.0 / sy;
+							var invSZ = 1.0 / sz;
+
+							position.x = te[12];
+							position.y = te[13];
+							position.z = te[14];
+
+							te[0] *= invSX;te[1] *= invSX;te[2] *= invSX;
+							te[4] *= invSY;te[5] *= invSY;te[6] *= invSY;
+							te[8] *= invSZ;te[9] *= invSZ;te[10] *= invSZ;
+
+							quaternion.setFromRotationMatrix(this);
+
+							te[0] = n00;te[1] = n10;te[2] = n20;
+							te[4] = n01;te[5] = n11;te[6] = n21;
+							te[8] = n02;te[9] = n12;te[10] = n22;
+
+							scale.x = sx;
+							scale.y = sy;
+							scale.z = sz;
+
+							return this;
+					}
+			}, {
+					key: "makePerspective",
+					value: function makePerspective(left, right, top, bottom, near, far) {
+
+							var te = this.elements;
+							var x = 2 * near / (right - left);
+							var y = 2 * near / (top - bottom);
+
+							var a = (right + left) / (right - left);
+							var b = (top + bottom) / (top - bottom);
+							var c = -(far + near) / (far - near);
+							var d = -2 * far * near / (far - near);
+
+							te[0] = x;te[4] = 0;te[8] = a;te[12] = 0;
+							te[1] = 0;te[5] = y;te[9] = b;te[13] = 0;
+							te[2] = 0;te[6] = 0;te[10] = c;te[14] = d;
+							te[3] = 0;te[7] = 0;te[11] = -1;te[15] = 0;
+
+							return this;
+					}
+			}, {
+					key: "makeOrthographic",
+					value: function makeOrthographic(left, right, top, bottom, near, far) {
+
+							var te = this.elements;
+							var w = 1.0 / (right - left);
+							var h = 1.0 / (top - bottom);
+							var p = 1.0 / (far - near);
+
+							var x = (right + left) * w;
+							var y = (top + bottom) * h;
+							var z = (far + near) * p;
+
+							te[0] = 2 * w;te[4] = 0;te[8] = 0;te[12] = -x;
+							te[1] = 0;te[5] = 2 * h;te[9] = 0;te[13] = -y;
+							te[2] = 0;te[6] = 0;te[10] = -2 * p;te[14] = -z;
+							te[3] = 0;te[7] = 0;te[11] = 0;te[15] = 1;
+
+							return this;
+					}
+			}, {
+					key: "equals",
+					value: function equals(m) {
+
+							var te = this.elements;
+							var me = m.elements;
+
+							var result = true;
+							var i = void 0;
+
+							for (i = 0; result && i < 16; ++i) {
+
+									if (te[i] !== me[i]) {
+
+											result = false;
+									}
+							}
+
+							return result;
+					}
+			}]);
+			return Matrix4;
+	}();
+
+	var v$5 = [new Vector3(), new Vector3(), new Vector3(), new Vector3()];
+
+	var Ray = function () {
+		function Ray() {
+			var origin = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3();
+			var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Vector3();
+			classCallCheck(this, Ray);
+
+
+			this.origin = origin;
+
+			this.direction = direction;
 		}
 
-		/**
-		 * Updates movement calculations based on time.
-		 *
-		 * @param {Number} delta - The time since the last update in seconds.
-		 */
+		createClass(Ray, [{
+			key: "set",
+			value: function set$$1(origin, direction) {
 
-		update(delta) {
+				this.origin.copy(origin);
+				this.direction.copy(direction);
 
-			if(this.settings.translation.enabled) {
-
-				this.translate(delta);
-
+				return this;
 			}
+		}, {
+			key: "copy",
+			value: function copy(r) {
 
-		}
+				this.origin.copy(r.origin);
+				this.direction.copy(r.direction);
 
-		/**
-		 * Moves to the given position.
-		 *
-		 * @param {Vector3} position - The position.
-		 * @return {DeltaControls} This instance.
-		 */
-
-		moveTo(position) {
-
-			if(this.settings.general.orbit) {
-
-				this.target.copy(position);
-
-			} else {
-
-				this.position.copy(position);
-
+				return this;
 			}
+		}, {
+			key: "clone",
+			value: function clone() {
 
-			return this;
+				return new this.constructor().copy(this);
+			}
+		}, {
+			key: "at",
+			value: function at(t) {
+				var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Vector3();
 
+
+				return target.copy(this.direction).multiplyScalar(t).add(this.origin);
+			}
+		}, {
+			key: "lookAt",
+			value: function lookAt(target) {
+
+				this.direction.copy(target).sub(this.origin).normalize();
+
+				return this;
+			}
+		}, {
+			key: "recast",
+			value: function recast(t) {
+
+				this.origin.copy(this.at(t, v$5[0]));
+
+				return this;
+			}
+		}, {
+			key: "closestPointToPoint",
+			value: function closestPointToPoint(p) {
+				var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Vector3();
+
+
+				var directionDistance = target.subVectors(p, this.origin).dot(this.direction);
+
+				return directionDistance >= 0.0 ? target.copy(this.direction).multiplyScalar(directionDistance).add(this.origin) : target.copy(this.origin);
+			}
+		}, {
+			key: "distanceSquaredToPoint",
+			value: function distanceSquaredToPoint(p) {
+
+				var directionDistance = v$5[0].subVectors(p, this.origin).dot(this.direction);
+
+				return directionDistance < 0.0 ? this.origin.distanceToSquared(p) : v$5[0].copy(this.direction).multiplyScalar(directionDistance).add(this.origin).distanceToSquared(p);
+			}
+		}, {
+			key: "distanceToPoint",
+			value: function distanceToPoint(p) {
+
+				return Math.sqrt(this.distanceSquaredToPoint(p));
+			}
+		}, {
+			key: "distanceToPlane",
+			value: function distanceToPlane(p) {
+
+				var denominator = p.normal.dot(this.direction);
+
+				var t = denominator !== 0.0 ? -(this.origin.dot(p.normal) + p.constant) / denominator : p.distanceToPoint(this.origin) === 0.0 ? 0.0 : -1.0;
+
+				return t >= 0.0 ? t : null;
+			}
+		}, {
+			key: "distanceSquaredToSegment",
+			value: function distanceSquaredToSegment(v0, v1, pointOnRay, pointOnSegment) {
+
+				var segCenter = v$5[0].copy(v0).add(v1).multiplyScalar(0.5);
+				var segDir = v$5[1].copy(v1).sub(v0).normalize();
+				var diff = v$5[2].copy(this.origin).sub(segCenter);
+
+				var segExtent = v0.distanceTo(v1) * 0.5;
+				var a01 = -this.direction.dot(segDir);
+				var b0 = diff.dot(this.direction);
+				var b1 = -diff.dot(segDir);
+				var c = diff.lengthSq();
+				var det = Math.abs(1.0 - a01 * a01);
+
+				var s0 = void 0,
+				    s1 = void 0,
+				    extDet = void 0,
+				    invDet = void 0,
+				    sqrDist = void 0;
+
+				if (det > 0.0) {
+					s0 = a01 * b1 - b0;
+					s1 = a01 * b0 - b1;
+					extDet = segExtent * det;
+
+					if (s0 >= 0.0) {
+
+						if (s1 >= -extDet) {
+
+							if (s1 <= extDet) {
+								invDet = 1.0 / det;
+								s0 *= invDet;
+								s1 *= invDet;
+								sqrDist = s0 * (s0 + a01 * s1 + 2.0 * b0) + s1 * (a01 * s0 + s1 + 2.0 * b1) + c;
+							} else {
+								s1 = segExtent;
+								s0 = Math.max(0.0, -(a01 * s1 + b0));
+								sqrDist = -s0 * s0 + s1 * (s1 + 2.0 * b1) + c;
+							}
+						} else {
+							s1 = -segExtent;
+							s0 = Math.max(0.0, -(a01 * s1 + b0));
+							sqrDist = -s0 * s0 + s1 * (s1 + 2.0 * b1) + c;
+						}
+					} else {
+
+						if (s1 <= -extDet) {
+							s0 = Math.max(0.0, -(-a01 * segExtent + b0));
+							s1 = s0 > 0.0 ? -segExtent : Math.min(Math.max(-segExtent, -b1), segExtent);
+							sqrDist = -s0 * s0 + s1 * (s1 + 2.0 * b1) + c;
+						} else if (s1 <= extDet) {
+							s0 = 0.0;
+							s1 = Math.min(Math.max(-segExtent, -b1), segExtent);
+							sqrDist = s1 * (s1 + 2.0 * b1) + c;
+						} else {
+							s0 = Math.max(0.0, -(a01 * segExtent + b0));
+							s1 = s0 > 0.0 ? segExtent : Math.min(Math.max(-segExtent, -b1), segExtent);
+							sqrDist = -s0 * s0 + s1 * (s1 + 2.0 * b1) + c;
+						}
+					}
+				} else {
+					s1 = a01 > 0.0 ? -segExtent : segExtent;
+					s0 = Math.max(0.0, -(a01 * s1 + b0));
+					sqrDist = -s0 * s0 + s1 * (s1 + 2.0 * b1) + c;
+				}
+
+				if (pointOnRay !== undefined) {
+
+					pointOnRay.copy(this.direction).multiplyScalar(s0).add(this.origin);
+				}
+
+				if (pointOnSegment !== undefined) {
+
+					pointOnSegment.copy(segDir).multiplyScalar(s1).add(segCenter);
+				}
+
+				return sqrDist;
+			}
+		}, {
+			key: "intersectSphere",
+			value: function intersectSphere(s) {
+				var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Vector3();
+
+
+				var ab = v$5[0].subVectors(s.center, this.origin);
+				var tca = ab.dot(this.direction);
+				var d2 = ab.dot(ab) - tca * tca;
+				var radius2 = s.radius * s.radius;
+
+				var result = null;
+				var thc = void 0,
+				    t0 = void 0,
+				    t1 = void 0;
+
+				if (d2 <= radius2) {
+
+					thc = Math.sqrt(radius2 - d2);
+
+					t0 = tca - thc;
+
+					t1 = tca + thc;
+
+					if (t0 >= 0.0 || t1 >= 0.0) {
+						result = t0 < 0.0 ? this.at(t1, target) : this.at(t0, target);
+					}
+				}
+
+				return result;
+			}
+		}, {
+			key: "intersectsSphere",
+			value: function intersectsSphere(s) {
+
+				return this.distanceToPoint(s.center) <= s.radius;
+			}
+		}, {
+			key: "intersectPlane",
+			value: function intersectPlane(p) {
+				var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Vector3();
+
+
+				var t = this.distanceToPlane(p);
+
+				return t === null ? null : this.at(t, target);
+			}
+		}, {
+			key: "intersectsPlane",
+			value: function intersectsPlane(p) {
+
+				var distanceToPoint = p.distanceToPoint(this.origin);
+
+				return distanceToPoint === 0.0 || p.normal.dot(this.direction) * distanceToPoint < 0.0;
+			}
+		}, {
+			key: "intersectBox",
+			value: function intersectBox(b) {
+				var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Vector3();
+
+
+				var origin = this.origin;
+				var direction = this.direction;
+				var min = b.min;
+				var max = b.max;
+
+				var invDirX = 1.0 / direction.x;
+				var invDirY = 1.0 / direction.y;
+				var invDirZ = 1.0 / direction.z;
+
+				var result = null;
+				var tmin = void 0,
+				    tmax = void 0,
+				    tymin = void 0,
+				    tymax = void 0,
+				    tzmin = void 0,
+				    tzmax = void 0;
+
+				if (invDirX >= 0.0) {
+
+					tmin = (min.x - origin.x) * invDirX;
+					tmax = (max.x - origin.x) * invDirX;
+				} else {
+
+					tmin = (max.x - origin.x) * invDirX;
+					tmax = (min.x - origin.x) * invDirX;
+				}
+
+				if (invDirY >= 0.0) {
+
+					tymin = (min.y - origin.y) * invDirY;
+					tymax = (max.y - origin.y) * invDirY;
+				} else {
+
+					tymin = (max.y - origin.y) * invDirY;
+					tymax = (min.y - origin.y) * invDirY;
+				}
+
+				if (tmin <= tymax && tymin <= tmax) {
+					if (tymin > tmin || tmin !== tmin) {
+
+						tmin = tymin;
+					}
+
+					if (tymax < tmax || tmax !== tmax) {
+
+						tmax = tymax;
+					}
+
+					if (invDirZ >= 0.0) {
+
+						tzmin = (min.z - origin.z) * invDirZ;
+						tzmax = (max.z - origin.z) * invDirZ;
+					} else {
+
+						tzmin = (max.z - origin.z) * invDirZ;
+						tzmax = (min.z - origin.z) * invDirZ;
+					}
+
+					if (tmin <= tzmax && tzmin <= tmax) {
+
+						if (tzmin > tmin || tmin !== tmin) {
+
+							tmin = tzmin;
+						}
+
+						if (tzmax < tmax || tmax !== tmax) {
+
+							tmax = tzmax;
+						}
+
+						if (tmax >= 0.0) {
+
+							result = this.at(tmin >= 0.0 ? tmin : tmax, target);
+						}
+					}
+				}
+
+				return result;
+			}
+		}, {
+			key: "intersectsBox",
+			value: function intersectsBox(b) {
+
+				return this.intersectBox(b, v$5[0]) !== null;
+			}
+		}, {
+			key: "intersectTriangle",
+			value: function intersectTriangle(a, b, c, backfaceCulling, target) {
+
+				var direction = this.direction;
+
+				var diff = v$5[0];
+				var edge1 = v$5[1];
+				var edge2 = v$5[2];
+				var normal = v$5[3];
+
+				var result = null;
+				var DdN = void 0,
+				    sign = void 0,
+				    DdQxE2 = void 0,
+				    DdE1xQ = void 0,
+				    QdN = void 0;
+
+				edge1.subVectors(b, a);
+				edge2.subVectors(c, a);
+				normal.crossVectors(edge1, edge2);
+
+				DdN = direction.dot(normal);
+
+				if (DdN !== 0.0 && !(backfaceCulling && DdN > 0.0)) {
+
+					if (DdN > 0.0) {
+
+						sign = 1.0;
+					} else {
+
+						sign = -1.0;
+						DdN = -DdN;
+					}
+
+					diff.subVectors(this.origin, a);
+					DdQxE2 = sign * direction.dot(edge2.crossVectors(diff, edge2));
+
+					if (DdQxE2 >= 0.0) {
+
+						DdE1xQ = sign * direction.dot(edge1.cross(diff));
+
+						if (DdE1xQ >= 0.0 && DdQxE2 + DdE1xQ <= DdN) {
+							QdN = -sign * diff.dot(normal);
+
+							if (QdN >= 0.0) {
+								result = this.at(QdN / DdN, target);
+							}
+						}
+					}
+				}
+
+				return result;
+			}
+		}, {
+			key: "applyMatrix4",
+			value: function applyMatrix4(m) {
+
+				this.origin.applyMatrix4(m);
+				this.direction.transformDirection(m);
+
+				return this;
+			}
+		}, {
+			key: "equals",
+			value: function equals(r) {
+
+				return r.origin.equals(this.origin) && r.direction.equals(this.direction);
+			}
+		}]);
+		return Ray;
+	}();
+
+	var Spherical = function () {
+		function Spherical() {
+			var radius = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+			var phi = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+			var theta = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+			classCallCheck(this, Spherical);
+
+
+			this.radius = radius;
+
+			this.phi = phi;
+
+			this.theta = theta;
 		}
 
-	}
+		createClass(Spherical, [{
+			key: "set",
+			value: function set$$1(radius, phi, theta) {
 
-	/**
-	 * A handler for the KeyCode Proxy.
-	 *
-	 * @type {Object}
-	 * @private
-	 */
+				this.radius = radius;
+				this.phi = phi;
+				this.theta = theta;
 
-	const KeyCodeHandler = {
+				return this;
+			}
+		}, {
+			key: "copy",
+			value: function copy(s) {
 
-		/**
-		 * Handles key code lookups.
-		 *
-		 * @param {Object} target - The KeyCode enumeration.
-		 * @param {String} name - A potential key code identifier.
-		 * @return {Number} A key code.
-		 */
+				this.radius = s.radius;
+				this.phi = s.phi;
+				this.theta = s.theta;
 
-		get(target, name) {
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
 
-			return (name in target) ?
-				target[name] : (name.length === 1) ?
-					name.toUpperCase().charCodeAt(0) : undefined;
+				return new this.constructor().copy(this);
+			}
+		}, {
+			key: "setFromVector3",
+			value: function setFromVector3(v) {
 
+				this.radius = v.length();
+
+				if (this.radius === 0) {
+
+					this.theta = 0;
+					this.phi = 0;
+				} else {
+					this.theta = Math.atan2(v.x, v.z);
+
+					this.phi = Math.acos(Math.min(Math.max(v.y / this.radius, -1), 1));
+				}
+
+				return this.makeSafe();
+			}
+		}, {
+			key: "makeSafe",
+			value: function makeSafe() {
+
+				this.phi = Math.max(1e-6, Math.min(Math.PI - 1e-6, this.phi));
+
+				return this;
+			}
+		}]);
+		return Spherical;
+	}();
+
+	var SymmetricMatrix3 = function () {
+		function SymmetricMatrix3() {
+			classCallCheck(this, SymmetricMatrix3);
+
+
+			this.elements = new Float32Array([1, 0, 0, 1, 0, 1]);
 		}
+
+		createClass(SymmetricMatrix3, [{
+			key: "set",
+			value: function set$$1(m00, m01, m02, m11, m12, m22) {
+
+				var e = this.elements;
+
+				e[0] = m00;
+				e[1] = m01;e[3] = m11;
+				e[2] = m02;e[4] = m12;e[5] = m22;
+
+				return this;
+			}
+		}, {
+			key: "identity",
+			value: function identity() {
+
+				this.set(1, 0, 0, 1, 0, 1);
+
+				return this;
+			}
+		}, {
+			key: "copy",
+			value: function copy(m) {
+
+				var me = m.elements;
+
+				this.set(me[0], me[1], me[2], me[3], me[4], me[5]);
+
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
+
+				return new this.constructor().copy(this);
+			}
+		}, {
+			key: "toMatrix3",
+			value: function toMatrix3(m) {
+
+				var me = m.elements;
+
+				m.set(me[0], me[1], me[2], me[1], me[3], me[4], me[2], me[4], me[5]);
+			}
+		}, {
+			key: "add",
+			value: function add(m) {
+
+				var te = this.elements;
+				var me = m.elements;
+
+				te[0] += me[0];
+				te[1] += me[1];te[3] += me[3];
+				te[2] += me[2];te[4] += me[4];te[5] += me[5];
+
+				return this;
+			}
+		}, {
+			key: "norm",
+			value: function norm() {
+
+				var e = this.elements;
+
+				var m01m01 = e[1] * e[1];
+				var m02m02 = e[2] * e[2];
+				var m12m12 = e[4] * e[4];
+
+				return Math.sqrt(e[0] * e[0] + m01m01 + m02m02 + m01m01 + e[3] * e[3] + m12m12 + m02m02 + m12m12 + e[5] * e[5]);
+			}
+		}, {
+			key: "off",
+			value: function off() {
+
+				var e = this.elements;
+
+				return Math.sqrt(2 * (e[1] * e[1] + e[2] * e[2] + e[4] * e[4]));
+			}
+		}, {
+			key: "applyToVector3",
+			value: function applyToVector3(v) {
+
+				var x = v.x,
+				    y = v.y,
+				    z = v.z;
+				var e = this.elements;
+
+				v.x = e[0] * x + e[1] * y + e[2] * z;
+				v.y = e[1] * x + e[3] * y + e[4] * z;
+				v.z = e[2] * x + e[4] * y + e[5] * z;
+
+				return v;
+			}
+		}, {
+			key: "equals",
+			value: function equals(m) {
+
+				var te = this.elements;
+				var me = m.elements;
+
+				var result = true;
+				var i = void 0;
+
+				for (i = 0; result && i < 6; ++i) {
+
+					if (te[i] !== me[i]) {
+
+						result = false;
+					}
+				}
+
+				return result;
+			}
+		}], [{
+			key: "calculateIndex",
+			value: function calculateIndex(i, j) {
+
+				return 3 - (3 - i) * (2 - i) / 2 + j;
+			}
+		}]);
+		return SymmetricMatrix3;
+	}();
+
+	var Vector4 = function () {
+		function Vector4() {
+			var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+			var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+			var z = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+			var w = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+			classCallCheck(this, Vector4);
+
+
+			this.x = x;
+
+			this.y = y;
+
+			this.z = z;
+
+			this.w = w;
+		}
+
+		createClass(Vector4, [{
+			key: "set",
+			value: function set$$1(x, y, z, w) {
+
+				this.x = x;
+				this.y = y;
+				this.z = z;
+				this.w = w;
+
+				return this;
+			}
+		}, {
+			key: "copy",
+			value: function copy(v) {
+
+				this.x = v.x;
+				this.y = v.y;
+				this.z = v.z;
+				this.w = v.w;
+
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
+
+				return new this.constructor(this.x, this.y, this.z, this.w);
+			}
+		}, {
+			key: "fromArray",
+			value: function fromArray(array) {
+				var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+
+				this.x = array[offset];
+				this.y = array[offset + 1];
+				this.z = array[offset + 2];
+				this.w = array[offset + 3];
+
+				return this;
+			}
+		}, {
+			key: "toArray",
+			value: function toArray$$1() {
+				var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+				var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+
+				array[offset] = this.x;
+				array[offset + 1] = this.y;
+				array[offset + 2] = this.z;
+				array[offset + 3] = this.w;
+
+				return array;
+			}
+		}, {
+			key: "setAxisAngleFromQuaternion",
+			value: function setAxisAngleFromQuaternion(q) {
+
+				this.w = 2 * Math.acos(q.w);
+
+				var s = Math.sqrt(1 - q.w * q.w);
+
+				if (s < 1e-4) {
+
+					this.x = 1;
+					this.y = 0;
+					this.z = 0;
+				} else {
+
+					this.x = q.x / s;
+					this.y = q.y / s;
+					this.z = q.z / s;
+				}
+
+				return this;
+			}
+		}, {
+			key: "setAxisAngleFromRotationMatrix",
+			value: function setAxisAngleFromRotationMatrix(m) {
+				var E = 0.01;
+
+				var H = 0.1;
+
+				var me = m.elements;
+				var m00 = me[0],
+				    m01 = me[4],
+				    m02 = me[8];
+				var m10 = me[1],
+				    m11 = me[5],
+				    m12 = me[9];
+				var m20 = me[2],
+				    m21 = me[6],
+				    m22 = me[10];
+
+				var angle = void 0;
+				var x = void 0,
+				    y = void 0,
+				    z = void 0;
+				var xx = void 0,
+				    yy = void 0,
+				    zz = void 0;
+				var xy = void 0,
+				    xz = void 0,
+				    yz = void 0;
+				var s = void 0;
+
+				if (Math.abs(m01 - m10) < E && Math.abs(m02 - m20) < E && Math.abs(m12 - m21) < E) {
+					if (Math.abs(m01 + m10) < H && Math.abs(m02 + m20) < H && Math.abs(m12 + m21) < H && Math.abs(m00 + m11 + m22 - 3) < H) {
+						this.set(1, 0, 0, 0);
+					} else {
+						angle = Math.PI;
+
+						xx = (m00 + 1) / 2;
+						yy = (m11 + 1) / 2;
+						zz = (m22 + 1) / 2;
+						xy = (m01 + m10) / 4;
+						xz = (m02 + m20) / 4;
+						yz = (m12 + m21) / 4;
+
+						if (xx > yy && xx > zz) {
+							if (xx < E) {
+
+								x = 0;
+								y = 0.707106781;
+								z = 0.707106781;
+							} else {
+
+								x = Math.sqrt(xx);
+								y = xy / x;
+								z = xz / x;
+							}
+						} else if (yy > zz) {
+							if (yy < E) {
+
+								x = 0.707106781;
+								y = 0;
+								z = 0.707106781;
+							} else {
+
+								y = Math.sqrt(yy);
+								x = xy / y;
+								z = yz / y;
+							}
+						} else {
+							if (zz < E) {
+
+								x = 0.707106781;
+								y = 0.707106781;
+								z = 0;
+							} else {
+
+								z = Math.sqrt(zz);
+								x = xz / z;
+								y = yz / z;
+							}
+						}
+
+						this.set(x, y, z, angle);
+					}
+				} else {
+					s = Math.sqrt((m21 - m12) * (m21 - m12) + (m02 - m20) * (m02 - m20) + (m10 - m01) * (m10 - m01));
+
+					if (Math.abs(s) < 0.001) {
+
+						s = 1;
+					}
+
+					this.x = (m21 - m12) / s;
+					this.y = (m02 - m20) / s;
+					this.z = (m10 - m01) / s;
+					this.w = Math.acos((m00 + m11 + m22 - 1) / 2);
+				}
+
+				return this;
+			}
+		}, {
+			key: "add",
+			value: function add(v) {
+
+				this.x += v.x;
+				this.y += v.y;
+				this.z += v.z;
+				this.w += v.w;
+
+				return this;
+			}
+		}, {
+			key: "addScalar",
+			value: function addScalar(s) {
+
+				this.x += s;
+				this.y += s;
+				this.z += s;
+				this.w += s;
+
+				return this;
+			}
+		}, {
+			key: "addVectors",
+			value: function addVectors(a, b) {
+
+				this.x = a.x + b.x;
+				this.y = a.y + b.y;
+				this.z = a.z + b.z;
+				this.w = a.w + b.w;
+
+				return this;
+			}
+		}, {
+			key: "addScaledVector",
+			value: function addScaledVector(v, s) {
+
+				this.x += v.x * s;
+				this.y += v.y * s;
+				this.z += v.z * s;
+				this.w += v.w * s;
+
+				return this;
+			}
+		}, {
+			key: "sub",
+			value: function sub(v) {
+
+				this.x -= v.x;
+				this.y -= v.y;
+				this.z -= v.z;
+				this.w -= v.w;
+
+				return this;
+			}
+		}, {
+			key: "subScalar",
+			value: function subScalar(s) {
+
+				this.x -= s;
+				this.y -= s;
+				this.z -= s;
+				this.w -= s;
+
+				return this;
+			}
+		}, {
+			key: "subVectors",
+			value: function subVectors(a, b) {
+
+				this.x = a.x - b.x;
+				this.y = a.y - b.y;
+				this.z = a.z - b.z;
+				this.w = a.w - b.w;
+
+				return this;
+			}
+		}, {
+			key: "multiply",
+			value: function multiply(v) {
+
+				this.x *= v.x;
+				this.y *= v.y;
+				this.z *= v.z;
+				this.w *= v.w;
+
+				return this;
+			}
+		}, {
+			key: "multiplyScalar",
+			value: function multiplyScalar(s) {
+
+				this.x *= s;
+				this.y *= s;
+				this.z *= s;
+				this.w *= s;
+
+				return this;
+			}
+		}, {
+			key: "multiplyVectors",
+			value: function multiplyVectors(a, b) {
+
+				this.x = a.x * b.x;
+				this.y = a.y * b.y;
+				this.z = a.z * b.z;
+				this.w = a.w * b.w;
+
+				return this;
+			}
+		}, {
+			key: "divide",
+			value: function divide(v) {
+
+				this.x /= v.x;
+				this.y /= v.y;
+				this.z /= v.z;
+				this.w /= v.w;
+
+				return this;
+			}
+		}, {
+			key: "divideScalar",
+			value: function divideScalar(s) {
+
+				this.x /= s;
+				this.y /= s;
+				this.z /= s;
+				this.w /= s;
+
+				return this;
+			}
+		}, {
+			key: "applyMatrix4",
+			value: function applyMatrix4(m) {
+
+				var x = this.x,
+				    y = this.y,
+				    z = this.z,
+				    w = this.w;
+				var e = m.elements;
+
+				this.x = e[0] * x + e[4] * y + e[8] * z + e[12] * w;
+				this.y = e[1] * x + e[5] * y + e[9] * z + e[13] * w;
+				this.z = e[2] * x + e[6] * y + e[10] * z + e[14] * w;
+				this.w = e[3] * x + e[7] * y + e[11] * z + e[15] * w;
+
+				return this;
+			}
+		}, {
+			key: "negate",
+			value: function negate() {
+
+				this.x = -this.x;
+				this.y = -this.y;
+				this.z = -this.z;
+				this.w = -this.w;
+
+				return this;
+			}
+		}, {
+			key: "dot",
+			value: function dot(v) {
+
+				return this.x * v.x + this.y * v.y + this.z * v.z + this.w * v.w;
+			}
+		}, {
+			key: "manhattanLength",
+			value: function manhattanLength() {
+
+				return Math.abs(this.x) + Math.abs(this.y) + Math.abs(this.z) + Math.abs(this.w);
+			}
+		}, {
+			key: "lengthSquared",
+			value: function lengthSquared() {
+
+				return this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w;
+			}
+		}, {
+			key: "length",
+			value: function length() {
+
+				return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
+			}
+		}, {
+			key: "manhattanDistanceTo",
+			value: function manhattanDistanceTo(v) {
+
+				return Math.abs(this.x - v.x) + Math.abs(this.y - v.y) + Math.abs(this.z - v.z) + Math.abs(this.w - v.w);
+			}
+		}, {
+			key: "distanceToSquared",
+			value: function distanceToSquared(v) {
+
+				var dx = this.x - v.x;
+				var dy = this.y - v.y;
+				var dz = this.z - v.z;
+				var dw = this.w - v.w;
+
+				return dx * dx + dy * dy + dz * dz + dw * dw;
+			}
+		}, {
+			key: "distanceTo",
+			value: function distanceTo(v) {
+
+				return Math.sqrt(this.distanceToSquared(v));
+			}
+		}, {
+			key: "normalize",
+			value: function normalize() {
+
+				return this.divideScalar(this.length());
+			}
+		}, {
+			key: "setLength",
+			value: function setLength(length) {
+
+				return this.normalize().multiplyScalar(length);
+			}
+		}, {
+			key: "min",
+			value: function min(v) {
+
+				this.x = Math.min(this.x, v.x);
+				this.y = Math.min(this.y, v.y);
+				this.z = Math.min(this.z, v.z);
+				this.w = Math.min(this.w, v.w);
+
+				return this;
+			}
+		}, {
+			key: "max",
+			value: function max(v) {
+
+				this.x = Math.max(this.x, v.x);
+				this.y = Math.max(this.y, v.y);
+				this.z = Math.max(this.z, v.z);
+				this.w = Math.max(this.w, v.w);
+
+				return this;
+			}
+		}, {
+			key: "clamp",
+			value: function clamp(min, max) {
+
+				this.x = Math.max(min.x, Math.min(max.x, this.x));
+				this.y = Math.max(min.y, Math.min(max.y, this.y));
+				this.z = Math.max(min.z, Math.min(max.z, this.z));
+				this.w = Math.max(min.w, Math.min(max.w, this.w));
+
+				return this;
+			}
+		}, {
+			key: "floor",
+			value: function floor() {
+
+				this.x = Math.floor(this.x);
+				this.y = Math.floor(this.y);
+				this.z = Math.floor(this.z);
+				this.w = Math.floor(this.w);
+
+				return this;
+			}
+		}, {
+			key: "ceil",
+			value: function ceil() {
+
+				this.x = Math.ceil(this.x);
+				this.y = Math.ceil(this.y);
+				this.z = Math.ceil(this.z);
+				this.w = Math.ceil(this.w);
+
+				return this;
+			}
+		}, {
+			key: "round",
+			value: function round() {
+
+				this.x = Math.round(this.x);
+				this.y = Math.round(this.y);
+				this.z = Math.round(this.z);
+				this.w = Math.round(this.w);
+
+				return this;
+			}
+		}, {
+			key: "lerp",
+			value: function lerp(v, alpha) {
+
+				this.x += (v.x - this.x) * alpha;
+				this.y += (v.y - this.y) * alpha;
+				this.z += (v.z - this.z) * alpha;
+				this.w += (v.w - this.w) * alpha;
+
+				return this;
+			}
+		}, {
+			key: "lerpVectors",
+			value: function lerpVectors(v1, v2, alpha) {
+
+				return this.subVectors(v2, v1).multiplyScalar(alpha).add(v1);
+			}
+		}, {
+			key: "equals",
+			value: function equals(v) {
+
+				return v.x === this.x && v.y === this.y && v.z === this.z && v.w === this.w;
+			}
+		}]);
+		return Vector4;
+	}();
+
+	var PointerButton = {
+
+	  MAIN: 0,
+	  AUXILIARY: 1,
+	  SECONDARY: 2
 
 	};
 
-	/**
-	 * An enumeration of key codes.
-	 *
-	 * Special keys are listed explicitly. Simple character keys [A-Z] are computed
-	 * on demand. For instance, `KeyCode.A` will return the key code for the A key.
-	 *
-	 * @type {Object}
-	 * @property {Number} BACKSPACE - Backspace key.
-	 * @property {Number} TAB - Tab key.
-	 * @property {Number} ENTER - Enter key.
-	 * @property {Number} SHIFT - Shift key.
-	 * @property {Number} CTRL - Control key.
-	 * @property {Number} ALT - Alt key.
-	 * @property {Number} PAUSE - Pause key.
-	 * @property {Number} CAPS_LOCK - Caps lock key.
-	 * @property {Number} ESCAPE - Escape key.
-	 * @property {Number} SPACE - Space bar.
-	 * @property {Number} PAGE_UP - Page up key.
-	 * @property {Number} PAGE_DOWN - Page down key.
-	 * @property {Number} END - End key.
-	 * @property {Number} HOME - Home key.
-	 * @property {Number} LEFT - Left arrow key.
-	 * @property {Number} UP - Up arrow key.
-	 * @property {Number} RIGHT - Right arrow key.
-	 * @property {Number} DOWN - Down arrow key.
-	 * @property {Number} INSERT - Insert key.
-	 * @property {Number} DELETE - Delete key.
-	 * @property {Number} META_LEFT - Left OS key.
-	 * @property {Number} META_RIGHT - Right OS key.
-	 * @property {Number} SELECT - Select key.
-	 * @property {Number} NUMPAD_0 - Numpad 0 key.
-	 * @property {Number} NUMPAD_1 - Numpad 1 key.
-	 * @property {Number} NUMPAD_2 - Numpad 2 key.
-	 * @property {Number} NUMPAD_3 - Numpad 3 key.
-	 * @property {Number} NUMPAD_4 - Numpad 4 key.
-	 * @property {Number} NUMPAD_5 - Numpad 5 key.
-	 * @property {Number} NUMPAD_6 - Numpad 6 key.
-	 * @property {Number} NUMPAD_7 - Numpad 7 key.
-	 * @property {Number} NUMPAD_8 - Numpad 8 key.
-	 * @property {Number} NUMPAD_9 - Numpad 9 key.
-	 * @property {Number} MULTIPLY - Multiply key.
-	 * @property {Number} ADD - Add key.
-	 * @property {Number} SUBTRACT - Subtract key.
-	 * @property {Number} DECIMAL_POINT - Decimal point key.
-	 * @property {Number} DIVIDE - Divide key.
-	 * @property {Number} F1 - F1 key.
-	 * @property {Number} F2 - F2 key.
-	 * @property {Number} F3 - F3 key.
-	 * @property {Number} F4 - F4 key.
-	 * @property {Number} F5 - F5 key.
-	 * @property {Number} F6 - F6 key.
-	 * @property {Number} F7 - F7 key.
-	 * @property {Number} F8 - F8 key.
-	 * @property {Number} F9 - F9 key.
-	 * @property {Number} F10 - F10 key.
-	 * @property {Number} F11 - F11 key.
-	 * @property {Number} F12 - F12 key.
-	 * @property {Number} NUM_LOCK - Num lock key.
-	 * @property {Number} SCROLL_LOCK - Scroll lock key.
-	 * @property {Number} SEMICOLON - Semicolon key.
-	 * @property {Number} EQUAL_SIGN - Equal sign key.
-	 * @property {Number} COMMA - Comma key.
-	 * @property {Number} DASH - Dash key.
-	 * @property {Number} PERIOD - Period key.
-	 * @property {Number} FORWARD_SLASH - Forward slash key.
-	 * @property {Number} GRAVE_ACCENT - Grave accent key.
-	 * @property {Number} OPEN_BRACKET - Open bracket key.
-	 * @property {Number} BACK_SLASH - Back slash key.
-	 * @property {Number} CLOSE_BRACKET - Close bracket key.
-	 * @property {Number} SINGLE_QUOTE - Single quote key.
-	 */
+	var TWO_PI = Math.PI * 2;
 
-	const KeyCode = new Proxy({
+	var v$6 = new Vector3();
 
-		BACKSPACE: 8,
-		TAB: 9,
-		ENTER: 13,
+	var m$1 = new Matrix4();
 
-		SHIFT: 16,
-		CTRL: 17,
-		ALT: 18,
+	var RotationManager = function () {
+			function RotationManager(position, quaternion, target, settings) {
+					classCallCheck(this, RotationManager);
 
-		PAUSE: 19,
-		CAPS_LOCK: 20,
-		ESCAPE: 27,
 
-		SPACE: 32,
-		PAGE_UP: 33,
-		PAGE_DOWN: 34,
-		END: 35,
-		HOME: 36,
-		LEFT: 37,
-		UP: 38,
-		RIGHT: 39,
-		DOWN: 40,
+					this.position = position;
 
-		INSERT: 45,
-		DELETE: 46,
+					this.quaternion = quaternion;
 
-		META_LEFT: 91,
-		META_RIGHT: 92,
-		SELECT: 93,
+					this.target = target;
 
-		NUMPAD_0: 96,
-		NUMPAD_1: 97,
-		NUMPAD_2: 98,
-		NUMPAD_3: 99,
-		NUMPAD_4: 100,
-		NUMPAD_5: 101,
-		NUMPAD_6: 102,
-		NUMPAD_7: 103,
-		NUMPAD_8: 104,
-		NUMPAD_9: 105,
-		MULTIPLY: 106,
-		ADD: 107,
-		SUBTRACT: 109,
-		DECIMAL_POINT: 110,
-		DIVIDE: 111,
+					this.settings = settings;
 
-		F1: 112,
-		F2: 113,
-		F3: 114,
-		F4: 115,
-		F5: 116,
-		F6: 117,
-		F7: 118,
-		F8: 119,
-		F9: 120,
-		F10: 121,
-		F11: 122,
-		F12: 123,
+					this.spherical = new Spherical();
+			}
 
-		NUM_LOCK: 144,
-		SCROLL_LOCK: 145,
+			createClass(RotationManager, [{
+					key: "setPosition",
+					value: function setPosition(position) {
 
-		SEMICOLON: 186,
-		EQUAL_SIGN: 187,
-		COMMA: 188,
-		DASH: 189,
-		PERIOD: 190,
-		FORWARD_SLASH: 191,
-		GRAVE_ACCENT: 192,
+							this.position = position;
 
-		OPEN_BRACKET: 219,
-		BACK_SLASH: 220,
-		CLOSE_BRACKET: 221,
-		SINGLE_QUOTE: 222
+							return this;
+					}
+			}, {
+					key: "setQuaternion",
+					value: function setQuaternion(quaternion) {
+
+							this.quaternion = quaternion;
+
+							return this;
+					}
+			}, {
+					key: "setTarget",
+					value: function setTarget(target) {
+
+							this.target = target;
+
+							return this;
+					}
+			}, {
+					key: "updateQuaternion",
+					value: function updateQuaternion() {
+
+							var settings = this.settings;
+							var rotation = settings.rotation;
+
+							if (settings.general.orbit) {
+
+									m$1.lookAt(v$6.subVectors(this.position, this.target), rotation.pivotOffset, rotation.up);
+							} else {
+
+									m$1.lookAt(v$6.set(0, 0, 0), this.target.setFromSpherical(this.spherical), rotation.up);
+							}
+
+							this.quaternion.setFromRotationMatrix(m$1);
+
+							return this;
+					}
+			}, {
+					key: "adjustSpherical",
+					value: function adjustSpherical(theta, phi) {
+
+							var settings = this.settings;
+							var orbit = settings.general.orbit;
+							var rotation = settings.rotation;
+							var s = this.spherical;
+
+							s.theta = !rotation.invertX ? s.theta - theta : s.theta + theta;
+							s.phi = (orbit || rotation.invertY) && !(orbit && rotation.invertY) ? s.phi - phi : s.phi + phi;
+
+							s.theta = Math.min(Math.max(s.theta, rotation.minAzimuthalAngle), rotation.maxAzimuthalAngle);
+							s.phi = Math.min(Math.max(s.phi, rotation.minPolarAngle), rotation.maxPolarAngle);
+							s.theta %= TWO_PI;
+							s.makeSafe();
+
+							if (orbit) {
+									this.position.setFromSpherical(s).add(this.target);
+							}
+
+							return this;
+					}
+			}, {
+					key: "zoom",
+					value: function zoom(sign) {
+
+							var settings = this.settings;
+							var general = settings.general;
+							var sensitivity = settings.sensitivity;
+							var zoom = settings.zoom;
+							var s = this.spherical;
+
+							var amount = void 0,
+							    min = void 0,
+							    max = void 0;
+
+							if (general.orbit && zoom.enabled) {
+
+									amount = sign * sensitivity.zoom;
+
+									if (zoom.invert) {
+
+											amount = -amount;
+									}
+
+									min = Math.max(zoom.minDistance, 1e-6);
+									max = Math.min(zoom.maxDistance, Infinity);
+
+									s.radius = Math.min(Math.max(s.radius + amount, min), max);
+									this.position.setFromSpherical(s).add(this.target);
+							}
+
+							return this;
+					}
+			}, {
+					key: "update",
+					value: function update(delta) {}
+			}, {
+					key: "lookAt",
+					value: function lookAt(point) {
+
+							var spherical = this.spherical;
+							var position = this.position;
+							var target = this.target;
+
+							target.copy(point);
+
+							if (this.settings.general.orbit) {
+
+									v$6.subVectors(position, target);
+							} else {
+
+									v$6.subVectors(target, position).normalize();
+							}
+
+							spherical.setFromVector3(v$6);
+							spherical.radius = Math.max(spherical.radius, 1e-6);
+							this.updateQuaternion();
+
+							return this;
+					}
+			}, {
+					key: "getViewDirection",
+					value: function getViewDirection() {
+							var view = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3();
+
+
+							view.setFromSpherical(this.spherical).normalize();
+
+							if (this.settings.general.orbit) {
+
+									view.negate();
+							}
+
+							return view;
+					}
+			}]);
+			return RotationManager;
+	}();
+
+	var MovementState = function () {
+			function MovementState() {
+					classCallCheck(this, MovementState);
+
+
+					this.left = false;
+
+					this.right = false;
+
+					this.forward = false;
+
+					this.backward = false;
+
+					this.up = false;
+
+					this.down = false;
+			}
+
+			createClass(MovementState, [{
+					key: "reset",
+					value: function reset() {
+
+							this.left = false;
+							this.right = false;
+							this.forward = false;
+							this.backward = false;
+							this.up = false;
+							this.down = false;
+
+							return this;
+					}
+			}]);
+			return MovementState;
+	}();
+
+	var x = new Vector3(1, 0, 0);
+
+	var y = new Vector3(0, 1, 0);
+
+	var z = new Vector3(0, 0, 1);
+
+	var v$7 = new Vector3();
+
+	var TranslationManager = function () {
+			function TranslationManager(position, quaternion, target, settings) {
+					classCallCheck(this, TranslationManager);
+
+
+					this.position = position;
+
+					this.quaternion = quaternion;
+
+					this.target = target;
+
+					this.settings = settings;
+
+					this.movementState = new MovementState();
+			}
+
+			createClass(TranslationManager, [{
+					key: "setPosition",
+					value: function setPosition(position) {
+
+							this.position = position;
+
+							return this;
+					}
+			}, {
+					key: "setQuaternion",
+					value: function setQuaternion(quaternion) {
+
+							this.quaternion = quaternion;
+
+							return this;
+					}
+			}, {
+					key: "setTarget",
+					value: function setTarget(target) {
+
+							this.target = target;
+
+							return this;
+					}
+			}, {
+					key: "translateOnAxis",
+					value: function translateOnAxis(axis, distance) {
+
+							v$7.copy(axis).applyQuaternion(this.quaternion).multiplyScalar(distance);
+
+							this.position.add(v$7);
+
+							if (this.settings.general.orbit) {
+
+									this.target.add(v$7);
+							}
+					}
+			}, {
+					key: "translate",
+					value: function translate(delta) {
+
+							var sensitivity = this.settings.sensitivity;
+							var state = this.movementState;
+
+							var step = delta * sensitivity.translation;
+
+							if (state.backward) {
+
+									this.translateOnAxis(z, step);
+							} else if (state.forward) {
+
+									this.translateOnAxis(z, -step);
+							}
+
+							if (state.right) {
+
+									this.translateOnAxis(x, step);
+							} else if (state.left) {
+
+									this.translateOnAxis(x, -step);
+							}
+
+							if (state.up) {
+
+									this.translateOnAxis(y, step);
+							} else if (state.down) {
+
+									this.translateOnAxis(y, -step);
+							}
+					}
+			}, {
+					key: "update",
+					value: function update(delta) {
+
+							if (this.settings.translation.enabled) {
+
+									this.translate(delta);
+							}
+					}
+			}, {
+					key: "moveTo",
+					value: function moveTo(position) {
+
+							if (this.settings.general.orbit) {
+
+									this.target.copy(position);
+							} else {
+
+									this.position.copy(position);
+							}
+
+							return this;
+					}
+			}]);
+			return TranslationManager;
+	}();
+
+	var KeyCodeHandler = {
+	  get: function get(target, name) {
+
+	    return name in target ? target[name] : name.length === 1 ? name.toUpperCase().charCodeAt(0) : undefined;
+	  }
+	};
+
+	var KeyCode = new Proxy({
+
+	  BACKSPACE: 8,
+	  TAB: 9,
+	  ENTER: 13,
+
+	  SHIFT: 16,
+	  CTRL: 17,
+	  ALT: 18,
+
+	  PAUSE: 19,
+	  CAPS_LOCK: 20,
+	  ESCAPE: 27,
+
+	  SPACE: 32,
+	  PAGE_UP: 33,
+	  PAGE_DOWN: 34,
+	  END: 35,
+	  HOME: 36,
+	  LEFT: 37,
+	  UP: 38,
+	  RIGHT: 39,
+	  DOWN: 40,
+
+	  INSERT: 45,
+	  DELETE: 46,
+
+	  META_LEFT: 91,
+	  META_RIGHT: 92,
+	  SELECT: 93,
+
+	  NUMPAD_0: 96,
+	  NUMPAD_1: 97,
+	  NUMPAD_2: 98,
+	  NUMPAD_3: 99,
+	  NUMPAD_4: 100,
+	  NUMPAD_5: 101,
+	  NUMPAD_6: 102,
+	  NUMPAD_7: 103,
+	  NUMPAD_8: 104,
+	  NUMPAD_9: 105,
+	  MULTIPLY: 106,
+	  ADD: 107,
+	  SUBTRACT: 109,
+	  DECIMAL_POINT: 110,
+	  DIVIDE: 111,
+
+	  F1: 112,
+	  F2: 113,
+	  F3: 114,
+	  F4: 115,
+	  F5: 116,
+	  F6: 117,
+	  F7: 118,
+	  F8: 119,
+	  F9: 120,
+	  F10: 121,
+	  F11: 122,
+	  F12: 123,
+
+	  NUM_LOCK: 144,
+	  SCROLL_LOCK: 145,
+
+	  SEMICOLON: 186,
+	  EQUAL_SIGN: 187,
+	  COMMA: 188,
+	  DASH: 189,
+	  PERIOD: 190,
+	  FORWARD_SLASH: 191,
+	  GRAVE_ACCENT: 192,
+
+	  OPEN_BRACKET: 219,
+	  BACK_SLASH: 220,
+	  CLOSE_BRACKET: 221,
+	  SINGLE_QUOTE: 222
 
 	}, KeyCodeHandler);
 
-	/**
-	 * General settings.
-	 */
+	var GeneralSettings = function () {
+		function GeneralSettings() {
+			classCallCheck(this, GeneralSettings);
 
-	class GeneralSettings {
-
-		/**
-		 * Constructs new general settings.
-		 */
-
-		constructor() {
-
-			/**
-			 * Indicates whether third person perspective is active.
-			 *
-			 * Should not be modified directly. See {@link DeltaControls#setOrbit}.
-			 *
-			 * @type {Boolean}
-			 */
 
 			this.orbit = true;
-
 		}
 
-		/**
-		 * Copies the given general settings.
-		 *
-		 * @param {GeneralSettings} settings - General settings.
-		 * @return {GeneralSettings} This instance.
-		 */
+		createClass(GeneralSettings, [{
+			key: "copy",
+			value: function copy(settings) {
 
-		copy(settings) {
+				this.orbit = settings.orbit;
 
-			this.orbit = settings.orbit;
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
 
-			return this;
+				return new this.constructor().copy(this);
+			}
+		}]);
+		return GeneralSettings;
+	}();
 
-		}
+	var KeyBindings = function () {
+		function KeyBindings() {
+			classCallCheck(this, KeyBindings);
 
-		/**
-		 * Clones this general settings instance.
-		 *
-		 * @return {GeneralSettings} The cloned general settings.
-		 */
-
-		clone() {
-
-			return new this.constructor().copy(this);
-
-		}
-
-	}
-
-	/**
-	 * Key bindings.
-	 */
-
-	class KeyBindings {
-
-		/**
-		 * Constructs new key bindings.
-		 */
-
-		constructor() {
-
-			/**
-			 * The default key bindings.
-			 *
-			 * @type {Map}
-			 */
 
 			this.defaultActions = new Map();
 
-			/**
-			 * The current key bindings.
-			 *
-			 * @type {Map}
-			 */
-
 			this.actions = new Map();
-
 		}
 
-		/**
-		 * Resets the current bindings to match the default bindings.
-		 *
-		 * @return {KeyBindings} This key bindings instance.
-		 */
+		createClass(KeyBindings, [{
+			key: "reset",
+			value: function reset() {
 
-		reset() {
+				this.actions = new Map(this.defaultActions);
 
-			this.actions = new Map(this.defaultActions);
+				return this;
+			}
+		}, {
+			key: "setDefault",
+			value: function setDefault(actions) {
 
-			return this;
+				this.defaultActions = actions;
 
-		}
+				return this.reset();
+			}
+		}, {
+			key: "copy",
+			value: function copy(keyBindings) {
 
-		/**
-		 * Establishes default key bindings and resets the current bindings.
-		 *
-		 * @param {Map} actions - A map of actions. Each key must be a key code and each value must be a number.
-		 * @return {KeyBindings} This key bindings instance.
-		 */
+				this.defaultActions = new Map(keyBindings.defaultActions);
+				this.actions = new Map(keyBindings.actions);
 
-		setDefault(actions) {
+				return this;
+			}
+		}, {
+			key: "clearDefault",
+			value: function clearDefault() {
 
-			this.defaultActions = actions;
+				this.defaultActions.clear();
 
-			return this.reset();
+				return this;
+			}
+		}, {
+			key: "clear",
+			value: function clear() {
 
-		}
+				this.actions.clear();
 
-		/**
-		 * Copies the given key bindings, including the default bindings.
-		 *
-		 * @param {KeyBindings} keyBindings - Key bindings.
-		 * @return {KeyBindings} This key bindings instance.
-		 */
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
 
-		copy(keyBindings) {
+				return new this.constructor().copy(this);
+			}
+		}, {
+			key: "has",
+			value: function has(keyCode) {
 
-			this.defaultActions = new Map(keyBindings.defaultActions);
-			this.actions = new Map(keyBindings.actions);
+				return this.actions.has(keyCode);
+			}
+		}, {
+			key: "get",
+			value: function get$$1(keyCode) {
 
-			return this;
+				return this.actions.get(keyCode);
+			}
+		}, {
+			key: "set",
+			value: function set$$1(keyCode, action) {
 
-		}
+				this.actions.set(keyCode, action);
 
-		/**
-		 * Clears the default key bindings.
-		 *
-		 * @return {KeyBindings} This key bindings instance.
-		 */
+				return this;
+			}
+		}, {
+			key: "delete",
+			value: function _delete(keyCode) {
 
-		clearDefault() {
+				return this.actions.delete(keyCode);
+			}
+		}, {
+			key: "toJSON",
+			value: function toJSON() {
 
-			this.defaultActions.clear();
+				return {
+					defaultActions: [].concat(toConsumableArray(this.defaultActions)),
+					actions: [].concat(toConsumableArray(this.actions))
+				};
+			}
+		}]);
+		return KeyBindings;
+	}();
 
-			return this;
+	var PointerSettings = function () {
+		function PointerSettings() {
+			classCallCheck(this, PointerSettings);
 
-		}
-
-		/**
-		 * Clears the current key bindings.
-		 *
-		 * @return {KeyBindings} This key bindings instance.
-		 */
-
-		clear() {
-
-			this.actions.clear();
-
-			return this;
-
-		}
-
-		/**
-		 * Clones these key bindings.
-		 *
-		 * @return {KeyBindings} The cloned key bindings.
-		 */
-
-		clone() {
-
-			return new this.constructor().copy(this);
-
-		}
-
-		/**
-		 * Checks if the given key is bound to an action.
-		 *
-		 * @param {KeyCode} keyCode - A key code.
-		 * @return {Boolean} Whether the given key is bound to an action.
-		 */
-
-		has(keyCode) {
-
-			return this.actions.has(keyCode);
-
-		}
-
-		/**
-		 * Returns the action that is bound to the given key.
-		 *
-		 * @param {KeyCode} keyCode - A key code.
-		 * @return {Number} The action, or undefined if the key is not bound to any action.
-		 */
-
-		get(keyCode) {
-
-			return this.actions.get(keyCode);
-
-		}
-
-		/**
-		 * Binds a key to an action.
-		 *
-		 * @param {KeyCode} keyCode - A key code.
-		 * @param {Number} action - An action.
-		 * @return {KeyBindings} This instance.
-		 */
-
-		set(keyCode, action) {
-
-			this.actions.set(keyCode, action);
-
-			return this;
-
-		}
-
-		/**
-		 * Unbinds a key.
-		 *
-		 * @param {KeyCode} keyCode - A key code.
-		 * @return {Boolean} Whether the key bindings existed or not.
-		 */
-
-		delete(keyCode) {
-
-			return this.actions.delete(keyCode);
-
-		}
-
-		/**
-		 * Creates a plain representation of this instance.
-		 *
-		 * @return {String} The plain representation.
-		 */
-
-		toJSON() {
-
-			return {
-				defaultActions: [...this.defaultActions],
-				actions: [...this.actions]
-			};
-
-		}
-
-	}
-
-	/**
-	 * Pointer settings.
-	 */
-
-	class PointerSettings {
-
-		/**
-		 * Constructs new pointer settings.
-		 */
-
-		constructor() {
-
-			/**
-			 * Whether the pointer buttons must be held down to have an effect.
-			 *
-			 * This setting only applies when the pointer is locked.
-			 *
-			 * @type {Boolean}
-			 */
 
 			this.hold = false;
 
-			/**
-			 * Whether the pointer should be locked on click events.
-			 *
-			 * @type {Boolean}
-			 */
-
 			this.lock = true;
-
 		}
 
-		/**
-		 * Copies the given pointer settings.
-		 *
-		 * @param {PointerSettings} settings - Pointer settings.
-		 * @return {PointerSettings} This instance.
-		 */
+		createClass(PointerSettings, [{
+			key: "copy",
+			value: function copy(settings) {
 
-		copy(settings) {
+				this.hold = settings.hold;
+				this.lock = settings.lock;
 
-			this.hold = settings.hold;
-			this.lock = settings.lock;
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
 
-			return this;
+				return new this.constructor().copy(this);
+			}
+		}]);
+		return PointerSettings;
+	}();
 
-		}
+	var RotationSettings = function () {
+			function RotationSettings() {
+					classCallCheck(this, RotationSettings);
 
-		/**
-		 * Clones this pointer settings instance.
-		 *
-		 * @return {PointerSettings} The cloned pointer settings.
-		 */
 
-		clone() {
+					this.up = new Vector3();
+					this.up.copy(y);
 
-			return new this.constructor().copy(this);
+					this.pivotOffset = new Vector3();
 
-		}
+					this.minAzimuthalAngle = -Infinity;
 
-	}
+					this.maxAzimuthalAngle = Infinity;
 
-	/**
-	 * Rotation settings.
-	 */
+					this.minPolarAngle = 0.0;
 
-	class RotationSettings {
+					this.maxPolarAngle = Math.PI;
 
-		/**
-		 * Constructs new rotation settings.
-		 */
+					this.invertX = false;
 
-		constructor() {
+					this.invertY = false;
+			}
 
-			/**
-			 * The up vector. Must be normalized.
-			 *
-			 * @type {Vector3}
-			 */
+			createClass(RotationSettings, [{
+					key: "copy",
+					value: function copy(settings) {
 
-			this.up = new Vector3();
-			this.up.copy(y);
+							this.up.copy(settings.up);
+							this.pivotOffset.copy(settings.pivotOffset);
 
-			/**
-			 * A pivot offset. Only affects third person orbiting.
-			 *
-			 * @type {Vector3}
-			 */
+							this.minAzimuthalAngle = settings.minAzimuthalAngle !== null ? settings.minAzimuthalAngle : -Infinity;
+							this.maxAzimuthalAngle = settings.maxAzimuthalAngle !== null ? settings.maxAzimuthalAngle : Infinity;
 
-			this.pivotOffset = new Vector3();
+							this.minPolarAngle = settings.minPolarAngle;
+							this.maxPolarAngle = settings.maxPolarAngle;
 
-			/**
-			 * The minimum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
-			 *
-			 * @type {Number}
-			 */
+							this.invertX = settings.invertX;
+							this.invertY = settings.invertY;
 
-			this.minAzimuthalAngle = -Infinity;
+							return this;
+					}
+			}, {
+					key: "clone",
+					value: function clone() {
 
-			/**
-			 * The maximum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
-			 *
-			 * @type {Number}
-			 */
+							return new this.constructor().copy(this);
+					}
+			}]);
+			return RotationSettings;
+	}();
 
-			this.maxAzimuthalAngle = Infinity;
+	var SensitivitySettings = function () {
+		function SensitivitySettings() {
+			classCallCheck(this, SensitivitySettings);
 
-			/**
-			 * The minimum polar angle in radians. Range: [0, Math.PI].
-			 *
-			 * @type {Number}
-			 */
-
-			this.minPolarAngle = 0.0;
-
-			/**
-			 * The maximum polar angle in radians. Range: [0, Math.PI].
-			 *
-			 * @type {Number}
-			 */
-
-			this.maxPolarAngle = Math.PI;
-
-			/**
-			 * Indicates whether the horizontal rotation should be inverted.
-			 *
-			 * @type {Boolean}
-			 */
-
-			this.invertX = false;
-
-			/**
-			 * Indicates whether the vertical rotation should be inverted.
-			 *
-			 * @type {Boolean}
-			 */
-
-			this.invertY = false;
-
-		}
-
-		/**
-		 * Copies the given rotation settings.
-		 *
-		 * @param {RotationSettings} settings - Rotation settings.
-		 * @return {RotationSettings} This instance.
-		 */
-
-		copy(settings) {
-
-			this.up.copy(settings.up);
-			this.pivotOffset.copy(settings.pivotOffset);
-
-			this.minAzimuthalAngle = (settings.minAzimuthalAngle !== null) ? settings.minAzimuthalAngle : -Infinity;
-			this.maxAzimuthalAngle = (settings.maxAzimuthalAngle !== null) ? settings.maxAzimuthalAngle : Infinity;
-
-			this.minPolarAngle = settings.minPolarAngle;
-			this.maxPolarAngle = settings.maxPolarAngle;
-
-			this.invertX = settings.invertX;
-			this.invertY = settings.invertY;
-
-			return this;
-
-		}
-
-		/**
-		 * Clones this rotation settings instance.
-		 *
-		 * @return {RotationSettings} The cloned rotation settings.
-		 */
-
-		clone() {
-
-			return new this.constructor().copy(this);
-
-		}
-
-	}
-
-	/**
-	 * Sensitivity settings.
-	 */
-
-	class SensitivitySettings {
-
-		/**
-		 * Constructs new sensitivity settings.
-		 */
-
-		constructor() {
-
-			/**
-			 * The rotation sensitivity.
-			 *
-			 * @type {Number}
-			 */
 
 			this.rotation = 0.0025;
 
-			/**
-			 * The translation sensitivity.
-			 *
-			 * @type {Number}
-			 */
-
 			this.translation = 1.0;
 
-			/**
-			 * The zoom sensitivity.
-			 *
-			 * @type {Number}
-			 */
-
 			this.zoom = 0.1;
-
 		}
 
-		/**
-		 * Copies the given sensitivity settings.
-		 *
-		 * @param {SensitivitySettings} settings - Sensitivity settings.
-		 * @return {SensitivitySettings} This instance.
-		 */
+		createClass(SensitivitySettings, [{
+			key: "copy",
+			value: function copy(settings) {
 
-		copy(settings) {
+				this.rotation = settings.rotation;
+				this.translation = settings.translation;
+				this.zoom = settings.zoom;
 
-			this.rotation = settings.rotation;
-			this.translation = settings.translation;
-			this.zoom = settings.zoom;
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
 
-			return this;
+				return new this.constructor().copy(this);
+			}
+		}]);
+		return SensitivitySettings;
+	}();
 
-		}
+	var TranslationSettings = function () {
+		function TranslationSettings() {
+			classCallCheck(this, TranslationSettings);
 
-		/**
-		 * Clones these sensitivity settings.
-		 *
-		 * @return {SensitivitySettings} The cloned sensitivity settings.
-		 */
-
-		clone() {
-
-			return new this.constructor().copy(this);
-
-		}
-
-	}
-
-	/**
-	 * Translation settings.
-	 */
-
-	class TranslationSettings {
-
-		/**
-		 * Constructs new translation settings.
-		 */
-
-		constructor() {
-
-			/**
-			 * Whether positional translation is enabled.
-			 *
-			 * @type {Boolean}
-			 */
 
 			this.enabled = true;
-
 		}
 
-		/**
-		 * Copies the given translation settings.
-		 *
-		 * @param {TranslationSettings} settings - Translation settings.
-		 * @return {TranslationSettings} This instance.
-		 */
+		createClass(TranslationSettings, [{
+			key: "copy",
+			value: function copy(settings) {
 
-		copy(settings) {
+				this.enabled = settings.enabled;
 
-			this.enabled = settings.enabled;
+				return this;
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
 
-			return this;
+				return new this.constructor().copy(this);
+			}
+		}]);
+		return TranslationSettings;
+	}();
 
-		}
+	var ZoomSettings = function () {
+			function ZoomSettings() {
+					classCallCheck(this, ZoomSettings);
 
-		/**
-		 * Clones this translation settings instance.
-		 *
-		 * @return {RotationSettings} The cloned translation settings.
-		 */
 
-		clone() {
+					this.enabled = true;
 
-			return new this.constructor().copy(this);
+					this.invert = false;
 
-		}
+					this.minDistance = 1e-6;
 
-	}
-
-	/**
-	 * Zoom settings.
-	 */
-
-	class ZoomSettings {
-
-		/**
-		 * Constructs new zoom settings.
-		 */
-
-		constructor() {
-
-			/**
-			 * Whether zooming is enabled.
-			 *
-			 * @type {Boolean}
-			 */
-
-			this.enabled = true;
-
-			/**
-			 * Indicates whether the zoom controls should be inverted.
-			 *
-			 * @type {Boolean}
-			 */
-
-			this.invert = false;
-
-			/**
-			 * The minimum zoom distance.
-			 *
-			 * @type {Number}
-			 */
-
-			this.minDistance = 1e-6;
-
-			/**
-			 * The maximum zoom distance.
-			 *
-			 * @type {Number}
-			 */
-
-			this.maxDistance = Infinity;
-
-		}
-
-		/**
-		 * Copies the given zoom settings.
-		 *
-		 * @param {ZoomSettings} settings - Zoom settings.
-		 * @return {ZoomSettings} This instance.
-		 */
-
-		copy(settings) {
-
-			this.enabled = settings.enabled;
-			this.invert = settings.invert;
-			this.minDistance = settings.minDistance;
-			this.maxDistance = settings.maxDistance;
-
-			return this;
-
-		}
-
-		/**
-		 * Clones this zoom settings instance.
-		 *
-		 * @return {ZoomSettings} The cloned zoom settings.
-		 */
-
-		clone() {
-
-			return new this.constructor().copy(this);
-
-		}
-
-	}
-
-	/**
-	 * Control settings.
-	 */
-
-	class Settings {
-
-		/**
-		 * Constructs new settings.
-		 */
-
-		constructor() {
-
-			/**
-			 * General settings.
-			 *
-			 * @type {GeneralSettings}
-			 */
-
-			this.general = new GeneralSettings();
-
-			/**
-			 * Key bindings.
-			 *
-			 * @type {KeyBindings}
-			 */
-
-			this.keyBindings = new KeyBindings();
-			this.keyBindings.setDefault(new Map([
-
-				[KeyCode.W, Action.MOVE_FORWARD],
-				[KeyCode.UP, Action.MOVE_FORWARD],
-
-				[KeyCode.A, Action.MOVE_LEFT],
-				[KeyCode.LEFT, Action.MOVE_LEFT],
-
-				[KeyCode.S, Action.MOVE_BACKWARD],
-				[KeyCode.DOWN, Action.MOVE_BACKWARD],
-
-				[KeyCode.D, Action.MOVE_RIGHT],
-				[KeyCode.RIGHT, Action.MOVE_RIGHT],
-
-				[KeyCode.X, Action.MOVE_DOWN],
-				[KeyCode.SPACE, Action.MOVE_UP],
-
-				[KeyCode.PAGE_DOWN, Action.ZOOM_OUT],
-				[KeyCode.PAGE_UP, Action.ZOOM_IN]
-
-			]));
-
-			/**
-			 * Pointer settings.
-			 *
-			 * @type {PointerSettings}
-			 */
-
-			this.pointer = new PointerSettings();
-
-			/**
-			 * Rotation settings.
-			 *
-			 * @type {RotationSettings}
-			 */
-
-			this.rotation = new RotationSettings();
-
-			/**
-			 * Sensitivity settings.
-			 *
-			 * @type {SensitivitySettings}
-			 */
-
-			this.sensitivity = new SensitivitySettings();
-
-			/**
-			 * Translation settings.
-			 *
-			 * @type {TranslationSettings}
-			 */
-
-			this.translation = new TranslationSettings();
-
-			/**
-			 * Zoom settings.
-			 *
-			 * @type {ZoomSettings}
-			 */
-
-			this.zoom = new ZoomSettings();
-
-		}
-
-		/**
-		 * Copies the given settings.
-		 *
-		 * @param {Settings} settings - Settings.
-		 * @return {Settings} This instance.
-		 */
-
-		copy(settings) {
-
-			this.general.copy(settings.general);
-			this.keyBindings.copy(settings.keyBindings);
-			this.pointer.copy(settings.pointer);
-			this.rotation.copy(settings.rotation);
-			this.sensitivity.copy(settings.sensitivity);
-			this.translation.copy(settings.translation);
-			this.zoom.copy(settings.zoom);
-
-			return this;
-
-		}
-
-		/**
-		 * Clones these settings.
-		 *
-		 * @return {Settings} The cloned settings.
-		 */
-
-		clone() {
-
-			return new this.constructor().copy(this);
-
-		}
-
-		/**
-		 * Saves the current settings in the form of a JSON blob.
-		 *
-		 * @return {DOMString} A URL to the exported settings.
-		 */
-
-		toDataURL() {
-
-			return URL.createObjectURL(new Blob([JSON.stringify(this)], { type: "text/json" }));
-
-		}
-
-	}
-
-	/**
-	 * The Strategy interface.
-	 */
-
-	class Strategy {
-
-		/**
-		 * Executes this strategy.
-		 *
-		 * @throws {Error} An error is thrown if the method is not overridden.
-		 * @param {Boolean} flag - A flag.
-		 */
-
-		execute(flag) {
-
-			throw new Error("Strategy#execute method not implemented!");
-
-		}
-
-	}
-
-	/**
-	 * A movement strategy.
-	 */
-
-	class MovementStrategy extends Strategy {
-
-		/**
-		 * Constructs a new movement strategy.
-		 *
-		 * @param {MovementState} movementState - A movement state.
-		 * @param {Direction} direction - A direction.
-		 */
-
-		constructor(movementState, direction) {
-
-			super();
-
-			/**
-			 * A movement state.
-			 *
-			 * @type {MovementState}
-			 * @private
-			 */
-
-			this.movementState = movementState;
-
-			/**
-			 * A direction.
-			 *
-			 * @type {Direction}
-			 * @private
-			 */
-
-			this.direction = direction;
-
-		}
-
-		/**
-		 * Executes this strategy.
-		 *
-		 * @param {Boolean} flag - A flag.
-		 */
-
-		execute(flag) {
-
-			const state = this.movementState;
-
-			switch(this.direction) {
-
-				case Direction.FORWARD:
-					state.forward = flag;
-					break;
-
-				case Direction.LEFT:
-					state.left = flag;
-					break;
-
-				case Direction.BACKWARD:
-					state.backward = flag;
-					break;
-
-				case Direction.RIGHT:
-					state.right = flag;
-					break;
-
-				case Direction.DOWN:
-					state.down = flag;
-					break;
-
-				case Direction.UP:
-					state.up = flag;
-					break;
-
+					this.maxDistance = Infinity;
 			}
 
+			createClass(ZoomSettings, [{
+					key: "copy",
+					value: function copy(settings) {
+
+							this.enabled = settings.enabled;
+							this.invert = settings.invert;
+							this.minDistance = settings.minDistance;
+							this.maxDistance = settings.maxDistance;
+
+							return this;
+					}
+			}, {
+					key: "clone",
+					value: function clone() {
+
+							return new this.constructor().copy(this);
+					}
+			}]);
+			return ZoomSettings;
+	}();
+
+	var Settings = function () {
+			function Settings() {
+					classCallCheck(this, Settings);
+
+
+					this.general = new GeneralSettings();
+
+					this.keyBindings = new KeyBindings();
+					this.keyBindings.setDefault(new Map([[KeyCode.W, Action.MOVE_FORWARD], [KeyCode.UP, Action.MOVE_FORWARD], [KeyCode.A, Action.MOVE_LEFT], [KeyCode.LEFT, Action.MOVE_LEFT], [KeyCode.S, Action.MOVE_BACKWARD], [KeyCode.DOWN, Action.MOVE_BACKWARD], [KeyCode.D, Action.MOVE_RIGHT], [KeyCode.RIGHT, Action.MOVE_RIGHT], [KeyCode.X, Action.MOVE_DOWN], [KeyCode.SPACE, Action.MOVE_UP], [KeyCode.PAGE_DOWN, Action.ZOOM_OUT], [KeyCode.PAGE_UP, Action.ZOOM_IN]]));
+
+					this.pointer = new PointerSettings();
+
+					this.rotation = new RotationSettings();
+
+					this.sensitivity = new SensitivitySettings();
+
+					this.translation = new TranslationSettings();
+
+					this.zoom = new ZoomSettings();
+			}
+
+			createClass(Settings, [{
+					key: "copy",
+					value: function copy(settings) {
+
+							this.general.copy(settings.general);
+							this.keyBindings.copy(settings.keyBindings);
+							this.pointer.copy(settings.pointer);
+							this.rotation.copy(settings.rotation);
+							this.sensitivity.copy(settings.sensitivity);
+							this.translation.copy(settings.translation);
+							this.zoom.copy(settings.zoom);
+
+							return this;
+					}
+			}, {
+					key: "clone",
+					value: function clone() {
+
+							return new this.constructor().copy(this);
+					}
+			}, {
+					key: "toDataURL",
+					value: function toDataURL() {
+
+							return URL.createObjectURL(new Blob([JSON.stringify(this)], { type: "text/json" }));
+					}
+			}]);
+			return Settings;
+	}();
+
+	var Strategy = function () {
+		function Strategy() {
+			classCallCheck(this, Strategy);
 		}
 
-	}
-	/**
-	 * An enumeration of movement directions.
-	 *
-	 * @type {Object}
-	 * @property {Number} FORWARD - Move forward.
-	 * @property {Number} LEFT - Move left.
-	 * @property {Number} BACKWARD - Move backward.
-	 * @property {Number} RIGHT - Move right.
-	 * @property {Number} DOWN - Move down.
-	 * @property {Number} UP - Move up.
-	 */
+		createClass(Strategy, [{
+			key: "execute",
+			value: function execute(flag) {
 
-	const Direction = {
+				throw new Error("Strategy#execute method not implemented!");
+			}
+		}]);
+		return Strategy;
+	}();
+
+	var MovementStrategy = function (_Strategy) {
+		inherits(MovementStrategy, _Strategy);
+
+		function MovementStrategy(movementState, direction) {
+			classCallCheck(this, MovementStrategy);
+
+			var _this = possibleConstructorReturn(this, (MovementStrategy.__proto__ || Object.getPrototypeOf(MovementStrategy)).call(this));
+
+			_this.movementState = movementState;
+
+			_this.direction = direction;
+
+			return _this;
+		}
+
+		createClass(MovementStrategy, [{
+			key: "execute",
+			value: function execute(flag) {
+
+				var state = this.movementState;
+
+				switch (this.direction) {
+
+					case Direction.FORWARD:
+						state.forward = flag;
+						break;
+
+					case Direction.LEFT:
+						state.left = flag;
+						break;
+
+					case Direction.BACKWARD:
+						state.backward = flag;
+						break;
+
+					case Direction.RIGHT:
+						state.right = flag;
+						break;
+
+					case Direction.DOWN:
+						state.down = flag;
+						break;
+
+					case Direction.UP:
+						state.up = flag;
+						break;
+
+				}
+			}
+		}]);
+		return MovementStrategy;
+	}(Strategy);
+
+
+	var Direction = {
 
 		FORWARD: 0,
 		LEFT: 1,
@@ -4683,880 +5981,484 @@
 
 	};
 
-	/**
-	 * A zoom strategy.
-	 */
+	var ZoomStrategy = function (_Strategy) {
+			inherits(ZoomStrategy, _Strategy);
 
-	class ZoomStrategy extends Strategy {
+			function ZoomStrategy(rotationManager, zoomIn) {
+					classCallCheck(this, ZoomStrategy);
 
-		/**
-		 * Constructs a new zoom strategy.
-		 *
-		 * @param {RotationManager} rotationManager - A rotation manager.
-		 * @param {Boolean} zoomIn - Whether this strategy should zoom in.
-		 */
+					var _this = possibleConstructorReturn(this, (ZoomStrategy.__proto__ || Object.getPrototypeOf(ZoomStrategy)).call(this));
 
-		constructor(rotationManager, zoomIn) {
+					_this.rotationManager = rotationManager;
 
-			super();
+					_this.zoomIn = zoomIn;
 
-			/**
-			 * A rotation manager.
-			 *
-			 * @type {RotationManager}
-			 * @private
-			 */
-
-			this.rotationManager = rotationManager;
-
-			/**
-			 * Whether this strategy should zoom in.
-			 *
-			 * @type {Boolean}
-			 * @private
-			 */
-
-			this.zoomIn = zoomIn;
-
-		}
-
-		/**
-		 * Executes this strategy.
-		 *
-		 * @param {Boolean} flag - A flag.
-		 */
-
-		execute(flag) {
-
-			// Only act on key down events.
-			if(flag) {
-
-				this.rotationManager.zoom(this.zoomIn ? -1 : 1);
-
+					return _this;
 			}
 
-		}
+			createClass(ZoomStrategy, [{
+					key: "execute",
+					value: function execute(flag) {
+							if (flag) {
 
-	}
+									this.rotationManager.zoom(this.zoomIn ? -1 : 1);
+							}
+					}
+			}]);
+			return ZoomStrategy;
+	}(Strategy);
 
-	/**
-	 * Movement controls driven by user input.
-	 *
-	 * @implements {Disposable}
-	 * @implements {EventListener}
-	 */
+	var DeltaControls = function () {
+		function DeltaControls() {
+			var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+			var quaternion = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+			var dom = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : document.body;
+			classCallCheck(this, DeltaControls);
 
-	class DeltaControls {
-
-		/**
-		 * Constructs new controls.
-		 *
-		 * @param {Vector3} position - A position.
-		 * @param {Quaternion} quaternion - A quaternion.
-		 * @param {HTMLElement} [dom=document.body] - A DOM element. Acts as the primary event target.
-		 */
-
-		constructor(position = null, quaternion = null, dom = document.body) {
-
-			/**
-			 * A DOM element. Acts as the primary event target.
-			 *
-			 * @type {HTMLElement}
-			 * @private
-			 */
 
 			this.dom = dom;
 
-			/**
-			 * The position that will be modified.
-			 *
-			 * @type {Vector3}
-			 * @private
-			 */
-
 			this.position = position;
 
-			/**
-			 * The quaternion that will be modified.
-			 *
-			 * @type {Quaternion}
-			 * @private
-			 */
-
 			this.quaternion = quaternion;
-
-			/**
-			 * The target.
-			 *
-			 * @type {Vector3}
-			 * @private
-			 */
 
 			this.target = new Vector3();
 
-			/**
-			 * The control settings.
-			 *
-			 * @type {Settings}
-			 */
-
 			this.settings = new Settings();
-
-			/**
-			 * A rotation manager.
-			 *
-			 * @type {RotationManager}
-			 * @private
-			 */
 
 			this.rotationManager = new RotationManager(position, quaternion, this.target, this.settings);
 
-			/**
-			 * A translation manager.
-			 *
-			 * @type {TranslationManager}
-			 * @private
-			 */
-
 			this.translationManager = new TranslationManager(position, quaternion, this.target, this.settings);
 
-			/**
-			 * A map that links actions to specific strategies.
-			 *
-			 * @type {Map}
-			 * @private
-			 */
+			this.strategies = function (rotationManager, translationManager) {
 
-			this.strategies = ((rotationManager, translationManager) => {
+				var state = translationManager.movementState;
 
-				const state = translationManager.movementState;
-
-				return new Map([
-
-					[Action.MOVE_FORWARD, new MovementStrategy(state, Direction.FORWARD)],
-					[Action.MOVE_LEFT, new MovementStrategy(state, Direction.LEFT)],
-					[Action.MOVE_BACKWARD, new MovementStrategy(state, Direction.BACKWARD)],
-					[Action.MOVE_RIGHT, new MovementStrategy(state, Direction.RIGHT)],
-					[Action.MOVE_DOWN, new MovementStrategy(state, Direction.DOWN)],
-					[Action.MOVE_UP, new MovementStrategy(state, Direction.UP)],
-					[Action.ZOOM_OUT, new ZoomStrategy(rotationManager, false)],
-					[Action.ZOOM_IN, new ZoomStrategy(rotationManager, true)]
-
-				]);
-
-			})(this.rotationManager, this.translationManager);
-
-			/**
-			 * A screen position.
-			 *
-			 * @type {Vector2}
-			 * @private
-			 */
+				return new Map([[Action.MOVE_FORWARD, new MovementStrategy(state, Direction.FORWARD)], [Action.MOVE_LEFT, new MovementStrategy(state, Direction.LEFT)], [Action.MOVE_BACKWARD, new MovementStrategy(state, Direction.BACKWARD)], [Action.MOVE_RIGHT, new MovementStrategy(state, Direction.RIGHT)], [Action.MOVE_DOWN, new MovementStrategy(state, Direction.DOWN)], [Action.MOVE_UP, new MovementStrategy(state, Direction.UP)], [Action.ZOOM_OUT, new ZoomStrategy(rotationManager, false)], [Action.ZOOM_IN, new ZoomStrategy(rotationManager, true)]]);
+			}(this.rotationManager, this.translationManager);
 
 			this.lastScreenPosition = new Vector2();
 
-			/**
-			 * Indicates whether the user is currently holding the pointer button down.
-			 *
-			 * @type {Boolean}
-			 * @private
-			 */
-
 			this.dragging = false;
-
-			/**
-			 * The internal enabled state.
-			 *
-			 * @type {Boolean}
-			 * @private
-			 */
 
 			this.enabled = false;
 
-			if(position !== null && quaternion !== null) {
+			if (position !== null && quaternion !== null) {
 
 				this.lookAt(this.target);
 
-				if(dom !== null) {
+				if (dom !== null) {
 
 					this.setEnabled();
+				}
+			}
+		}
 
+		createClass(DeltaControls, [{
+			key: "getDom",
+			value: function getDom() {
+
+				return this.dom;
+			}
+		}, {
+			key: "getPosition",
+			value: function getPosition() {
+
+				return this.position;
+			}
+		}, {
+			key: "getQuaternion",
+			value: function getQuaternion() {
+
+				return this.quaternion;
+			}
+		}, {
+			key: "getTarget",
+			value: function getTarget() {
+				var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3();
+
+
+				target.copy(this.target);
+
+				if (!this.settings.general.orbit) {
+					target.add(this.position);
 				}
 
+				return target;
 			}
+		}, {
+			key: "getViewDirection",
+			value: function getViewDirection() {
+				var view = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Vector3();
 
-		}
 
-		/**
-		 * Returns the DOM element.
-		 *
-		 * @return {HTMLElement} The DOM element.
-		 */
-
-		getDom() {
-
-			return this.dom;
-
-		}
-
-		/**
-		 * Returns the position.
-		 *
-		 * @return {Vector3} The position.
-		 */
-
-		getPosition() {
-
-			return this.position;
-
-		}
-
-		/**
-		 * Returns the quaternion.
-		 *
-		 * @return {Quaternion} The quaternion.
-		 */
-
-		getQuaternion() {
-
-			return this.quaternion;
-
-		}
-
-		/**
-		 * Returns the current target.
-		 *
-		 * @param {Vector3} [target] - A vector to store the target in. If none is provided, a new one will be created.
-		 * @return {Vector3} The current target.
-		 */
-
-		getTarget(target = new Vector3()) {
-
-			target.copy(this.target);
-
-			if(!this.settings.general.orbit) {
-
-				// The target is relative to the position.
-				target.add(this.position);
-
+				return this.rotationManager.getViewDirection(view);
 			}
+		}, {
+			key: "setDom",
+			value: function setDom(dom) {
 
-			return target;
+				var enabled = this.enabled;
 
-		}
+				if (dom !== null) {
 
-		/**
-		 * Returns the current view direction.
-		 *
-		 * @param {Vector3} [view] - A vector to store the direction in. If none is provided, a new one will be created.
-		 * @return {Vector3} The normalized view direction.
-		 */
+					if (enabled) {
 
-		getViewDirection(view = new Vector3()) {
+						this.setEnabled(false);
+					}
 
-			return this.rotationManager.getViewDirection(view);
-
-		}
-
-		/**
-		 * Sets the DOM element.
-		 *
-		 * @param {HTMLElement} dom - The new DOM element.
-		 * @return {DeltaControls} This instance.
-		 */
-
-		setDom(dom) {
-
-			const enabled = this.enabled;
-
-			if(dom !== null) {
-
-				if(enabled) {
-
-					this.setEnabled(false);
-
+					this.dom = dom;
+					this.setEnabled(enabled);
 				}
 
-				this.dom = dom;
-				this.setEnabled(enabled);
-
+				return this;
 			}
+		}, {
+			key: "setPosition",
+			value: function setPosition(position) {
 
-			return this;
+				this.position = position;
+				this.rotationManager.setPosition(position);
+				this.translationManager.setPosition(position);
 
-		}
-
-		/**
-		 * Sets the position vector.
-		 *
-		 * @param {Vector3} position - The new position vector.
-		 * @return {DeltaControls} This instance.
-		 */
-
-		setPosition(position) {
-
-			this.position = position;
-			this.rotationManager.setPosition(position);
-			this.translationManager.setPosition(position);
-
-			return this.lookAt(this.target);
-
-		}
-
-		/**
-		 * Sets the quaternion.
-		 *
-		 * @param {Quaternion} quaternion - The new quaternion.
-		 * @return {DeltaControls} This instance.
-		 */
-
-		setQuaternion(quaternion) {
-
-			this.quaternion = quaternion;
-			this.rotationManager.setQuaternion(quaternion);
-			this.translationManager.setQuaternion(quaternion);
-
-			return this.lookAt(this.target);
-
-		}
-
-		/**
-		 * Sets the target.
-		 *
-		 * @param {Vector3} target - The new target.
-		 * @return {DeltaControls} This instance.
-		 */
-
-		setTarget(target) {
-
-			this.target = target;
-			this.rotationManager.setTarget(target);
-			this.translationManager.setTarget(target);
-
-			return this.lookAt(this.target);
-
-		}
-
-		/**
-		 * Changes the control mode to first or third person perspective.
-		 *
-		 * @param {Boolean} orbit - Whether the third person perspective should be enabled.
-		 * @return {DeltaControls} This instance.
-		 */
-
-		setOrbitEnabled(orbit) {
-
-			const general = this.settings.general;
-
-			if(general.orbit !== orbit) {
-
-				this.getTarget(this.target);
-				general.orbit = orbit;
-				this.lookAt(this.target);
-
+				return this.lookAt(this.target);
 			}
+		}, {
+			key: "setQuaternion",
+			value: function setQuaternion(quaternion) {
 
-			return this;
+				this.quaternion = quaternion;
+				this.rotationManager.setQuaternion(quaternion);
+				this.translationManager.setQuaternion(quaternion);
 
-		}
+				return this.lookAt(this.target);
+			}
+		}, {
+			key: "setTarget",
+			value: function setTarget(target) {
 
-		/**
-		 * Copies the given controls.
-		 *
-		 * @param {DeltaControls} controls - A controls instance.
-		 * @return {DeltaControls} This instance.
-		 */
+				this.target = target;
+				this.rotationManager.setTarget(target);
+				this.translationManager.setTarget(target);
 
-		copy(controls) {
+				return this.lookAt(this.target);
+			}
+		}, {
+			key: "setOrbitEnabled",
+			value: function setOrbitEnabled(orbit) {
 
-			this.dom = controls.getDom();
-			this.position = controls.getPosition();
-			this.quaternion = controls.getQuaternion();
-			this.target = controls.getTarget();
+				var general = this.settings.general;
 
-			this.settings.copy(controls.settings);
+				if (general.orbit !== orbit) {
 
-			this.rotationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);
-			this.translationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);
-
-			return this.lookAt(this.target);
-
-		}
-
-		/**
-		 * Clones this instance.
-		 *
-		 * @return {DeltaControls} the cloned controls.
-		 */
-
-		clone() {
-
-			return new this.constructor().copy(this);
-
-		}
-
-		/**
-		 * Handles pointer move events.
-		 *
-		 * @private
-		 * @param {MouseEvent} event - A pointer event.
-		 */
-
-		handlePointerMoveEvent(event) {
-
-			const settings = this.settings;
-			const pointer = settings.pointer;
-			const sensitivity = settings.sensitivity;
-			const rotationManager = this.rotationManager;
-			const lastScreenPosition = this.lastScreenPosition;
-
-			let movementX, movementY;
-
-			if(document.pointerLockElement === this.dom) {
-
-				if(!pointer.hold || this.dragging) {
-
-					rotationManager.adjustSpherical(
-						event.movementX * sensitivity.rotation,
-						event.movementY * sensitivity.rotation
-					).updateQuaternion();
-
+					this.getTarget(this.target);
+					general.orbit = orbit;
+					this.lookAt(this.target);
 				}
 
-			} else {
-
-				// Compensate for inconsistent web APIs.
-				movementX = event.screenX - lastScreenPosition.x;
-				movementY = event.screenY - lastScreenPosition.y;
-
-				lastScreenPosition.set(event.screenX, event.screenY);
-
-				rotationManager.adjustSpherical(
-					movementX * sensitivity.rotation,
-					movementY * sensitivity.rotation
-				).updateQuaternion();
-
+				return this;
 			}
+		}, {
+			key: "copy",
+			value: function copy(controls) {
 
-		}
+				this.dom = controls.getDom();
+				this.position = controls.getPosition();
+				this.quaternion = controls.getQuaternion();
+				this.target = controls.getTarget();
 
-		/**
-		 * Handles touch move events.
-		 *
-		 * @private
-		 * @param {TouchEvent} event - A touch event.
-		 */
+				this.settings.copy(controls.settings);
 
-		handleTouchMoveEvent(event) {
+				this.rotationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);
+				this.translationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);
 
-			const sensitivity = this.settings.sensitivity;
-			const rotationManager = this.rotationManager;
-			const lastScreenPosition = this.lastScreenPosition;
-			const touch = event.touches[0];
+				return this.lookAt(this.target);
+			}
+		}, {
+			key: "clone",
+			value: function clone() {
 
-			// Compensate for inconsistent web APIs.
-			const movementX = touch.screenX - lastScreenPosition.x;
-			const movementY = touch.screenY - lastScreenPosition.y;
+				return new this.constructor().copy(this);
+			}
+		}, {
+			key: "handlePointerMoveEvent",
+			value: function handlePointerMoveEvent(event) {
 
-			lastScreenPosition.set(touch.screenX, touch.screenY);
+				var settings = this.settings;
+				var pointer = settings.pointer;
+				var sensitivity = settings.sensitivity;
+				var rotationManager = this.rotationManager;
+				var lastScreenPosition = this.lastScreenPosition;
 
-			// Don't produce a mouse move event.
-			event.preventDefault();
+				var movementX = void 0,
+				    movementY = void 0;
 
-			rotationManager.adjustSpherical(
-				movementX * sensitivity.rotation,
-				movementY * sensitivity.rotation
-			).updateQuaternion();
+				if (document.pointerLockElement === this.dom) {
 
-		}
+					if (!pointer.hold || this.dragging) {
 
-		/**
-		 * Handles main pointer button events.
-		 *
-		 * @private
-		 * @param {MouseEvent} event - A pointer event.
-		 * @param {Boolean} pressed - Whether the pointer button has been pressed down.
-		 */
-
-		handleMainPointerButton(event, pressed) {
-
-			this.dragging = pressed;
-
-			if(this.settings.pointer.lock) {
-
-				this.setPointerLocked();
-
-			} else {
-
-				if(pressed) {
-
-					this.lastScreenPosition.set(event.screenX, event.screenY);
-					this.dom.addEventListener("mousemove", this);
-
+						rotationManager.adjustSpherical(event.movementX * sensitivity.rotation, event.movementY * sensitivity.rotation).updateQuaternion();
+					}
 				} else {
+					movementX = event.screenX - lastScreenPosition.x;
+					movementY = event.screenY - lastScreenPosition.y;
 
-					this.dom.removeEventListener("mousemove", this);
+					lastScreenPosition.set(event.screenX, event.screenY);
 
+					rotationManager.adjustSpherical(movementX * sensitivity.rotation, movementY * sensitivity.rotation).updateQuaternion();
 				}
-
 			}
+		}, {
+			key: "handleTouchMoveEvent",
+			value: function handleTouchMoveEvent(event) {
 
-		}
+				var sensitivity = this.settings.sensitivity;
+				var rotationManager = this.rotationManager;
+				var lastScreenPosition = this.lastScreenPosition;
+				var touch = event.touches[0];
 
-		/**
-		 * Handles auxiliary pointer button events.
-		 *
-		 * @private
-		 * @param {MouseEvent} event - A pointer event.
-		 * @param {Boolean} pressed - Whether the pointer button has been pressed down.
-		 */
+				var movementX = touch.screenX - lastScreenPosition.x;
+				var movementY = touch.screenY - lastScreenPosition.y;
 
-		handleAuxiliaryPointerButton(event, pressed) {
-
-		}
-
-		/**
-		 * Handles secondary pointer button events.
-		 *
-		 * @private
-		 * @param {MouseEvent} event - A pointer event.
-		 * @param {Boolean} pressed - Whether the pointer button has been pressed down.
-		 */
-
-		handleSecondaryPointerButton(event, pressed) {
-
-		}
-
-		/**
-		 * Handles pointer events.
-		 *
-		 * @private
-		 * @param {MouseEvent} event - A pointer event.
-		 * @param {Boolean} pressed - Whether the pointer button has been pressed down.
-		 */
-
-		handlePointerButtonEvent(event, pressed) {
-
-			event.preventDefault();
-
-			switch(event.button) {
-
-				case PointerButton.MAIN:
-					this.handleMainPointerButton(event, pressed);
-					break;
-
-				case PointerButton.AUXILIARY:
-					this.handleAuxiliaryPointerButton(event, pressed);
-					break;
-
-				case PointerButton.SECONDARY:
-					this.handleSecondaryPointerButton(event, pressed);
-					break;
-
-			}
-
-		}
-
-		/**
-		 * Handles touch start and end events.
-		 *
-		 * @private
-		 * @param {TouchEvent} event - A touch event.
-		 * @param {Boolean} start - Whether the event is a touch start event.
-		 */
-
-		handleTouchEvent(event, start) {
-
-			const touch = event.touches[0];
-
-			// Don't produce mouse events.
-			event.preventDefault();
-
-			if(start) {
-
-				this.lastScreenPosition.set(touch.screenX, touch.screenY);
-				this.dom.addEventListener("touchmove", this);
-
-			} else {
-
-				this.dom.removeEventListener("touchmove", this);
-
-			}
-
-		}
-
-		/**
-		 * Handles keyboard events.
-		 *
-		 * @private
-		 * @param {KeyboardEvent} event - A keyboard event.
-		 * @param {Boolean} pressed - Whether the key has been pressed down.
-		 */
-
-		handleKeyboardEvent(event, pressed) {
-
-			const keyBindings = this.settings.keyBindings;
-
-			if(keyBindings.has(event.keyCode)) {
+				lastScreenPosition.set(touch.screenX, touch.screenY);
 
 				event.preventDefault();
 
-				this.strategies.get(keyBindings.get(event.keyCode)).execute(pressed);
-
+				rotationManager.adjustSpherical(movementX * sensitivity.rotation, movementY * sensitivity.rotation).updateQuaternion();
 			}
+		}, {
+			key: "handleMainPointerButton",
+			value: function handleMainPointerButton(event, pressed) {
 
-		}
+				this.dragging = pressed;
 
-		/**
-		 * Handles wheel events.
-		 *
-		 * @private
-		 * @param {WheelEvent} event - A wheel event.
-		 */
+				if (this.settings.pointer.lock) {
 
-		handleWheelEvent(event) {
+					this.setPointerLocked();
+				} else {
 
-			this.rotationManager.zoom(Math.sign(event.deltaY));
+					if (pressed) {
 
-		}
+						this.lastScreenPosition.set(event.screenX, event.screenY);
+						this.dom.addEventListener("mousemove", this);
+					} else {
 
-		/**
-		 * Enables or disables controls based on the pointer lock state.
-		 *
-		 * @private
-		 */
-
-		handlePointerLockEvent() {
-
-			if(document.pointerLockElement === this.dom) {
-
-				this.dom.addEventListener("mousemove", this);
-
-			} else {
-
-				this.dom.removeEventListener("mousemove", this);
-
+						this.dom.removeEventListener("mousemove", this);
+					}
+				}
 			}
+		}, {
+			key: "handleAuxiliaryPointerButton",
+			value: function handleAuxiliaryPointerButton(event, pressed) {}
+		}, {
+			key: "handleSecondaryPointerButton",
+			value: function handleSecondaryPointerButton(event, pressed) {}
+		}, {
+			key: "handlePointerButtonEvent",
+			value: function handlePointerButtonEvent(event, pressed) {
 
-		}
+				event.preventDefault();
 
-		/**
-		 * Handles events.
-		 *
-		 * @param {Event} event - An event.
-		 */
+				switch (event.button) {
 
-		handleEvent(event) {
+					case PointerButton.MAIN:
+						this.handleMainPointerButton(event, pressed);
+						break;
 
-			switch(event.type) {
+					case PointerButton.AUXILIARY:
+						this.handleAuxiliaryPointerButton(event, pressed);
+						break;
 
-				case "mousemove":
-					this.handlePointerMoveEvent(event);
-					break;
-
-				case "touchmove":
-					this.handleTouchMoveEvent(event);
-					break;
-
-				case "mousedown":
-					this.handlePointerButtonEvent(event, true);
-					break;
-
-				case "mouseup":
-					this.handlePointerButtonEvent(event, false);
-					break;
-
-				case "touchstart":
-					this.handleTouchEvent(event, true);
-					break;
-
-				case "touchend":
-					this.handleTouchEvent(event, false);
-					break;
-
-				case "keydown":
-					this.handleKeyboardEvent(event, true);
-					break;
-
-				case "keyup":
-					this.handleKeyboardEvent(event, false);
-					break;
-
-				case "wheel":
-					this.handleWheelEvent(event);
-					break;
-
-				case "pointerlockchange":
-					this.handlePointerLockEvent();
-					break;
-
-			}
-
-		}
-
-		/**
-		 * Updates movement and rotation calculations based on time.
-		 *
-		 * This method should be called before a new frame is rendered.
-		 *
-		 * @param {Number} delta - The time since the last update in seconds.
-		 */
-
-		update(delta) {
-
-			this.rotationManager.update(delta);
-			this.translationManager.update(delta);
-
-		}
-
-		/**
-		 * Moves to the given position.
-		 *
-		 * @param {Vector3} position - The position.
-		 * @return {DeltaControls} This instance.
-		 */
-
-		moveTo(position) {
-
-			this.rotationManager.moveTo(position);
-
-			return this;
-
-		}
-
-		/**
-		 * Looks at the given point.
-		 *
-		 * @param {Vector3} point - The target point.
-		 * @return {DeltaControls} This instance.
-		 */
-
-		lookAt(point) {
-
-			this.rotationManager.lookAt(point);
-
-			return this;
-
-		}
-
-		/**
-		 * Locks or unlocks the pointer.
-		 *
-		 * @private
-		 * @param {Boolean} [locked=true] - Whether the pointer should be locked.
-		 */
-
-		setPointerLocked(locked = true) {
-
-			if(locked) {
-
-				if(document.pointerLockElement !== this.dom && this.dom.requestPointerLock !== undefined) {
-
-					this.dom.requestPointerLock();
+					case PointerButton.SECONDARY:
+						this.handleSecondaryPointerButton(event, pressed);
+						break;
 
 				}
-
-			} else if(document.exitPointerLock !== undefined) {
-
-				document.exitPointerLock();
-
 			}
+		}, {
+			key: "handleTouchEvent",
+			value: function handleTouchEvent(event, start) {
 
-		}
+				var touch = event.touches[0];
 
-		/**
-		 * Enables or disables the controls.
-		 *
-		 * @param {Boolean} [enabled=true] - Whether the controls should be enabled or disabled.
-		 * @return {DeltaControls} This instance.
-		 */
+				event.preventDefault();
 
-		setEnabled(enabled = true) {
+				if (start) {
 
-			const dom = this.dom;
+					this.lastScreenPosition.set(touch.screenX, touch.screenY);
+					this.dom.addEventListener("touchmove", this);
+				} else {
 
-			this.translationManager.movementState.reset();
-
-			if(enabled && !this.enabled) {
-
-				document.addEventListener("pointerlockchange", this);
-				document.body.addEventListener("keyup", this);
-				document.body.addEventListener("keydown", this);
-				dom.addEventListener("mousedown", this);
-				dom.addEventListener("mouseup", this);
-				dom.addEventListener("touchstart", this);
-				dom.addEventListener("touchend", this);
-				dom.addEventListener("wheel", this);
-
-			} else if(!enabled && this.enabled) {
-
-				document.removeEventListener("pointerlockchange", this);
-				document.body.removeEventListener("keyup", this);
-				document.body.removeEventListener("keydown", this);
-				dom.removeEventListener("mousedown", this);
-				dom.removeEventListener("mouseup", this);
-				dom.removeEventListener("touchstart", this);
-				dom.removeEventListener("touchend", this);
-				dom.removeEventListener("wheel", this);
-				dom.removeEventListener("mousemove", this);
-				dom.removeEventListener("touchmove", this);
-
+					this.dom.removeEventListener("touchmove", this);
+				}
 			}
+		}, {
+			key: "handleKeyboardEvent",
+			value: function handleKeyboardEvent(event, pressed) {
 
-			this.setPointerLocked(false);
-			this.enabled = enabled;
+				var keyBindings = this.settings.keyBindings;
 
-			return this;
+				if (keyBindings.has(event.keyCode)) {
 
-		}
+					event.preventDefault();
 
-		/**
-		 * Removes all event listeners and unlocks the pointer.
-		 */
+					this.strategies.get(keyBindings.get(event.keyCode)).execute(pressed);
+				}
+			}
+		}, {
+			key: "handleWheelEvent",
+			value: function handleWheelEvent(event) {
 
-		dispose() {
+				this.rotationManager.zoom(Math.sign(event.deltaY));
+			}
+		}, {
+			key: "handlePointerLockEvent",
+			value: function handlePointerLockEvent() {
 
-			this.setEnabled(false);
+				if (document.pointerLockElement === this.dom) {
 
-		}
+					this.dom.addEventListener("mousemove", this);
+				} else {
 
-	}
+					this.dom.removeEventListener("mousemove", this);
+				}
+			}
+		}, {
+			key: "handleEvent",
+			value: function handleEvent(event) {
 
-	/**
-	 * A collection of core components.
-	 *
-	 * @module delta-controls/core
-	 */
+				switch (event.type) {
 
-	/**
-	 * A collection of classes related to input values.
-	 *
-	 * @module delta-controls/input
-	 */
+					case "mousemove":
+						this.handlePointerMoveEvent(event);
+						break;
 
-	/**
-	 * A collection of managers.
-	 *
-	 * @module delta-controls/managers
-	 */
+					case "touchmove":
+						this.handleTouchMoveEvent(event);
+						break;
 
-	/**
-	 * A collection of specialised settings.
-	 *
-	 * @module delta-controls/settings
-	 */
+					case "mousedown":
+						this.handlePointerButtonEvent(event, true);
+						break;
 
-	/**
-	 * A collection of control strategies.
-	 *
-	 * @module delta-controls/strategies
-	 */
+					case "mouseup":
+						this.handlePointerButtonEvent(event, false);
+						break;
 
-	/**
-	 * Exposure of the library components.
-	 *
-	 * @module delta-controls
-	 */
+					case "touchstart":
+						this.handleTouchEvent(event, true);
+						break;
+
+					case "touchend":
+						this.handleTouchEvent(event, false);
+						break;
+
+					case "keydown":
+						this.handleKeyboardEvent(event, true);
+						break;
+
+					case "keyup":
+						this.handleKeyboardEvent(event, false);
+						break;
+
+					case "wheel":
+						this.handleWheelEvent(event);
+						break;
+
+					case "pointerlockchange":
+						this.handlePointerLockEvent();
+						break;
+
+				}
+			}
+		}, {
+			key: "update",
+			value: function update(delta) {
+
+				this.rotationManager.update(delta);
+				this.translationManager.update(delta);
+			}
+		}, {
+			key: "moveTo",
+			value: function moveTo(position) {
+
+				this.rotationManager.moveTo(position);
+
+				return this;
+			}
+		}, {
+			key: "lookAt",
+			value: function lookAt(point) {
+
+				this.rotationManager.lookAt(point);
+
+				return this;
+			}
+		}, {
+			key: "setPointerLocked",
+			value: function setPointerLocked() {
+				var locked = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+
+				if (locked) {
+
+					if (document.pointerLockElement !== this.dom && this.dom.requestPointerLock !== undefined) {
+
+						this.dom.requestPointerLock();
+					}
+				} else if (document.exitPointerLock !== undefined) {
+
+					document.exitPointerLock();
+				}
+			}
+		}, {
+			key: "setEnabled",
+			value: function setEnabled() {
+				var enabled = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+
+				var dom = this.dom;
+
+				this.translationManager.movementState.reset();
+
+				if (enabled && !this.enabled) {
+
+					document.addEventListener("pointerlockchange", this);
+					document.body.addEventListener("keyup", this);
+					document.body.addEventListener("keydown", this);
+					dom.addEventListener("mousedown", this);
+					dom.addEventListener("mouseup", this);
+					dom.addEventListener("touchstart", this);
+					dom.addEventListener("touchend", this);
+					dom.addEventListener("wheel", this);
+				} else if (!enabled && this.enabled) {
+
+					document.removeEventListener("pointerlockchange", this);
+					document.body.removeEventListener("keyup", this);
+					document.body.removeEventListener("keydown", this);
+					dom.removeEventListener("mousedown", this);
+					dom.removeEventListener("mouseup", this);
+					dom.removeEventListener("touchstart", this);
+					dom.removeEventListener("touchend", this);
+					dom.removeEventListener("wheel", this);
+					dom.removeEventListener("mousemove", this);
+					dom.removeEventListener("touchmove", this);
+				}
+
+				this.setPointerLocked(false);
+				this.enabled = enabled;
+
+				return this;
+			}
+		}, {
+			key: "dispose",
+			value: function dispose() {
+
+				this.setEnabled(false);
+			}
+		}]);
+		return DeltaControls;
+	}();
 
 	exports.Action = Action;
 	exports.DeltaControls = DeltaControls;
