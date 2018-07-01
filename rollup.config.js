@@ -49,11 +49,11 @@ export default [lib, demo].concat((process.env.NODE_ENV === "production") ? [
 			file: "build/" + pkg.name + ".min.js"
 		}),
 
-		plugins: [resolve()].concat([babel(), minify({
+		plugins: [resolve(), babel(), minify({
 			bannerNewLine: true,
 			sourceMap: false,
 			comments: false
-		})])
+		})]
 
 	}),
 
@@ -63,11 +63,11 @@ export default [lib, demo].concat((process.env.NODE_ENV === "production") ? [
 			file: "public/demo/index.min.js"
 		}),
 
-		plugins: [resolve()].concat([babel(), minify({
+		plugins: [resolve(), babel(), minify({
 			bannerNewLine: true,
 			sourceMap: false,
 			comments: false
-		})])
+		})]
 
 	})
 
