@@ -21,6 +21,8 @@ npm install math-ds delta-controls
 
 ## Usage
 
+Note: This library is compatible with the math classes from [three.js](https://threejs.org).
+
 ```javascript
 import { Quaternion, Vector3 } from "math-ds";
 import { DeltaControls } from "delta-controls";
