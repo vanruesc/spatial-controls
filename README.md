@@ -2,7 +2,7 @@
 
 [![Build status](https://travis-ci.org/vanruesc/delta-controls.svg?branch=master)](https://travis-ci.org/vanruesc/delta-controls) 
 [![npm version](https://badge.fury.io/js/delta-controls.svg)](http://badge.fury.io/js/delta-controls) 
-[![Dependencies](https://david-dm.org/vanruesc/delta-controls.svg?branch=master)](https://david-dm.org/vanruesc/delta-controls)
+[![Peer dependencies](https://david-dm.org/vanruesc/delta-controls/peer-status.svg)](https://david-dm.org/vanruesc/delta-controls?type=peer)
 
 A 3D movement controller that supports multiple movement modes and configurable input settings.
 
