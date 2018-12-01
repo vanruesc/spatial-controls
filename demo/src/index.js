@@ -87,7 +87,15 @@ window.addEventListener("load", function main(event) {
 	manager.addEventListener("load", onLoad);
 
 	// Register demos.
-	manager.addDemo(new DeltaControlsDemo());
+	const demo = new DeltaControlsDemo();
+
+	if(demo.id !== window.location.hash.slice(1)) {
+
+		window.location.hash = "";
+
+	}
+
+	manager.addDemo(demo);
 
 	// Start rendering.
 	render();

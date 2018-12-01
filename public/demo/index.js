@@ -8797,7 +8797,13 @@
     });
     manager.addEventListener("change", onChange);
     manager.addEventListener("load", onLoad);
-    manager.addDemo(new DeltaControlsDemo());
+    var demo = new DeltaControlsDemo();
+
+    if (demo.id !== window.location.hash.slice(1)) {
+      window.location.hash = "";
+    }
+
+    manager.addDemo(demo);
     render();
   });
   window.addEventListener("resize", function () {
