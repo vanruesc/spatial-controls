@@ -1,5 +1,5 @@
 /**
- * delta-controls v2.0.4 build Wed Oct 31 2018
+ * delta-controls v2.0.4 build Sat Dec 01 2018
  * https://github.com/vanruesc/delta-controls
  * Copyright 2018 Raoul van Rüschen, Zlib
  */
