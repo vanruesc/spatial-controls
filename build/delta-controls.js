@@ -1,5 +1,5 @@
 /**
- * delta-controls v2.0.4 build Fri Feb 01 2019
+ * delta-controls v2.0.4 build Thu Apr 25 2019
  * https://github.com/vanruesc/delta-controls
  * Copyright 2019 Raoul van Rüschen, Zlib
  */
@@ -4743,7 +4743,7 @@
 	  }, {
 	    key: "delete",
 	    value: function _delete(keyCode) {
-	      return this.actions.delete(keyCode);
+	      return this.actions["delete"](keyCode);
 	    }
 	  }, {
 	    key: "toJSON",
@@ -5412,22 +5412,22 @@
 
 	exports.Action = Action;
 	exports.DeltaControls = DeltaControls;
-	exports.KeyCode = KeyCode;
-	exports.PointerButton = PointerButton;
-	exports.MovementState = MovementState;
-	exports.RotationManager = RotationManager;
-	exports.TranslationManager = TranslationManager;
+	exports.Direction = Direction;
 	exports.GeneralSettings = GeneralSettings;
 	exports.KeyBindings = KeyBindings;
+	exports.KeyCode = KeyCode;
+	exports.MovementState = MovementState;
+	exports.MovementStrategy = MovementStrategy;
+	exports.PointerButton = PointerButton;
 	exports.PointerSettings = PointerSettings;
+	exports.RotationManager = RotationManager;
 	exports.RotationSettings = RotationSettings;
 	exports.SensitivitySettings = SensitivitySettings;
-	exports.TranslationSettings = TranslationSettings;
 	exports.Settings = Settings;
-	exports.ZoomSettings = ZoomSettings;
-	exports.Direction = Direction;
-	exports.MovementStrategy = MovementStrategy;
 	exports.Strategy = Strategy;
+	exports.TranslationManager = TranslationManager;
+	exports.TranslationSettings = TranslationSettings;
+	exports.ZoomSettings = ZoomSettings;
 	exports.ZoomStrategy = ZoomStrategy;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
