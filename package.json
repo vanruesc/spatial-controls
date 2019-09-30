@@ -47,7 +47,6 @@
 		"build": "rollup -c",
 		"build:production": "cross-env NODE_ENV=production rollup -c",
 		"doc": "esdoc",
-		"deploy": "cpx demo/assets/** public/demo",
 		"pretest": "npm run lint && npm run build:production",
 		"test": "npm run ava",
 		"prepack": "npm test"
@@ -70,8 +69,7 @@
 		"@babel/core": "7.x.x",
 		"@babel/preset-env": "7.x.x",
 		"ava": "2.x.x",
-		"cpx": "1.x.x",
-		"cross-env": "5.x.x",
+		"cross-env": "6.x.x",
 		"dat.gui": "0.x.x",
 		"esdoc": "1.x.x",
 		"esdoc-standard-plugin": "1.x.x",
