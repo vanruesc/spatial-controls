@@ -1,9 +1,3 @@
-/**
- * A collection of specialised settings.
- *
- * @module delta-controls/settings
- */
-
 export { GeneralSettings } from "./GeneralSettings.js";
 export { KeyBindings } from "./KeyBindings.js";
 export { PointerSettings } from "./PointerSettings.js";

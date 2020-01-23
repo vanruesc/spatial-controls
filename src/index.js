@@ -1,9 +1,3 @@
-/**
- * Exposure of the library components.
- *
- * @module delta-controls
- */
-
 export {
 	Action,
 	DeltaControls
