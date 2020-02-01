@@ -38,7 +38,7 @@ export class TranslationSettings {
 	/**
 	 * Clones this translation settings instance.
 	 *
-	 * @return {RotationSettings} The cloned translation settings.
+	 * @return {TranslationSettings} The cloned translation settings.
 	 */
 
 	clone() {
