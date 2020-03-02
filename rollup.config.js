@@ -1,5 +1,6 @@
-import babel from "rollup-plugin-babel";
 import resolve from "@rollup/plugin-node-resolve";
+import babel from "rollup-plugin-babel";
+import { eslint } from "rollup-plugin-eslint";
 import { terser } from "rollup-plugin-terser";
 
 const pkg = require("./package.json");
@@ -13,7 +14,7 @@ const banner = `/**
  */`;
 
 const production = (process.env.NODE_ENV === "production");
-const external = Object.keys(pkg.peerDependencies).concat(["three"]);
+const external = Object.keys(pkg.peerDependencies);
 const globals = Object.assign({}, ...external.map((value) => ({
 	[value]: value.replace(/-/g, "").toUpperCase()
 })));
@@ -23,7 +24,9 @@ const lib = {
 	module: {
 		input: "src/index.js",
 		external,
-		plugins: [resolve()],
+		plugins: [resolve(), eslint({
+			include: ["src/**/*.js", "demo/**/*.js"]
+		})],
 		output: [{
 			file: pkg.module,
 			format: "esm",
@@ -41,9 +44,9 @@ const lib = {
 	},
 
 	main: {
-		input: production ? pkg.main : "src/index.js",
+		input: pkg.main,
 		external,
-		plugins: production ? [babel()] : [],
+		plugins: [babel()],
 		output: {
 			file: pkg.main,
 			format: "umd",
@@ -68,4 +71,45 @@ const lib = {
 
 };
 
-export default production ? [lib.module, lib.main, lib.min] : [lib.main];
+const demo = {
+
+	module: {
+		input: "demo/src/index.js",
+		plugins: [resolve(), eslint({
+			include: ["src/**/*.js", "demo/**/*.js"]
+		})],
+		output: [{
+			file: "public/demo/index.js",
+			format: "esm"
+		}].concat(production ? [{
+			file: "public/demo/index.min.js",
+			format: "esm"
+		}] : [])
+	},
+
+	main: {
+		input: production ? "public/demo/index.js" : "demo/src/index.js",
+		plugins: production ? [babel()] : [resolve(), eslint({
+			include: ["src/**/*.js", "demo/**/*.js"]
+		})],
+		output: [{
+			file: "public/demo/index.js",
+			format: "iife"
+		}]
+	},
+
+	min: {
+		input: "public/demo/index.min.js",
+		plugins: [terser(), babel()],
+		output: {
+			file: "public/demo/index.min.js",
+			format: "iife"
+		}
+	}
+
+};
+
+export default production ? [
+	lib.module, lib.main, lib.min,
+	demo.module, demo.main, demo.min
+] : [demo.main];
