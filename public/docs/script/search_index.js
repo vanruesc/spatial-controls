@@ -1,116 +1,116 @@
 window.esdocSearchIndex = [
   [
-    "delta-controls/src/core/action.js~action",
+    "delta-controls~action",
     "variable/index.html#static-variable-Action",
-    "<span>Action</span> <span class=\"search-result-import-path\">delta-controls/src/core/Action.js</span>",
+    "<span>Action</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "variable"
   ],
   [
-    "delta-controls/src/core/deltacontrols.js~deltacontrols",
+    "delta-controls~deltacontrols",
     "class/src/core/DeltaControls.js~DeltaControls.html",
-    "<span>DeltaControls</span> <span class=\"search-result-import-path\">delta-controls/src/core/DeltaControls.js</span>",
+    "<span>DeltaControls</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/strategies/movementstrategy.js~direction",
+    "delta-controls~direction",
     "variable/index.html#static-variable-Direction",
-    "<span>Direction</span> <span class=\"search-result-import-path\">delta-controls/src/strategies/MovementStrategy.js</span>",
+    "<span>Direction</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "variable"
   ],
   [
-    "delta-controls/src/settings/generalsettings.js~generalsettings",
+    "delta-controls~generalsettings",
     "class/src/settings/GeneralSettings.js~GeneralSettings.html",
-    "<span>GeneralSettings</span> <span class=\"search-result-import-path\">delta-controls/src/settings/GeneralSettings.js</span>",
+    "<span>GeneralSettings</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/settings/keybindings.js~keybindings",
+    "delta-controls~keybindings",
     "class/src/settings/KeyBindings.js~KeyBindings.html",
-    "<span>KeyBindings</span> <span class=\"search-result-import-path\">delta-controls/src/settings/KeyBindings.js</span>",
+    "<span>KeyBindings</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/input/keycode.js~keycode",
+    "delta-controls~keycode",
     "variable/index.html#static-variable-KeyCode",
-    "<span>KeyCode</span> <span class=\"search-result-import-path\">delta-controls/src/input/KeyCode.js</span>",
+    "<span>KeyCode</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "variable"
   ],
   [
-    "delta-controls/src/managers/movementstate.js~movementstate",
+    "delta-controls~movementstate",
     "class/src/managers/MovementState.js~MovementState.html",
-    "<span>MovementState</span> <span class=\"search-result-import-path\">delta-controls/src/managers/MovementState.js</span>",
+    "<span>MovementState</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/strategies/movementstrategy.js~movementstrategy",
+    "delta-controls~movementstrategy",
     "class/src/strategies/MovementStrategy.js~MovementStrategy.html",
-    "<span>MovementStrategy</span> <span class=\"search-result-import-path\">delta-controls/src/strategies/MovementStrategy.js</span>",
+    "<span>MovementStrategy</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/input/pointerbutton.js~pointerbutton",
+    "delta-controls~pointerbutton",
     "variable/index.html#static-variable-PointerButton",
-    "<span>PointerButton</span> <span class=\"search-result-import-path\">delta-controls/src/input/PointerButton.js</span>",
+    "<span>PointerButton</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "variable"
   ],
   [
-    "delta-controls/src/settings/pointersettings.js~pointersettings",
+    "delta-controls~pointersettings",
     "class/src/settings/PointerSettings.js~PointerSettings.html",
-    "<span>PointerSettings</span> <span class=\"search-result-import-path\">delta-controls/src/settings/PointerSettings.js</span>",
+    "<span>PointerSettings</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/managers/rotationmanager.js~rotationmanager",
+    "delta-controls~rotationmanager",
     "class/src/managers/RotationManager.js~RotationManager.html",
-    "<span>RotationManager</span> <span class=\"search-result-import-path\">delta-controls/src/managers/RotationManager.js</span>",
+    "<span>RotationManager</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/settings/rotationsettings.js~rotationsettings",
+    "delta-controls~rotationsettings",
     "class/src/settings/RotationSettings.js~RotationSettings.html",
-    "<span>RotationSettings</span> <span class=\"search-result-import-path\">delta-controls/src/settings/RotationSettings.js</span>",
+    "<span>RotationSettings</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/settings/sensitivitysettings.js~sensitivitysettings",
+    "delta-controls~sensitivitysettings",
     "class/src/settings/SensitivitySettings.js~SensitivitySettings.html",
-    "<span>SensitivitySettings</span> <span class=\"search-result-import-path\">delta-controls/src/settings/SensitivitySettings.js</span>",
+    "<span>SensitivitySettings</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/settings/settings.js~settings",
+    "delta-controls~settings",
     "class/src/settings/Settings.js~Settings.html",
-    "<span>Settings</span> <span class=\"search-result-import-path\">delta-controls/src/settings/Settings.js</span>",
+    "<span>Settings</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/strategies/strategy.js~strategy",
+    "delta-controls~strategy",
     "class/src/strategies/Strategy.js~Strategy.html",
-    "<span>Strategy</span> <span class=\"search-result-import-path\">delta-controls/src/strategies/Strategy.js</span>",
+    "<span>Strategy</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/managers/translationmanager.js~translationmanager",
+    "delta-controls~translationmanager",
     "class/src/managers/TranslationManager.js~TranslationManager.html",
-    "<span>TranslationManager</span> <span class=\"search-result-import-path\">delta-controls/src/managers/TranslationManager.js</span>",
+    "<span>TranslationManager</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/settings/translationsettings.js~translationsettings",
+    "delta-controls~translationsettings",
     "class/src/settings/TranslationSettings.js~TranslationSettings.html",
-    "<span>TranslationSettings</span> <span class=\"search-result-import-path\">delta-controls/src/settings/TranslationSettings.js</span>",
+    "<span>TranslationSettings</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/settings/zoomsettings.js~zoomsettings",
+    "delta-controls~zoomsettings",
     "class/src/settings/ZoomSettings.js~ZoomSettings.html",
-    "<span>ZoomSettings</span> <span class=\"search-result-import-path\">delta-controls/src/settings/ZoomSettings.js</span>",
+    "<span>ZoomSettings</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
-    "delta-controls/src/strategies/zoomstrategy.js~zoomstrategy",
+    "delta-controls~zoomstrategy",
     "class/src/strategies/ZoomStrategy.js~ZoomStrategy.html",
-    "<span>ZoomStrategy</span> <span class=\"search-result-import-path\">delta-controls/src/strategies/ZoomStrategy.js</span>",
+    "<span>ZoomStrategy</span> <span class=\"search-result-import-path\">delta-controls</span>",
     "class"
   ],
   [
@@ -432,24 +432,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/core/deltacontrols.js~deltacontrols#dom",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-dom",
-    "src/core/DeltaControls.js~DeltaControls#dom",
-    "member"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#dragging",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-dragging",
-    "src/core/DeltaControls.js~DeltaControls#dragging",
-    "member"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#enabled",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-enabled",
-    "src/core/DeltaControls.js~DeltaControls#enabled",
-    "member"
-  ],
-  [
     "src/core/deltacontrols.js~deltacontrols#getdom",
     "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-getDom",
     "src/core/DeltaControls.js~DeltaControls#getDom",
@@ -480,76 +462,10 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/core/deltacontrols.js~deltacontrols#handleauxiliarypointerbutton",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-handleAuxiliaryPointerButton",
-    "src/core/DeltaControls.js~DeltaControls#handleAuxiliaryPointerButton",
-    "method"
-  ],
-  [
     "src/core/deltacontrols.js~deltacontrols#handleevent",
     "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-handleEvent",
     "src/core/DeltaControls.js~DeltaControls#handleEvent",
     "method"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#handlekeyboardevent",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-handleKeyboardEvent",
-    "src/core/DeltaControls.js~DeltaControls#handleKeyboardEvent",
-    "method"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#handlemainpointerbutton",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-handleMainPointerButton",
-    "src/core/DeltaControls.js~DeltaControls#handleMainPointerButton",
-    "method"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#handlepointerbuttonevent",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-handlePointerButtonEvent",
-    "src/core/DeltaControls.js~DeltaControls#handlePointerButtonEvent",
-    "method"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#handlepointerlockevent",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-handlePointerLockEvent",
-    "src/core/DeltaControls.js~DeltaControls#handlePointerLockEvent",
-    "method"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#handlepointermoveevent",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-handlePointerMoveEvent",
-    "src/core/DeltaControls.js~DeltaControls#handlePointerMoveEvent",
-    "method"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#handlesecondarypointerbutton",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-handleSecondaryPointerButton",
-    "src/core/DeltaControls.js~DeltaControls#handleSecondaryPointerButton",
-    "method"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#handletouchevent",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-handleTouchEvent",
-    "src/core/DeltaControls.js~DeltaControls#handleTouchEvent",
-    "method"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#handletouchmoveevent",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-handleTouchMoveEvent",
-    "src/core/DeltaControls.js~DeltaControls#handleTouchMoveEvent",
-    "method"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#handlewheelevent",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-handleWheelEvent",
-    "src/core/DeltaControls.js~DeltaControls#handleWheelEvent",
-    "method"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#lastscreenposition",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-lastScreenPosition",
-    "src/core/DeltaControls.js~DeltaControls#lastScreenPosition",
-    "member"
   ],
   [
     "src/core/deltacontrols.js~deltacontrols#lookat",
@@ -562,24 +478,6 @@ window.esdocSearchIndex = [
     "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-moveTo",
     "src/core/DeltaControls.js~DeltaControls#moveTo",
     "method"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#position",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-position",
-    "src/core/DeltaControls.js~DeltaControls#position",
-    "member"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#quaternion",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-quaternion",
-    "src/core/DeltaControls.js~DeltaControls#quaternion",
-    "member"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#rotationmanager",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-rotationManager",
-    "src/core/DeltaControls.js~DeltaControls#rotationManager",
-    "member"
   ],
   [
     "src/core/deltacontrols.js~deltacontrols#setdom",
@@ -597,12 +495,6 @@ window.esdocSearchIndex = [
     "src/core/deltacontrols.js~deltacontrols#setorbitenabled",
     "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-setOrbitEnabled",
     "src/core/DeltaControls.js~DeltaControls#setOrbitEnabled",
-    "method"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#setpointerlocked",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-method-setPointerLocked",
-    "src/core/DeltaControls.js~DeltaControls#setPointerLocked",
     "method"
   ],
   [
@@ -627,24 +519,6 @@ window.esdocSearchIndex = [
     "src/core/deltacontrols.js~deltacontrols#settings",
     "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-settings",
     "src/core/DeltaControls.js~DeltaControls#settings",
-    "member"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#strategies",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-strategies",
-    "src/core/DeltaControls.js~DeltaControls#strategies",
-    "member"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#target",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-target",
-    "src/core/DeltaControls.js~DeltaControls#target",
-    "member"
-  ],
-  [
-    "src/core/deltacontrols.js~deltacontrols#translationmanager",
-    "class/src/core/DeltaControls.js~DeltaControls.html#instance-member-translationManager",
-    "src/core/DeltaControls.js~DeltaControls#translationManager",
     "member"
   ],
   [
@@ -774,18 +648,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/managers/rotationmanager.js~rotationmanager#position",
-    "class/src/managers/RotationManager.js~RotationManager.html#instance-member-position",
-    "src/managers/RotationManager.js~RotationManager#position",
-    "member"
-  ],
-  [
-    "src/managers/rotationmanager.js~rotationmanager#quaternion",
-    "class/src/managers/RotationManager.js~RotationManager.html#instance-member-quaternion",
-    "src/managers/RotationManager.js~RotationManager#quaternion",
-    "member"
-  ],
-  [
     "src/managers/rotationmanager.js~rotationmanager#setposition",
     "class/src/managers/RotationManager.js~RotationManager.html#instance-method-setPosition",
     "src/managers/RotationManager.js~RotationManager#setPosition",
@@ -804,21 +666,9 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/managers/rotationmanager.js~rotationmanager#settings",
-    "class/src/managers/RotationManager.js~RotationManager.html#instance-member-settings",
-    "src/managers/RotationManager.js~RotationManager#settings",
-    "member"
-  ],
-  [
     "src/managers/rotationmanager.js~rotationmanager#spherical",
     "class/src/managers/RotationManager.js~RotationManager.html#instance-member-spherical",
     "src/managers/RotationManager.js~RotationManager#spherical",
-    "member"
-  ],
-  [
-    "src/managers/rotationmanager.js~rotationmanager#target",
-    "class/src/managers/RotationManager.js~RotationManager.html#instance-member-target",
-    "src/managers/RotationManager.js~RotationManager#target",
     "member"
   ],
   [
@@ -864,18 +714,6 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/managers/translationmanager.js~translationmanager#position",
-    "class/src/managers/TranslationManager.js~TranslationManager.html#instance-member-position",
-    "src/managers/TranslationManager.js~TranslationManager#position",
-    "member"
-  ],
-  [
-    "src/managers/translationmanager.js~translationmanager#quaternion",
-    "class/src/managers/TranslationManager.js~TranslationManager.html#instance-member-quaternion",
-    "src/managers/TranslationManager.js~TranslationManager#quaternion",
-    "member"
-  ],
-  [
     "src/managers/translationmanager.js~translationmanager#setposition",
     "class/src/managers/TranslationManager.js~TranslationManager.html#instance-method-setPosition",
     "src/managers/TranslationManager.js~TranslationManager#setPosition",
@@ -891,30 +729,6 @@ window.esdocSearchIndex = [
     "src/managers/translationmanager.js~translationmanager#settarget",
     "class/src/managers/TranslationManager.js~TranslationManager.html#instance-method-setTarget",
     "src/managers/TranslationManager.js~TranslationManager#setTarget",
-    "method"
-  ],
-  [
-    "src/managers/translationmanager.js~translationmanager#settings",
-    "class/src/managers/TranslationManager.js~TranslationManager.html#instance-member-settings",
-    "src/managers/TranslationManager.js~TranslationManager#settings",
-    "member"
-  ],
-  [
-    "src/managers/translationmanager.js~translationmanager#target",
-    "class/src/managers/TranslationManager.js~TranslationManager.html#instance-member-target",
-    "src/managers/TranslationManager.js~TranslationManager#target",
-    "member"
-  ],
-  [
-    "src/managers/translationmanager.js~translationmanager#translate",
-    "class/src/managers/TranslationManager.js~TranslationManager.html#instance-method-translate",
-    "src/managers/TranslationManager.js~TranslationManager#translate",
-    "method"
-  ],
-  [
-    "src/managers/translationmanager.js~translationmanager#translateonaxis",
-    "class/src/managers/TranslationManager.js~TranslationManager.html#instance-method-translateOnAxis",
-    "src/managers/TranslationManager.js~TranslationManager#translateOnAxis",
     "method"
   ],
   [
@@ -1368,22 +1182,10 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/strategies/movementstrategy.js~movementstrategy#direction",
-    "class/src/strategies/MovementStrategy.js~MovementStrategy.html#instance-member-direction",
-    "src/strategies/MovementStrategy.js~MovementStrategy#direction",
-    "member"
-  ],
-  [
     "src/strategies/movementstrategy.js~movementstrategy#execute",
     "class/src/strategies/MovementStrategy.js~MovementStrategy.html#instance-method-execute",
     "src/strategies/MovementStrategy.js~MovementStrategy#execute",
     "method"
-  ],
-  [
-    "src/strategies/movementstrategy.js~movementstrategy#movementstate",
-    "class/src/strategies/MovementStrategy.js~MovementStrategy.html#instance-member-movementState",
-    "src/strategies/MovementStrategy.js~MovementStrategy#movementState",
-    "member"
   ],
   [
     "src/strategies/strategy.js",
@@ -1414,18 +1216,6 @@ window.esdocSearchIndex = [
     "class/src/strategies/ZoomStrategy.js~ZoomStrategy.html#instance-method-execute",
     "src/strategies/ZoomStrategy.js~ZoomStrategy#execute",
     "method"
-  ],
-  [
-    "src/strategies/zoomstrategy.js~zoomstrategy#rotationmanager",
-    "class/src/strategies/ZoomStrategy.js~ZoomStrategy.html#instance-member-rotationManager",
-    "src/strategies/ZoomStrategy.js~ZoomStrategy#rotationManager",
-    "member"
-  ],
-  [
-    "src/strategies/zoomstrategy.js~zoomstrategy#zoomin",
-    "class/src/strategies/ZoomStrategy.js~ZoomStrategy.html#instance-member-zoomIn",
-    "src/strategies/ZoomStrategy.js~ZoomStrategy#zoomIn",
-    "member"
   ],
   [
     "src/strategies/index.js",

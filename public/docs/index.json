@@ -583,7 +583,7 @@
     "longname": "src/core/Action.js~Action",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/core/Action.js",
+    "importPath": "delta-controls",
     "importStyle": "{Action}",
     "description": "An enumeration of control actions.\n\nThis enum can be used to bind keys to specific control actions.",
     "lineNumber": 17,
@@ -698,7 +698,7 @@
     "longname": "src/core/axes.js~x",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/core/axes.js",
+    "importPath": "delta-controls",
     "importStyle": "{x}",
     "description": "The X-axis.",
     "lineNumber": 10,
@@ -721,7 +721,7 @@
     "longname": "src/core/axes.js~y",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/core/axes.js",
+    "importPath": "delta-controls",
     "importStyle": "{y}",
     "description": "The Y-axis.",
     "lineNumber": 19,
@@ -744,7 +744,7 @@
     "longname": "src/core/axes.js~z",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/core/axes.js",
+    "importPath": "delta-controls",
     "importStyle": "{z}",
     "description": "The Z-axis.",
     "lineNumber": 28,
@@ -778,7 +778,7 @@
     "longname": "src/core/DeltaControls.js~DeltaControls",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/core/DeltaControls.js",
+    "importPath": "delta-controls",
     "importStyle": "{DeltaControls}",
     "description": "Movement controls driven by user input.",
     "lineNumber": 17,
@@ -852,7 +852,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 58,
@@ -871,7 +872,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 59,
@@ -890,7 +892,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 60,
@@ -909,7 +912,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 61,
@@ -947,7 +951,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 63,
@@ -966,7 +971,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 64,
@@ -985,7 +991,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 65,
@@ -1004,7 +1011,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 66,
@@ -1023,7 +1031,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 67,
@@ -1042,7 +1051,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 68,
@@ -1420,6 +1430,7 @@
         "description": "A pointer event."
       }
     ],
+    "ignore": true,
     "return": null
   },
   {
@@ -1446,6 +1457,7 @@
         "description": "A touch event."
       }
     ],
+    "ignore": true,
     "return": null
   },
   {
@@ -1482,6 +1494,7 @@
         "description": "Whether the pointer button has been pressed down."
       }
     ],
+    "ignore": true,
     "return": null
   },
   {
@@ -1518,6 +1531,7 @@
         "description": "Whether the pointer button has been pressed down."
       }
     ],
+    "ignore": true,
     "return": null
   },
   {
@@ -1554,6 +1568,7 @@
         "description": "Whether the pointer button has been pressed down."
       }
     ],
+    "ignore": true,
     "return": null
   },
   {
@@ -1590,6 +1605,7 @@
         "description": "Whether the pointer button has been pressed down."
       }
     ],
+    "ignore": true,
     "return": null
   },
   {
@@ -1626,6 +1642,7 @@
         "description": "Whether the event is a touch start event."
       }
     ],
+    "ignore": true,
     "return": null
   },
   {
@@ -1662,6 +1679,7 @@
         "description": "Whether the key has been pressed down."
       }
     ],
+    "ignore": true,
     "return": null
   },
   {
@@ -1688,6 +1706,7 @@
         "description": "A wheel event."
       }
     ],
+    "ignore": true,
     "return": null
   },
   {
@@ -1702,6 +1721,7 @@
     "access": "private",
     "description": "Enables or disables controls based on the pointer lock state.",
     "lineNumber": 597,
+    "ignore": true,
     "params": [],
     "return": null
   },
@@ -1849,6 +1869,7 @@
         "description": "Whether the pointer should be locked."
       }
     ],
+    "ignore": true,
     "return": null
   },
   {
@@ -1954,7 +1975,7 @@
     "longname": "src/input/KeyCode.js~KeyCodeHandler",
     "access": "private",
     "export": false,
-    "importPath": "delta-controls/src/input/KeyCode.js",
+    "importPath": "delta-controls",
     "importStyle": null,
     "description": "A handler for the KeyCode Proxy.",
     "lineNumber": 8,
@@ -1977,7 +1998,7 @@
     "longname": "src/input/KeyCode.js~KeyCode",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/input/KeyCode.js",
+    "importPath": "delta-controls",
     "importStyle": "{KeyCode}",
     "description": "An enumeration of key codes.\n\nSpecial keys are listed explicitly. Simple character keys [A-Z] are computed\non demand. For instance, `KeyCode.A` will return the key code for the A key.",
     "lineNumber": 100,
@@ -2642,7 +2663,7 @@
     "longname": "src/input/PointerButton.js~PointerButton",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/input/PointerButton.js",
+    "importPath": "delta-controls",
     "importStyle": "{PointerButton}",
     "description": "An enumeration of pointer buttons.",
     "lineNumber": 10,
@@ -2718,7 +2739,7 @@
     "longname": "src/managers/MovementState.js~MovementState",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/managers/MovementState.js",
+    "importPath": "delta-controls",
     "importStyle": "{MovementState}",
     "description": "An collection of movement flags.",
     "lineNumber": 5,
@@ -2893,7 +2914,7 @@
     "longname": "src/managers/RotationManager.js~TWO_PI",
     "access": "private",
     "export": false,
-    "importPath": "delta-controls/src/managers/RotationManager.js",
+    "importPath": "delta-controls",
     "importStyle": null,
     "description": "Two PI.",
     "lineNumber": 10,
@@ -2916,7 +2937,7 @@
     "longname": "src/managers/RotationManager.js~v",
     "access": "private",
     "export": false,
-    "importPath": "delta-controls/src/managers/RotationManager.js",
+    "importPath": "delta-controls",
     "importStyle": null,
     "description": "A vector.",
     "lineNumber": 19,
@@ -2939,7 +2960,7 @@
     "longname": "src/managers/RotationManager.js~m",
     "access": "private",
     "export": false,
-    "importPath": "delta-controls/src/managers/RotationManager.js",
+    "importPath": "delta-controls",
     "importStyle": null,
     "description": "A matrix.",
     "lineNumber": 28,
@@ -2962,7 +2983,7 @@
     "longname": "src/managers/RotationManager.js~RotationManager",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/managers/RotationManager.js",
+    "importPath": "delta-controls",
     "importStyle": "{RotationManager}",
     "description": "A rotation manager.",
     "lineNumber": 34,
@@ -3040,7 +3061,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 139,
@@ -3059,7 +3081,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 140,
@@ -3078,7 +3101,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 141,
@@ -3097,7 +3121,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 142,
@@ -3427,7 +3452,7 @@
     "longname": "src/managers/TranslationManager.js~v",
     "access": "private",
     "export": false,
-    "importPath": "delta-controls/src/managers/TranslationManager.js",
+    "importPath": "delta-controls",
     "importStyle": null,
     "description": "A vector.",
     "lineNumber": 12,
@@ -3450,7 +3475,7 @@
     "longname": "src/managers/TranslationManager.js~TranslationManager",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/managers/TranslationManager.js",
+    "importPath": "delta-controls",
     "importStyle": "{TranslationManager}",
     "description": "A translation manager.",
     "lineNumber": 18,
@@ -3528,7 +3553,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 160,
@@ -3547,7 +3573,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 161,
@@ -3566,7 +3593,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 162,
@@ -3585,7 +3613,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 163,
@@ -3739,6 +3768,7 @@
         "description": "The distance."
       }
     ],
+    "ignore": true,
     "return": null
   },
   {
@@ -3765,6 +3795,7 @@
         "description": "The time since the last update in seconds."
       }
     ],
+    "ignore": true,
     "return": null
   },
   {
@@ -3846,7 +3877,7 @@
     "longname": "src/settings/GeneralSettings.js~GeneralSettings",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/settings/GeneralSettings.js",
+    "importPath": "delta-controls",
     "importStyle": "{GeneralSettings}",
     "description": "General settings.",
     "lineNumber": 5,
@@ -3970,7 +4001,7 @@
     "longname": "src/settings/KeyBindings.js~KeyBindings",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/settings/KeyBindings.js",
+    "importPath": "delta-controls",
     "importStyle": "{KeyBindings}",
     "description": "Key bindings.",
     "lineNumber": 5,
@@ -4365,7 +4396,7 @@
     "longname": "src/settings/PointerSettings.js~PointerSettings",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/settings/PointerSettings.js",
+    "importPath": "delta-controls",
     "importStyle": "{PointerSettings}",
     "description": "Pointer settings.",
     "lineNumber": 5,
@@ -4497,7 +4528,7 @@
     "longname": "src/settings/RotationSettings.js~RotationSettings",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/settings/RotationSettings.js",
+    "importPath": "delta-controls",
     "importStyle": "{RotationSettings}",
     "description": "Rotation settings.",
     "lineNumber": 8,
@@ -4743,7 +4774,7 @@
     "longname": "src/settings/SensitivitySettings.js~SensitivitySettings",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/settings/SensitivitySettings.js",
+    "importPath": "delta-controls",
     "importStyle": "{SensitivitySettings}",
     "description": "Sensitivity settings.",
     "lineNumber": 5,
@@ -4894,7 +4925,7 @@
     "longname": "src/settings/Settings.js~Settings",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/settings/Settings.js",
+    "importPath": "delta-controls",
     "importStyle": "{Settings}",
     "description": "Control settings.",
     "lineNumber": 15,
@@ -5143,7 +5174,7 @@
     "longname": "src/settings/TranslationSettings.js~TranslationSettings",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/settings/TranslationSettings.js",
+    "importPath": "delta-controls",
     "importStyle": "{TranslationSettings}",
     "description": "Translation settings.",
     "lineNumber": 5,
@@ -5256,7 +5287,7 @@
     "longname": "src/settings/ZoomSettings.js~ZoomSettings",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/settings/ZoomSettings.js",
+    "importPath": "delta-controls",
     "importStyle": "{ZoomSettings}",
     "description": "Zoom settings.",
     "lineNumber": 5,
@@ -5437,7 +5468,7 @@
     "longname": "src/strategies/MovementStrategy.js~MovementStrategy",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/strategies/MovementStrategy.js",
+    "importPath": "delta-controls",
     "importStyle": "{MovementStrategy}",
     "description": "A movement strategy.",
     "lineNumber": 7,
@@ -5498,7 +5529,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 279,
@@ -5517,7 +5549,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 280,
@@ -5554,7 +5587,7 @@
     "longname": "src/strategies/MovementStrategy.js~Direction",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/strategies/MovementStrategy.js",
+    "importPath": "delta-controls",
     "importStyle": "{Direction}",
     "description": "An enumeration of movement directions.",
     "lineNumber": 93,
@@ -5649,7 +5682,7 @@
     "longname": "src/strategies/Strategy.js~Strategy",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/strategies/Strategy.js",
+    "importPath": "delta-controls",
     "importStyle": "{Strategy}",
     "description": "The Strategy interface.",
     "lineNumber": 5,
@@ -5709,7 +5742,7 @@
     "longname": "src/strategies/ZoomStrategy.js~ZoomStrategy",
     "access": "public",
     "export": true,
-    "importPath": "delta-controls/src/strategies/ZoomStrategy.js",
+    "importPath": "delta-controls",
     "importStyle": "{ZoomStrategy}",
     "description": "A zoom strategy.",
     "lineNumber": 7,
@@ -5770,7 +5803,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 289,
@@ -5789,7 +5823,8 @@
       ],
       "spread": false,
       "description": null
-    }
+    },
+    "ignore": true
   },
   {
     "__docId__": 290,
