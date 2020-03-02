@@ -1,4 +1,4 @@
-# &Delta;c&omicron;n&tau;r&omicron;&iota;s
+# Delta Controls
 
 [![Build status](https://travis-ci.org/vanruesc/delta-controls.svg?branch=master)](https://travis-ci.org/vanruesc/delta-controls)
 [![npm version](https://badgen.net/npm/v/delta-controls?color=green)](https://www.npmjs.com/package/delta-controls)
