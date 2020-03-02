@@ -1,5 +1,5 @@
 /**
- * delta-controls v2.1.0 build Thu Jan 23 2020
+ * delta-controls v2.1.0 build Mon Mar 02 2020
  * https://github.com/vanruesc/delta-controls
  * Copyright 2020 Raoul van Rüschen
  * @license Zlib
@@ -1396,7 +1396,7 @@ class TranslationSettings {
 	/**
 	 * Clones this translation settings instance.
 	 *
-	 * @return {RotationSettings} The cloned translation settings.
+	 * @return {TranslationSettings} The cloned translation settings.
 	 */
 
 	clone() {
