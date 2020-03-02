@@ -24,9 +24,7 @@ const lib = {
 	module: {
 		input: "src/index.js",
 		external,
-		plugins: [resolve(), eslint({
-			include: ["src/**/*.js", "demo/**/*.js"]
-		})],
+		plugins: [resolve(), eslint()],
 		output: [{
 			file: pkg.module,
 			format: "esm",
@@ -75,9 +73,7 @@ const demo = {
 
 	module: {
 		input: "demo/src/index.js",
-		plugins: [resolve(), eslint({
-			include: ["src/**/*.js", "demo/**/*.js"]
-		})],
+		plugins: [resolve(), eslint()],
 		output: [{
 			file: "public/demo/index.js",
 			format: "esm"
@@ -89,9 +85,7 @@ const demo = {
 
 	main: {
 		input: production ? "public/demo/index.js" : "demo/src/index.js",
-		plugins: production ? [babel()] : [resolve(), eslint({
-			include: ["src/**/*.js", "demo/**/*.js"]
-		})],
+		plugins: production ? [babel()] : [resolve(), eslint()],
 		output: [{
 			file: "public/demo/index.js",
 			format: "iife"
