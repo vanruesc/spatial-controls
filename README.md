@@ -1,45 +1,40 @@
-# Delta Controls
+# Spatial Controls
 
-[![Build status](https://travis-ci.org/vanruesc/delta-controls.svg?branch=master)](https://travis-ci.org/vanruesc/delta-controls)
-[![npm version](https://badgen.net/npm/v/delta-controls?color=green)](https://www.npmjs.com/package/delta-controls)
-[![Peer dependencies](https://david-dm.org/vanruesc/delta-controls/peer-status.svg)](https://david-dm.org/vanruesc/delta-controls?type=peer)
+[![Build status](https://travis-ci.org/vanruesc/spatial-controls.svg?branch=master)](https://travis-ci.org/vanruesc/spatial-controls)
+[![npm version](https://badgen.net/npm/v/spatial-controls?color=green)](https://www.npmjs.com/package/spatial-controls)
+[![Peer dependencies](https://david-dm.org/vanruesc/spatial-controls/peer-status.svg)](https://david-dm.org/vanruesc/spatial-controls?type=peer)
 
 A 3D movement controller that supports multiple movement modes and configurable input settings.
 
-*[Demo](https://vanruesc.github.io/delta-controls/public/demo)&ensp;&middot;&ensp;[API Reference](https://vanruesc.github.io/delta-controls/public/docs)*
+*[Demo](https://vanruesc.github.io/spatial-controls/public/demo)&ensp;&middot;&ensp;[Documentation](https://vanruesc.github.io/spatial-controls/public/docs)*
 
 
 ## Installation
 
-This library requires the peer dependency [math-ds](https://github.com/vanruesc/math-ds).
+This library requires the peer dependency [three](https://github.com/mrdoob/three.js/).
 
 ```sh
-npm install math-ds delta-controls
+npm install three spatial-controls
 ```
 
 
 ## Usage
 
-Note: This library is compatible with the math classes from [three.js](https://threejs.org).
-
 ```javascript
-import { Quaternion, Vector3 } from "math-ds";
-import { DeltaControls } from "delta-controls";
+import { Clock, Quaternion, Vector3 } from "three";
+import { SpatialControls } from "spatial-controls";
 
 const position = new Vector3();
 const rotation = new Quaternion();
 const domElement = document.getElementById("viewport");
-const controls = new DeltaControls(position, rotation, domElement);
+const controls = new SpatialControls(position, rotation, domElement);
 
-let t0 = performance.now();
+const clock = new Clock();
 
-(function render(t) {
+(function render() {
 
 	requestAnimationFrame(render);
-	controls.update(t0 - t);
-	t0 = t;
-
-	// Render things.
+	controls.update(clock.getDelta());
 
 }());
 ```
@@ -50,7 +45,7 @@ let t0 = performance.now();
 #### Configuration
 
 ```js
-import { Action, KeyCode } from "delta-controls";
+import { Action, KeyCode } from "spatial-controls";
 
 const settings = controls.settings;
 const keyBindings = settings.keyBindings;
@@ -60,13 +55,12 @@ controls.setOrbitEnabled(true|false);
 
 settings.pointer.hold = true;
 settings.rotation.minPolarAngle = 0.125;
-settings.sensitivity.rotation = 0.075;
+settings.sensitivity.rotation = 1.2;
 settings.translation.enabled = true;
 settings.zoom.minDistance = 1.0;
 
 keyBindings.delete(KeyCode.X);
 keyBindings.set(KeyCode.V, Action.MOVE_DOWN);
-
 ```
 
 #### Saving
@@ -102,4 +96,4 @@ request.send();
 
 ## Contributing
 
-Please refer to the [contribution guidelines](https://github.com/vanruesc/delta-controls/blob/master/.github/CONTRIBUTING.md) for details.
+Please refer to the [contribution guidelines](https://github.com/vanruesc/spatial-controls/blob/master/.github/CONTRIBUTING.md) for details.
