@@ -1,140 +1,200 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html class="default no-js">
 <head>
-  <meta charset="utf-8">
-  <base data-ice="baseUrl">
-  <title data-ice="title">Home | delta-controls</title>
-  <link type="text/css" rel="stylesheet" href="css/style.css">
-  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
-  <script src="script/prettify/prettify.js"></script>
-  <script src="script/manual.js"></script>
-<meta name="description" content="A 3D movement controller."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="delta-controls"><meta property="twitter:description" content="A 3D movement controller."></head>
-<body class="layout-container" data-ice="rootContainer">
-
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>spatial-controls - v1.0.0</title>
+	<meta name="description" content="Documentation for spatial-controls - v1.0.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
 <header>
-  <a href="./">Home</a>
-  
-  <a href="identifiers.html">Reference</a>
-  <a href="source.html">Source</a>
-  
-  <div class="search-box">
-  <span>
-    <img src="./image/search.png">
-    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
-  </span>
-    <ul class="search-result"></ul>
-  </div>
-<a style="position:relative; top:3px;" href="https://github.com/vanruesc/delta-controls.git"><img width="20px" src="./image/github.png"></a></header>
-
-<nav class="navigation" data-ice="nav"><div>
-  <ul>
-    
-  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#core">core</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/core/DeltaControls.js~DeltaControls.html">DeltaControls</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Action">Action</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#input">input</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-KeyCode">KeyCode</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-PointerButton">PointerButton</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#managers">managers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/managers/MovementState.js~MovementState.html">MovementState</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/managers/RotationManager.js~RotationManager.html">RotationManager</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/managers/TranslationManager.js~TranslationManager.html">TranslationManager</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#settings">settings</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings/GeneralSettings.js~GeneralSettings.html">GeneralSettings</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings/KeyBindings.js~KeyBindings.html">KeyBindings</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings/PointerSettings.js~PointerSettings.html">PointerSettings</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings/RotationSettings.js~RotationSettings.html">RotationSettings</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings/SensitivitySettings.js~SensitivitySettings.html">SensitivitySettings</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings/Settings.js~Settings.html">Settings</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings/TranslationSettings.js~TranslationSettings.html">TranslationSettings</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings/ZoomSettings.js~ZoomSettings.html">ZoomSettings</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#strategies">strategies</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/strategies/MovementStrategy.js~MovementStrategy.html">MovementStrategy</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/strategies/Strategy.js~Strategy.html">Strategy</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/strategies/ZoomStrategy.js~ZoomStrategy.html">ZoomStrategy</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Direction">Direction</a></span></span></li>
-</ul>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">spatial-controls - v1.0.0</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="index.html">Globals</a>
+				</li>
+			</ul>
+			<h1>spatial-controls - v1.0.0</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Enumerations</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-enum"><a href="enums/action.html" class="tsd-kind-icon">Action</a></li>
+								<li class="tsd-kind-enum"><a href="enums/direction.html" class="tsd-kind-icon">Direction</a></li>
+								<li class="tsd-kind-enum"><a href="enums/keycode.html" class="tsd-kind-icon">Key<wbr>Code</a></li>
+								<li class="tsd-kind-enum"><a href="enums/pointerbutton.html" class="tsd-kind-icon">Pointer<wbr>Button</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Classes</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-class"><a href="classes/generalsettings.html" class="tsd-kind-icon">General<wbr>Settings</a></li>
+								<li class="tsd-kind-class"><a href="classes/keybindings.html" class="tsd-kind-icon">Key<wbr>Bindings</a></li>
+								<li class="tsd-kind-class"><a href="classes/movementstate.html" class="tsd-kind-icon">Movement<wbr>State</a></li>
+								<li class="tsd-kind-class"><a href="classes/movementstrategy.html" class="tsd-kind-icon">Movement<wbr>Strategy</a></li>
+								<li class="tsd-kind-class"><a href="classes/pointersettings.html" class="tsd-kind-icon">Pointer<wbr>Settings</a></li>
+								<li class="tsd-kind-class"><a href="classes/rotationmanager.html" class="tsd-kind-icon">Rotation<wbr>Manager</a></li>
+								<li class="tsd-kind-class"><a href="classes/rotationsettings.html" class="tsd-kind-icon">Rotation<wbr>Settings</a></li>
+								<li class="tsd-kind-class"><a href="classes/sensitivitysettings.html" class="tsd-kind-icon">Sensitivity<wbr>Settings</a></li>
+								<li class="tsd-kind-class"><a href="classes/settings.html" class="tsd-kind-icon">Settings</a></li>
+								<li class="tsd-kind-class"><a href="classes/spatialcontrols.html" class="tsd-kind-icon">Spatial<wbr>Controls</a></li>
+								<li class="tsd-kind-class"><a href="classes/translationmanager.html" class="tsd-kind-icon">Translation<wbr>Manager</a></li>
+								<li class="tsd-kind-class"><a href="classes/translationsettings.html" class="tsd-kind-icon">Translation<wbr>Settings</a></li>
+								<li class="tsd-kind-class"><a href="classes/zoomsettings.html" class="tsd-kind-icon">Zoom<wbr>Settings</a></li>
+								<li class="tsd-kind-class"><a href="classes/zoomstrategy.html" class="tsd-kind-icon">Zoom<wbr>Strategy</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface"><a href="interfaces/disposable.html" class="tsd-kind-icon">Disposable</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/strategy.html" class="tsd-kind-icon">Strategy</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals current ">
+						<a href="index.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-enum">
+						<a href="enums/action.html" class="tsd-kind-icon">Action</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/direction.html" class="tsd-kind-icon">Direction</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/keycode.html" class="tsd-kind-icon">Key<wbr>Code</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/pointerbutton.html" class="tsd-kind-icon">Pointer<wbr>Button</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/generalsettings.html" class="tsd-kind-icon">General<wbr>Settings</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/keybindings.html" class="tsd-kind-icon">Key<wbr>Bindings</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/movementstate.html" class="tsd-kind-icon">Movement<wbr>State</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/movementstrategy.html" class="tsd-kind-icon">Movement<wbr>Strategy</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/pointersettings.html" class="tsd-kind-icon">Pointer<wbr>Settings</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/rotationmanager.html" class="tsd-kind-icon">Rotation<wbr>Manager</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/rotationsettings.html" class="tsd-kind-icon">Rotation<wbr>Settings</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/sensitivitysettings.html" class="tsd-kind-icon">Sensitivity<wbr>Settings</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/settings.html" class="tsd-kind-icon">Settings</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/spatialcontrols.html" class="tsd-kind-icon">Spatial<wbr>Controls</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/translationmanager.html" class="tsd-kind-icon">Translation<wbr>Manager</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/translationsettings.html" class="tsd-kind-icon">Translation<wbr>Settings</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/zoomsettings.html" class="tsd-kind-icon">Zoom<wbr>Settings</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/zoomstrategy.html" class="tsd-kind-icon">Zoom<wbr>Strategy</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/disposable.html" class="tsd-kind-icon">Disposable</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/strategy.html" class="tsd-kind-icon">Strategy</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
 </div>
-</nav>
-
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="delta-controls">Delta Controls</h1><p><a href="https://travis-ci.org/vanruesc/delta-controls"><img src="https://travis-ci.org/vanruesc/delta-controls.svg?branch=master" alt="Build status"></a>
-<a href="https://www.npmjs.com/package/delta-controls"><img src="https://badgen.net/npm/v/delta-controls?color=green" alt="npm version"></a>
-<a href="https://david-dm.org/vanruesc/delta-controls?type=peer"><img src="https://david-dm.org/vanruesc/delta-controls/peer-status.svg" alt="Peer dependencies"></a></p>
-<p>A 3D movement controller that supports multiple movement modes and configurable input settings.</p>
-<p><em><a href="https://vanruesc.github.io/delta-controls/public/demo">Demo</a>&#x2002;&#xB7;&#x2002;<a href="https://vanruesc.github.io/delta-controls/public/docs">API Reference</a></em></p>
-<h2 id="installation">Installation</h2><p>This library requires the peer dependency <a href="https://github.com/vanruesc/math-ds">math-ds</a>.</p>
-<pre><code class="lang-sh"><code class="source-code prettyprint">npm install math-ds delta-controls</code>
-</code></pre>
-<h2 id="usage">Usage</h2><p>Note: This library is compatible with the math classes from <a href="https://threejs.org">three.js</a>.</p>
-<pre><code class="lang-javascript"><code class="source-code prettyprint">import { Quaternion, Vector3 } from &quot;math-ds&quot;;
-import { DeltaControls } from &quot;delta-controls&quot;;
-
-const position = new Vector3();
-const rotation = new Quaternion();
-const domElement = document.getElementById(&quot;viewport&quot;);
-const controls = new DeltaControls(position, rotation, domElement);
-
-let t0 = performance.now();
-
-(function render(t) {
-
-    requestAnimationFrame(render);
-    controls.update(t0 - t);
-    t0 = t;
-
-    // Render things.
-
-}());</code>
-</code></pre>
-<h2 id="settings">Settings</h2><h4 id="configuration">Configuration</h4><pre><code class="lang-js"><code class="source-code prettyprint">import { Action, KeyCode } from &quot;delta-controls&quot;;
-
-const settings = controls.settings;
-const keyBindings = settings.keyBindings;
-
-// Activate or deactivate third person controls. Enabled by default.
-controls.setOrbitEnabled(true|false);
-
-settings.pointer.hold = true;
-settings.rotation.minPolarAngle = 0.125;
-settings.sensitivity.rotation = 0.075;
-settings.translation.enabled = true;
-settings.zoom.minDistance = 1.0;
-
-keyBindings.delete(KeyCode.X);
-keyBindings.set(KeyCode.V, Action.MOVE_DOWN);
-</code>
-</code></pre>
-<h4 id="saving">Saving</h4><pre><code class="lang-js"><code class="source-code prettyprint">const settingsURL = settings.toDataURL();
-const a = document.createElement(&quot;a&quot;);
-a.href = settingsURL;
-a.setAttribute(&quot;download&quot;, &quot;controls.json&quot;);
-a.click();
-URL.revokeObjectURL(settingsURL);</code>
-</code></pre>
-<h4 id="loading">Loading</h4><pre><code class="lang-js"><code class="source-code prettyprint">const request = new XMLHttpRequest();
-
-request.addEventListener(&quot;readystatechange&quot;, function() {
-
-    if(this.readyState === 4 &amp;&amp; this.status === 200) {
-
-        controls.settings.copy(JSON.parse(this.responseText));
-
-    }
-
-});
-
-request.open(&quot;GET&quot;, &quot;./controls.json&quot;);
-request.send();</code>
-</code></pre>
-<h2 id="contributing">Contributing</h2><p>Please refer to the <a href="https://github.com/vanruesc/delta-controls/blob/master/.github/CONTRIBUTING.md">contribution guidelines</a> for details.</p>
-</div>
-</div>
-
-<footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+<footer>
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+		</div>
+	</div>
 </footer>
-
-<script src="script/search_index.js"></script>
-<script src="script/search.js"></script>
-<script src="script/pretty-print.js"></script>
-<script src="script/inherited-summary.js"></script>
-<script src="script/test-summary.js"></script>
-<script src="script/inner-link.js"></script>
-<script src="script/patch-for-local.js"></script>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
 </body>
 </html>
