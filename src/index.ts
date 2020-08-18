@@ -1,6 +1,6 @@
 export {
 	Action,
-	DeltaControls
+	SpatialControls
 } from "./core";
 
 export {

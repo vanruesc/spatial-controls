@@ -1,10 +1,10 @@
-import { Matrix4, Spherical, Vector3 } from "math-ds";
+import { Matrix4, Quaternion, Spherical, Vector3 } from "three";
+import { Settings } from "../settings";
 
 /**
  * Two PI.
  *
- * @type {Number}
- * @private
+ * @ignore
  */
 
 const TWO_PI = Math.PI * 2;
@@ -12,8 +12,7 @@ const TWO_PI = Math.PI * 2;
 /**
  * A vector.
  *
- * @type {Vector3}
- * @private
+ * @ignore
  */
 
 const v = new Vector3();
@@ -21,8 +20,7 @@ const v = new Vector3();
 /**
  * A matrix.
  *
- * @type {Matrix4}
- * @private
+ * @ignore
  */
 
 const m = new Matrix4();
@@ -34,58 +32,45 @@ const m = new Matrix4();
 export class RotationManager {
 
 	/**
-	 * Constructs a new rotation manager.
-	 *
-	 * @param {Vector3} position - A position.
-	 * @param {Quaternion} quaternion - A quaternion.
-	 * @param {Vector3} target - A target.
-	 * @param {Settings} settings - The settings.
+	 * The position that will be modified.
 	 */
 
-	constructor(position, quaternion, target, settings) {
+	private position: Vector3;
 
-		/**
-		 * The position that will be modified.
-		 *
-		 * @type {Vector3}
-		 * @private
-		 */
+	/**
+	 * The quaternion that will be modified.
+	 */
+
+	private quaternion: Quaternion;
+
+	/**
+	 * A target.
+	 */
+
+	private target: Vector3;
+
+	/**
+	 * The settings.
+	 */
+
+	private settings: Settings;
+
+	/**
+	 * A spherical coordinate system.
+	 */
+
+	private spherical: Spherical;
+
+	/**
+	 * Constructs a new rotation manager.
+	 */
+
+	constructor(position: Vector3, quaternion: Quaternion, target: Vector3, settings: Settings) {
 
 		this.position = position;
-
-		/**
-		 * The quaternion that will be modified.
-		 *
-		 * @type {Quaternion}
-		 * @private
-		 */
-
 		this.quaternion = quaternion;
-
-		/**
-		 * A target.
-		 *
-		 * @type {Vector3}
-		 * @private
-		 */
-
 		this.target = target;
-
-		/**
-		 * The settings.
-		 *
-		 * @type {Settings}
-		 * @private
-		 */
-
 		this.settings = settings;
-
-		/**
-		 * A spherical coordinate system.
-		 *
-		 * @type {Spherical}
-		 */
-
 		this.spherical = new Spherical();
 
 	}
@@ -93,11 +78,11 @@ export class RotationManager {
 	/**
 	 * Sets the position.
 	 *
-	 * @param {Vector3} position - A position.
-	 * @return {RotationManager} This manager.
+	 * @param position - A position.
+	 * @return This manager.
 	 */
 
-	setPosition(position) {
+	setPosition(position: Vector3): RotationManager {
 
 		this.position = position;
 
@@ -108,11 +93,11 @@ export class RotationManager {
 	/**
 	 * Sets the quaternion.
 	 *
-	 * @param {Quaternion} quaternion - A quaternion.
-	 * @return {RotationManager} This manager.
+	 * @param quaternion - A quaternion.
+	 * @return This manager.
 	 */
 
-	setQuaternion(quaternion) {
+	setQuaternion(quaternion: Quaternion): RotationManager {
 
 		this.quaternion = quaternion;
 
@@ -123,11 +108,11 @@ export class RotationManager {
 	/**
 	 * Sets the target.
 	 *
-	 * @param {Vector3} target - A target.
-	 * @return {RotationManager} This manager.
+	 * @param target - A target.
+	 * @return This manager.
 	 */
 
-	setTarget(target) {
+	setTarget(target: Vector3): RotationManager {
 
 		this.target = target;
 
@@ -138,10 +123,10 @@ export class RotationManager {
 	/**
 	 * Updates the quaternion.
 	 *
-	 * @return {RotationManager} This manager.
+	 * @return This manager.
 	 */
 
-	updateQuaternion() {
+	updateQuaternion(): RotationManager {
 
 		const settings = this.settings;
 		const rotation = settings.rotation;
@@ -165,12 +150,12 @@ export class RotationManager {
 	/**
 	 * Adjusts the spherical system.
 	 *
-	 * @param {Number} theta - The angle to add to theta in radians.
-	 * @param {Number} phi - The angle to add to phi in radians.
-	 * @return {RotationManager} This manager.
+	 * @param theta - The angle to add to theta in radians.
+	 * @param phi - The angle to add to phi in radians.
+	 * @return This manager.
 	 */
 
-	adjustSpherical(theta, phi) {
+	adjustSpherical(theta: number, phi: number): RotationManager {
 
 		const settings = this.settings;
 		const orbit = settings.general.orbit;
@@ -200,11 +185,11 @@ export class RotationManager {
 	/**
 	 * Zooms in or out.
 	 *
-	 * @param {Number} sign - The zoom sign. Possible values are [-1, 0, 1].
-	 * @return {RotationManager} This manager.
+	 * @param sign - The zoom sign. Possible values are [-1, 0, 1].
+	 * @return This manager.
 	 */
 
-	zoom(sign) {
+	zoom(sign: number): RotationManager {
 
 		const settings = this.settings;
 		const general = settings.general;
@@ -212,11 +197,9 @@ export class RotationManager {
 		const zoom = settings.zoom;
 		const s = this.spherical;
 
-		let amount, min, max;
-
 		if(general.orbit && zoom.enabled) {
 
-			amount = sign * sensitivity.zoom;
+			let amount = sign * sensitivity.zoom;
 
 			if(zoom.invert) {
 
@@ -224,8 +207,8 @@ export class RotationManager {
 
 			}
 
-			min = Math.max(zoom.minDistance, 1e-6);
-			max = Math.min(zoom.maxDistance, Infinity);
+			const min = Math.max(zoom.minDistance, 1e-6);
+			const max = Math.min(zoom.maxDistance, Number.POSITIVE_INFINITY);
 
 			s.radius = Math.min(Math.max(s.radius + amount, min), max);
 			this.position.setFromSpherical(s).add(this.target);
@@ -239,21 +222,19 @@ export class RotationManager {
 	/**
 	 * Updates rotation calculations based on time.
 	 *
-	 * @param {Number} delta - The time since the last update in seconds.
+	 * @param deltaTime - The time since the last update in seconds.
 	 */
 
-	update(delta) {
-
-	}
+	update(deltaTime: number): void {}
 
 	/**
 	 * Looks at the given point.
 	 *
-	 * @param {Vector3} point - The target point.
-	 * @return {RotationManager} This manager.
+	 * @param point - The target point.
+	 * @return This manager.
 	 */
 
-	lookAt(point) {
+	lookAt(point: Vector3): RotationManager {
 
 		const spherical = this.spherical;
 		const position = this.position;
@@ -282,11 +263,11 @@ export class RotationManager {
 	/**
 	 * Returns the current view direction.
 	 *
-	 * @param {Vector3} [view] - A vector to store the direction in. If none is provided, a new vector will be created.
-	 * @return {Vector3} The normalized view direction.
+	 * @param view - A vector to store the direction in.
+	 * @return The normalized view direction.
 	 */
 
-	getViewDirection(view = new Vector3()) {
+	getViewDirection(view: Vector3): Vector3 {
 
 		view.setFromSpherical(this.spherical).normalize();
 
