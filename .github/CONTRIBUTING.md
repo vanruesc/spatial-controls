@@ -7,7 +7,8 @@ Thank you for considering to contribute! :speech_balloon:
 
 1. Search the issue tracker for similar bug reports before submitting a new one.
 2. Specify the version of the library where the bug occurred.
-3. Specify your browser version and operating system (e.g. `Chrome 0.0.0.0 (64-bit), Windows 0 (64-bit)`).
+3. Specify your browser version, operating system, and graphics card  
+   (e.g. `Chrome 0.0.0.0 (64-bit), Windows 10 (64-bit), NVIDIA GTX 1050`).
 4. Describe the problem in detail. Explain what happened, and what you expected would happen.
 5. Provide a minimal test case (http://jsfiddle.net) or a link to a live version of your application.
 6. If helpful, include a screenshot. Annotate the screenshot for clarity.
@@ -16,13 +17,15 @@ Thank you for considering to contribute! :speech_balloon:
 ## Pull Request Process :sparkles:
 
 When contributing to this repository, please first discuss the change you wish to make with the owners of this repository via the issue tracker.
-A proposed change should be focused and concise. Do not include generated build files in your commits.
+A proposed change should be focused and concise. Please adhere to the following guideline:
 
-1. Create a feature branch.
-2. Implement your patch or feature on that branch. Maintain the existing coding style.
-3. Lint and test your changes.
+__Do not include generated build files in your commits.__
+
+1. Create a feature branch based on the `dev` branch.
+2. Implement your patch or feature on that branch.
+3. Lint and test your changes. Maintain the existing coding style.
 3. Add unit tests for any new or changed functionality.
-3. Navigate to your fork on Github, select your feature branch and create a new Pull Request.
+3. Navigate to your fork on Github, select your feature branch and create a new Pull Request targeting the `dev` branch.
 4. Once your PR has been merged, you can safely remove your feature-branch.
 
 
@@ -31,21 +34,19 @@ A proposed change should be focused and concise. Do not include generated build 
 This project contains scripts that will help you during development. All scripts can be executed with `npm run [script]`.
 The following table provides an overview of the most important scripts:
 
-| Task  | Description                           |
-|-------|---------------------------------------|
-| lint  | Checks source files for syntax errors |
-| build | Generates the final bundle            |
-| test  | Runs unit tests                       |
+| Task  | Description                                     |
+|-------|-------------------------------------------------|
+| build | Builds the demo bundle.                         |
+| watch | Builds the demo bundle and listens for changes. |
+| dev   | Runs the watch script and serves files locally. |
+| test  | Generates production bundles and runs tests.    |
 
-__Note__: Setting `BABEL_ENV` to `production` enables source code transpilation and minification which considerably slows down the build process.
+__Note__: Setting `NODE_ENV` to `production` enables source code transpilation and minification which considerably slows down the build process. The `test` script does this automatically.
 
 
 ### Testing :heavy_check_mark:
 
-First, install the [http-server](https://github.com/indexzero/http-server) using `npm install -g http-server` to conveniently run things locally.
-
-Navigate to the project's root folder and start the server with the command `hs`. Open your web browser and navigate to http://localhost:8080/demo/index.debug.html.
-Please note that the default `index.html` will load the minified demo bundle which is _not_ desirable during development.
+Use the script `npm run dev` to run an HTTP server in the background while building the demo bundle and watching for file changes at the same time. Open your web browser and navigate to http://localhost:8080/demo/index.debug.html. Please note that the default `index.html` will load the minified demo bundle which is _not_ desirable during development.
 
 __Hint__: Open the development tools in your browser and make sure that the browser cache is disabled while it's open.
 
@@ -66,5 +67,5 @@ Git will guide you through the process of resolving conflicts.
 This operation is similar to merging, except you're in fact rewriting your local history.
 After rebasing, you'll need to use `git push --force my-feature`.
 
-You can add more commits to your feature branch after you created the PR.
+You can add more commits to your feature branch after you created the Pull Request.
 This means that you can change things later if necessary.
