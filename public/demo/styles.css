@@ -22,6 +22,8 @@ a:hover, a:active {
 
 canvas {
 	display: block;
+	max-height: 100%;
+	max-width: 100%;
 }
 
 p {
@@ -39,31 +41,57 @@ div[role="complementary"] {
 	top: 0;
 }
 
-.info {
-	color: rgb(90, 95, 90);
-	font-size: 75%;
-	left: 5px;
-	position: fixed;
-	top: 5px;
-}
-
-.github {
-	bottom: 15px;
-	left: 15px;
+img {
+	cursor: pointer;
+	display: block;
 	opacity: 0.075;
-	position: fixed;
 	transition: opacity 0.2s;
 }
 
-.github:active, .github:hover {
+img:hover {
 	opacity: 0.25;
 }
 
-#viewport p {
+.hidden {
+	display: none;
+}
+
+.loading {
 	left: 0;
 	position: fixed;
 	right: 0;
 	text-align: center;
 	top: 50%;
 	transform: translateY(-50%);
+	user-select: none;
+}
+
+.info {
+	bottom: 12px;
+	left: 8px;
+	position: fixed;
+}
+
+.info div {
+	bottom: 100%;
+	color: rgb(90, 95, 90);
+	font-size: 75%;
+	position: absolute;
+	width: max-content;
+}
+
+.code {
+	bottom: 15px;
+	left: 50px;
+	position: fixed;
+}
+
+.github {
+	bottom: 15px;
+	left: 90px;
+	position: fixed;
+}
+
+.dg {
+	user-select: none;
 }
