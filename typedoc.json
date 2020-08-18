@@ -1,0 +1,11 @@
+{
+	"inputFiles": ["src"],
+	"out": "public/docs",
+	"mode": "file",
+	"theme": "default",
+	"readme": "none",
+	"excludeNotExported": true,
+	"excludePrivate": true,
+	"includeVersion": true,
+	"hideGenerator": true
+}
