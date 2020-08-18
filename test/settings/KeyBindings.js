@@ -1,5 +1,5 @@
 import test from "ava";
-import { KeyBindings } from "../../build/delta-controls.js";
+import { KeyBindings } from "../../build/spatial-controls.esm.js";
 
 test("can be instantiated", t => {
 

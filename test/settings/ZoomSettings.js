@@ -1,5 +1,5 @@
 import test from "ava";
-import { ZoomSettings } from "../../build/delta-controls.js";
+import { ZoomSettings } from "../../build/spatial-controls.esm.js";
 
 test("can be instantiated", t => {
 

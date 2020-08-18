@@ -1,5 +1,5 @@
 import test from "ava";
-import { PointerSettings } from "../../build/delta-controls.js";
+import { PointerSettings } from "../../build/spatial-controls.esm.js";
 
 test("can be instantiated", t => {
 

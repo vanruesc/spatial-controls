@@ -1,5 +1,5 @@
 import test from "ava";
-import { MovementState } from "../../build/delta-controls.js";
+import { MovementState } from "../../build/spatial-controls.esm.js";
 
 test("can be instantiated", t => {
 
