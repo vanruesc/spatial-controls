@@ -1,20 +1,35 @@
 import {
-	AxesHelper,
 	CubeTextureLoader,
 	Mesh,
 	MeshBasicMaterial,
 	PerspectiveCamera,
-	SphereBufferGeometry
+	PolarGridHelper,
+	SphereBufferGeometry,
+	Texture,
+	sRGBEncoding
 } from "three";
 
+import { GUI } from "dat.gui";
 import { Demo } from "three-demo";
-import { DeltaControls } from "../../../src";
+import { SpatialControls } from "../../../src";
 
 /**
- * A Delta Controls demo.
+ * A Spatial Controls demo.
  */
 
-export class DeltaControlsDemo extends Demo {
+export class SpatialControlsDemo extends Demo {
+
+	/**
+	 * The controls.
+	 */
+
+	private controls: SpatialControls;
+
+	/**
+	 * A mesh.
+	 */
+
+	private mesh: Mesh;
 
 	/**
 	 * Constructs a new demo.
@@ -24,13 +39,7 @@ export class DeltaControlsDemo extends Demo {
 
 		super("delta-controls");
 
-		/**
-		 * A mesh.
-		 *
-		 * @type {Mesh}
-		 * @private
-		 */
-
+		this.controls = null;
 		this.mesh = null;
 
 	}
@@ -38,10 +47,10 @@ export class DeltaControlsDemo extends Demo {
 	/**
 	 * Loads scene assets.
 	 *
-	 * @return {Promise} A promise that will be fulfilled as soon as all assets have been loaded.
+	 * @return A promise that resolves when all assets have been loaded.
 	 */
 
-	load() {
+	load(): Promise<void> {
 
 		const assets = this.assets;
 		const loadingManager = this.loadingManager;
@@ -60,19 +69,12 @@ export class DeltaControlsDemo extends Demo {
 			if(assets.size === 0) {
 
 				loadingManager.onError = reject;
-				loadingManager.onProgress = (item, loaded, total) => {
+				loadingManager.onLoad = resolve;
 
-					if(loaded === total) {
+				cubeTextureLoader.load(urls, (t) => {
 
-						resolve();
-
-					}
-
-				};
-
-				cubeTextureLoader.load(urls, function(textureCube) {
-
-					assets.set("sky", textureCube);
+					t.encoding = sRGBEncoding;
+					assets.set("sky", t);
 
 				});
 
@@ -90,7 +92,7 @@ export class DeltaControlsDemo extends Demo {
 	 * Creates the scene.
 	 */
 
-	initialize() {
+	initialize(): void {
 
 		const scene = this.scene;
 		const assets = this.assets;
@@ -98,37 +100,36 @@ export class DeltaControlsDemo extends Demo {
 
 		// Sky.
 
-		scene.background = assets.get("sky");
+		scene.background = assets.get("sky") as Texture;
 
 		// Camera.
 
-		const camera = new PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 2000);
+		const aspect = window.innerWidth / window.innerHeight;
+		const camera = new PerspectiveCamera(50, aspect, 0.1, 1000);
 		camera.position.set(4, 1, 4).normalize();
 		this.camera = camera;
 
 		// Controls.
 
-		const controls = new DeltaControls(camera.position, camera.quaternion, renderer.domElement);
+		const controls = new SpatialControls(camera.position, camera.quaternion, renderer.domElement);
 		controls.lookAt(scene.position);
 		controls.settings.zoom.minDistance = 0.25;
 		controls.settings.zoom.maxDistance = 3.0;
+		controls.settings.sensitivity.rotationX = 2.2;
+		controls.settings.sensitivity.rotationY = 2.2;
+		controls.settings.sensitivity.translation = 0.25;
+		controls.settings.sensitivity.zoom = 0.1;
+		controls.settings.pointer.lock = false;
 		this.controls = controls;
 
 		// Objects.
 
-		const axesHelper = new AxesHelper();
-		axesHelper.scale.set(0.1, 0.1, 0.1);
-		scene.add(axesHelper);
+		const gridHelper = new PolarGridHelper(1, 16, 8, 64, 0x444444, 0x888888);
+		scene.add(gridHelper);
 
 		const mesh = new Mesh(
-			new SphereBufferGeometry(0.05, 16, 16),
-			new MeshBasicMaterial({
-				transparent: true,
-				wireframe: true,
-				opacity: 0.35,
-				color: 0xff9600,
-				fog: false
-			})
+			new SphereBufferGeometry(0.01, 16, 16),
+			new MeshBasicMaterial({ color: 0xff0000 })
 		);
 
 		this.mesh = mesh;
@@ -140,24 +141,23 @@ export class DeltaControlsDemo extends Demo {
 	/**
 	 * Renders this demo.
 	 *
-	 * @param {Number} delta - The time since the last frame in seconds.
+	 * @param deltaTime - The time since the last update in seconds.
 	 */
 
-	render(delta) {
+	render(deltaTime: number): void {
 
-		this.controls.update(delta);
-
-		super.render(delta);
+		this.controls.update(deltaTime);
+		super.render(deltaTime);
 
 	}
 
 	/**
 	 * Registers configuration options.
 	 *
-	 * @param {GUI} menu - A menu.
+	 * @param menu - A menu.
 	 */
 
-	registerOptions(menu) {
+	registerOptions(menu: GUI): void {
 
 		const controls = this.controls;
 		const mesh = this.mesh;
@@ -166,13 +166,17 @@ export class DeltaControlsDemo extends Demo {
 			orbit: controls.settings.general.orbit
 		};
 
-		let folder = menu.addFolder("General");
+		let folder;
+
+		folder = menu.addFolder("General");
+
 		folder.add(params, "orbit").onChange(() => {
 
 			mesh.visible = params.orbit;
 			controls.setOrbitEnabled(params.orbit);
 
 		});
+
 		folder.open();
 
 		folder = menu.addFolder("Pointer Behaviour");
@@ -181,14 +185,34 @@ export class DeltaControlsDemo extends Demo {
 		folder.open();
 
 		folder = menu.addFolder("Sensitivity");
-		folder.add(controls.settings.sensitivity, "rotation").min(0.0001).max(0.01).step(0.0001);
-		folder.add(controls.settings.sensitivity, "translation").min(0.01).max(5.0).step(0.01);
-		folder.add(controls.settings.sensitivity, "zoom").min(0.001).max(1.0).step(0.001);
+		folder.add(controls.settings.sensitivity, "rotationX").min(0.1).max(3.0).step(0.01);
+		folder.add(controls.settings.sensitivity, "rotationY").min(0.1).max(3.0).step(0.01);
+		folder.add(controls.settings.sensitivity, "translation").min(0.1).max(2.0).step(0.01);
+		folder.add(controls.settings.sensitivity, "zoom").min(0.01).max(3.0).step(0.01);
 		folder.open();
 
 		folder = menu.addFolder("Rotation");
-		folder.add(controls.settings.rotation, "minAzimuthalAngle").min(-Math.PI).max(Math.PI).step(0.0001);
-		folder.add(controls.settings.rotation, "maxAzimuthalAngle").min(-Math.PI).max(Math.PI).step(0.0001);
+
+		folder.add(controls.settings.rotation, "minAzimuthalAngle").min(-Math.PI).max(0.0).step(0.0001).onChange(() => {
+
+			if(controls.settings.rotation.minAzimuthalAngle <= -Math.PI + 1e-6) {
+
+				controls.settings.rotation.minAzimuthalAngle = Number.NEGATIVE_INFINITY;
+
+			}
+
+		});
+
+		folder.add(controls.settings.rotation, "maxAzimuthalAngle").min(0.0).max(Math.PI).step(0.0001).onChange(() => {
+
+			if(controls.settings.rotation.maxAzimuthalAngle >= Math.PI - 1e-6) {
+
+				controls.settings.rotation.maxAzimuthalAngle = Number.POSITIVE_INFINITY;
+
+			}
+
+		});
+
 		folder.add(controls.settings.rotation, "minPolarAngle").min(0.0).max(Math.PI).step(0.0001);
 		folder.add(controls.settings.rotation, "maxPolarAngle").min(0.0).max(Math.PI).step(0.0001);
 		folder.add(controls.settings.rotation, "invertX");
