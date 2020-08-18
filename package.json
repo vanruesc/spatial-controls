@@ -1,10 +1,14 @@
 {
-	"name": "delta-controls",
-	"version": "2.1.0",
-	"description": "A 3D movement controller.",
-	"homepage": "https://github.com/vanruesc/delta-controls",
-	"main": "build/delta-controls.js",
-	"module": "build/delta-controls.esm.js",
+	"name": "spatial-controls",
+	"version": "1.0.1",
+	"description": "Customizable 3D controls.",
+	"homepage": "https://github.com/vanruesc/spatial-controls",
+	"main": "build/spatial-controls.js",
+	"module": "build/spatial-controls.esm.js",
+  "types": "build/types/index.d.ts",
+	"exports": {
+		".": "./build/spatial-controls.esm.js"
+	},
 	"sideEffects": false,
 	"license": "Zlib",
 	"keywords": [
@@ -22,10 +26,10 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/vanruesc/delta-controls.git"
+		"url": "https://github.com/vanruesc/spatial-controls.git"
 	},
 	"bugs": {
-		"url": "https://github.com/vanruesc/delta-controls/issues"
+		"url": "https://github.com/vanruesc/spatial-controls/issues"
 	},
 	"files": [
 		"build"
@@ -33,12 +37,14 @@
 	"scripts": {
 		"ava": "ava",
 		"build": "rollup -c",
-		"build:production": "cross-env NODE_ENV=production npm run build",
+		"build:production": "cross-env NODE_ENV=production rollup -c",
 		"watch": "rollup -c -w",
-		"doc": "rimraf public/docs && esdoc",
-		"pretest": "npm run build:production",
-		"test": "ava",
-		"prepack": "npm test && npm run doc"
+		"dev": "concurrently -k -n server,rollup,eslint \"hs -s\" \"rollup -c -w\" \"esw -w --ext .ts src demo/src\"",
+		"doc": "rimraf public/docs && typedoc",
+		"lint": "eslint src demo/src",
+		"prepack": "npm test && npm run doc",
+		"pretest": "rimraf build && npm run build:production",
+		"test": "ava"
 	},
 	"ava": {
 		"failFast": true,
@@ -50,31 +56,40 @@
 		]
 	},
 	"eslintConfig": {
-		"extends": "delta"
+		"root": true,
+		"extends": "aether/typescript",
+		"parserOptions": {
+			"project": [
+				"tsconfig.json"
+			]
+		}
 	},
 	"peerDependencies": {
-		"math-ds": ">= 1.0.0 < 2.0.0"
+		"three": ">= 0.118.0 < 0.120.0"
 	},
 	"devDependencies": {
-		"@babel/core": "7.x.x",
-		"@babel/preset-env": "7.x.x",
-		"@rollup/plugin-node-resolve": "7.x.x",
+		"@rollup/plugin-buble": "0.x.x",
+		"@rollup/plugin-node-resolve": "9.x.x",
+		"@rollup/plugin-typescript": "5.x.x",
+		"@types/dat.gui": "0.x.x",
+		"@typescript-eslint/eslint-plugin": "3.x.x",
+		"@typescript-eslint/parser": "3.x.x",
 		"ava": "3.x.x",
+		"concurrently": "5.x.x",
 		"cross-env": "7.x.x",
 		"dat.gui": "0.x.x",
-		"esdoc": "1.x.x",
-		"esdoc-importpath-plugin": "1.x.x",
-		"esdoc-standard-plugin": "1.x.x",
-		"eslint-config-delta": "1.x.x",
+		"eslint": "7.x.x",
+		"eslint-config-aether": "1.x.x",
+		"eslint-watch": "7.x.x",
 		"esm": "3.x.x",
-		"math-ds": "1.x.x",
+		"http-server": "0.x.x",
 		"rimraf": "3.x.x",
-		"rollup": "1.x.x",
-		"rollup-plugin-babel": "4.x.x",
-		"rollup-plugin-eslint": "6.x.x",
-		"rollup-plugin-terser": "5.x.x",
-		"synthetic-event": "1.x.x",
+		"rollup": "2.x.x",
+		"rollup-plugin-terser": "7.x.x",
 		"three": "0.x.x",
-		"three-demo": "3.x.x"
+		"three-demo": "4.x.x",
+		"tslib": "2.x.x",
+		"typedoc": "0.x.x",
+		"typescript": "3.x.x"
 	}
 }
