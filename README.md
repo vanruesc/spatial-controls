@@ -1,8 +1,8 @@
 # Spatial Controls
 
-[![Build status](https://travis-ci.org/vanruesc/spatial-controls.svg?branch=master)](https://travis-ci.org/vanruesc/spatial-controls)
-[![npm version](https://badgen.net/npm/v/spatial-controls?color=green)](https://www.npmjs.com/package/spatial-controls)
-[![Peer dependencies](https://david-dm.org/vanruesc/spatial-controls/peer-status.svg)](https://david-dm.org/vanruesc/spatial-controls?type=peer)
+[![CI](https://badgen.net/github/checks/vanruesc/spatial-controls)](https://github.com/vanruesc/spatial-controls/actions)
+[![Version](https://badgen.net/npm/v/spatial-controls?color=green)](https://www.npmjs.com/package/spatial-controls)
+[![Peer dependencies](https://badgen.net/david/peer/vanruesc/spatial-controls)](https://david-dm.org/vanruesc/spatial-controls?type=peer)
 
 A 3D movement controller that supports multiple movement modes and configurable input settings.
 
