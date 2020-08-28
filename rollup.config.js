@@ -23,7 +23,7 @@ const lib = {
 	module: {
 		input: "src/index.ts",
 		plugins: [resolve(), typescript({
-			tsconfig: "tsconfig.lib.json"
+			tsconfig: "src/tsconfig.json"
 		})],
 		external,
 		output: {
@@ -36,7 +36,7 @@ const lib = {
 	main: {
 		input: "src/index.ts",
 		plugins: [resolve(), typescript({
-			tsconfig: "tsconfig.lib.json"
+			tsconfig: "src/tsconfig.json"
 		}), buble()],
 		external,
 		output: [{
@@ -61,7 +61,7 @@ const lib = {
 const demo = {
 	input: "demo/src/index.ts",
 	plugins: [resolve(), typescript({
-		tsconfig: "tsconfig.demo.json"
+		tsconfig: "demo/src/tsconfig.json"
 	})].concat(production ? [buble()] : []),
 	output: [{
 		dir: "public/demo",

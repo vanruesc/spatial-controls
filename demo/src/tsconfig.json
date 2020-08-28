@@ -1,11 +1,11 @@
 {
-	"extends": "./tsconfig.json",
+	"extends": "../../tsconfig.json",
 	"compilerOptions": {
-		"outDir": "public/demo",
+		"outDir": "../../public/demo",
 		"assumeChangesOnlyAffectDirectDependencies": true
 	},
 	"include": [
-		"src/**/*",
-		"demo/src/**/*"
+		"../../src/**/*",
+		"**/*"
 	]
 }
