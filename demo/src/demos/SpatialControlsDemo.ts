@@ -37,7 +37,7 @@ export class SpatialControlsDemo extends Demo {
 
 	constructor() {
 
-		super("delta-controls");
+		super("spatial-controls");
 
 		this.controls = null;
 		this.mesh = null;
