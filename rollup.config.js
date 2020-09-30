@@ -1,4 +1,4 @@
-import buble from "@rollup/plugin-buble";
+import babel from "@rollup/plugin-babel";
 import resolve from "@rollup/plugin-node-resolve";
 import typescript  from "@rollup/plugin-typescript";
 import { terser } from "rollup-plugin-terser";
@@ -35,9 +35,16 @@ const lib = {
 	},
 	main: {
 		input: "src/index.ts",
-		plugins: [resolve(), typescript({
-			tsconfig: "src/tsconfig.json"
-		}), buble()],
+		plugins: [
+			resolve(),
+			typescript({
+				tsconfig: "src/tsconfig.json"
+			}),
+			babel({
+				babelHelpers: "bundled",
+				extensions: [".ts"]
+			})
+		],
 		external,
 		output: [{
 			dir: "build",
@@ -62,7 +69,10 @@ const demo = {
 	input: "demo/src/index.ts",
 	plugins: [resolve(), typescript({
 		tsconfig: "demo/src/tsconfig.json"
-	})].concat(production ? [buble()] : []),
+	})].concat(!production ? [] : [babel({
+		babelHelpers: "bundled",
+		extensions: [".ts"]
+	})]),
 	output: [{
 		dir: "public/demo",
 		entryFileNames: "[name].js",
