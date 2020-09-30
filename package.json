@@ -65,15 +65,17 @@
 		}
 	},
 	"peerDependencies": {
-		"three": ">= 0.118.0 < 0.121.0"
+		"three": ">= 0.118.0 < 0.122.0"
 	},
 	"devDependencies": {
-		"@rollup/plugin-buble": "0.x.x",
+		"@babel/core": "7.x.x",
+		"@babel/preset-env": "7.x.x",
+		"@rollup/plugin-babel": "5.x.x",
 		"@rollup/plugin-node-resolve": "9.x.x",
-		"@rollup/plugin-typescript": "5.x.x",
+		"@rollup/plugin-typescript": "6.x.x",
 		"@types/dat.gui": "0.x.x",
-		"@typescript-eslint/eslint-plugin": "3.x.x",
-		"@typescript-eslint/parser": "3.x.x",
+		"@typescript-eslint/eslint-plugin": "4.x.x",
+		"@typescript-eslint/parser": "4.x.x",
 		"ava": "3.x.x",
 		"concurrently": "5.x.x",
 		"cross-env": "7.x.x",
