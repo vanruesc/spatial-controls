@@ -42,7 +42,7 @@
 		"dev": "concurrently -k -n server,rollup,eslint \"hs -s\" \"rollup -c -w\" \"esw -w --ext .ts src demo/src\"",
 		"doc": "rimraf public/docs && typedoc",
 		"lint": "eslint src demo/src",
-		"prepack": "npm test && npm run doc",
+		"prepublishOnly": "npm test && npm run doc",
 		"pretest": "rimraf build && npm run build:production",
 		"test": "ava"
 	},
@@ -65,13 +65,13 @@
 		}
 	},
 	"peerDependencies": {
-		"three": ">= 0.118.0 < 0.122.0"
+		"three": ">= 0.118.0 < 0.123.0"
 	},
 	"devDependencies": {
 		"@babel/core": "7.x.x",
 		"@babel/preset-env": "7.x.x",
 		"@rollup/plugin-babel": "5.x.x",
-		"@rollup/plugin-node-resolve": "9.x.x",
+		"@rollup/plugin-node-resolve": "10.x.x",
 		"@rollup/plugin-typescript": "6.x.x",
 		"@types/dat.gui": "0.x.x",
 		"@typescript-eslint/eslint-plugin": "4.x.x",
