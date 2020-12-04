@@ -14,21 +14,22 @@ let manager: DemoManager;
  * @param timestamp - The current time in milliseconds.
  */
 
-function render(now: number): void {
+function render(timestamp: number): void {
 
 	requestAnimationFrame(render);
-	manager.render(now);
+	manager.render(timestamp);
 
 }
 
 /**
- * Starts the program.
+ * Performs initialization tasks when the page has been fully loaded.
  *
  * @param event - An event.
  */
 
 window.addEventListener("load", (event: Event) => {
 
+	const debug = (window.location.href.indexOf("debug") !== -1);
 	const viewport = document.getElementById("viewport");
 
 	const renderer = new WebGLRenderer({
@@ -40,6 +41,7 @@ window.addEventListener("load", (event: Event) => {
 	});
 
 	renderer.outputEncoding = sRGBEncoding;
+	renderer.debug.checkShaderErrors = debug;
 	renderer.setSize(viewport.clientWidth, viewport.clientHeight);
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setClearColor(0x000000, 0.0);
@@ -104,7 +106,7 @@ document.addEventListener("DOMContentLoaded", (event: Event) => {
 });
 
 /**
- * Toggles the visibility of the interface on H key press.
+ * Handles keyboard events.
  *
  * @param event - An event.
  */
