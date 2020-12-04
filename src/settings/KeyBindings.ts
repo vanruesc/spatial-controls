@@ -1,5 +1,5 @@
 import { KeyCode } from "../input";
-import { Action } from "../core";
+import { Action } from "../core/Action";
 
 /**
  * Key bindings.
