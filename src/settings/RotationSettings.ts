@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import * as axes from "../core/axes.js";
+import * as axes from "../core/axes";
 
 /**
  * Rotation settings.
