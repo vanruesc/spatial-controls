@@ -1,5 +1,5 @@
 import { KeyCode } from "../input";
-import { Action } from "../core";
+import { Action } from "../core/Action";
 export declare class KeyBindings {
     defaultActions: Map<KeyCode, Action>;
     actions: Map<KeyCode, Action>;

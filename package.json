@@ -1,6 +1,6 @@
 {
 	"name": "spatial-controls",
-	"version": "3.0.3",
+	"version": "3.0.4",
 	"description": "Customizable 3D controls.",
 	"homepage": "https://github.com/vanruesc/spatial-controls",
 	"main": "build/spatial-controls.js",
