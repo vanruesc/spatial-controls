@@ -5,9 +5,10 @@
 	"homepage": "https://github.com/vanruesc/spatial-controls",
 	"main": "build/spatial-controls.js",
 	"module": "build/spatial-controls.esm.js",
-  "types": "build/types/index.d.ts",
+	"types": "build/types/index.d.ts",
 	"exports": {
-		".": "./build/spatial-controls.esm.js"
+		"import": "./build/spatial-controls.esm.js",
+		"require": "./build/spatial-controls.js"
 	},
 	"sideEffects": false,
 	"license": "Zlib",
@@ -39,15 +40,15 @@
 		"build": "run-s build:*",
 		"build:js": "cross-env NODE_ENV=production ts-node-script esbuild",
 		"build:dts": "tsc -p tsconfig.d.json",
+		"clean": "del-cli public/docs build",
 		"dev": "run-p start watch:*",
-		"doc": "rimraf public/docs && typedoc",
+		"doc": "typedoc",
 		"lint": "eslint src demo/src --fix",
-		"prepublishOnly": "run-s test doc",
-		"pretest": "rimraf build",
+		"prepublishOnly": "run-s clean test doc",
 		"test": "run-s lint build ava",
 		"start": "hs -s",
 		"watch": "run-p watch:*",
-		"watch:eslint": "esw -w --ext .ts src demo/src",
+		"watch:eslint": "esw -w --ext .ts --color src demo/src",
 		"watch:js": "ts-node-script esbuild -w"
 	},
 	"ava": {
@@ -69,7 +70,7 @@
 		}
 	},
 	"peerDependencies": {
-		"three": ">= 0.118.0 < 0.124.0"
+		"three": ">= 0.118.0 < 0.125.0"
 	},
 	"devDependencies": {
 		"@types/dat.gui": "0.x.x",
@@ -81,6 +82,7 @@
 		"chokidar": "3.x.x",
 		"cross-env": "7.x.x",
 		"dat.gui": "0.x.x",
+		"del-cli": "3.x.x",
 		"esbuild": "0.x.x",
 		"eslint": "7.x.x",
 		"eslint-config-aether": "1.x.x",
@@ -88,7 +90,6 @@
 		"esm": "3.x.x",
 		"http-server": "0.x.x",
 		"npm-run-all": "4.x.x",
-		"rimraf": "3.x.x",
 		"three": "0.x.x",
 		"three-demo": "4.x.x",
 		"ts-node": "9.x.x",
