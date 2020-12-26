@@ -1,5 +1,5 @@
 /**
- * spatial-controls v3.0.4 build Sun Dec 06 2020
+ * spatial-controls v3.0.5 build Sat Dec 26 2020
  * https://github.com/vanruesc/spatial-controls
  * Copyright 2020 Raoul van Rüschen
  * @license Zlib
