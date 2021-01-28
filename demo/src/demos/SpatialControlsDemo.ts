@@ -44,12 +44,6 @@ export class SpatialControlsDemo extends Demo {
 
 	}
 
-	/**
-	 * Loads scene assets.
-	 *
-	 * @return A promise that resolves when all assets have been loaded.
-	 */
-
 	load(): Promise<void> {
 
 		const assets = this.assets;
@@ -88,28 +82,24 @@ export class SpatialControlsDemo extends Demo {
 
 	}
 
-	/**
-	 * Creates the scene.
-	 */
-
 	initialize(): void {
 
 		const scene = this.scene;
 		const assets = this.assets;
 		const renderer = this.renderer;
 
-		// Sky.
+		// Sky
 
 		scene.background = assets.get("sky") as Texture;
 
-		// Camera.
+		// Camera
 
 		const aspect = window.innerWidth / window.innerHeight;
 		const camera = new PerspectiveCamera(50, aspect, 0.1, 1000);
 		camera.position.set(4, 1, 4).normalize();
 		this.camera = camera;
 
-		// Controls.
+		// Controls
 
 		const controls = new SpatialControls(camera.position, camera.quaternion, renderer.domElement);
 		controls.lookAt(scene.position);
@@ -122,7 +112,7 @@ export class SpatialControlsDemo extends Demo {
 		controls.settings.pointer.lock = false;
 		this.controls = controls;
 
-		// Objects.
+		// Objects
 
 		const gridHelper = new PolarGridHelper(1, 16, 8, 64, 0x444444, 0x888888);
 		scene.add(gridHelper);
@@ -138,24 +128,11 @@ export class SpatialControlsDemo extends Demo {
 
 	}
 
-	/**
-	 * Renders this demo.
-	 *
-	 * @param deltaTime - The time since the last update in seconds.
-	 */
-
-	render(deltaTime: number): void {
+	update(deltaTime: number): void {
 
 		this.controls.update(deltaTime);
-		super.render(deltaTime);
 
 	}
-
-	/**
-	 * Registers configuration options.
-	 *
-	 * @param menu - A menu.
-	 */
 
 	registerOptions(menu: GUI): void {
 
