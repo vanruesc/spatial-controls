@@ -2,9 +2,19 @@
 	"ts-node": {
 		"transpileOnly": true,
 		"compilerOptions": {
-			"module": "CommonJS"
+			"module": "CommonJS",
+			"resolveJsonModule": true
 		},
 		"include": ["./*.ts"]
+	},
+	"typedocOptions": {
+		"entryPoints": ["./src/index.ts"],
+		"out": "public/docs",
+		"theme": "default",
+		"readme": "none",
+		"excludePrivate": true,
+		"includeVersion": true,
+		"hideGenerator": true
 	},
 	"compilerOptions": {
 		"rootDir": ".",
@@ -13,8 +23,9 @@
 		"target": "ESNext",
 		"strict": true,
 		"sourceMap": false,
-		"removeComments": true,
+		"importHelpers": true,
 		"skipLibCheck": true,
 		"strictNullChecks": false
-	}
+	},
+	"include": ["src", "demo/src"]
 }
