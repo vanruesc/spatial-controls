@@ -1,5 +1,5 @@
 import test from "ava";
-import { RotationSettings } from "../../build/spatial-controls.esm.js";
+import { RotationSettings } from "../../";
 
 test("can be instantiated", t => {
 

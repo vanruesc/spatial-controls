@@ -1,5 +1,5 @@
 import test from "ava";
-import { SensitivitySettings } from "../../build/spatial-controls.esm.js";
+import { SensitivitySettings } from "../../";
 
 test("can be instantiated", t => {
 

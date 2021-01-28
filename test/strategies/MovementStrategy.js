@@ -1,5 +1,5 @@
 import test from "ava";
-import { MovementStrategy } from "../../build/spatial-controls.esm.js";
+import { MovementStrategy } from "../../";
 
 test("can be instantiated", t => {
 

@@ -1,5 +1,5 @@
 import test from "ava";
-import { ZoomStrategy } from "../../build/spatial-controls.esm.js";
+import { ZoomStrategy } from "../../";
 
 test("can be instantiated", t => {
 

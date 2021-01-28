@@ -1,5 +1,5 @@
 import test from "ava";
-import { PointerSettings } from "../../build/spatial-controls.esm.js";
+import { PointerSettings } from "../../";
 
 test("can be instantiated", t => {
 

@@ -1,6 +1,6 @@
 import test from "ava";
 import { Quaternion, Vector3 } from "three";
-import { SpatialControls } from "../../build/spatial-controls.esm.js";
+import { SpatialControls } from "../../";
 
 test("can be instantiated", t => {
 

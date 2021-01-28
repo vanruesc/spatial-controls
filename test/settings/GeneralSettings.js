@@ -1,5 +1,5 @@
 import test from "ava";
-import { GeneralSettings } from "../../build/spatial-controls.esm.js";
+import { GeneralSettings } from "../../";
 
 test("can be instantiated", t => {
 
