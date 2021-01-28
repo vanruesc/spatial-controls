@@ -68,7 +68,7 @@ keyBindings.set(KeyCode.V, Action.MOVE_DOWN);
 ```js
 const settingsURL = settings.toDataURL();
 const a = document.createElement("a");
-a.href = settingsURL;
+a.setAttribute("href", settingsURL);
 a.setAttribute("download", "controls.json");
 a.click();
 URL.revokeObjectURL(settingsURL);
@@ -77,23 +77,13 @@ URL.revokeObjectURL(settingsURL);
 #### Loading
 
 ```js
-const request = new XMLHttpRequest();
-
-request.addEventListener("readystatechange", function() {
-
-	if(this.readyState === 4 && this.status === 200) {
-
-		controls.settings.copy(JSON.parse(this.responseText));
-
-	}
-
-});
-
-request.open("GET", "./controls.json");
-request.send();
+fetch("./controls.json")
+	.then(response => response.json())
+	.then(data => controls.settings.copy(data))
+	.catch(e => console.error(e));
 ```
 
 
 ## Contributing
 
-Please refer to the [contribution guidelines](https://github.com/vanruesc/spatial-controls/blob/master/.github/CONTRIBUTING.md) for details.
+Please refer to the [contribution guidelines](https://github.com/vanruesc/spatial-controls/blob/main/.github/CONTRIBUTING.md) for details.
