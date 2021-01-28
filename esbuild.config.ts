@@ -3,6 +3,7 @@ import * as pkg from "./package.json";
 
 const date = (new Date()).toDateString();
 const production = (process.env.NODE_ENV === "production");
+const globalName = pkg.name.replace(/-/g, "").toUpperCase();
 const external = Object.keys(pkg.peerDependencies);
 
 const banner = `/**
@@ -12,37 +13,36 @@ const banner = `/**
  * @license ${pkg.license}
  */`;
 
-const ext = new Map([
-	["esm", ".esm.js"],
-	["iife", ".js"],
-	["min", ".min.js"]
-]);
+const footer = `if(typeof module==="object"&&module.exports)module.exports=${globalName};`;
 
-function config(id: string, format: string, minify = false): BuildOptions {
+function config(infile: string, outfile: string, format: string, minify = false): BuildOptions {
 
-	const lib = (id === "lib");
-	const extKey = minify ? "min" : format;
-	const fileName = lib ? pkg.name : "index";
-	const outDir = lib ? "build" : "public/demo";
+	const lib = (infile === "src/index.ts");
+	const iife = (format === "iife");
 
 	return {
-		entryPoints: lib ? ["src/index.ts"] : ["demo/src/index.ts"],
-		outfile: `${outDir}/${fileName}${ext.get(extKey)}`,
-		globalName: lib ? pkg.name.replace(/-/g, "").toUpperCase() : "",
+		entryPoints: [infile],
 		external: lib ? external : [],
+		globalName: lib ? globalName : "",
 		banner: lib ? banner : "",
+		footer: (lib && iife) ? footer : "",
+		bundle: true,
+		outfile,
 		minify,
 		format
 	} as BuildOptions;
 
 }
 
-export default production ? [
-	config("lib", "esm"),
-	config("lib", "iife"),
-	config("lib", "iife", true),
-	config("demo", "iife"),
-	config("demo", "iife", true)
-] : [
-	config("demo", "iife")
+const demoConfigs = [
+	config("demo/src/index.ts", "public/demo/index.js", "iife", production)
 ];
+
+const libConfigs = production ? [
+	config("src/index.ts", `build/${pkg.name}.esm.js`, "esm"),
+	config("src/index.ts", `build/${pkg.name}.js`, "iife"),
+	config("src/index.ts", `build/${pkg.name}.min.js`, "iife", true)
+] : [];
+
+export const sourceDirectories = ["src", "demo/src"];
+export const configLists = [demoConfigs, libConfigs];

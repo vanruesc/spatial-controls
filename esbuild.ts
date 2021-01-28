@@ -1,53 +1,55 @@
-import { BuildOptions, startService } from "esbuild";
+import { BuildOptions, BuildResult, startService } from "esbuild";
 import { watch } from "chokidar";
-import { Stats } from "stats";
 import * as path from "path";
 import * as yargs from "yargs";
-import configs from "./esbuild.config";
+import { configLists, sourceDirectories } from "./esbuild.config";
 
-const argv = yargs.options({
-	watch: { alias: "w", type: "boolean", default: false }
-}).argv;
+const { argv } = yargs.options({ watch: { alias: "w", type: "boolean" } });
 
-async function build(changedFile: string) {
+async function build(changedFile: string = null): Promise<void> {
 
 	const service = await startService();
-	const t0 = Date.now();
+	const f = (changedFile !== null) ? path.normalize(changedFile) : null;
 
-	try {
+	for(const configs of configLists) {
 
-		for(const config of configs) {
+		const t0 = Date.now();
+		const promises: Promise<void>[] = configs.map((c: BuildOptions) => {
 
-			if(config.outfile !== changedFile) {
+			let p: Promise<void> = null;
 
-				await service.build(Object.assign({ bundle: true }, config));
-				console.log(`Built ${config.outfile} in ${Date.now() - t0}ms`);
+			if(path.normalize(c.outfile) !== f) {
+
+				p = service.build(c).then((result) => {
+
+					console.log(`Built ${c.outfile} in ${Date.now() - t0}ms`);
+					result.warnings.forEach((w) => console.warn(w.text,
+						`${w.location.line}:${w.location.column} ${w.location.file}`));
+
+				}).catch((e) => console.error(`Failed to build ${c.outfile}`));
 
 			}
 
-		}
+			return p;
 
-	} catch(e: Error) {
+		});
 
-		console.error(e);
-
-	} finally {
-
-		service.stop();
+		await Promise.all(promises);
 
 	}
+
+	service.stop();
 
 }
 
 if(argv.watch) {
 
-	const entryPoints: string[] = configs.reduce((a: string[], b: BuildOptions) => a.concat(b.entryPoints), []);
-	const directories = Array.from(new Set(entryPoints.map((f: string) => path.dirname(f))));
-	console.log(`Watching ${directories.join(", ").replace(/,\s([^,]*)$/, " and $1")} for changes…\n`);
+	console.log("Watching %s for changes…\n",
+		sourceDirectories.join(", ").replace(/, ([^,]*)$/, " and $1"));
 
-	const watcher = watch(directories);
+	const watcher = watch(sourceDirectories);
 	watcher.on("change", (f: string) => void build(f));
 
 }
 
-void build(null);
+void build();
