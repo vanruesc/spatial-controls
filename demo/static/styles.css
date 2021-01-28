@@ -20,40 +20,37 @@ a:hover, a:active {
 	color: white;
 }
 
-canvas {
-	display: block;
-	max-height: 100%;
-	max-width: 100%;
-}
-
-p {
-	margin: 0;
-}
-
-div[role="main"] {
-	height: 100%;
-}
-
-div[role="complementary"] {
+aside {
 	padding: 0 5px;
-	position: fixed;
+	position: absolute;
 	right: 0;
 	top: 0;
+	z-index: 1;
 }
 
-img {
+aside img {
 	cursor: pointer;
 	display: block;
 	opacity: 0.075;
 	transition: opacity 0.2s;
 }
 
-img:hover {
+aside img:hover {
 	opacity: 0.25;
 }
 
-.hidden {
-	display: none;
+canvas {
+	display: block;
+	max-height: 100%;
+	max-width: 100%;
+}
+
+main {
+	height: 100%;
+}
+
+p {
+	margin: 0;
 }
 
 .loading {
@@ -66,10 +63,22 @@ img:hover {
 	user-select: none;
 }
 
+.github, .code, .info {
+	bottom: 15px;
+	position: fixed;
+}
+
+.code {
+	left: 50px;
+}
+
+.github {
+	left: 90px;
+}
+
 .info {
 	bottom: 12px;
 	left: 8px;
-	position: fixed;
 }
 
 .info div {
@@ -80,18 +89,14 @@ img:hover {
 	width: max-content;
 }
 
-.code {
-	bottom: 15px;
-	left: 50px;
-	position: fixed;
-}
-
-.github {
-	bottom: 15px;
-	left: 90px;
-	position: fixed;
-}
-
 .dg {
 	user-select: none;
+}
+
+.dg select {
+	max-width: 100%;
+}
+
+.hidden {
+	display: none;
 }
