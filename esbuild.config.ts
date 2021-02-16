@@ -3,7 +3,6 @@ import * as pkg from "./package.json";
 
 const date = (new Date()).toDateString();
 const production = (process.env.NODE_ENV === "production");
-const globalName = pkg.name.replace(/-/g, "").toUpperCase();
 const external = Object.keys(pkg.peerDependencies);
 
 const banner = `/**
@@ -13,38 +12,22 @@ const banner = `/**
  * @license ${pkg.license}
  */`;
 
-const requireShim = `if(typeof window === "object"&&!window.require)window.require=()=>window.THREE;`;
-const footer = `if(typeof module==="object"&&module.exports)module.exports=${globalName};`;
+const demo: BuildOptions = {
+	entryPoints: ["demo/src/index.ts"],
+	outfile: "public/demo/index.js",
+	format: "iife",
+	bundle: true,
+	minify: production
+};
 
-function config(infile: string, outfile: string, format: string, minify = false): BuildOptions {
+const lib: BuildOptions = {
+	entryPoints: ["src/index.ts"],
+	outfile: `dist/${pkg.name}.js`,
+	format: "esm",
+	bundle: true,
+	external,
+	banner
+};
 
-	const lib = (infile === "src/index.ts");
-	const iife = (format === "iife");
-	const header = (!lib || !iife) ? banner : banner + "\n" + requireShim;
-
-	return {
-		entryPoints: [infile],
-		external: lib ? external : [],
-		globalName: lib ? globalName : "",
-		banner: lib ? header : "",
-		footer: (lib && iife) ? footer : "",
-		bundle: true,
-		outfile,
-		minify,
-		format
-	} as BuildOptions;
-
-}
-
-const demoConfigs = [
-	config("demo/src/index.ts", "public/demo/index.js", "iife", production)
-];
-
-const libConfigs = production ? [
-	config("src/index.ts", `build/${pkg.name}.esm.js`, "esm"),
-	config("src/index.ts", `build/${pkg.name}.js`, "iife"),
-	config("src/index.ts", `build/${pkg.name}.min.js`, "iife", true)
-] : [];
-
-export const sourceDirectories = ["src", "demo/src"];
-export const configLists = [demoConfigs, libConfigs];
+export const srcDirs = ["src", "demo/src"];
+export const configs = production ? [demo, lib] : [demo];
