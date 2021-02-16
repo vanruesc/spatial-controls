@@ -29,7 +29,7 @@ function render(timestamp: number): void {
 
 window.addEventListener("load", (event: Event) => {
 
-	const debug = (window.location.href.indexOf("debug") !== -1);
+	const debug = (window.location.href.indexOf("localhost") !== -1);
 	const viewport = document.getElementById("viewport");
 
 	const renderer = new WebGLRenderer({
