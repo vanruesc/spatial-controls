@@ -1,65 +1,67 @@
-import { Vector3 } from "three";
+import { EventDispatcher, Vector3 } from "three";
 import * as axes from "../core/axes";
 
 /**
  * Rotation settings.
  */
 
-export class RotationSettings {
+export class RotationSettings extends EventDispatcher {
 
 	/**
 	 * The up vector. Must be normalized.
 	 */
 
-	up: Vector3;
+	private up: Vector3;
 
 	/**
 	 * A pivot offset. Only affects third person orbiting.
 	 */
 
-	pivotOffset: Vector3;
+	private pivotOffset: Vector3;
 
 	/**
-	 * The minimum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
+	 * The minimum azimuthal angle in radians.
 	 */
 
-	minAzimuthalAngle: number;
+	private minAzimuthalAngle: number;
 
 	/**
-	 * The maximum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
+	 * The maximum azimuthal angle in radians.
 	 */
 
-	maxAzimuthalAngle: number;
+	private maxAzimuthalAngle: number;
 
 	/**
-	 * The minimum polar angle in radians. Range: [0, Math.PI].
+	 * The minimum polar angle in radians.
 	 */
 
-	minPolarAngle: number;
+	private minPolarAngle: number;
 
 	/**
-	 * The maximum polar angle in radians. Range: [0, Math.PI].
+	 * The maximum polar angle in radians.
 	 */
 
-	maxPolarAngle: number;
+	private maxPolarAngle: number;
 
 	/**
-	 * Indicates whether the horizontal rotation should be inverted.
+	 * Indicates whether the horizontal rotation is inverted.
 	 */
 
-	invertX: boolean;
+	private invertedX: boolean;
 
 	/**
-	 * Indicates whether the vertical rotation should be inverted.
+	 * Indicates whether the vertical rotation is inverted.
 	 */
 
-	invertY: boolean;
+	private invertedY: boolean;
 
 	/**
 	 * Constructs new rotation settings.
 	 */
 
 	constructor() {
+
+		super();
 
 		this.up = new Vector3();
 		this.up.copy(axes.y);
@@ -71,8 +73,208 @@ export class RotationSettings {
 		this.minPolarAngle = 0.0;
 		this.maxPolarAngle = Math.PI;
 
-		this.invertX = false;
-		this.invertY = false;
+		this.invertedX = false;
+		this.invertedY = false;
+
+	}
+
+	/**
+	 * Returns the up vector offset.
+	 *
+	 * @return The up vector.
+	 */
+
+	getUpVector(): Vector3 {
+
+		return this.up;
+
+	}
+
+	/**
+	 * Sets the up vector.
+	 *
+	 * @param value - The up vector.
+	 */
+
+	setUpVector(value: Vector3): void {
+
+		this.up = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Returns the pivot offset.
+	 *
+	 * @return The offset.
+	 */
+
+	getPivotOffset(): Vector3 {
+
+		return this.pivotOffset;
+
+	}
+
+	/**
+	 * Sets the pivot offset.
+	 *
+	 * @param value - The offset.
+	 */
+
+	setPivotOffset(value: Vector3): void {
+
+		this.pivotOffset = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Returns the minimum azimuthal angle in radians.
+	 *
+	 * @return The angle.
+	 */
+
+	getMinAzimuthalAngle(): number {
+
+		return this.minAzimuthalAngle;
+
+	}
+
+	/**
+	 * Sets the minimum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
+	 *
+	 * @param value - The angle.
+	 */
+
+	setMinAzimuthalAngle(value: number): void {
+
+		this.minAzimuthalAngle = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Returns the maximum azimuthal angle in radians.
+	 *
+	 * @return The angle.
+	 */
+
+	getMaxAzimuthalAngle(): number {
+
+		return this.maxAzimuthalAngle;
+
+	}
+
+	/**
+	 * Sets the maximum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
+	 *
+	 * @param value - The angle.
+	 */
+
+	setMaxAzimuthalAngle(value: number): void {
+
+		this.maxAzimuthalAngle = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Returns the minimum polar angle in radians.
+	 *
+	 * @return The angle.
+	 */
+
+	getMinPolarAngle(): number {
+
+		return this.minPolarAngle;
+
+	}
+
+	/**
+	 * Sets the minimum polar angle in radians. Range: [0, Math.PI].
+	 *
+	 * @param value - The angle.
+	 */
+
+	setMinPolarAngle(value: number): void {
+
+		this.minPolarAngle = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Returns the maximum polar angle in radians.
+	 *
+	 * @return The angle.
+	 */
+
+	getMaxPolarAngle(): number {
+
+		return this.maxPolarAngle;
+
+	}
+
+	/**
+	 * Sets the maximum polar angle in radians. Range: [0, Math.PI].
+	 *
+	 * @param value - The angle.
+	 */
+
+	setMaxPolarAngle(value: number): void {
+
+		this.maxPolarAngle = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Indicates whether the horizontal rotation is inverted.
+	 *
+	 * @return Whether the horizontal rotation is inverted.
+	 */
+
+	isInvertedX(): boolean {
+
+		return this.invertedX;
+
+	}
+
+	/**
+	 * Defines whether the horizontal rotation should be inverted.
+	 *
+	 * @param value - The value.
+	 */
+
+	setInvertedX(value: boolean): void {
+
+		this.invertedX = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Indicates whether the vertical rotation is inverted.
+	 *
+	 * @return Whether the vertical rotation is inverted.
+	 */
+
+	isInvertedY(): boolean {
+
+		return this.invertedY;
+
+	}
+
+	/**
+	 * Defines whether the vertical rotation should be inverted.
+	 *
+	 * @param value - The value.
+	 */
+
+	setInvertedY(value: boolean): void {
+
+		this.invertedY = value;
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -85,17 +287,17 @@ export class RotationSettings {
 
 	copy(settings: RotationSettings): RotationSettings {
 
-		this.up.copy(settings.up);
-		this.pivotOffset.copy(settings.pivotOffset);
+		this.up.copy(settings.getUpVector());
+		this.pivotOffset.copy(settings.getPivotOffset());
 
-		this.minAzimuthalAngle = settings.minAzimuthalAngle;
-		this.maxAzimuthalAngle = settings.maxAzimuthalAngle;
+		this.minAzimuthalAngle = settings.getMinAzimuthalAngle();
+		this.maxAzimuthalAngle = settings.getMaxAzimuthalAngle();
 
-		this.minPolarAngle = settings.minPolarAngle;
-		this.maxPolarAngle = settings.maxPolarAngle;
+		this.minPolarAngle = settings.getMinPolarAngle();
+		this.maxPolarAngle = settings.getMaxPolarAngle();
 
-		this.invertX = settings.invertX;
-		this.invertY = settings.invertY;
+		this.invertedX = settings.isInvertedX();
+		this.invertedY = settings.isInvertedY();
 
 		return this;
 

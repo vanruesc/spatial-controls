@@ -1,16 +1,17 @@
+import { EventDispatcher } from "three";
+import { ControlMode } from "../core/ControlMode";
+
 /**
  * General settings.
  */
 
-export class GeneralSettings {
+export class GeneralSettings extends EventDispatcher {
 
 	/**
-	 * Indicates whether third person perspective is active.
-	 *
-	 * Should not be modified directly. See {@link DeltaControls#setOrbit}.
+	 * The control mode.
 	 */
 
-	orbit: boolean;
+	private mode: ControlMode;
 
 	/**
 	 * Constructs new general settings.
@@ -18,7 +19,34 @@ export class GeneralSettings {
 
 	constructor() {
 
-		this.orbit = true;
+		super();
+
+		this.mode = ControlMode.FIRST_PERSON;
+
+	}
+
+	/**
+	 * Returns the control mode.
+	 *
+	 * @return The mode.
+	 */
+
+	getMode(): ControlMode {
+
+		return this.mode;
+
+	}
+
+	/**
+	 * Sets the control mode.
+	 *
+	 * @param value - The value.
+	 */
+
+	setMode(value: ControlMode): void {
+
+		this.mode = value;
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -31,7 +59,7 @@ export class GeneralSettings {
 
 	copy(settings: GeneralSettings): GeneralSettings {
 
-		this.orbit = settings.orbit;
+		this.mode = settings.getMode();
 		return this;
 
 	}

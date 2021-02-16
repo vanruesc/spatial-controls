@@ -1,22 +1,17 @@
+import { EventDispatcher } from "three";
+import { PointerBehaviour } from "../core";
+
 /**
  * Pointer settings.
  */
 
-export class PointerSettings {
+export class PointerSettings extends EventDispatcher {
 
 	/**
-	 * Whether the pointer buttons must be held down to have an effect.
-	 *
-	 * This setting only applies when the pointer is locked.
+	 * The pointer behaviour.
 	 */
 
-	hold: boolean;
-
-	/**
-	 * Whether the pointer should be locked on click events.
-	 */
-
-	lock: boolean;
+	private behaviour: PointerBehaviour;
 
 	/**
 	 * Constructs new pointer settings.
@@ -24,8 +19,34 @@ export class PointerSettings {
 
 	constructor() {
 
-		this.hold = false;
-		this.lock = true;
+		super();
+
+		this.behaviour = PointerBehaviour.DEFAULT;
+
+	}
+
+	/**
+	 * Returns the pointer behaviour.
+	 *
+	 * @return The pointer behaviour.
+	 */
+
+	getBehaviour(): PointerBehaviour {
+
+		return this.behaviour;
+
+	}
+
+	/**
+	 * Sets the pointer behaviour.
+	 *
+	 * @param value - The behaviour.
+	 */
+
+	setBehaviour(value: PointerBehaviour): void {
+
+		this.behaviour = value;
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -38,9 +59,7 @@ export class PointerSettings {
 
 	copy(settings: PointerSettings): PointerSettings {
 
-		this.hold = settings.hold;
-		this.lock = settings.lock;
-
+		this.behaviour = settings.getBehaviour();
 		return this;
 
 	}

@@ -1,32 +1,34 @@
+import { EventDispatcher } from "three";
+
 /**
  * Zoom settings.
  */
 
-export class ZoomSettings {
+export class ZoomSettings extends EventDispatcher {
 
 	/**
 	 * Whether zooming is enabled.
 	 */
 
-	enabled: boolean;
+	private enabled: boolean;
 
 	/**
 	 * Indicates whether the zoom controls should be inverted.
 	 */
 
-	invert: boolean;
+	private inverted: boolean;
 
 	/**
 	 * The minimum zoom distance.
 	 */
 
-	minDistance: number;
+	private minDistance: number;
 
 	/**
 	 * The maximum zoom distance.
 	 */
 
-	maxDistance: number;
+	private maxDistance: number;
 
 	/**
 	 * Constructs new zoom settings.
@@ -34,10 +36,127 @@ export class ZoomSettings {
 
 	constructor() {
 
+		super();
+
 		this.enabled = true;
-		this.invert = false;
+		this.inverted = false;
 		this.minDistance = 1e-6;
 		this.maxDistance = Infinity;
+
+	}
+
+	/**
+	 * Indicates whether zooming is enabled.
+	 *
+	 * @return Whether zooming is enabled.
+	 */
+
+	isEnabled() {
+
+		return this.enabled;
+
+	}
+
+	/**
+	 * Enables or disables zooming.
+	 *
+	 * @param value - The value.
+	 */
+
+	setEnabled(value: boolean) {
+
+		this.enabled = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Indicates whether the zoom controls should be inverted.
+	 *
+	 * @return Whether zooming is enabled.
+	 */
+
+	isInverted() {
+
+		return this.inverted;
+
+	}
+
+	/**
+	 * Defines whether the zoom controls should be inverted.
+	 *
+	 * @param value - The value.
+	 */
+
+	setInverted(value: boolean) {
+
+		this.inverted = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Returns the minimum zoom distance.
+	 *
+	 * @return The distance.
+	 */
+
+	getMinDistance() {
+
+		return this.minDistance;
+
+	}
+
+	/**
+	 * Sets the minimum zoom distance.
+	 *
+	 * @param value - The distance.
+	 */
+
+	setMinDistance(value: number) {
+
+		this.minDistance = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Returns the maximum zoom distance.
+	 *
+	 * @return The distance.
+	 */
+
+	getMaxDistance() {
+
+		return this.maxDistance;
+
+	}
+
+	/**
+	 * Sets the maximum zoom distance.
+	 *
+	 * @param value - The distance.
+	 */
+
+	setMaxDistance(value: number) {
+
+		this.maxDistance = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Sets the minimum and maximum zoom distance.
+	 *
+	 * @param min - The minimum distance.
+	 * @param max - The maximum distance.
+	 */
+
+	setRange(min: number, max: number) {
+
+		this.minDistance = min;
+		this.maxDistance = max;
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -50,10 +169,10 @@ export class ZoomSettings {
 
 	copy(settings: ZoomSettings): ZoomSettings {
 
-		this.enabled = settings.enabled;
-		this.invert = settings.invert;
-		this.minDistance = settings.minDistance;
-		this.maxDistance = settings.maxDistance;
+		this.enabled = settings.isEnabled();
+		this.inverted = settings.isInverted();
+		this.minDistance = settings.getMinDistance();
+		this.maxDistance = settings.getMaxDistance();
 
 		return this;
 

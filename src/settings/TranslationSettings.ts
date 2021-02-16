@@ -1,14 +1,16 @@
+import { EventDispatcher } from "three";
+
 /**
  * Translation settings.
  */
 
-export class TranslationSettings {
+export class TranslationSettings extends EventDispatcher {
 
 	/**
 	 * Whether positional translation is enabled.
 	 */
 
-	enabled: boolean;
+	private enabled: boolean;
 
 	/**
 	 * Constructs new translation settings.
@@ -16,7 +18,34 @@ export class TranslationSettings {
 
 	constructor() {
 
+		super();
+
 		this.enabled = true;
+
+	}
+
+	/**
+	 * Indicates whether zooming is enabled.
+	 *
+	 * @return Whether zooming is enabled.
+	 */
+
+	isEnabled(): boolean {
+
+		return this.enabled;
+
+	}
+
+	/**
+	 * Enables or disables zooming.
+	 *
+	 * @param value - The value.
+	 */
+
+	setEnabled(value: boolean): void {
+
+		this.enabled = value;
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -29,7 +58,7 @@ export class TranslationSettings {
 
 	copy(settings: TranslationSettings): TranslationSettings {
 
-		this.enabled = settings.enabled;
+		this.enabled = settings.isEnabled();
 		return this;
 
 	}

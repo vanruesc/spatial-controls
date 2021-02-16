@@ -1,3 +1,4 @@
+import { EventDispatcher } from "three";
 import { Action } from "../core/Action";
 import { KeyCode } from "../input/KeyCode";
 import { GeneralSettings } from "./GeneralSettings";
@@ -12,7 +13,7 @@ import { ZoomSettings } from "./ZoomSettings";
  * Control settings.
  */
 
-export class Settings {
+export class Settings extends EventDispatcher {
 
 	/**
 	 * General settings.
@@ -62,7 +63,7 @@ export class Settings {
 
 	constructor() {
 
-		this.general = new GeneralSettings();
+		super();
 
 		this.keyBindings = new KeyBindings();
 		this.keyBindings.setDefault(new Map([
@@ -87,11 +88,19 @@ export class Settings {
 
 		]));
 
+		this.general = new GeneralSettings();
 		this.pointer = new PointerSettings();
 		this.rotation = new RotationSettings();
 		this.sensitivity = new SensitivitySettings();
 		this.translation = new TranslationSettings();
 		this.zoom = new ZoomSettings();
+
+		// Forward events.
+		this.pointer.addEventListener("change", (event) => this.dispatchEvent(event));
+		this.rotation.addEventListener("change", (event) => this.dispatchEvent(event));
+		this.sensitivity.addEventListener("change", (event) => this.dispatchEvent(event));
+		this.translation.addEventListener("change", (event) => this.dispatchEvent(event));
+		this.zoom.addEventListener("change", (event) => this.dispatchEvent(event));
 
 	}
 
@@ -111,6 +120,8 @@ export class Settings {
 		this.sensitivity.copy(settings.sensitivity);
 		this.translation.copy(settings.translation);
 		this.zoom.copy(settings.zoom);
+
+		this.dispatchEvent({ type: "change" });
 
 		return this;
 
@@ -132,7 +143,7 @@ export class Settings {
 	/**
 	 * Saves the current settings as a data blob.
 	 *
-	 * @return A URL to the exported settings.
+	 * @return An object URL that points to the exported settings.
 	 */
 
 	toDataURL(): string {
