@@ -9,6 +9,7 @@ body {
 	font-family: sans-serif;
 	line-height: 150%;
 	margin: 0;
+	min-height: 100vh;
 }
 
 a {
@@ -20,29 +21,36 @@ a:hover, a:active {
 	color: white;
 }
 
-aside {
-	padding: 0 5px;
+aside, footer {
 	position: absolute;
-	right: 0;
-	top: 0;
 	z-index: 1;
 }
 
-aside img {
-	cursor: pointer;
-	display: block;
-	opacity: 0.075;
-	transition: opacity 0.2s;
-}
-
-aside img:hover {
-	opacity: 0.25;
+aside {
+	right: 0;
+	top: 0;
 }
 
 canvas {
 	display: block;
 	max-height: 100%;
 	max-width: 100%;
+}
+
+footer {
+	bottom: 0;
+	left: 0;
+}
+
+footer img {
+	cursor: pointer;
+	display: block;
+	opacity: 0.075;
+	transition: opacity 0.2s;
+}
+
+footer img:hover {
+	opacity: 0.25;
 }
 
 main {
@@ -54,18 +62,21 @@ p {
 }
 
 .loading {
+	align-items: center;
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 	left: 0;
-	position: fixed;
+	position: absolute;
 	right: 0;
-	text-align: center;
-	top: 50%;
-	transform: translateY(-50%);
+	top: 0;
 	user-select: none;
 }
 
 .github, .code, .info {
 	bottom: 15px;
-	position: fixed;
+	position: absolute;
 }
 
 .code {
@@ -85,6 +96,7 @@ p {
 	bottom: 100%;
 	color: rgb(90, 95, 90);
 	font-size: 75%;
+	max-width: 100vw;
 	position: absolute;
 	width: max-content;
 }
