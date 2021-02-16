@@ -1,5 +1,6 @@
-import { Strategy } from "./Strategy";
+import { Direction } from "../core";
 import { MovementState } from "../managers";
+import { Strategy } from "./Strategy";
 
 /**
  * A movement strategy.
@@ -66,20 +67,5 @@ export class MovementStrategy implements Strategy {
 		}
 
 	}
-
-}
-
-/**
- * An enumeration of movement directions.
- */
-
-export enum Direction {
-
-	FORWARD,
-	LEFT,
-	BACKWARD,
-	RIGHT,
-	DOWN,
-	UP
 
 }
