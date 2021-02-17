@@ -1,6 +1,8 @@
 import { Quaternion, Vector3 } from "three";
 import { MovementState } from "./MovementState";
+import { ControlMode } from "../core";
 import { Settings } from "../settings";
+import { Updatable } from "../core";
 import * as axes from "../core/axes";
 
 /**
@@ -15,7 +17,7 @@ const v = new Vector3();
  * A translation manager.
  */
 
-export class TranslationManager {
+export class TranslationManager implements Updatable {
 
 	/**
 	 * The position that will be modified.
@@ -30,7 +32,7 @@ export class TranslationManager {
 	private quaternion: Quaternion;
 
 	/**
-	 * A target.
+	 * The target.
 	 */
 
 	private target: Vector3;
@@ -50,9 +52,9 @@ export class TranslationManager {
 	/**
 	 * Constructs a new translation manager.
 	 *
-	 * @param position - A position.
-	 * @param quaternion - A quaternion.
-	 * @param target - A target.
+	 * @param position - The position.
+	 * @param quaternion - The quaternion.
+	 * @param target - The target.
 	 * @param settings - The settings.
 	 */
 
@@ -127,13 +129,14 @@ export class TranslationManager {
 	 * @param distance - The distance.
 	 */
 
-	private translateOnAxis(axis: Vector3, distance: number) {
+	private translateOnAxis(axis: Vector3, distance: number): void {
 
 		v.copy(axis).applyQuaternion(this.quaternion).multiplyScalar(distance);
 		this.position.add(v);
 
-		if(this.settings.general.orbit) {
+		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
 
+			// Move the target together with the position.
 			this.target.add(v);
 
 		}
@@ -148,10 +151,8 @@ export class TranslationManager {
 
 	private translate(deltaTime: number): void {
 
-		const sensitivity = this.settings.sensitivity;
 		const state = this.movementState;
-
-		const step = deltaTime * sensitivity.translation;
+		const step = deltaTime * this.settings.translation.getSensitivity();
 
 		if(state.backward) {
 
@@ -186,33 +187,19 @@ export class TranslationManager {
 	}
 
 	/**
-	 * Updates movement calculations based on time.
-	 *
-	 * @param deltaTime - The time since the last update in seconds.
-	 */
-
-	update(deltaTime: number): void {
-
-		if(this.settings.translation.enabled) {
-
-			this.translate(deltaTime);
-
-		}
-
-	}
-
-	/**
 	 * Moves to the given position.
 	 *
-	 * @param position - The position.
+	 * @param p - The position.
 	 * @return This instance.
 	 */
 
 	moveTo(position: Vector3): TranslationManager {
 
-		if(this.settings.general.orbit) {
+		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
 
+			v.subVectors(position, this.target);
 			this.target.copy(position);
+			this.position.add(v);
 
 		} else {
 
@@ -221,6 +208,16 @@ export class TranslationManager {
 		}
 
 		return this;
+
+	}
+
+	update(deltaTime: number): void {
+
+		if(this.settings.translation.isEnabled()) {
+
+			this.translate(deltaTime);
+
+		}
 
 	}
 
