@@ -13,6 +13,12 @@ export class TranslationSettings extends EventDispatcher {
 	private enabled: boolean;
 
 	/**
+	 * The translation sensitivity.
+	 */
+
+	private sensitivity: number;
+
+	/**
 	 * Constructs new translation settings.
 	 */
 
@@ -21,6 +27,7 @@ export class TranslationSettings extends EventDispatcher {
 		super();
 
 		this.enabled = true;
+		this.sensitivity = 1.0;
 
 	}
 
@@ -50,6 +57,31 @@ export class TranslationSettings extends EventDispatcher {
 	}
 
 	/**
+	 * Returns the translation sensitivity.
+	 *
+	 * @return The sensitivity.
+	 */
+
+	getSensitivity() {
+
+		return this.sensitivity;
+
+	}
+
+	/**
+	 * Sets the translation sensitivity.
+	 *
+	 * @param value - The sensitivity.
+	 */
+
+	setSensitivity(value: number) {
+
+		this.sensitivity = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
 	 * Copies the given translation settings.
 	 *
 	 * @param settings - Translation settings.
@@ -59,6 +91,8 @@ export class TranslationSettings extends EventDispatcher {
 	copy(settings: TranslationSettings): TranslationSettings {
 
 		this.enabled = settings.isEnabled();
+		this.sensitivity = settings.getSensitivity();
+
 		return this;
 
 	}

@@ -56,6 +56,18 @@ export class RotationSettings extends EventDispatcher {
 	private invertedY: boolean;
 
 	/**
+	 * The horizontal rotation sensitivity.
+	 */
+
+	private sensitivityX: number;
+
+	/**
+	 * The vertical rotation sensitivity.
+	 */
+
+	private sensitivityY: number;
+
+	/**
 	 * Constructs new rotation settings.
 	 */
 
@@ -75,6 +87,9 @@ export class RotationSettings extends EventDispatcher {
 
 		this.invertedX = false;
 		this.invertedY = false;
+
+		this.sensitivityX = 1.0;
+		this.sensitivityY = 1.0;
 
 	}
 
@@ -279,6 +294,69 @@ export class RotationSettings extends EventDispatcher {
 	}
 
 	/**
+	 * Returns the horizontal rotation sensitivity.
+	 *
+	 * @return The sensitivity.
+	 */
+
+	getSensitivityX() {
+
+		return this.sensitivityX;
+
+	}
+
+	/**
+	 * Sets the horizontal rotation sensitivity.
+	 *
+	 * @param value - The sensitivity.
+	 */
+
+	setSensitivityX(value: number) {
+
+		this.sensitivityX = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Returns the vertical rotation sensitivity.
+	 *
+	 * @return The sensitivity.
+	 */
+
+	getSensitivityY() {
+
+		return this.sensitivityY;
+
+	}
+
+	/**
+	 * Sets the vertical rotation sensitivity.
+	 *
+	 * @param value - The sensitivity.
+	 */
+
+	setSensitivityY(value: number) {
+
+		this.sensitivityY = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Sets the rotation sensitivity.
+	 *
+	 * @param value - The sensitivity.
+	 */
+
+	setSensitivity(value: number) {
+
+		this.sensitivityX = this.sensitivityY = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
 	 * Copies the given rotation settings.
 	 *
 	 * @param settings - Rotation settings.
@@ -298,6 +376,9 @@ export class RotationSettings extends EventDispatcher {
 
 		this.invertedX = settings.isInvertedX();
 		this.invertedY = settings.isInvertedY();
+
+		this.sensitivityX = settings.getSensitivityX();
+		this.sensitivityY = settings.getSensitivityY();
 
 		return this;
 

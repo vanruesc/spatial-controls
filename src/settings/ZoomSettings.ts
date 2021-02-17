@@ -31,6 +31,12 @@ export class ZoomSettings extends EventDispatcher {
 	private maxDistance: number;
 
 	/**
+	 * The zoom sensitivity.
+	 */
+
+	private sensitivity: number;
+
+	/**
 	 * Constructs new zoom settings.
 	 */
 
@@ -41,7 +47,8 @@ export class ZoomSettings extends EventDispatcher {
 		this.enabled = true;
 		this.inverted = false;
 		this.minDistance = 1e-6;
-		this.maxDistance = Infinity;
+		this.maxDistance = Number.POSITIVE_INFINITY;
+		this.sensitivity = 1.0;
 
 	}
 
@@ -110,12 +117,12 @@ export class ZoomSettings extends EventDispatcher {
 	/**
 	 * Sets the minimum zoom distance.
 	 *
-	 * @param value - The distance.
+	 * @param value - The distance. Must be greater than zero.
 	 */
 
 	setMinDistance(value: number) {
 
-		this.minDistance = value;
+		this.minDistance = Math.min(Math.max(value, 1e-6), Number.POSITIVE_INFINITY);
 		this.dispatchEvent({ type: "change" });
 
 	}
@@ -135,12 +142,12 @@ export class ZoomSettings extends EventDispatcher {
 	/**
 	 * Sets the maximum zoom distance.
 	 *
-	 * @param value - The distance.
+	 * @param value - The distance. Must be greater than the minimum distance.
 	 */
 
 	setMaxDistance(value: number) {
 
-		this.maxDistance = value;
+		this.maxDistance = Math.min(Math.max(value, this.minDistance), Number.POSITIVE_INFINITY);
 		this.dispatchEvent({ type: "change" });
 
 	}
@@ -161,6 +168,31 @@ export class ZoomSettings extends EventDispatcher {
 	}
 
 	/**
+	 * Returns the zoom sensitivity.
+	 *
+	 * @return The sensitivity.
+	 */
+
+	getSensitivity() {
+
+		return this.sensitivity;
+
+	}
+
+	/**
+	 * Sets the zoom sensitivity.
+	 *
+	 * @param value - The sensitivity.
+	 */
+
+	setSensitivity(value: number) {
+
+		this.sensitivity = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
 	 * Copies the given zoom settings.
 	 *
 	 * @param settings - Zoom settings.
@@ -173,6 +205,7 @@ export class ZoomSettings extends EventDispatcher {
 		this.inverted = settings.isInverted();
 		this.minDistance = settings.getMinDistance();
 		this.maxDistance = settings.getMaxDistance();
+		this.sensitivity = settings.getSensitivity();
 
 		return this;
 

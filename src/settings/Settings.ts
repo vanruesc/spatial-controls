@@ -5,7 +5,6 @@ import { GeneralSettings } from "./GeneralSettings";
 import { KeyBindings } from "./KeyBindings";
 import { PointerSettings } from "./PointerSettings";
 import { RotationSettings } from "./RotationSettings";
-import { SensitivitySettings } from "./SensitivitySettings";
 import { TranslationSettings } from "./TranslationSettings";
 import { ZoomSettings } from "./ZoomSettings";
 
@@ -38,12 +37,6 @@ export class Settings extends EventDispatcher {
 	 */
 
 	rotation: RotationSettings;
-
-	/**
-	 * Sensitivity settings.
-	 */
-
-	sensitivity: SensitivitySettings;
 
 	/**
 	 * Translation settings.
@@ -91,14 +84,12 @@ export class Settings extends EventDispatcher {
 		this.general = new GeneralSettings();
 		this.pointer = new PointerSettings();
 		this.rotation = new RotationSettings();
-		this.sensitivity = new SensitivitySettings();
 		this.translation = new TranslationSettings();
 		this.zoom = new ZoomSettings();
 
 		// Forward events.
 		this.pointer.addEventListener("change", (event) => this.dispatchEvent(event));
 		this.rotation.addEventListener("change", (event) => this.dispatchEvent(event));
-		this.sensitivity.addEventListener("change", (event) => this.dispatchEvent(event));
 		this.translation.addEventListener("change", (event) => this.dispatchEvent(event));
 		this.zoom.addEventListener("change", (event) => this.dispatchEvent(event));
 
@@ -117,7 +108,6 @@ export class Settings extends EventDispatcher {
 		this.keyBindings.copy(settings.keyBindings);
 		this.pointer.copy(settings.pointer);
 		this.rotation.copy(settings.rotation);
-		this.sensitivity.copy(settings.sensitivity);
 		this.translation.copy(settings.translation);
 		this.zoom.copy(settings.zoom);
 
@@ -146,7 +136,7 @@ export class Settings extends EventDispatcher {
 	 * @return An object URL that points to the exported settings.
 	 */
 
-	toDataURL(): string {
+	toObjectURL(): string {
 
 		return URL.createObjectURL(new Blob([JSON.stringify(this)], {
 			type: "text/json"
