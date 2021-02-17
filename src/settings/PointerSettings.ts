@@ -14,6 +14,12 @@ export class PointerSettings extends EventDispatcher {
 	private behaviour: PointerBehaviour;
 
 	/**
+	 * The baseline pointer sensitivity.
+	 */
+
+	private sensitivity: number;
+
+	/**
 	 * Constructs new pointer settings.
 	 */
 
@@ -22,6 +28,7 @@ export class PointerSettings extends EventDispatcher {
 		super();
 
 		this.behaviour = PointerBehaviour.DEFAULT;
+		this.sensitivity = 1e-3;
 
 	}
 
@@ -46,6 +53,33 @@ export class PointerSettings extends EventDispatcher {
 	setBehaviour(value: PointerBehaviour): void {
 
 		this.behaviour = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Returns the sensitivity. The default is 1e-3.
+	 *
+	 * @return The sensitivity.
+	 */
+
+	getSensitivity() {
+
+		return this.sensitivity;
+
+	}
+
+	/**
+	 * Sets the sensitivity.
+	 *
+	 * This sensitivity acts as a baseline scale for pointer movement deltas.
+	 *
+	 * @param value - The sensitivity.
+	 */
+
+	setSensitivity(value: number) {
+
+		this.sensitivity = value;
 		this.dispatchEvent({ type: "change" });
 
 	}
