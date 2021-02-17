@@ -10,7 +10,14 @@ async function build(changedFile: string = null): Promise<void> {
 
 	const service = await startService();
 	const t0 = Date.now();
-	const promises: Promise<void>[] = configs.map((c) => {
+
+	if(changedFile !== null) {
+
+		console.clear();
+
+	}
+
+	await Promise.all(configs.map((c) => {
 
 		let p: Promise<void> = null;
 
@@ -28,14 +35,13 @@ async function build(changedFile: string = null): Promise<void> {
 
 		return p;
 
-	});
-
-	await Promise.all(promises);
+	}));
 
 }
 
 if(argv.watch) {
 
+	console.clear();
 	console.log("Watching %s for changes…\n",
 		srcDirs.join(", ").replace(/, ([^,]*)$/, " and $1"));
 
