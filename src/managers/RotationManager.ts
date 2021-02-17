@@ -1,4 +1,5 @@
 import { Matrix4, Quaternion, Spherical, Vector3 } from "three";
+import { ControlMode, Updatable } from "../core";
 import { Settings } from "../settings";
 
 /**
@@ -29,7 +30,7 @@ const m = new Matrix4();
  * A rotation manager.
  */
 
-export class RotationManager {
+export class RotationManager implements Updatable {
 
 	/**
 	 * The position that will be modified.
@@ -44,7 +45,7 @@ export class RotationManager {
 	private quaternion: Quaternion;
 
 	/**
-	 * A target.
+	 * The target.
 	 */
 
 	private target: Vector3;
@@ -56,13 +57,18 @@ export class RotationManager {
 	private settings: Settings;
 
 	/**
-	 * A spherical coordinate system.
+	 * The spherical coordinate system.
 	 */
 
 	private spherical: Spherical;
 
 	/**
 	 * Constructs a new rotation manager.
+ 	 *
+ 	 * @param position - The position.
+ 	 * @param quaternion - The quaternion.
+ 	 * @param target - The target.
+ 	 * @param settings - The settings.
 	 */
 
 	constructor(position: Vector3, quaternion: Quaternion, target: Vector3, settings: Settings) {
@@ -85,7 +91,6 @@ export class RotationManager {
 	setPosition(position: Vector3): RotationManager {
 
 		this.position = position;
-
 		return this;
 
 	}
@@ -100,7 +105,6 @@ export class RotationManager {
 	setQuaternion(quaternion: Quaternion): RotationManager {
 
 		this.quaternion = quaternion;
-
 		return this;
 
 	}
@@ -115,6 +119,104 @@ export class RotationManager {
 	setTarget(target: Vector3): RotationManager {
 
 		this.target = target;
+		return this;
+
+	}
+
+	/**
+	 * Restricts the spherical angles.
+	 *
+	 * @return This manager.
+	 */
+
+	private restrictAngles(): RotationManager {
+
+		const s = this.spherical;
+		const rotation = this.settings.rotation;
+
+		const thetaMin = rotation.getMinAzimuthalAngle();
+		const thetaMax = rotation.getMaxAzimuthalAngle();
+		const phiMin = rotation.getMinPolarAngle();
+		const phiMax = rotation.getMaxPolarAngle();
+
+		s.theta = Math.min(Math.max(s.theta, thetaMin), thetaMax);
+		s.phi = Math.min(Math.max(s.phi, phiMin), phiMax);
+		s.theta %= TWO_PI;
+		s.makeSafe();
+
+		return this;
+
+	}
+
+	/**
+	 * Restricts the spherical radius.
+	 *
+	 * @return This manager.
+	 */
+
+	private restrictRadius(): RotationManager {
+
+		const s = this.spherical;
+		const zoom = this.settings.zoom;
+		const min = zoom.getMinDistance();
+		const max = zoom.getMaxDistance();
+
+		s.radius = Math.min(Math.max(s.radius, min), max);
+
+		return this;
+
+	}
+
+	/**
+	 * Restricts the spherical system.
+	 *
+	 * @return This manager.
+	 */
+
+	restrictSpherical(): RotationManager {
+
+		return this.restrictRadius().restrictAngles();
+
+	}
+
+	/**
+	 * Updates the spherical coordinates based on the position and target.
+	 *
+	 * @return This manager.
+	 */
+
+	updateSpherical(): RotationManager {
+
+		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
+
+			v.subVectors(this.position, this.target);
+
+		} else {
+
+			v.subVectors(this.target, this.position).normalize();
+
+		}
+
+		this.spherical.setFromVector3(v);
+
+		return this.restrictSpherical();
+
+	}
+
+	/**
+	 * Updates the position based on the spherical coordinates.
+	 *
+	 * @return This manager.
+	 */
+
+	updatePosition(): RotationManager {
+
+		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
+
+			// Construct the position using the spherical coordinates and the target.
+			this.position.setFromSpherical(this.spherical).add(this.target);
+
+		}
 
 		return this;
 
@@ -130,14 +232,16 @@ export class RotationManager {
 
 		const settings = this.settings;
 		const rotation = settings.rotation;
+		const target = this.target;
+		const up = rotation.getUpVector();
 
-		if(settings.general.orbit) {
+		if(settings.general.getMode() === ControlMode.THIRD_PERSON) {
 
-			m.lookAt(v.subVectors(this.position, this.target), rotation.pivotOffset, rotation.up);
+			m.lookAt(v.subVectors(this.position, target), rotation.getPivotOffset(), up);
 
 		} else {
 
-			m.lookAt(v.set(0, 0, 0), this.target.setFromSpherical(this.spherical), rotation.up);
+			m.lookAt(v.set(0, 0, 0), target.setFromSpherical(this.spherical), up);
 
 		}
 
@@ -157,28 +261,16 @@ export class RotationManager {
 
 	adjustSpherical(theta: number, phi: number): RotationManager {
 
-		const settings = this.settings;
-		const orbit = settings.general.orbit;
-		const rotation = settings.rotation;
 		const s = this.spherical;
+		const settings = this.settings;
+		const rotation = settings.rotation;
+		const invertedY = rotation.isInvertedY();
+		const orbit = (settings.general.getMode() === ControlMode.THIRD_PERSON);
 
-		s.theta = !rotation.invertX ? s.theta - theta : s.theta + theta;
-		s.phi = ((orbit || rotation.invertY) && !(orbit && rotation.invertY)) ? s.phi - phi : s.phi + phi;
+		s.theta = !rotation.isInvertedX() ? s.theta - theta : s.theta + theta;
+		s.phi = ((orbit || invertedY) && !(orbit && invertedY)) ? s.phi - phi : s.phi + phi;
 
-		// Restrict theta and phi.
-		s.theta = Math.min(Math.max(s.theta, rotation.minAzimuthalAngle), rotation.maxAzimuthalAngle);
-		s.phi = Math.min(Math.max(s.phi, rotation.minPolarAngle), rotation.maxPolarAngle);
-		s.theta %= TWO_PI;
-		s.makeSafe();
-
-		if(orbit) {
-
-			// Keep the position up-to-date.
-			this.position.setFromSpherical(s).add(this.target);
-
-		}
-
-		return this;
+		return this.restrictAngles().updatePosition();
 
 	}
 
@@ -191,41 +283,22 @@ export class RotationManager {
 
 	zoom(sign: number): RotationManager {
 
-		const settings = this.settings;
-		const general = settings.general;
-		const sensitivity = settings.sensitivity;
-		const zoom = settings.zoom;
 		const s = this.spherical;
+		const settings = this.settings;
+		const zoom = settings.zoom;
+		const orbit = (settings.general.getMode() === ControlMode.THIRD_PERSON);
 
-		if(general.orbit && zoom.enabled) {
+		if(zoom.isEnabled() && orbit) {
 
-			let amount = sign * sensitivity.zoom;
-
-			if(zoom.invert) {
-
-				amount = -amount;
-
-			}
-
-			const min = Math.max(zoom.minDistance, 1e-6);
-			const max = Math.min(zoom.maxDistance, Number.POSITIVE_INFINITY);
-
-			s.radius = Math.min(Math.max(s.radius + amount, min), max);
-			this.position.setFromSpherical(s).add(this.target);
+			const amount = sign * zoom.getSensitivity();
+			s.radius = zoom.isInverted() ? s.radius - amount : s.radius + amount;
+			this.restrictRadius().position.setFromSpherical(s).add(this.target);
 
 		}
 
 		return this;
 
 	}
-
-	/**
-	 * Updates rotation calculations based on time.
-	 *
-	 * @param deltaTime - The time since the last update in seconds.
-	 */
-
-	update(deltaTime: number): void {}
 
 	/**
 	 * Looks at the given point.
@@ -236,27 +309,8 @@ export class RotationManager {
 
 	lookAt(point: Vector3): RotationManager {
 
-		const spherical = this.spherical;
-		const position = this.position;
-		const target = this.target;
-
-		target.copy(point);
-
-		if(this.settings.general.orbit) {
-
-			v.subVectors(position, target);
-
-		} else {
-
-			v.subVectors(target, position).normalize();
-
-		}
-
-		spherical.setFromVector3(v);
-		spherical.radius = Math.max(spherical.radius, 1e-6);
-		this.updateQuaternion();
-
-		return this;
+		this.target.copy(point);
+		return this.updateSpherical().updateQuaternion();
 
 	}
 
@@ -269,16 +323,12 @@ export class RotationManager {
 
 	getViewDirection(view: Vector3): Vector3 {
 
+		const orbit = (this.settings.general.getMode() === ControlMode.THIRD_PERSON);
 		view.setFromSpherical(this.spherical).normalize();
-
-		if(this.settings.general.orbit) {
-
-			view.negate();
-
-		}
-
-		return view;
+		return orbit ? view.negate() : view;
 
 	}
+
+	update(deltaTime: number): void {}
 
 }
