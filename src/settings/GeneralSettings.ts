@@ -14,6 +14,12 @@ export class GeneralSettings extends EventDispatcher {
 	private mode: ControlMode;
 
 	/**
+	 * The previous control mode.
+	 */
+
+	private previousMode: ControlMode;
+
+	/**
 	 * Constructs new general settings.
 	 */
 
@@ -22,6 +28,19 @@ export class GeneralSettings extends EventDispatcher {
 		super();
 
 		this.mode = ControlMode.FIRST_PERSON;
+		this.previousMode = this.mode;
+
+	}
+
+	/**
+	 * Returns the previous control mode.
+	 *
+	 * @return The mode.
+	 */
+
+	getPreviousMode(): ControlMode {
+
+		return this.previousMode;
 
 	}
 
@@ -45,8 +64,13 @@ export class GeneralSettings extends EventDispatcher {
 
 	setMode(value: ControlMode): void {
 
-		this.mode = value;
-		this.dispatchEvent({ type: "change" });
+		if(this.mode !== value) {
+
+			this.mode = value;
+			this.dispatchEvent({ type: "change" });
+			this.previousMode = value;
+
+		}
 
 	}
 
