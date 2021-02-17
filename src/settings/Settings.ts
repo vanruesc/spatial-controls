@@ -88,6 +88,7 @@ export class Settings extends EventDispatcher {
 		this.zoom = new ZoomSettings();
 
 		// Forward events.
+		this.general.addEventListener("change", (event) => this.dispatchEvent(event));
 		this.pointer.addEventListener("change", (event) => this.dispatchEvent(event));
 		this.rotation.addEventListener("change", (event) => this.dispatchEvent(event));
 		this.translation.addEventListener("change", (event) => this.dispatchEvent(event));
