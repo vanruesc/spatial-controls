@@ -3,14 +3,26 @@ import { Disposable } from "./Disposable";
 import { PointerButton } from "../input/PointerButton";
 import { RotationManager, TranslationManager } from "../managers";
 import { Settings } from "../settings/Settings";
-import { Direction, MovementStrategy, Strategy, ZoomStrategy } from "../strategies";
+import { MovementStrategy, Strategy, ZoomStrategy } from "../strategies";
 import { Action } from "./Action";
+import { ControlMode } from "./ControlMode";
+import { Direction } from "./Direction";
+import { PointerBehaviour } from "./PointerBehaviour";
+import { Updatable } from "./Updatable";
+
+/**
+ * A vector.
+ *
+ * @ignore
+ */
+
+const v = new Vector3();
 
 /**
  * Spatial controls for 3D translation and rotation.
  */
 
-export class SpatialControls implements Disposable, EventListenerObject {
+export class SpatialControls implements Disposable, EventListenerObject, Updatable {
 
 	/**
 	 * A DOM element. Acts as the primary event target.
@@ -35,12 +47,6 @@ export class SpatialControls implements Disposable, EventListenerObject {
 	 */
 
 	private target: Vector3;
-
-	/**
-	 * The control settings.
-	 */
-
-	settings: Settings;
 
 	/**
 	 * A rotation manager.
@@ -79,6 +85,12 @@ export class SpatialControls implements Disposable, EventListenerObject {
 	private enabled: boolean;
 
 	/**
+	 * The control settings.
+	 */
+
+	settings: Settings;
+
+	/**
 	 * Constructs new controls.
 	 *
 	 * @param position - A position.
@@ -89,16 +101,17 @@ export class SpatialControls implements Disposable, EventListenerObject {
 	constructor(position: Vector3 = null, quaternion: Quaternion = null, domElement: HTMLElement = document.body) {
 
 		this.domElement = domElement;
+		this.settings = new Settings();
+		this.settings.addEventListener("change", (event) => this.handleEvent(event as Event));
 
 		this.position = position;
 		this.quaternion = quaternion;
 		this.target = new Vector3();
 
-		this.settings = new Settings();
 		this.rotationManager = new RotationManager(position, quaternion, this.target, this.settings);
 		this.translationManager = new TranslationManager(position, quaternion, this.target, this.settings);
 
-		const movementState = this.translationManager.movementState;
+		const movementState = this.translationManager.getMovementState();
 
 		this.strategies = new Map<Action, Strategy>([
 			[Action.MOVE_FORWARD, new MovementStrategy(movementState, Direction.FORWARD)],
@@ -117,6 +130,8 @@ export class SpatialControls implements Disposable, EventListenerObject {
 
 		if(position !== null && quaternion !== null) {
 
+			// Note: Default mode is first person.
+			this.target.set(0, 0, -1).applyQuaternion(this.quaternion);
 			this.lookAt(this.target);
 
 			if(domElement !== null) {
@@ -182,17 +197,27 @@ export class SpatialControls implements Disposable, EventListenerObject {
 	}
 
 	/**
-	 * Sets the position vector.
+	 * Sets the position.
 	 *
-	 * @param position - The new position vector.
+	 * @param x - The X-coordinate, or a new position vector.
+	 * @param y - The Y-coordinate.
+	 * @param z - The Z-coordinate.
 	 * @return This instance.
 	 */
 
-	setPosition(position: Vector3): SpatialControls {
+	setPosition(x: number | Vector3, y?: number, z?: number): SpatialControls {
 
-		this.position = position;
-		this.rotationManager.setPosition(position);
-		this.translationManager.setPosition(position);
+		if(x instanceof Vector3) {
+
+			this.position = x;
+			this.rotationManager.setPosition(x);
+			this.translationManager.setPosition(x);
+
+		} else {
+
+			this.position.set(x, y, z);
+
+		}
 
 		return this.lookAt(this.target);
 
@@ -228,39 +253,39 @@ export class SpatialControls implements Disposable, EventListenerObject {
 	}
 
 	/**
-	 * Returns the current target.
+	 * Returns the target.
 	 *
-	 * @param target - A vector to store the target in.
 	 * @return The target.
 	 */
 
-	getTarget(target: Vector3): Vector3 {
+	getTarget(): Vector3 {
 
-		target.copy(this.target);
-
-		if(!this.settings.general.orbit) {
-
-			// The target is relative to the position.
-			target.add(this.position);
-
-		}
-
-		return target;
+		return this.target;
 
 	}
 
 	/**
 	 * Sets the target.
 	 *
-	 * @param target - The new target.
+	 * @param x - The X-coordinate, or a new target vector.
+	 * @param y - The Y-coordinate.
+	 * @param z - The Z-coordinate.
 	 * @return This instance.
 	 */
 
-	setTarget(target: Vector3): SpatialControls {
+	setTarget(x: number | Vector3, y?: number, z?: number): SpatialControls {
 
-		this.target = target;
-		this.rotationManager.setTarget(target);
-		this.translationManager.setTarget(target);
+		if(x instanceof Vector3) {
+
+			this.target = x;
+			this.rotationManager.setTarget(x);
+			this.translationManager.setTarget(x);
+
+		} else {
+
+			this.target.set(x, y, z);
+
+		}
 
 		return this.lookAt(this.target);
 
@@ -280,29 +305,6 @@ export class SpatialControls implements Disposable, EventListenerObject {
 	}
 
 	/**
-	 * Changes the control mode to first or third person perspective.
-	 *
-	 * @param orbit - Whether the third person perspective should be enabled.
-	 * @return This instance.
-	 */
-
-	setOrbitEnabled(orbit: boolean): SpatialControls {
-
-		const general = this.settings.general;
-
-		if(general.orbit !== orbit) {
-
-			this.getTarget(this.target);
-			general.orbit = orbit;
-			this.lookAt(this.target);
-
-		}
-
-		return this;
-
-	}
-
-	/**
 	 * Copies the given controls.
 	 *
 	 * @param controls - A controls instance.
@@ -311,17 +313,16 @@ export class SpatialControls implements Disposable, EventListenerObject {
 
 	copy(controls: SpatialControls): SpatialControls {
 
+		const p = this.position = controls.getPosition();
+		const q = this.quaternion = controls.getQuaternion();
+		const t = this.target = controls.getTarget();
+
 		this.domElement = controls.getDomElement();
-		this.position = controls.getPosition();
-		this.quaternion = controls.getQuaternion();
-		this.target = controls.getTarget(new Vector3());
-
 		this.settings.copy(controls.settings);
+		this.rotationManager.setPosition(p).setQuaternion(q).setTarget(t);
+		this.translationManager.setPosition(p).setQuaternion(q).setTarget(t);
 
-		this.rotationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);
-		this.translationManager.setPosition(this.position).setQuaternion(this.quaternion).setTarget(this.target);
-
-		return this.lookAt(this.target);
+		return this.lookAt(t);
 
 	}
 
@@ -339,6 +340,130 @@ export class SpatialControls implements Disposable, EventListenerObject {
 	}
 
 	/**
+	 * Moves to the given position.
+	 *
+	 * In third person mode, the target will be moved to the given location and
+	 * the position will be adjusted accordingly.
+	 *
+	 * @param x - The X-coordinate, or a point.
+	 * @param y - The Y-coordinate.
+	 * @param z - The Z-coordinate.
+	 * @return This instance.
+	 */
+
+	moveTo(x: number | Vector3, y?: number, z?: number): SpatialControls {
+
+		if(x instanceof Vector3) {
+
+			this.translationManager.moveTo(x);
+
+		} else {
+
+			this.translationManager.moveTo(v.set(x, y, z));
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	 * Looks at the given point.
+	 *
+	 * @param x - The X-coordinate, or a point.
+	 * @param y - The Y-coordinate.
+	 * @param z - The Z-coordinate.
+	 * @return This instance.
+	 */
+
+	lookAt(x: number | Vector3, y?: number, z?: number): SpatialControls {
+
+		if(x instanceof Vector3) {
+
+			this.rotationManager.lookAt(x);
+
+		} else {
+
+			this.rotationManager.lookAt(v.set(x, y, z));
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	 * Locks or unlocks the pointer.
+	 *
+	 * @param locked - Whether the pointer should be locked.
+	 */
+
+	private setPointerLocked(locked = true): void {
+
+		if(locked) {
+
+			if(document.pointerLockElement !== this.domElement &&
+				this.domElement.requestPointerLock !== undefined) {
+
+				this.domElement.requestPointerLock();
+
+			}
+
+		} else if(document.exitPointerLock !== undefined) {
+
+			document.exitPointerLock();
+
+		}
+
+	}
+
+	/**
+	 * Enables or disables the controls.
+	 *
+	 * @param enabled - Whether the controls should be enabled or disabled.
+	 * @return This instance.
+	 */
+
+	setEnabled(enabled = true): SpatialControls {
+
+		const domElement = this.domElement;
+
+		this.translationManager.getMovementState().reset();
+
+		if(enabled && !this.enabled) {
+
+			document.addEventListener("pointerlockchange", this);
+			document.body.addEventListener("keyup", this);
+			document.body.addEventListener("keydown", this);
+			domElement.addEventListener("mousedown", this);
+			domElement.addEventListener("mouseup", this);
+			domElement.addEventListener("touchstart", this);
+			domElement.addEventListener("touchend", this);
+			domElement.addEventListener("wheel", this, { passive: true });
+
+		} else if(!enabled && this.enabled) {
+
+			document.removeEventListener("pointerlockchange", this);
+			document.body.removeEventListener("keyup", this);
+			document.body.removeEventListener("keydown", this);
+			domElement.removeEventListener("mousedown", this);
+			domElement.removeEventListener("mouseup", this);
+			domElement.removeEventListener("touchstart", this);
+			domElement.removeEventListener("touchend", this);
+			domElement.removeEventListener("wheel", this);
+			domElement.removeEventListener("mousemove", this);
+			domElement.removeEventListener("touchmove", this);
+
+		}
+
+		this.setPointerLocked(false);
+		this.enabled = enabled;
+
+		return this;
+
+	}
+
+	/**
 	 * Handles pointer move events.
 	 *
 	 * @param event - A pointer event.
@@ -347,18 +472,19 @@ export class SpatialControls implements Disposable, EventListenerObject {
 	private handlePointerMoveEvent(event: MouseEvent): void {
 
 		const settings = this.settings;
-		const pointer = settings.pointer;
-		const sensitivity = settings.sensitivity;
+		const rotation = settings.rotation;
+		const pointerBehaviour = settings.pointer.getBehaviour();
+		const pointerSensitivity = settings.pointer.getSensitivity();
 		const rotationManager = this.rotationManager;
 		const lastScreenPosition = this.lastScreenPosition;
 
 		if(document.pointerLockElement === this.domElement) {
 
-			if(!pointer.hold || this.dragging) {
+			if(pointerBehaviour === PointerBehaviour.LOCK || this.dragging) {
 
 				rotationManager.adjustSpherical(
-					event.movementX * 0.001 * sensitivity.rotationX,
-					event.movementY * 0.001 * sensitivity.rotationY
+					event.movementX * pointerSensitivity * rotation.getSensitivityX(),
+					event.movementY * pointerSensitivity * rotation.getSensitivityY()
 				).updateQuaternion();
 
 			}
@@ -372,8 +498,8 @@ export class SpatialControls implements Disposable, EventListenerObject {
 			lastScreenPosition.set(event.screenX, event.screenY);
 
 			rotationManager.adjustSpherical(
-				movementX * 0.001 * sensitivity.rotationX,
-				movementY * 0.001 * sensitivity.rotationY
+				movementX * pointerSensitivity * rotation.getSensitivityX(),
+				movementY * pointerSensitivity * rotation.getSensitivityY()
 			).updateQuaternion();
 
 		}
@@ -388,7 +514,9 @@ export class SpatialControls implements Disposable, EventListenerObject {
 
 	private handleTouchMoveEvent(event: TouchEvent): void {
 
-		const sensitivity = this.settings.sensitivity;
+		const settings = this.settings;
+		const rotation = settings.rotation;
+		const pointerSensitivity = settings.pointer.getSensitivity();
 		const rotationManager = this.rotationManager;
 		const lastScreenPosition = this.lastScreenPosition;
 		const touch = event.touches[0];
@@ -399,12 +527,9 @@ export class SpatialControls implements Disposable, EventListenerObject {
 
 		lastScreenPosition.set(touch.screenX, touch.screenY);
 
-		// Don't produce a mouse move event.
-		event.preventDefault();
-
 		rotationManager.adjustSpherical(
-			movementX * 0.001 * sensitivity.rotationX,
-			movementY * 0.001 * sensitivity.rotationY
+			movementX * pointerSensitivity * rotation.getSensitivityX(),
+			movementY * pointerSensitivity * rotation.getSensitivityY()
 		).updateQuaternion();
 
 	}
@@ -420,7 +545,7 @@ export class SpatialControls implements Disposable, EventListenerObject {
 
 		this.dragging = pressed;
 
-		if(this.settings.pointer.lock) {
+		if(this.settings.pointer.getBehaviour() !== PointerBehaviour.DEFAULT) {
 
 			this.setPointerLocked();
 
@@ -567,10 +692,38 @@ export class SpatialControls implements Disposable, EventListenerObject {
 	}
 
 	/**
-	 * Handles events.
+	 * Reacts to setting changes.
 	 *
 	 * @param event - An event.
 	 */
+
+	private onSettingsChanged(event: Event): void {
+
+		const general = this.settings.general;
+
+		if(general.getMode() !== general.getPreviousMode()) {
+
+			if(general.getMode() === ControlMode.THIRD_PERSON) {
+
+				// Switch to third person.
+				v.copy(this.target);
+				this.target.copy(this.position);
+				this.position.sub(v);
+
+			} else {
+
+				// Switch to first person.
+				this.position.copy(this.target);
+				this.target.set(0, 0, -1).applyQuaternion(this.quaternion);
+				this.target.add(this.position);
+
+			}
+
+		}
+
+		this.rotationManager.updateSpherical().updatePosition().updateQuaternion();
+
+	}
 
 	handleEvent(event: Event): void {
 
@@ -616,119 +769,18 @@ export class SpatialControls implements Disposable, EventListenerObject {
 				this.handlePointerLockEvent();
 				break;
 
+			case "change":
+				this.onSettingsChanged(event);
+				break;
+
 		}
 
 	}
-
-	/**
-	 * Updates movement and rotation calculations based on time.
-	 *
-	 * @param {number} deltaTime - The time since the last update in seconds.
-	 */
 
 	update(deltaTime: number): void {
 
 		this.rotationManager.update(deltaTime);
 		this.translationManager.update(deltaTime);
-
-	}
-
-	/**
-	 * Moves to the given position.
-	 *
-	 * @param position - The position.
-	 * @return This instance.
-	 */
-
-	moveTo(position: Vector3): SpatialControls {
-
-		this.translationManager.moveTo(position);
-		return this;
-
-	}
-
-	/**
-	 * Looks at the given point.
-	 *
-	 * @param point - The target point.
-	 * @return This instance.
-	 */
-
-	lookAt(point: Vector3): SpatialControls {
-
-		this.rotationManager.lookAt(point);
-		return this;
-
-	}
-
-	/**
-	 * Locks or unlocks the pointer.
-	 *
-	 * @param locked - Whether the pointer should be locked.
-	 */
-
-	private setPointerLocked(locked = true): void {
-
-		if(locked) {
-
-			if(document.pointerLockElement !== this.domElement &&
-				this.domElement.requestPointerLock !== undefined) {
-
-				this.domElement.requestPointerLock();
-
-			}
-
-		} else if(document.exitPointerLock !== undefined) {
-
-			document.exitPointerLock();
-
-		}
-
-	}
-
-	/**
-	 * Enables or disables the controls.
-	 *
-	 * @param enabled - Whether the controls should be enabled or disabled.
-	 * @return This instance.
-	 */
-
-	setEnabled(enabled = true): SpatialControls {
-
-		const domElement = this.domElement;
-
-		this.translationManager.movementState.reset();
-
-		if(enabled && !this.enabled) {
-
-			document.addEventListener("pointerlockchange", this);
-			document.body.addEventListener("keyup", this);
-			document.body.addEventListener("keydown", this);
-			domElement.addEventListener("mousedown", this);
-			domElement.addEventListener("mouseup", this);
-			domElement.addEventListener("touchstart", this);
-			domElement.addEventListener("touchend", this);
-			domElement.addEventListener("wheel", this);
-
-		} else if(!enabled && this.enabled) {
-
-			document.removeEventListener("pointerlockchange", this);
-			document.body.removeEventListener("keyup", this);
-			document.body.removeEventListener("keydown", this);
-			domElement.removeEventListener("mousedown", this);
-			domElement.removeEventListener("mouseup", this);
-			domElement.removeEventListener("touchstart", this);
-			domElement.removeEventListener("touchend", this);
-			domElement.removeEventListener("wheel", this);
-			domElement.removeEventListener("mousemove", this);
-			domElement.removeEventListener("touchmove", this);
-
-		}
-
-		this.setPointerLocked(false);
-		this.enabled = enabled;
-
-		return this;
 
 	}
 
