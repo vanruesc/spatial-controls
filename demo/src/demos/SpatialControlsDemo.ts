@@ -6,18 +6,19 @@ import {
 	PolarGridHelper,
 	SphereBufferGeometry,
 	Texture,
-	sRGBEncoding
+	sRGBEncoding,
+	Vector3
 } from "three";
 
 import { GUI } from "dat.gui";
 import { Demo } from "three-demo";
-import { SpatialControls } from "../../../src";
+import { ControlMode, PointerBehaviour, SpatialControls } from "../../../src";
 
 /**
  * A Spatial Controls demo.
  */
 
-export class SpatialControlsDemo extends Demo {
+export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 	/**
 	 * The controls.
@@ -41,6 +42,22 @@ export class SpatialControlsDemo extends Demo {
 
 		this.controls = null;
 		this.mesh = null;
+
+	}
+
+	handleEvent(event: Event) {
+
+		const controls = this.controls;
+		const keyboardEvent = event as KeyboardEvent;
+
+		if(keyboardEvent.key === "c") {
+
+			console.clear();
+			console.log("Position", controls.getPosition());
+			console.log("Target", controls.getTarget());
+			console.log("View direction", controls.getViewDirection(new Vector3()));
+
+		}
 
 	}
 
@@ -96,35 +113,34 @@ export class SpatialControlsDemo extends Demo {
 
 		const aspect = window.innerWidth / window.innerHeight;
 		const camera = new PerspectiveCamera(50, aspect, 0.1, 1000);
-		camera.position.set(4, 1, 4).normalize();
 		this.camera = camera;
-
-		// Controls
-
-		const controls = new SpatialControls(camera.position, camera.quaternion, renderer.domElement);
-		controls.lookAt(scene.position);
-		controls.settings.zoom.minDistance = 0.25;
-		controls.settings.zoom.maxDistance = 3.0;
-		controls.settings.sensitivity.rotationX = 2.2;
-		controls.settings.sensitivity.rotationY = 2.2;
-		controls.settings.sensitivity.translation = 0.25;
-		controls.settings.sensitivity.zoom = 0.1;
-		controls.settings.pointer.lock = false;
-		this.controls = controls;
 
 		// Objects
 
-		const gridHelper = new PolarGridHelper(1, 16, 8, 64, 0x444444, 0x888888);
-		scene.add(gridHelper);
-
-		const mesh = new Mesh(
+		const mesh = this.mesh = new Mesh(
 			new SphereBufferGeometry(0.01, 16, 16),
 			new MeshBasicMaterial({ color: 0xff0000 })
 		);
 
-		this.mesh = mesh;
-		controls.setTarget(mesh.position);
+		scene.add(new PolarGridHelper(1, 16, 8, 64, 0x444444, 0x888888));
 		scene.add(mesh);
+
+		// Controls
+
+		const controls = new SpatialControls(camera.position, camera.quaternion, renderer.domElement);
+		const settings = controls.settings;
+		settings.general.setMode(ControlMode.THIRD_PERSON);
+		settings.pointer.setBehaviour(PointerBehaviour.DEFAULT);
+		settings.zoom.setRange(0.25, 3.0);
+		settings.rotation.setSensitivity(2.2);
+		settings.translation.setSensitivity(0.25);
+		settings.zoom.setSensitivity(0.1);
+		this.controls = controls;
+
+		controls.setPosition(0, 0.17, 1);
+		controls.setTarget(mesh.position);
+
+		document.addEventListener("keydown", this);
 
 	}
 
@@ -136,73 +152,104 @@ export class SpatialControlsDemo extends Demo {
 
 	registerOptions(menu: GUI): void {
 
-		const controls = this.controls;
+		const settings = this.controls.settings;
 		const mesh = this.mesh;
 
 		const params = {
-			orbit: controls.settings.general.orbit
+			general: {
+				"mode": settings.general.getMode()
+			},
+			pointer: {
+				"behaviour": settings.pointer.getBehaviour()
+			},
+			sensitivity: {
+				"rotation X": settings.rotation.getSensitivityX(),
+				"rotation Y": settings.rotation.getSensitivityY(),
+				"translation": settings.translation.getSensitivity(),
+				"zoom": settings.zoom.getSensitivity()
+			},
+			rotation: {
+				"min azim. angle": settings.rotation.getMinAzimuthalAngle(),
+				"max azim. angle": settings.rotation.getMaxAzimuthalAngle(),
+				"min polar angle": settings.rotation.getMinPolarAngle(),
+				"max polar angle": settings.rotation.getMaxPolarAngle(),
+				"inverted X": settings.rotation.isInvertedX(),
+				"inverted Y": settings.rotation.isInvertedY()
+			},
+			translation: {
+				"enabled": settings.translation.isEnabled()
+			},
+			zoom: {
+				"enabled": settings.zoom.isEnabled(),
+				"inverted": settings.zoom.isInverted(),
+				"min distance": settings.zoom.getMinDistance(),
+				"max distance": settings.zoom.getMaxDistance()
+			}
 		};
 
-		let folder;
+		let folder = menu.addFolder("General");
+		folder.add(params.general, "mode", ControlMode).onChange((value: ControlMode) => {
 
-		folder = menu.addFolder("General");
-
-		folder.add(params, "orbit").onChange(() => {
-
-			mesh.visible = params.orbit;
-			controls.setOrbitEnabled(params.orbit);
+			mesh.visible = (value === ControlMode.THIRD_PERSON);
+			settings.general.setMode(value);
 
 		});
 
 		folder.open();
 
-		folder = menu.addFolder("Pointer Behaviour");
-		folder.add(controls.settings.pointer, "hold");
-		folder.add(controls.settings.pointer, "lock");
+		folder = menu.addFolder("Pointer");
+		folder.add(params.pointer, "behaviour", PointerBehaviour).onChange(value => settings.pointer.setBehaviour(value));
 		folder.open();
 
 		folder = menu.addFolder("Sensitivity");
-		folder.add(controls.settings.sensitivity, "rotationX").min(0.1).max(3.0).step(0.01);
-		folder.add(controls.settings.sensitivity, "rotationY").min(0.1).max(3.0).step(0.01);
-		folder.add(controls.settings.sensitivity, "translation").min(0.1).max(2.0).step(0.01);
-		folder.add(controls.settings.sensitivity, "zoom").min(0.01).max(3.0).step(0.01);
+		folder.add(params.sensitivity, "rotation X", 0.1, 3.0, 0.01).onChange(value => settings.rotation.setSensitivityX(value));
+		folder.add(params.sensitivity, "rotation Y", 0.1, 3.0, 0.01).onChange(value => settings.rotation.setSensitivityY(value));
+		folder.add(params.sensitivity, "translation", 0.1, 2.0, 0.01).onChange(value => settings.translation.setSensitivity(value));
+		folder.add(params.sensitivity, "zoom", 0.01, 3.0, 0.01).onChange(value => settings.zoom.setSensitivity(value));
 		folder.open();
 
 		folder = menu.addFolder("Rotation");
+		folder.add(params.rotation, "min azim. angle", -Math.PI, 0.0, 0.0001).onChange((value: number) => {
 
-		folder.add(controls.settings.rotation, "minAzimuthalAngle").min(-Math.PI).max(0.0).step(0.0001).onChange(() => {
-
-			if(controls.settings.rotation.minAzimuthalAngle <= -Math.PI + 1e-6) {
-
-				controls.settings.rotation.minAzimuthalAngle = Number.NEGATIVE_INFINITY;
-
-			}
+			const angle = (value <= -Math.PI + 1e-6) ? Number.NEGATIVE_INFINITY : value;
+			params.rotation["min azim. angle"] = angle;
+			settings.rotation.setMinAzimuthalAngle(angle);
 
 		});
 
-		folder.add(controls.settings.rotation, "maxAzimuthalAngle").min(0.0).max(Math.PI).step(0.0001).onChange(() => {
+		folder.add(params.rotation, "max azim. angle", 0.0, Math.PI, 0.0001).onChange((value: number) => {
 
-			if(controls.settings.rotation.maxAzimuthalAngle >= Math.PI - 1e-6) {
-
-				controls.settings.rotation.maxAzimuthalAngle = Number.POSITIVE_INFINITY;
-
-			}
+			const angle = (value >= Math.PI - 1e-6) ? Number.POSITIVE_INFINITY : value;
+			params.rotation["max azim. angle"] = angle;
+			settings.rotation.setMaxAzimuthalAngle(angle);
 
 		});
 
-		folder.add(controls.settings.rotation, "minPolarAngle").min(0.0).max(Math.PI).step(0.0001);
-		folder.add(controls.settings.rotation, "maxPolarAngle").min(0.0).max(Math.PI).step(0.0001);
-		folder.add(controls.settings.rotation, "invertX");
-		folder.add(controls.settings.rotation, "invertY");
+		folder.add(params.rotation, "min polar angle", 0.0, Math.PI, 0.0001).onChange(value => settings.rotation.setMinPolarAngle(value));
+		folder.add(params.rotation, "max polar angle", 0.0, Math.PI, 0.0001).onChange(value => settings.rotation.setMaxPolarAngle(value));
+		folder.add(params.rotation, "inverted X").onChange(value => settings.rotation.setInvertedX(value));
+		folder.add(params.rotation, "inverted Y").onChange(value => settings.rotation.setInvertedY(value));
 
 		folder = menu.addFolder("Translation");
-		folder.add(controls.settings.translation, "enabled");
+		folder.add(params.translation, "enabled").onChange(value => settings.translation.setEnabled(value));
 
 		folder = menu.addFolder("Zooming");
-		folder.add(controls.settings.zoom, "enabled");
-		folder.add(controls.settings.zoom, "invert");
-		folder.add(controls.settings.zoom, "minDistance").min(0.1).max(1.0).step(0.01);
-		folder.add(controls.settings.zoom, "maxDistance").min(1.0).max(10.0).step(0.01);
+		folder.add(params.zoom, "enabled").onChange(value => settings.zoom.setEnabled(value));
+		folder.add(params.zoom, "inverted").onChange(value => settings.zoom.setInverted(value));
+		folder.add(params.zoom, "min distance", 0.1, 1.0, 0.01).onChange(value => settings.zoom.setMinDistance(value));
+		folder.add(params.zoom, "max distance", 1.0, 10.0, 0.01).onChange(value => settings.zoom.setMaxDistance(value));
+
+		if(window.innerWidth < 720) {
+
+			menu.close();
+
+		}
+
+	}
+
+	dispose() {
+
+		document.removeEventListener("keydown", this);
 
 	}
 
