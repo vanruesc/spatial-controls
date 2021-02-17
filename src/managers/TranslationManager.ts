@@ -45,7 +45,7 @@ export class TranslationManager {
 	 * The current movement state.
 	 */
 
-	movementState: MovementState;
+	private movementState: MovementState;
 
 	/**
 	 * Constructs a new translation manager.
@@ -63,6 +63,18 @@ export class TranslationManager {
 		this.target = target;
 		this.settings = settings;
 		this.movementState = new MovementState();
+
+	}
+
+	/**
+	 * Returns the movement state.
+	 *
+	 * @return The movement state.
+	 */
+
+	getMovementState(): MovementState {
+
+		return this.movementState;
 
 	}
 
