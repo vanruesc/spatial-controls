@@ -554,7 +554,7 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 			if(pressed) {
 
 				this.lastScreenPosition.set(event.screenX, event.screenY);
-				this.domElement.addEventListener("mousemove", this);
+				this.domElement.addEventListener("mousemove", this, { passive: true });
 
 			} else {
 
@@ -630,7 +630,7 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 		if(start) {
 
 			this.lastScreenPosition.set(touch.screenX, touch.screenY);
-			this.domElement.addEventListener("touchmove", this);
+			this.domElement.addEventListener("touchmove", this, { passive: true });
 
 		} else {
 
@@ -681,7 +681,7 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 
 		if(document.pointerLockElement === this.domElement) {
 
-			this.domElement.addEventListener("mousemove", this);
+			this.domElement.addEventListener("mousemove", this, { passive: true });
 
 		} else {
 
