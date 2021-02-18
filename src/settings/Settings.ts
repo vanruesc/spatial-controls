@@ -127,6 +127,7 @@ export class Settings extends EventDispatcher {
 	clone(): Settings {
 
 		const clone = new Settings();
+
 		return clone.copy(this);
 
 	}

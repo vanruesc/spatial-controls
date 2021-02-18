@@ -39,6 +39,7 @@ export class KeyBindings {
 	reset(): KeyBindings {
 
 		this.actions = new Map(this.defaultActions);
+
 		return this;
 
 	}
@@ -53,6 +54,7 @@ export class KeyBindings {
 	setDefault(actions: Map<KeyCode, Action>): KeyBindings {
 
 		this.defaultActions = actions;
+
 		return this.reset();
 
 	}
@@ -108,6 +110,7 @@ export class KeyBindings {
 	clone(): KeyBindings {
 
 		const clone = new KeyBindings();
+
 		return clone.copy(this);
 
 	}
@@ -149,6 +152,7 @@ export class KeyBindings {
 	set(keyCode: KeyCode, action: Action): KeyBindings {
 
 		this.actions.set(keyCode, action);
+
 		return this;
 
 	}

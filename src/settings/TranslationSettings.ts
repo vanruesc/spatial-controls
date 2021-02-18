@@ -106,6 +106,7 @@ export class TranslationSettings extends EventDispatcher {
 	clone(): TranslationSettings {
 
 		const clone = new TranslationSettings();
+
 		return clone.copy(this);
 
 	}

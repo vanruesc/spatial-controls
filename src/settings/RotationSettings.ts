@@ -393,6 +393,7 @@ export class RotationSettings extends EventDispatcher {
 	clone(): RotationSettings {
 
 		const clone = new RotationSettings();
+
 		return clone.copy(this);
 
 	}

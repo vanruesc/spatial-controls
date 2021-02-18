@@ -91,6 +91,7 @@ export class RotationManager implements Updatable {
 	setPosition(position: Vector3): RotationManager {
 
 		this.position = position;
+
 		return this;
 
 	}
@@ -105,6 +106,7 @@ export class RotationManager implements Updatable {
 	setQuaternion(quaternion: Quaternion): RotationManager {
 
 		this.quaternion = quaternion;
+
 		return this;
 
 	}
@@ -119,6 +121,7 @@ export class RotationManager implements Updatable {
 	setTarget(target: Vector3): RotationManager {
 
 		this.target = target;
+
 		return this;
 
 	}
@@ -310,6 +313,7 @@ export class RotationManager implements Updatable {
 	lookAt(point: Vector3): RotationManager {
 
 		this.target.copy(point);
+
 		return this.updateSpherical().updateQuaternion();
 
 	}
@@ -325,6 +329,7 @@ export class RotationManager implements Updatable {
 
 		const orbit = (this.settings.general.getMode() === ControlMode.THIRD_PERSON);
 		view.setFromSpherical(this.spherical).normalize();
+
 		return orbit ? view.negate() : view;
 
 	}

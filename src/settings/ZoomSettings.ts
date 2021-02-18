@@ -220,6 +220,7 @@ export class ZoomSettings extends EventDispatcher {
 	clone(): ZoomSettings {
 
 		const clone = new ZoomSettings();
+
 		return clone.copy(this);
 
 	}

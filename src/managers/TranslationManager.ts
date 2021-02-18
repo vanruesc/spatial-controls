@@ -90,6 +90,7 @@ export class TranslationManager implements Updatable {
 	setPosition(position: Vector3): TranslationManager {
 
 		this.position = position;
+
 		return this;
 
 	}
@@ -104,6 +105,7 @@ export class TranslationManager implements Updatable {
 	setQuaternion(quaternion: Quaternion): TranslationManager {
 
 		this.quaternion = quaternion;
+
 		return this;
 
 	}
@@ -118,6 +120,7 @@ export class TranslationManager implements Updatable {
 	setTarget(target: Vector3): TranslationManager {
 
 		this.target = target;
+
 		return this;
 
 	}

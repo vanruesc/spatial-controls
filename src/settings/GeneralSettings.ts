@@ -84,6 +84,7 @@ export class GeneralSettings extends EventDispatcher {
 	copy(settings: GeneralSettings): GeneralSettings {
 
 		this.mode = settings.getMode();
+
 		return this;
 
 	}

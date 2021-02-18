@@ -94,6 +94,7 @@ export class PointerSettings extends EventDispatcher {
 	copy(settings: PointerSettings): PointerSettings {
 
 		this.behaviour = settings.getBehaviour();
+
 		return this;
 
 	}
@@ -107,6 +108,7 @@ export class PointerSettings extends EventDispatcher {
 	clone(): PointerSettings {
 
 		const clone = new PointerSettings();
+
 		return clone.copy(this);
 
 	}

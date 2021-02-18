@@ -335,6 +335,7 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 	clone(): SpatialControls {
 
 		const clone = new SpatialControls();
+
 		return clone.copy(this);
 
 	}
