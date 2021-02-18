@@ -433,10 +433,12 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 		if(enabled && !this.enabled) {
 
 			document.addEventListener("pointerlockchange", this);
+			document.addEventListener("visibilitychange", this);
 			document.body.addEventListener("keyup", this);
 			document.body.addEventListener("keydown", this);
 			domElement.addEventListener("mousedown", this);
 			domElement.addEventListener("mouseup", this);
+			domElement.addEventListener("mouseleave", this);
 			domElement.addEventListener("touchstart", this);
 			domElement.addEventListener("touchend", this);
 			domElement.addEventListener("wheel", this, { passive: true });
@@ -444,10 +446,12 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 		} else if(!enabled && this.enabled) {
 
 			document.removeEventListener("pointerlockchange", this);
+			document.removeEventListener("visibilitychange", this);
 			document.body.removeEventListener("keyup", this);
 			document.body.removeEventListener("keydown", this);
 			domElement.removeEventListener("mousedown", this);
 			domElement.removeEventListener("mouseup", this);
+			domElement.removeEventListener("mouseleave", this);
 			domElement.removeEventListener("touchstart", this);
 			domElement.removeEventListener("touchend", this);
 			domElement.removeEventListener("wheel", this);
@@ -614,6 +618,18 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 	}
 
 	/**
+	 * Handles pointer leave events.
+	 *
+	 * @param event - A pointer event.
+	 */
+
+	private handlePointerLeaveEvent(event: PointerEvent): void {
+
+		this.domElement.removeEventListener("mousemove", this);
+
+	}
+
+	/**
 	 * Handles touch start and end events.
 	 *
 	 * @param event - A touch event.
@@ -654,7 +670,6 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 		if(keyBindings.has(event.keyCode)) {
 
 			event.preventDefault();
-
 			this.strategies.get(keyBindings.get(event.keyCode)).execute(pressed);
 
 		}
@@ -686,6 +701,22 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 		} else {
 
 			this.domElement.removeEventListener("mousemove", this);
+
+		}
+
+	}
+
+	/**
+	 * Cancels active interactions on visibility loss.
+	 */
+
+	private handleVisibilityChangeEvent(): void {
+
+		if(document.hidden) {
+
+			this.translationManager.getMovementState().reset();
+			this.domElement.removeEventListener("mousemove", this);
+			this.domElement.removeEventListener("touchmove", this);
 
 		}
 
@@ -745,6 +776,10 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 				this.handlePointerButtonEvent(event as PointerEvent, false);
 				break;
 
+			case "mouseleave":
+				this.handlePointerLeaveEvent(event as PointerEvent);
+				break;
+
 			case "touchstart":
 				this.handleTouchEvent(event as TouchEvent, true);
 				break;
@@ -767,6 +802,10 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 
 			case "pointerlockchange":
 				this.handlePointerLockEvent();
+				break;
+
+			case "visibilitychange":
+				this.handleVisibilityChangeEvent();
 				break;
 
 			case "change":
