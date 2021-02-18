@@ -146,7 +146,8 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 	update(deltaTime: number): void {
 
-		this.controls.update(deltaTime);
+		// @todo use timestamp param.
+		this.controls.update(performance.now());
 
 	}
 
@@ -184,6 +185,16 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 				"inverted": settings.zoom.isInverted(),
 				"min distance": settings.zoom.getMinDistance(),
 				"max distance": settings.zoom.getMaxDistance()
+			},
+			save: () => {
+
+				const settingsURL = settings.toObjectURL();
+				const a = document.createElement("a");
+				a.setAttribute("href", settingsURL);
+				a.setAttribute("download", "spatial-controls.json");
+				a.click();
+				URL.revokeObjectURL(settingsURL);
+
 			}
 		};
 
@@ -238,6 +249,8 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		folder.add(params.zoom, "inverted").onChange(value => settings.zoom.setInverted(value));
 		folder.add(params.zoom, "min distance", 0.1, 1.0, 0.01).onChange(value => settings.zoom.setMinDistance(value));
 		folder.add(params.zoom, "max distance", 1.0, 10.0, 0.01).onChange(value => settings.zoom.setMaxDistance(value));
+
+		menu.add(params, "save");
 
 		if(window.innerWidth < 720) {
 
