@@ -1,12 +1,29 @@
 import { EventDispatcher } from "three";
 import { Action } from "../core/Action";
 import { KeyCode } from "../input/KeyCode";
-import { GeneralSettings } from "./GeneralSettings";
-import { KeyBindings } from "./KeyBindings";
-import { PointerSettings } from "./PointerSettings";
-import { RotationSettings } from "./RotationSettings";
-import { TranslationSettings } from "./TranslationSettings";
-import { ZoomSettings } from "./ZoomSettings";
+import { GeneralSettings, GeneralSettingsJSON } from "./GeneralSettings";
+import { KeyBindings, KeyBindingsJSON } from "./KeyBindings";
+import { PointerSettings, PointerSettingsJSON } from "./PointerSettings";
+import { RotationSettings, RotationSettingsJSON } from "./RotationSettings";
+import { TranslationSettings, TranslationSettingsJSON } from "./TranslationSettings";
+import { ZoomSettings, ZoomSettingsJSON } from "./ZoomSettings";
+
+/**
+ * JSON representation of control settings.
+ *
+ * @ignore
+ */
+
+interface SettingsJSON {
+
+	keyBindings: KeyBindingsJSON;
+	general: GeneralSettingsJSON;
+	pointer: PointerSettingsJSON;
+	rotation: RotationSettingsJSON;
+	translation: TranslationSettingsJSON;
+	zoom: ZoomSettingsJSON;
+
+}
 
 /**
  * Control settings.
@@ -15,16 +32,16 @@ import { ZoomSettings } from "./ZoomSettings";
 export class Settings extends EventDispatcher {
 
 	/**
-	 * General settings.
-	 */
-
-	general: GeneralSettings;
-
-	/**
 	 * Key bindings.
 	 */
 
 	keyBindings: KeyBindings;
+
+	/**
+	 * General settings.
+	 */
+
+	general: GeneralSettings;
 
 	/**
 	 * Pointer settings.
@@ -105,8 +122,8 @@ export class Settings extends EventDispatcher {
 
 	copy(settings: Settings): Settings {
 
-		this.general.copy(settings.general);
 		this.keyBindings.copy(settings.keyBindings);
+		this.general.copy(settings.general);
 		this.pointer.copy(settings.pointer);
 		this.rotation.copy(settings.rotation);
 		this.translation.copy(settings.translation);
@@ -133,9 +150,32 @@ export class Settings extends EventDispatcher {
 	}
 
 	/**
-	 * Saves the current settings as a data blob.
+	 * Copies the given JSON data.
 	 *
-	 * @return An object URL that points to the exported settings.
+	 * @param json - The JSON data string.
+	 * @return This instance.
+	 */
+
+	fromJSON(json: string): Settings {
+
+		const settings = JSON.parse(json) as SettingsJSON;
+		this.keyBindings.fromJSON(settings.keyBindings);
+		this.general.fromJSON(settings.general);
+		this.pointer.fromJSON(settings.pointer);
+		this.rotation.fromJSON(settings.rotation);
+		this.translation.fromJSON(settings.translation);
+		this.zoom.fromJSON(settings.zoom);
+
+		this.dispatchEvent({ type: "change" });
+
+		return this;
+
+	}
+
+	/**
+	 * Saves these settings as a data blob.
+	 *
+	 * @return An object URL that points to the serialized settings.
 	 */
 
 	toObjectURL(): string {
@@ -143,6 +183,19 @@ export class Settings extends EventDispatcher {
 		return URL.createObjectURL(new Blob([JSON.stringify(this)], {
 			type: "text/json"
 		}));
+
+	}
+
+	toJSON(): Record<string, unknown> {
+
+		return {
+			keyBindings: this.keyBindings,
+			general: this.general,
+			pointer: this.pointer,
+			rotation: this.rotation,
+			translation: this.translation,
+			zoom: this.zoom
+		};
 
 	}
 

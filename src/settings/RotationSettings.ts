@@ -2,6 +2,27 @@ import { EventDispatcher, Vector3 } from "three";
 import * as axes from "../core/axes";
 
 /**
+ * JSON representation of rotation settings.
+ *
+ * @ignore
+ */
+
+export interface RotationSettingsJSON {
+
+	up: Vector3;
+	pivotOffset: Vector3;
+	minAzimuthalAngle: number;
+	maxAzimuthalAngle: number;
+	minPolarAngle: number;
+	maxPolarAngle: number;
+	invertedX: boolean;
+	invertedY: boolean;
+	sensitivityX: number;
+	sensitivityY: number;
+
+}
+
+/**
  * Rotation settings.
  */
 
@@ -395,6 +416,51 @@ export class RotationSettings extends EventDispatcher {
 		const clone = new RotationSettings();
 
 		return clone.copy(this);
+
+	}
+
+	/**
+	 * Copies the given JSON data.
+	 *
+	 * @param json - The JSON data.
+	 * @return This instance.
+	 */
+
+	fromJSON(json: RotationSettingsJSON): RotationSettings {
+
+		this.up.copy(json.up);
+		this.pivotOffset.copy(json.pivotOffset);
+
+		this.minAzimuthalAngle = json.minAzimuthalAngle || Number.NEGATIVE_INFINITY;
+		this.maxAzimuthalAngle = json.maxAzimuthalAngle || Number.POSITIVE_INFINITY;
+
+		this.minPolarAngle = json.minPolarAngle;
+		this.maxPolarAngle = json.maxPolarAngle;
+
+		this.invertedX = json.invertedX;
+		this.invertedY = json.invertedY;
+
+		this.sensitivityX = json.sensitivityX;
+		this.sensitivityY = json.sensitivityY;
+
+		return this;
+
+	}
+
+	toJSON(): Record<string, unknown> {
+
+		return {
+			up: this.up,
+			pivotOffset: this.pivotOffset,
+			minAzimuthalAngle: this.minAzimuthalAngle,
+			maxAzimuthalAngle: this.maxAzimuthalAngle,
+			minPolarAngle: this.minPolarAngle,
+			maxPolarAngle: this.maxPolarAngle,
+			invertedX: this.invertedX,
+			invertedY: this.invertedY,
+			sensitivityX: this.sensitivityX,
+			sensitivityY: this.sensitivityY
+		};
 
 	}
 

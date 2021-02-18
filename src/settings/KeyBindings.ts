@@ -2,6 +2,19 @@ import { KeyCode } from "../input";
 import { Action } from "../core/Action";
 
 /**
+ * JSON representation of key bindings.
+ *
+ * @ignore
+ */
+
+export interface KeyBindingsJSON {
+
+	defaultActions: [[KeyCode, Action]];
+	actions: [[KeyCode, Action]];
+
+}
+
+/**
  * Key bindings.
  */
 
@@ -60,6 +73,34 @@ export class KeyBindings {
 	}
 
 	/**
+	 * Clears the default key bindings.
+	 *
+	 * @return This instance.
+	 */
+
+	clearDefault(): KeyBindings {
+
+		this.defaultActions.clear();
+
+		return this;
+
+	}
+
+	/**
+	 * Clears the current key bindings.
+	 *
+	 * @return This instance.
+	 */
+
+	clear(): KeyBindings {
+
+		this.actions.clear();
+
+		return this;
+
+	}
+
+	/**
 	 * Copies the given key bindings, including the default bindings.
 	 *
 	 * @param keyBindings - Key bindings.
@@ -76,32 +117,6 @@ export class KeyBindings {
 	}
 
 	/**
-	 * Clears the default key bindings.
-	 *
-	 * @return This instance.
-	 */
-
-	clearDefault(): KeyBindings {
-
-		this.defaultActions.clear();
-		return this;
-
-	}
-
-	/**
-	 * Clears the current key bindings.
-	 *
-	 * @return This instance.
-	 */
-
-	clear(): KeyBindings {
-
-		this.actions.clear();
-		return this;
-
-	}
-
-	/**
 	 * Clones these key bindings.
 	 *
 	 * @return The cloned key bindings.
@@ -112,6 +127,22 @@ export class KeyBindings {
 		const clone = new KeyBindings();
 
 		return clone.copy(this);
+
+	}
+
+	/**
+	 * Copies the given JSON data.
+	 *
+	 * @param json - The JSON data.
+	 * @return This instance.
+	 */
+
+	fromJSON(json: KeyBindingsJSON): KeyBindings {
+
+		this.defaultActions = new Map<KeyCode, Action>(json.defaultActions);
+		this.actions = new Map<KeyCode, Action>(json.actions);
+
+		return this;
 
 	}
 

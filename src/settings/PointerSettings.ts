@@ -2,6 +2,19 @@ import { EventDispatcher } from "three";
 import { PointerBehaviour } from "../core";
 
 /**
+ * JSON representation of pointer settings.
+ *
+ * @ignore
+ */
+
+export interface PointerSettingsJSON {
+
+	behaviour: PointerBehaviour;
+	sensitivity: number;
+
+}
+
+/**
  * Pointer settings.
  */
 
@@ -111,6 +124,31 @@ export class PointerSettings extends EventDispatcher {
 		const clone = new PointerSettings();
 
 		return clone.copy(this);
+
+	}
+
+	/**
+	 * Copies the given JSON data.
+	 *
+	 * @param json - The JSON data.
+	 * @return This instance.
+	 */
+
+	fromJSON(json: PointerSettingsJSON): PointerSettings {
+
+		this.behaviour = json.behaviour;
+		this.sensitivity = json.sensitivity;
+
+		return this;
+
+	}
+
+	toJSON(): Record<string, unknown> {
+
+		return {
+			behaviour: this.behaviour,
+			sensitivity: this.sensitivity
+		};
 
 	}
 

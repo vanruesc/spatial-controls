@@ -1,6 +1,22 @@
 import { EventDispatcher } from "three";
 
 /**
+ * JSON representation of zoom settings.
+ *
+ * @ignore
+ */
+
+export interface ZoomSettingsJSON {
+
+	enabled: boolean;
+	inverted: boolean;
+	minDistance: number;
+	maxDistance: number;
+	sensitivity: number;
+
+}
+
+/**
  * Zoom settings.
  */
 
@@ -222,6 +238,37 @@ export class ZoomSettings extends EventDispatcher {
 		const clone = new ZoomSettings();
 
 		return clone.copy(this);
+
+	}
+
+	/**
+	 * Copies the given JSON data.
+	 *
+	 * @param json - The JSON data.
+	 * @return This instance.
+	 */
+
+	fromJSON(json: ZoomSettingsJSON): ZoomSettings {
+
+		this.enabled = json.enabled;
+		this.inverted = json.inverted;
+		this.minDistance = json.minDistance;
+		this.maxDistance = json.maxDistance || Number.POSITIVE_INFINITY;
+		this.sensitivity = json.sensitivity;
+
+		return this;
+
+	}
+
+	toJSON(): Record<string, unknown> {
+
+		return {
+			enabled: this.enabled,
+			inverted: this.inverted,
+			minDistance: this.minDistance,
+			maxDistance: this.maxDistance,
+			sensitivity: this.sensitivity
+		};
 
 	}
 

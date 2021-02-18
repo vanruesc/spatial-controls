@@ -2,6 +2,18 @@ import { EventDispatcher } from "three";
 import { ControlMode } from "../core/ControlMode";
 
 /**
+ * JSON representation of general settings.
+ *
+ * @ignore
+ */
+
+export interface GeneralSettingsJSON {
+
+	mode: ControlMode;
+
+}
+
+/**
  * General settings.
  */
 
@@ -98,7 +110,31 @@ export class GeneralSettings extends EventDispatcher {
 	clone(): GeneralSettings {
 
 		const clone = new GeneralSettings();
+
 		return clone.copy(this);
+
+	}
+
+	/**
+	 * Copies the given JSON data.
+	 *
+	 * @param json - The JSON data.
+	 * @return This instance.
+	 */
+
+	fromJSON(json: GeneralSettingsJSON): GeneralSettings {
+
+		this.mode = json.mode;
+
+		return this;
+
+	}
+
+	toJSON(): Record<string, unknown> {
+
+		return {
+			mode: this.mode
+		};
 
 	}
 

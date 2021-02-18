@@ -1,6 +1,19 @@
 import { EventDispatcher } from "three";
 
 /**
+ * JSON representation of translation settings.
+ *
+ * @ignore
+ */
+
+export interface TranslationSettingsJSON {
+
+	enabled: boolean;
+	sensitivity: number;
+
+}
+
+/**
  * Translation settings.
  */
 
@@ -108,6 +121,31 @@ export class TranslationSettings extends EventDispatcher {
 		const clone = new TranslationSettings();
 
 		return clone.copy(this);
+
+	}
+
+	/**
+	 * Copies the given JSON data.
+	 *
+	 * @param json - The JSON data.
+	 * @return This instance.
+	 */
+
+	fromJSON(json: TranslationSettingsJSON): TranslationSettings {
+
+		this.enabled = json.enabled;
+		this.sensitivity = json.sensitivity;
+
+		return this;
+
+	}
+
+	toJSON(): Record<string, unknown> {
+
+		return {
+			enabled: this.enabled,
+			sensitivity: this.sensitivity
+		};
 
 	}
 
