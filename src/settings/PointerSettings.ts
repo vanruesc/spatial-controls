@@ -94,6 +94,7 @@ export class PointerSettings extends EventDispatcher {
 	copy(settings: PointerSettings): PointerSettings {
 
 		this.behaviour = settings.getBehaviour();
+		this.sensitivity = settings.getSensitivity();
 
 		return this;
 
