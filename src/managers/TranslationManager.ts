@@ -3,6 +3,7 @@ import { MovementState } from "./MovementState";
 import { ControlMode } from "../core";
 import { Settings } from "../settings";
 import { Updatable } from "../core";
+import { MILLISECONDS_TO_SECONDS } from "../core/time";
 import * as axes from "../core/axes";
 
 /**
@@ -50,6 +51,12 @@ export class TranslationManager implements Updatable {
 	private movementState: MovementState;
 
 	/**
+	 * A timestamp.
+	 */
+
+	private timestamp: number;
+
+	/**
 	 * Constructs a new translation manager.
 	 *
 	 * @param position - The position.
@@ -65,6 +72,7 @@ export class TranslationManager implements Updatable {
 		this.target = target;
 		this.settings = settings;
 		this.movementState = new MovementState();
+		this.timestamp = 0;
 
 	}
 
@@ -214,13 +222,16 @@ export class TranslationManager implements Updatable {
 
 	}
 
-	update(deltaTime: number): void {
+	update(timestamp: number): void {
 
 		if(this.settings.translation.isEnabled()) {
 
-			this.translate(deltaTime);
+			const elapsed = (timestamp - this.timestamp) * MILLISECONDS_TO_SECONDS;
+			this.translate(elapsed);
 
 		}
+
+		this.timestamp = timestamp;
 
 	}
 

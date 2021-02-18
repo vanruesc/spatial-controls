@@ -334,6 +334,6 @@ export class RotationManager implements Updatable {
 
 	}
 
-	update(deltaTime: number): void {}
+	update(timestamp: number): void {}
 
 }

@@ -7,9 +7,9 @@ export interface Updatable {
 	/**
 	 * Updates this object.
 	 *
-	 * @param deltaTime - The time since the last update in seconds.
+	 * @param timestamp - The current time in milliseconds.
 	 */
 
-	update(deltaTime: number): void;
+	update(timestamp: number): void;
 
 }

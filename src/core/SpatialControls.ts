@@ -817,10 +817,10 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 
 	}
 
-	update(deltaTime: number): void {
+	update(timestamp: number): void {
 
-		this.rotationManager.update(deltaTime);
-		this.translationManager.update(deltaTime);
+		this.rotationManager.update(timestamp);
+		this.translationManager.update(timestamp);
 
 	}
 
