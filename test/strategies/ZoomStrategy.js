@@ -5,6 +5,6 @@ test("can be instantiated", t => {
 
 	const object = new ZoomStrategy();
 
-	t.truthy(object);
+	t.pass();
 
 });

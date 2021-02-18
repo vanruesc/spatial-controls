@@ -5,7 +5,7 @@ test("can be instantiated", t => {
 
 	const object = new KeyBindings();
 
-	t.truthy(object);
+	t.pass();
 
 });
 
@@ -13,6 +13,7 @@ test("can be cloned", t => {
 
 	const object = new KeyBindings();
 
-	t.truthy(object.clone());
+	object.clone();
+	t.pass();
 
 });

@@ -5,6 +5,6 @@ test("can be instantiated", t => {
 
 	const object = new MovementStrategy();
 
-	t.truthy(object);
+	t.pass();
 
 });

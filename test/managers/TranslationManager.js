@@ -5,6 +5,6 @@ test("can be instantiated", t => {
 
 	const object = new TranslationManager();
 
-	t.truthy(object);
+	t.pass();
 
 });
