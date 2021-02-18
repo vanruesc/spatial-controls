@@ -29,14 +29,17 @@ const rotation = new Quaternion();
 const domElement = document.getElementById("viewport");
 const controls = new SpatialControls(position, rotation, domElement);
 
-const clock = new Clock();
+// Use the following methods to change the position, target and quaternion:
+controls.setPosition(0, 0.2, 1);
+controls.setTarget(0, 0, 0);
+controls.lookAt(0, 0, 0);
 
-(function render() {
+requestAnimationFrame(function render(timestamp: number) {
 
 	requestAnimationFrame(render);
-	controls.update(clock.getDelta());
+	controls.update(timestamp);
 
-}());
+});
 ```
 
 
@@ -45,41 +48,45 @@ const clock = new Clock();
 #### Configuration
 
 ```js
-import { Action, KeyCode } from "spatial-controls";
+import { Action, ControlMode, KeyCode } from "spatial-controls";
 
 const settings = controls.settings;
+settings.general.setMode(ControlMode.THIRD_PERSON);
+settings.zoom.setRange(0.25, 3.0);
+settings.rotation.setSensitivity(2.2);
+settings.translation.setSensitivity(0.25);
+
+// You can provide a custom target for the third person mode.
+controls.setTarget(myMesh.position);
+
 const keyBindings = settings.keyBindings;
-
-// Activate or deactivate third person controls. Enabled by default.
-controls.setOrbitEnabled(true|false);
-
-settings.pointer.hold = true;
-settings.rotation.minPolarAngle = 0.125;
-settings.sensitivity.rotation = 1.2;
-settings.translation.enabled = true;
-settings.zoom.minDistance = 1.0;
-
 keyBindings.delete(KeyCode.X);
 keyBindings.set(KeyCode.V, Action.MOVE_DOWN);
 ```
 
-#### Saving
+#### Saving and Loading
 
 ```js
-const settingsURL = settings.toDataURL();
+// JSON round-trip.
+const json = JSON.stringify(settings);
+settings.fromJSON(json);
+
+// Via local storage.
+localStorage.setItem("spatial-controls", JSON.stringify(settings));
+settings.fromJSON(localStorage.getItem("spatial-controls"));
+
+// Save as JSON file.
+const settingsURL = settings.toObjectURL();
 const a = document.createElement("a");
 a.setAttribute("href", settingsURL);
-a.setAttribute("download", "controls.json");
+a.setAttribute("download", "spatial-controls.json");
 a.click();
 URL.revokeObjectURL(settingsURL);
-```
 
-#### Loading
-
-```js
-fetch("./controls.json")
-	.then(response => response.json())
-	.then(data => controls.settings.copy(data))
+// Load from JSON file.
+fetch("./spatial-controls.json")
+	.then(response => response.text())
+	.then(data => settings.fromJSON(data))
 	.catch(e => console.error(e));
 ```
 
