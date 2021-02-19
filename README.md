@@ -4,7 +4,7 @@
 [![Version](https://badgen.net/npm/v/spatial-controls?color=green)](https://www.npmjs.com/package/spatial-controls)
 [![Peer dependencies](https://badgen.net/david/peer/vanruesc/spatial-controls)](https://david-dm.org/vanruesc/spatial-controls?type=peer)
 
-A 3D movement controller that supports multiple movement modes and configurable input settings.
+A 3D movement controller that supports multiple control modes and configurable input settings.
 
 *[Demo](https://vanruesc.github.io/spatial-controls/public/demo)&ensp;&middot;&ensp;[Documentation](https://vanruesc.github.io/spatial-controls/public/docs)*
 
@@ -20,21 +20,16 @@ npm install three spatial-controls
 
 ## Usage
 
-```javascript
+```js
 import { Clock, Quaternion, Vector3 } from "three";
 import { SpatialControls } from "spatial-controls";
 
 const position = new Vector3();
-const rotation = new Quaternion();
+const quaternion = new Quaternion();
 const domElement = document.getElementById("viewport");
-const controls = new SpatialControls(position, rotation, domElement);
+const controls = new SpatialControls(position, quaternion, domElement);
 
-// Use the following methods to change the position, target and quaternion:
-controls.setPosition(0, 0.2, 1);
-controls.setTarget(0, 0, 0);
-controls.lookAt(0, 0, 0);
-
-requestAnimationFrame(function render(timestamp: number) {
+requestAnimationFrame(function render(timestamp) {
 
 	requestAnimationFrame(render);
 	controls.update(timestamp);
@@ -42,6 +37,26 @@ requestAnimationFrame(function render(timestamp: number) {
 });
 ```
 
+Use the following methods to change the `position`, `target` and `quaternion`:
+
+```js
+// Sets or replaces the position and looks at the target.
+controls.setPosition(x, y, z);
+controls.setPosition(otherPosition);
+
+// First person: Sets the position.
+// Third person: Sets the target and adjusts the position.
+controls.moveTo(x, y, z);
+controls.moveTo(point);
+
+// Sets or replaces the target and updates the quaternion.
+controls.setTarget(x, y, z);
+controls.setTarget(otherTarget);
+
+// Same as setTarget() but never replaces the target.
+controls.lookAt(x, y, z);
+controls.lookAt(target);
+```
 
 ## Settings
 
@@ -55,9 +70,6 @@ settings.general.setMode(ControlMode.THIRD_PERSON);
 settings.zoom.setRange(0.25, 3.0);
 settings.rotation.setSensitivity(2.2);
 settings.translation.setSensitivity(0.25);
-
-// You can provide a custom target for the third person mode.
-controls.setTarget(myMesh.position);
 
 const keyBindings = settings.keyBindings;
 keyBindings.delete(KeyCode.X);
