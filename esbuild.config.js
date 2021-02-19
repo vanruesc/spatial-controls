@@ -1,5 +1,4 @@
-import { BuildOptions } from "esbuild";
-import * as pkg from "./package.json";
+import pkg from "./package.json";
 
 const date = (new Date()).toDateString();
 const production = (process.env.NODE_ENV === "production");
@@ -12,7 +11,7 @@ const banner = `/**
  * @license ${pkg.license}
  */`;
 
-const demo: BuildOptions = {
+const demo = {
 	entryPoints: ["demo/src/index.ts"],
 	outfile: "public/demo/index.js",
 	format: "iife",
@@ -20,7 +19,7 @@ const demo: BuildOptions = {
 	minify: production
 };
 
-const lib: BuildOptions = {
+const lib = {
 	entryPoints: ["src/index.ts"],
 	outfile: `dist/${pkg.name}.js`,
 	format: "esm",

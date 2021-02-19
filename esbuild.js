@@ -1,14 +1,16 @@
-import { startService } from "esbuild";
+import esbuild from "esbuild";
+import path from "path";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
 import { watch } from "chokidar";
-import * as path from "path";
-import * as yargs from "yargs";
-import { configs, srcDirs } from "./esbuild.config";
+import { configs, srcDirs } from "./esbuild.config.js";
 
-const { argv } = yargs.options({ watch: { alias: "w", type: "boolean" } });
+const { argv } = yargs(hideBin(process.argv))
+	.option("watch", { alias: "w", type: "boolean" });
 
-async function build(changedFile: string = null): Promise<void> {
+async function build(changedFile = null) {
 
-	const service = await startService();
+	const service = await esbuild.startService();
 	const t0 = Date.now();
 
 	if(changedFile !== null) {
@@ -19,7 +21,7 @@ async function build(changedFile: string = null): Promise<void> {
 
 	await Promise.all(configs.map((c) => {
 
-		let p: Promise<void> = null;
+		let p = null;
 
 		if(path.normalize(c.outfile) !== changedFile) {
 
@@ -29,7 +31,7 @@ async function build(changedFile: string = null): Promise<void> {
 				result.warnings.forEach((w) => console.warn(w.text,
 					`${w.location.line}:${w.location.column} ${w.location.file}`));
 
-			}).catch((e) => console.error(`Failed to build ${c.outfile}`));
+			}).catch(() => process.exit(1));
 
 		}
 
@@ -46,7 +48,7 @@ if(argv.watch) {
 		srcDirs.join(", ").replace(/, ([^,]*)$/, " and $1"));
 
 	const watcher = watch(srcDirs);
-	watcher.on("change", (f: string) => void build(path.normalize(f)));
+	watcher.on("change", (f) => void build(path.normalize(f)));
 
 }
 
