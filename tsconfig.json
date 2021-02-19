@@ -1,21 +1,5 @@
 {
-	"ts-node": {
-		"transpileOnly": true,
-		"compilerOptions": {
-			"module": "CommonJS",
-			"resolveJsonModule": true
-		},
-		"include": ["./*.ts"]
-	},
-	"typedocOptions": {
-		"entryPoints": ["./src/index.ts"],
-		"out": "public/docs",
-		"theme": "default",
-		"readme": "none",
-		"excludePrivate": true,
-		"includeVersion": true,
-		"hideGenerator": true
-	},
+	"include": ["src", "demo/src"],
 	"compilerOptions": {
 		"rootDir": ".",
 		"moduleResolution": "node",
@@ -27,5 +11,13 @@
 		"skipLibCheck": true,
 		"strictNullChecks": false
 	},
-	"include": ["src", "demo/src"]
+	"typedocOptions": {
+		"entryPoints": ["./src/index.ts"],
+		"out": "public/docs",
+		"theme": "default",
+		"readme": "none",
+		"excludePrivate": true,
+		"includeVersion": true,
+		"hideGenerator": true
+	}
 }
