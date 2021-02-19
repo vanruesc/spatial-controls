@@ -1,5 +1,5 @@
 import test from "ava";
-import { MovementStrategy } from "../../";
+import { MovementStrategy } from "../../dist/spatial-controls.js";
 
 test("can be instantiated", t => {
 

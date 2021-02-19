@@ -1,5 +1,5 @@
 import test from "ava";
-import { KeyBindings } from "../../";
+import { KeyBindings } from "../../dist/spatial-controls.js";
 
 test("can be instantiated", t => {
 

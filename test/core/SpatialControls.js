@@ -1,6 +1,6 @@
 import test from "ava";
 import { Quaternion, Vector3 } from "three";
-import { SpatialControls } from "../../";
+import { SpatialControls } from "../../dist/spatial-controls.js";
 
 test("can be instantiated", t => {
 

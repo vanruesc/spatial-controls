@@ -1,5 +1,5 @@
 import test from "ava";
-import { TranslationSettings } from "../../";
+import { TranslationSettings } from "../../dist/spatial-controls.js";
 
 test("can be instantiated", t => {
 

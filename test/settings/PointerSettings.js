@@ -1,5 +1,5 @@
 import test from "ava";
-import { PointerSettings } from "../../";
+import { PointerSettings } from "../../dist/spatial-controls.js";
 
 test("can be instantiated", t => {
 
