@@ -21,7 +21,7 @@ npm install three spatial-controls
 ## Usage
 
 ```js
-import { Clock, Quaternion, Vector3 } from "three";
+import { Quaternion, Vector3 } from "three";
 import { SpatialControls } from "spatial-controls";
 
 const position = new Vector3();
@@ -37,23 +37,23 @@ requestAnimationFrame(function render(timestamp) {
 });
 ```
 
-Use the following methods to change the `position`, `target` and `quaternion`:
+#### Position, Target and Quaternion
 
 ```js
-// Sets or replaces the position and looks at the target.
-controls.setPosition(x, y, z);
-controls.setPosition(otherPosition);
-
 // First person: Sets the position.
 // Third person: Sets the target and adjusts the position.
 controls.moveTo(x, y, z);
 controls.moveTo(point);
 
+// Sets or replaces the position and looks at the target.
+controls.setPosition(x, y, z);
+controls.setPosition(otherPosition);
+
 // Sets or replaces the target and updates the quaternion.
 controls.setTarget(x, y, z);
 controls.setTarget(otherTarget);
 
-// Same as setTarget() but never replaces the target.
+// Same as setTarget() but doesn't replace the target.
 controls.lookAt(x, y, z);
 controls.lookAt(target);
 ```
@@ -76,7 +76,7 @@ keyBindings.delete(KeyCode.X);
 keyBindings.set(KeyCode.V, Action.MOVE_DOWN);
 ```
 
-#### Saving and Loading
+### Saving and Loading
 
 ```js
 // JSON round-trip.
