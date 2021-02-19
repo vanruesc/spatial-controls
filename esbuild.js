@@ -10,14 +10,13 @@ const { argv } = yargs(hideBin(process.argv))
 
 async function build(changedFile = null) {
 
-	const service = await esbuild.startService();
-	const t0 = Date.now();
-
 	if(changedFile !== null) {
 
 		console.clear();
 
 	}
+
+	const t0 = Date.now();
 
 	await Promise.all(configs.map((c) => {
 
@@ -25,7 +24,7 @@ async function build(changedFile = null) {
 
 		if(path.normalize(c.outfile) !== changedFile) {
 
-			p = service.build(c).then((result) => {
+			p = esbuild.build(c).then((result) => {
 
 				console.log(`Built ${c.outfile} in ${Date.now() - t0}ms`);
 				result.warnings.forEach((w) => console.warn(w.text,
