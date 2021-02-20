@@ -1,5 +1,7 @@
-import pkg from "./package.json";
+import { createRequire } from "module";
 
+const require = createRequire(import.meta.url);
+const pkg = require("./package");
 const date = (new Date()).toDateString();
 const production = (process.env.NODE_ENV === "production");
 const external = Object.keys(pkg.peerDependencies);
