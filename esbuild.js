@@ -1,7 +1,7 @@
 import { createRequire } from "module";
+import { hideBin } from "yargs/helpers";
 import esbuild from "esbuild";
 import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
 
 const require = createRequire(import.meta.url);
 const pkg = require("./package");
