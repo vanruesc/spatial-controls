@@ -144,10 +144,9 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 	}
 
-	update(deltaTime: number): void {
+	update(deltaTime: number, timestamp: number): void {
 
-		// @todo use timestamp param.
-		this.controls.update(performance.now());
+		this.controls.update(timestamp);
 
 	}
 
