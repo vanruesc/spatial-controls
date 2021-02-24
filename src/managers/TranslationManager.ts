@@ -6,12 +6,6 @@ import { Updatable } from "../core";
 import { MILLISECONDS_TO_SECONDS } from "../core/time";
 import * as axes from "../core/axes";
 
-/**
- * A vector.
- *
- * @ignore
- */
-
 const v = new Vector3();
 
 /**

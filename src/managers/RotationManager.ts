@@ -2,28 +2,8 @@ import { Matrix4, Quaternion, Spherical, Vector3 } from "three";
 import { ControlMode, Updatable } from "../core";
 import { Settings } from "../settings";
 
-/**
- * Two PI.
- *
- * @ignore
- */
-
 const TWO_PI = Math.PI * 2;
-
-/**
- * A vector.
- *
- * @ignore
- */
-
 const v = new Vector3();
-
-/**
- * A matrix.
- *
- * @ignore
- */
-
 const m = new Matrix4();
 
 /**
@@ -278,7 +258,7 @@ export class RotationManager implements Updatable {
 	}
 
 	/**
-	 * Zooms in or out.
+	 * Zooms in or out. Only applies in third person mode.
 	 *
 	 * @param sign - The zoom sign. Possible values are [-1, 0, 1].
 	 * @return This manager.

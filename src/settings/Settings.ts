@@ -175,10 +175,10 @@ export class Settings extends EventDispatcher {
 	/**
 	 * Exports these settings as a data blob.
 	 *
-	 * @return The serialized settings.
+	 * @return The settings blob.
 	 */
 
-	toBlob(): string {
+	toBlob(): Blob {
 
 		return new Blob([JSON.stringify(this)], {
 			type: "text/json"

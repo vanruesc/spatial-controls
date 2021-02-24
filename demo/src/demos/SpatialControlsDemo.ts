@@ -187,7 +187,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 			},
 			save: () => {
 
-				const settingsURL = URL.createObjectURL(settings.toObjectURL());
+				const settingsURL = URL.createObjectURL(settings.toBlob());
 				const a = document.createElement("a");
 				a.setAttribute("href", settingsURL);
 				a.setAttribute("download", "spatial-controls.json");

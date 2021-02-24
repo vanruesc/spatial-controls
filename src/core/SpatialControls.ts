@@ -10,12 +10,6 @@ import { Direction } from "./Direction";
 import { PointerBehaviour } from "./PointerBehaviour";
 import { Updatable } from "./Updatable";
 
-/**
- * A vector.
- *
- * @ignore
- */
-
 const v = new Vector3();
 
 /**
