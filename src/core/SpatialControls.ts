@@ -242,6 +242,12 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 		this.rotationManager.setQuaternion(quaternion);
 		this.translationManager.setQuaternion(quaternion);
 
+		if(this.settings.general.getMode() === ControlMode.FIRST_PERSON) {
+
+			this.target.set(0, 0, -1).applyQuaternion(quaternion);
+
+		}
+
 		return this.lookAt(this.target);
 
 	}
