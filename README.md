@@ -88,7 +88,7 @@ localStorage.setItem("spatial-controls", JSON.stringify(settings));
 settings.fromJSON(localStorage.getItem("spatial-controls"));
 
 // Save as JSON file.
-const settingsURL = settings.toObjectURL();
+const settingsURL = URL.createObjectURL(settings.toBlob());
 const a = document.createElement("a");
 a.setAttribute("href", settingsURL);
 a.setAttribute("download", "spatial-controls.json");

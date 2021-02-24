@@ -173,16 +173,16 @@ export class Settings extends EventDispatcher {
 	}
 
 	/**
-	 * Saves these settings as a data blob.
+	 * Exports these settings as a data blob.
 	 *
-	 * @return An object URL that points to the serialized settings.
+	 * @return The serialized settings.
 	 */
 
-	toObjectURL(): string {
+	toBlob(): string {
 
-		return URL.createObjectURL(new Blob([JSON.stringify(this)], {
+		return new Blob([JSON.stringify(this)], {
 			type: "text/json"
-		}));
+		});
 
 	}
 
