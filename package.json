@@ -43,7 +43,7 @@
 		"build": "run-s build:*",
 		"build:js": "cross-env NODE_ENV=production node esbuild",
 		"build:dts": "tsc -p tsconfig.d.json",
-		"clean": "del-cli build public",
+		"clean": "del-cli dist public",
 		"copy": "cpy --cwd=demo/static --parents \"**/*\" \"../../public/demo\"",
 		"deploy": "run-s copy lint build doc",
 		"dev": "run-s clean copy && run-p start watch",
@@ -72,7 +72,7 @@
 		}
 	},
 	"peerDependencies": {
-		"three": ">= 0.118.0 < 0.126.0"
+		"three": ">= 0.126.0 < 0.127.0"
 	},
 	"devDependencies": {
 		"@types/dat.gui": "0.x.x",
@@ -90,7 +90,7 @@
 		"http-server": "0.x.x",
 		"npm-run-all": "4.x.x",
 		"three": "0.x.x",
-		"three-demo": "4.x.x",
+		"three-demo": "5.x.x",
 		"tslib": "2.x.x",
 		"typedoc": "0.x.x",
 		"typescript": "4.x.x",
