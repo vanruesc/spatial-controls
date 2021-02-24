@@ -35,6 +35,7 @@ const configs = [{
 }];
 
 const t0 = Date.now();
-await Promise.all(configs.map(c => esbuild.build(c)
+
+Promise.all(configs.map(c => esbuild.build(c)
 	.then(() => console.log(`Built ${c.outfile} in ${Date.now() - t0}ms`))
 	.catch(() => process.exit(1))));
