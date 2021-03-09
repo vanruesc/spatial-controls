@@ -28,10 +28,10 @@ const configs = [{
 }, {
 	entryPoints: ["src/index.ts"],
 	outfile: `dist/${pkg.name}.js`,
+	banner: { js: banner },
 	format: "esm",
 	bundle: true,
-	external,
-	banner
+	external
 }];
 
 const t0 = Date.now();
