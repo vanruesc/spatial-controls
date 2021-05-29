@@ -1,4 +1,10 @@
-import { Quaternion, Vector2, Vector3 } from "three";
+import {
+	EventDispatcher,
+	Quaternion,
+	Vector2,
+	Vector3
+} from "three";
+
 import { Disposable } from "./Disposable";
 import { PointerButton } from "../input/PointerButton";
 import { RotationManager, TranslationManager } from "../managers";
@@ -14,9 +20,12 @@ const v = new Vector3();
 
 /**
  * Spatial controls for 3D translation and rotation.
+ *
+ * This class emits "update" events during interaction.
  */
 
-export class SpatialControls implements Disposable, EventListenerObject, Updatable {
+export class SpatialControls extends EventDispatcher
+	implements Disposable, EventListenerObject, Updatable {
 
 	/**
 	 * A DOM element. Acts as the primary event target.
@@ -92,7 +101,10 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 	 * @param domElement - A DOM element. Acts as the primary event target.
 	 */
 
-	constructor(position: Vector3 = null, quaternion: Quaternion = null, domElement: HTMLElement = document.body) {
+	constructor(position: Vector3 = null, quaternion: Quaternion = null,
+		domElement: HTMLElement = document.body) {
+
+		super();
 
 		this.domElement = domElement;
 		this.settings = new Settings();
@@ -104,6 +116,10 @@ export class SpatialControls implements Disposable, EventListenerObject, Updatab
 
 		this.rotationManager = new RotationManager(position, quaternion, this.target, this.settings);
 		this.translationManager = new TranslationManager(position, quaternion, this.target, this.settings);
+
+		const rm = this.rotationManager, tm = this.translationManager;
+		rm.addEventListener("update", e => this.dispatchEvent(e));
+		tm.addEventListener("update", e => this.dispatchEvent(e));
 
 		const movementState = this.translationManager.getMovementState();
 

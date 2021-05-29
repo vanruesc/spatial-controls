@@ -1,4 +1,12 @@
-import { Matrix4, Quaternion, Spherical, Vector3 } from "three";
+import {
+	Event as Event3,
+	EventDispatcher,
+	Matrix4,
+	Quaternion,
+	Spherical,
+	Vector3
+} from "three";
+
 import { ControlMode, Updatable } from "../core";
 import { Settings } from "../settings";
 
@@ -10,7 +18,7 @@ const m = new Matrix4();
  * A rotation manager.
  */
 
-export class RotationManager implements Updatable {
+export class RotationManager extends EventDispatcher implements Updatable {
 
 	/**
 	 * The position that will be modified.
@@ -43,6 +51,12 @@ export class RotationManager implements Updatable {
 	private spherical: Spherical;
 
 	/**
+	 * A reusable update event.
+	 */
+
+	private updateEvent: Event3;
+
+	/**
 	 * Constructs a new rotation manager.
  	 *
  	 * @param position - The position.
@@ -51,13 +65,17 @@ export class RotationManager implements Updatable {
  	 * @param settings - The settings.
 	 */
 
-	constructor(position: Vector3, quaternion: Quaternion, target: Vector3, settings: Settings) {
+	constructor(position: Vector3, quaternion: Quaternion, target: Vector3,
+		settings: Settings) {
+
+		super();
 
 		this.position = position;
 		this.quaternion = quaternion;
 		this.target = target;
 		this.settings = settings;
 		this.spherical = new Spherical();
+		this.updateEvent = { type: "update" };
 
 	}
 
@@ -229,6 +247,7 @@ export class RotationManager implements Updatable {
 		}
 
 		this.quaternion.setFromRotationMatrix(m);
+		this.dispatchEvent(this.updateEvent);
 
 		return this;
 
@@ -276,6 +295,7 @@ export class RotationManager implements Updatable {
 			const amount = sign * zoom.getSensitivity();
 			s.radius = zoom.isInverted() ? s.radius - amount : s.radius + amount;
 			this.restrictRadius().position.setFromSpherical(s).add(this.target);
+			this.dispatchEvent(this.updateEvent);
 
 		}
 

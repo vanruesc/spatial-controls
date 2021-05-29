@@ -1,4 +1,10 @@
-import { Quaternion, Vector3 } from "three";
+import {
+	Event as Event3,
+	EventDispatcher,
+	Quaternion,
+	Vector3
+} from "three";
+
 import { MovementState } from "./MovementState";
 import { ControlMode } from "../core";
 import { Settings } from "../settings";
@@ -12,7 +18,7 @@ const v = new Vector3();
  * A translation manager.
  */
 
-export class TranslationManager implements Updatable {
+export class TranslationManager extends EventDispatcher implements Updatable {
 
 	/**
 	 * The position that will be modified.
@@ -51,6 +57,12 @@ export class TranslationManager implements Updatable {
 	private timestamp: number;
 
 	/**
+	 * A reusable update event.
+	 */
+
+	private updateEvent: Event3;
+
+	/**
 	 * Constructs a new translation manager.
 	 *
 	 * @param position - The position.
@@ -59,7 +71,10 @@ export class TranslationManager implements Updatable {
 	 * @param settings - The settings.
 	 */
 
-	constructor(position: Vector3, quaternion: Quaternion, target: Vector3, settings: Settings) {
+	constructor(position: Vector3, quaternion: Quaternion, target: Vector3,
+		settings: Settings) {
+
+		super();
 
 		this.position = position;
 		this.quaternion = quaternion;
@@ -67,6 +82,7 @@ export class TranslationManager implements Updatable {
 		this.settings = settings;
 		this.movementState = new MovementState();
 		this.timestamp = 0;
+		this.updateEvent = { type: "update" };
 
 	}
 
@@ -145,6 +161,8 @@ export class TranslationManager implements Updatable {
 			this.target.add(v);
 
 		}
+
+		this.dispatchEvent(this.updateEvent);
 
 	}
 
@@ -247,6 +265,8 @@ export class TranslationManager implements Updatable {
 			this.position.copy(position);
 
 		}
+
+		this.dispatchEvent(this.updateEvent);
 
 		return this;
 
