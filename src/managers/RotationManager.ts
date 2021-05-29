@@ -238,11 +238,19 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 		if(settings.general.getMode() === ControlMode.THIRD_PERSON) {
 
-			m.lookAt(v.subVectors(this.position, target), rotation.getPivotOffset(), up);
+			m.lookAt(
+				v.subVectors(this.position, target),
+				rotation.getPivotOffset(),
+				up
+			);
 
 		} else {
 
-			m.lookAt(v.set(0, 0, 0), target.setFromSpherical(this.spherical), up);
+			m.lookAt(
+				v.set(0, 0, 0),
+				target.setFromSpherical(this.spherical),
+				up
+			);
 
 		}
 
@@ -268,9 +276,10 @@ export class RotationManager extends EventDispatcher implements Updatable {
 		const rotation = settings.rotation;
 		const invertedY = rotation.isInvertedY();
 		const orbit = (settings.general.getMode() === ControlMode.THIRD_PERSON);
+		const orbitXorInvertedY = ((orbit || invertedY) && !(orbit && invertedY));
 
 		s.theta = !rotation.isInvertedX() ? s.theta - theta : s.theta + theta;
-		s.phi = ((orbit || invertedY) && !(orbit && invertedY)) ? s.phi - phi : s.phi + phi;
+		s.phi = orbitXorInvertedY ? s.phi - phi : s.phi + phi;
 
 		return this.restrictAngles().updatePosition();
 
@@ -327,7 +336,8 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 	getViewDirection(view: Vector3): Vector3 {
 
-		const orbit = (this.settings.general.getMode() === ControlMode.THIRD_PERSON);
+		const settings = this.settings;
+		const orbit = (settings.general.getMode() === ControlMode.THIRD_PERSON);
 		view.setFromSpherical(this.spherical).normalize();
 
 		return orbit ? view.negate() : view;

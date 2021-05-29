@@ -108,30 +108,41 @@ export class SpatialControls extends EventDispatcher
 
 		this.domElement = domElement;
 		this.settings = new Settings();
-		this.settings.addEventListener("change", (event) => this.handleEvent(event as Event));
+		this.settings.addEventListener("change", e => this.handleEvent(e as Event));
 
 		this.position = position;
 		this.quaternion = quaternion;
 		this.target = new Vector3();
 
-		this.rotationManager = new RotationManager(position, quaternion, this.target, this.settings);
-		this.translationManager = new TranslationManager(position, quaternion, this.target, this.settings);
+		this.rotationManager = new RotationManager(
+			position,
+			quaternion,
+			this.target,
+			this.settings
+		);
+
+		this.translationManager = new TranslationManager(
+			position,
+			quaternion,
+			this.target,
+			this.settings
+		);
 
 		const rm = this.rotationManager, tm = this.translationManager;
 		rm.addEventListener("update", e => this.dispatchEvent(e));
 		tm.addEventListener("update", e => this.dispatchEvent(e));
 
-		const movementState = this.translationManager.getMovementState();
+		const state = tm.getMovementState();
 
 		this.strategies = new Map<Action, Strategy>([
-			[Action.MOVE_FORWARD, new MovementStrategy(movementState, Direction.FORWARD)],
-			[Action.MOVE_LEFT, new MovementStrategy(movementState, Direction.LEFT)],
-			[Action.MOVE_BACKWARD, new MovementStrategy(movementState, Direction.BACKWARD)],
-			[Action.MOVE_RIGHT, new MovementStrategy(movementState, Direction.RIGHT)],
-			[Action.MOVE_DOWN, new MovementStrategy(movementState, Direction.DOWN)],
-			[Action.MOVE_UP, new MovementStrategy(movementState, Direction.UP)],
-			[Action.ZOOM_OUT, new ZoomStrategy(this.rotationManager, false)],
-			[Action.ZOOM_IN, new ZoomStrategy(this.rotationManager, true)]
+			[Action.MOVE_FORWARD, new MovementStrategy(state, Direction.FORWARD)],
+			[Action.MOVE_LEFT, new MovementStrategy(state, Direction.LEFT)],
+			[Action.MOVE_BACKWARD, new MovementStrategy(state, Direction.BACKWARD)],
+			[Action.MOVE_RIGHT, new MovementStrategy(state, Direction.RIGHT)],
+			[Action.MOVE_DOWN, new MovementStrategy(state, Direction.DOWN)],
+			[Action.MOVE_UP, new MovementStrategy(state, Direction.UP)],
+			[Action.ZOOM_OUT, new ZoomStrategy(rm, false)],
+			[Action.ZOOM_IN, new ZoomStrategy(rm, true)]
 		]);
 
 		this.lastScreenPosition = new Vector2();
@@ -594,7 +605,8 @@ export class SpatialControls extends EventDispatcher
 	 * @param pressed - Whether the pointer button has been pressed down.
 	 */
 
-	private handleAuxiliaryPointerButton(event: PointerEvent, pressed: boolean): void {}
+	private handleAuxiliaryPointerButton(event: PointerEvent,
+		pressed: boolean): void {}
 
 	/**
 	 * Handles secondary pointer button events.
@@ -603,7 +615,8 @@ export class SpatialControls extends EventDispatcher
 	 * @param pressed - Whether the pointer button has been pressed down.
 	 */
 
-	private handleSecondaryPointerButton(event: PointerEvent, pressed: boolean): void {}
+	private handleSecondaryPointerButton(event: PointerEvent,
+		pressed: boolean): void {}
 
 	/**
 	 * Handles pointer events.
@@ -612,7 +625,8 @@ export class SpatialControls extends EventDispatcher
 	 * @param pressed - Whether the pointer button has been pressed down.
 	 */
 
-	private handlePointerButtonEvent(event: PointerEvent, pressed: boolean): void {
+	private handlePointerButtonEvent(event: PointerEvent,
+		pressed: boolean): void {
 
 		event.preventDefault();
 
