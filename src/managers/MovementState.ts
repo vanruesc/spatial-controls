@@ -41,6 +41,24 @@ export class MovementState {
 	down: boolean;
 
 	/**
+	 * Controls whether backward movement currently has priority.
+	 */
+
+	backwardBeforeForward: boolean;
+
+	/**
+	 * Controls whether right movement currently has priority.
+	 */
+
+	rightBeforeLeft: boolean;
+
+	/**
+	 * Controls whether up movement currently has priority.
+	 */
+
+	upBeforeDown: boolean;
+
+	/**
 	 * Constructs a new movement state.
 	 */
 
@@ -64,6 +82,10 @@ export class MovementState {
 		this.backward = false;
 		this.up = false;
 		this.down = false;
+
+		this.backwardBeforeForward = false;
+		this.rightBeforeLeft = false;
+		this.upBeforeDown = false;
 
 		return this;
 

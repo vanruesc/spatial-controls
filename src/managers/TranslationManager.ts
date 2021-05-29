@@ -159,7 +159,19 @@ export class TranslationManager implements Updatable {
 		const state = this.movementState;
 		const step = deltaTime * this.settings.translation.getSensitivity();
 
-		if(state.backward) {
+		if(state.backward && state.forward) {
+
+			if(state.backwardBeforeForward) {
+
+				this.translateOnAxis(axes.z, step);
+
+			} else {
+
+				this.translateOnAxis(axes.z, -step);
+
+			}
+
+		} else if(state.backward) {
 
 			this.translateOnAxis(axes.z, step);
 
@@ -169,7 +181,19 @@ export class TranslationManager implements Updatable {
 
 		}
 
-		if(state.right) {
+		if(state.right && state.left) {
+
+			if(state.rightBeforeLeft) {
+
+				this.translateOnAxis(axes.x, step);
+
+			} else {
+
+				this.translateOnAxis(axes.x, -step);
+
+			}
+
+		} else if(state.right) {
 
 			this.translateOnAxis(axes.x, step);
 
@@ -179,7 +203,19 @@ export class TranslationManager implements Updatable {
 
 		}
 
-		if(state.up) {
+		if(state.up && state.down) {
+
+			if(state.upBeforeDown) {
+
+				this.translateOnAxis(axes.y, step);
+
+			} else {
+
+				this.translateOnAxis(axes.y, -step);
+
+			}
+
+		} else if(state.up) {
 
 			this.translateOnAxis(axes.y, step);
 

@@ -40,28 +40,34 @@ export class MovementStrategy implements Strategy {
 
 		switch(this.direction) {
 
-			case Direction.FORWARD:
-				state.forward = flag;
-				break;
-
-			case Direction.LEFT:
-				state.left = flag;
-				break;
-
 			case Direction.BACKWARD:
 				state.backward = flag;
+				state.backwardBeforeForward = flag;
+				break;
+
+			case Direction.FORWARD:
+				state.forward = flag;
+				state.backwardBeforeForward = !flag;
 				break;
 
 			case Direction.RIGHT:
 				state.right = flag;
+				state.rightBeforeLeft = flag;
 				break;
 
-			case Direction.DOWN:
-				state.down = flag;
+			case Direction.LEFT:
+				state.left = flag;
+				state.rightBeforeLeft = !flag;
 				break;
 
 			case Direction.UP:
 				state.up = flag;
+				state.upBeforeDown = flag;
+				break;
+
+			case Direction.DOWN:
+				state.down = flag;
+				state.upBeforeDown = !flag;
 				break;
 
 		}
