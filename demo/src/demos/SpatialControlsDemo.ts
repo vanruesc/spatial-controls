@@ -112,7 +112,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		// Camera
 
 		const aspect = window.innerWidth / window.innerHeight;
-		const camera = new PerspectiveCamera(50, aspect, 0.1, 1000);
+		const camera = new PerspectiveCamera(59, aspect, 0.1, 1000);
 		this.camera = camera;
 
 		// Objects
@@ -127,13 +127,17 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 		// Controls
 
-		const controls = new SpatialControls(camera.position, camera.quaternion, renderer.domElement);
+		const { position, quaternion } = camera;
+		const domElement = renderer.domElement;
+
+		const controls = new SpatialControls(position, quaternion, domElement);
 		const settings = controls.settings;
 		settings.general.setMode(ControlMode.THIRD_PERSON);
 		settings.pointer.setBehaviour(PointerBehaviour.DEFAULT);
 		settings.zoom.setRange(0.25, 3.0);
 		settings.rotation.setSensitivity(2.2);
 		settings.translation.setSensitivity(0.25);
+		settings.translation.setBoostSensitivity(0.5);
 		settings.zoom.setSensitivity(0.1);
 		this.controls = controls;
 
