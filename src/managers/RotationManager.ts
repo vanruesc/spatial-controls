@@ -194,7 +194,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 		} else {
 
-			v.subVectors(this.target, this.position).normalize();
+			v.copy(this.target);
 
 		}
 
