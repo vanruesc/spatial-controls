@@ -9,7 +9,9 @@ import { EventDispatcher } from "three";
 export interface TranslationSettingsJSON {
 
 	enabled: boolean;
+	boost: boolean;
 	sensitivity: number;
+	boostSensitivity: number;
 
 }
 
@@ -26,10 +28,22 @@ export class TranslationSettings extends EventDispatcher {
 	private enabled: boolean;
 
 	/**
+	 * Whether the boost sensitivity should be used.
+	 */
+
+	private boost: boolean;
+
+	/**
 	 * The translation sensitivity.
 	 */
 
 	private sensitivity: number;
+
+	/**
+	 * The translation boost sensitivity.
+	 */
+
+	private boostSensitivity: number;
 
 	/**
 	 * Constructs new translation settings.
@@ -40,7 +54,9 @@ export class TranslationSettings extends EventDispatcher {
 		super();
 
 		this.enabled = true;
+		this.boost = false;
 		this.sensitivity = 1.0;
+		this.boostSensitivity = 2.0;
 
 	}
 
@@ -65,6 +81,31 @@ export class TranslationSettings extends EventDispatcher {
 	setEnabled(value: boolean): void {
 
 		this.enabled = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Indicates whether translation boost is active.
+	 *
+	 * @return Whether translation is enabled.
+	 */
+
+	isBoostActive(): boolean {
+
+		return this.boost;
+
+	}
+
+	/**
+	 * Enables or disables translation boost.
+	 *
+	 * @param value - The value.
+	 */
+
+	setBoost(value: boolean): void {
+
+		this.boost = value;
 		this.dispatchEvent({ type: "change" });
 
 	}
@@ -95,6 +136,31 @@ export class TranslationSettings extends EventDispatcher {
 	}
 
 	/**
+	 * Returns the translation boost sensitivity.
+	 *
+	 * @return The sensitivity.
+	 */
+
+	getBoostSensitivity() {
+
+		return this.boostSensitivity;
+
+	}
+
+	/**
+	 * Sets the translation boost sensitivity.
+	 *
+	 * @param value - The sensitivity.
+	 */
+
+	setBoostSensitivity(value: number) {
+
+		this.boostSensitivity = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
 	 * Copies the given translation settings.
 	 *
 	 * @param settings - Translation settings.
@@ -104,7 +170,9 @@ export class TranslationSettings extends EventDispatcher {
 	copy(settings: TranslationSettings): TranslationSettings {
 
 		this.enabled = settings.isEnabled();
+		this.boost = settings.isBoostActive();
 		this.sensitivity = settings.getSensitivity();
+		this.boostSensitivity = settings.getBoostSensitivity();
 
 		return this;
 
@@ -134,7 +202,9 @@ export class TranslationSettings extends EventDispatcher {
 	fromJSON(json: TranslationSettingsJSON): TranslationSettings {
 
 		this.enabled = json.enabled;
+		this.boost = json.boost;
 		this.sensitivity = json.sensitivity;
+		this.boostSensitivity = json.boostSensitivity;
 
 		return this;
 
@@ -144,7 +214,9 @@ export class TranslationSettings extends EventDispatcher {
 
 		return {
 			enabled: this.enabled,
-			sensitivity: this.sensitivity
+			boost: this.boost,
+			sensitivity: this.sensitivity,
+			boostSensitivity: this.boostSensitivity
 		};
 
 	}

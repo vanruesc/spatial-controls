@@ -5,14 +5,20 @@ import {
 	Vector3
 } from "three";
 
-import { Disposable } from "./Disposable";
+import {
+	BoostStrategy,
+	MovementStrategy,
+	Strategy,
+	ZoomStrategy
+} from "../strategies";
+
 import { PointerButton } from "../input/PointerButton";
 import { RotationManager, TranslationManager } from "../managers";
 import { Settings } from "../settings/Settings";
-import { MovementStrategy, Strategy, ZoomStrategy } from "../strategies";
 import { Action } from "./Action";
 import { ControlMode } from "./ControlMode";
 import { Direction } from "./Direction";
+import { Disposable } from "./Disposable";
 import { PointerBehaviour } from "./PointerBehaviour";
 import { Updatable } from "./Updatable";
 
@@ -107,8 +113,8 @@ export class SpatialControls extends EventDispatcher
 		super();
 
 		this.domElement = domElement;
-		this.settings = new Settings();
-		this.settings.addEventListener("change", e => this.handleEvent(e as Event));
+		const settings = this.settings = new Settings();
+		settings.addEventListener("change", e => this.handleEvent(e as Event));
 
 		this.position = position;
 		this.quaternion = quaternion;
@@ -118,14 +124,14 @@ export class SpatialControls extends EventDispatcher
 			position,
 			quaternion,
 			this.target,
-			this.settings
+			settings
 		);
 
 		this.translationManager = new TranslationManager(
 			position,
 			quaternion,
 			this.target,
-			this.settings
+			settings
 		);
 
 		const rm = this.rotationManager, tm = this.translationManager;
@@ -142,7 +148,8 @@ export class SpatialControls extends EventDispatcher
 			[Action.MOVE_DOWN, new MovementStrategy(state, Direction.DOWN)],
 			[Action.MOVE_UP, new MovementStrategy(state, Direction.UP)],
 			[Action.ZOOM_OUT, new ZoomStrategy(rm, false)],
-			[Action.ZOOM_IN, new ZoomStrategy(rm, true)]
+			[Action.ZOOM_IN, new ZoomStrategy(rm, true)],
+			[Action.BOOST, new BoostStrategy(settings.translation)]
 		]);
 
 		this.lastScreenPosition = new Vector2();

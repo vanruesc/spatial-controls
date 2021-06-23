@@ -175,7 +175,12 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	private translate(deltaTime: number): void {
 
 		const state = this.movementState;
-		const step = deltaTime * this.settings.translation.getSensitivity();
+		const translation = this.settings.translation;
+		const sensitivity = translation.isBoostActive() ?
+			translation.getBoostSensitivity() :
+			translation.getSensitivity();
+
+		const step = deltaTime * sensitivity;
 
 		if(state.backward && state.forward) {
 

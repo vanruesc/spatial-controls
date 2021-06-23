@@ -11,6 +11,7 @@ export enum Action {
 	MOVE_DOWN,
 	MOVE_UP,
 	ZOOM_OUT,
-	ZOOM_IN
+	ZOOM_IN,
+	BOOST
 
 }

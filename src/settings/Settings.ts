@@ -94,7 +94,9 @@ export class Settings extends EventDispatcher {
 			[KeyCode.SPACE, Action.MOVE_UP],
 
 			[KeyCode.PAGE_DOWN, Action.ZOOM_OUT],
-			[KeyCode.PAGE_UP, Action.ZOOM_IN]
+			[KeyCode.PAGE_UP, Action.ZOOM_IN],
+
+			[KeyCode.SHIFT, Action.BOOST]
 
 		]));
 
