@@ -45,9 +45,9 @@ export class TranslationSettings extends EventDispatcher {
 	}
 
 	/**
-	 * Indicates whether zooming is enabled.
+	 * Indicates whether translation is enabled.
 	 *
-	 * @return Whether zooming is enabled.
+	 * @return Whether translation is enabled.
 	 */
 
 	isEnabled(): boolean {
@@ -57,7 +57,7 @@ export class TranslationSettings extends EventDispatcher {
 	}
 
 	/**
-	 * Enables or disables zooming.
+	 * Enables or disables translation.
 	 *
 	 * @param value - The value.
 	 */
