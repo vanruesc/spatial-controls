@@ -137,7 +137,6 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		settings.zoom.setRange(0.25, 3.0);
 		settings.rotation.setSensitivity(2.2);
 		settings.translation.setSensitivity(0.25);
-		settings.translation.setBoostMultiplier(2.0);
 		settings.zoom.setSensitivity(0.1);
 		this.controls = controls;
 
