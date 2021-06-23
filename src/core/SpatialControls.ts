@@ -784,7 +784,6 @@ export class SpatialControls extends EventDispatcher
 				// Switch to first person.
 				this.position.copy(this.target);
 				this.target.set(0, 0, -1).applyQuaternion(this.quaternion);
-				this.target.add(this.position);
 
 			}
 

@@ -191,14 +191,13 @@ export class RotationManager extends EventDispatcher implements Updatable {
 		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
 
 			v.subVectors(this.position, this.target);
+			this.spherical.setFromVector3(v);
 
 		} else {
 
-			v.copy(this.target);
+			this.spherical.setFromVector3(this.target);
 
 		}
-
-		this.spherical.setFromVector3(v);
 
 		return this.restrictSpherical();
 
@@ -321,7 +320,15 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 	lookAt(point: Vector3): RotationManager {
 
-		this.target.copy(point);
+		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
+
+			this.target.copy(point);
+
+		} else {
+
+			this.target.subVectors(point, this.position).normalize();
+
+		}
 
 		return this.updateSpherical().updateQuaternion();
 
