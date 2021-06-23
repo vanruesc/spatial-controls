@@ -1,4 +1,4 @@
-import { TranslationSettings } from "../settings";
+import { MovementState } from "../managers";
 import { Strategy } from "./Strategy";
 
 /**
@@ -8,26 +8,26 @@ import { Strategy } from "./Strategy";
 export class BoostStrategy implements Strategy {
 
 	/**
-	 * Translation settings.
+	 * A movement state.
 	 */
 
-	private translation: TranslationSettings;
+	private movementState: MovementState;
 
 	/**
 	 * Constructs a new boost strategy.
 	 *
-	 * @param translation - Translation settings.
+	 * @param movementState - A movement state.
 	 */
 
-	constructor(translation: TranslationSettings) {
+	constructor(movementState: MovementState) {
 
-		this.translation = translation;
+		this.movementState = movementState;
 
 	}
 
 	execute(flag: boolean): void {
 
-		this.translation.setBoost(flag);
+		this.movementState.boost = flag;
 
 	}
 

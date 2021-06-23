@@ -59,6 +59,12 @@ export class MovementState {
 	upBeforeDown: boolean;
 
 	/**
+	 * Whether the boost multiplier should be used.
+	 */
+
+	boost: boolean;
+
+	/**
 	 * Constructs a new movement state.
 	 */
 
@@ -86,6 +92,8 @@ export class MovementState {
 		this.backwardBeforeForward = false;
 		this.rightBeforeLeft = false;
 		this.upBeforeDown = false;
+
+		this.boost = false;
 
 		return this;
 

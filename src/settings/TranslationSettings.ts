@@ -39,12 +39,6 @@ export class TranslationSettings extends EventDispatcher {
 	private boostMultiplier: number;
 
 	/**
-	 * Whether the boost multiplier should be used.
-	 */
-
-	private boost: boolean;
-
-	/**
 	 * Constructs new translation settings.
 	 */
 
@@ -55,7 +49,6 @@ export class TranslationSettings extends EventDispatcher {
 		this.enabled = true;
 		this.sensitivity = 1.0;
 		this.boostMultiplier = 2.0;
-		this.boost = false;
 
 	}
 
@@ -80,31 +73,6 @@ export class TranslationSettings extends EventDispatcher {
 	setEnabled(value: boolean): void {
 
 		this.enabled = value;
-		this.dispatchEvent({ type: "change" });
-
-	}
-
-	/**
-	 * Indicates whether translation boost is active.
-	 *
-	 * @return Whether translation is enabled.
-	 */
-
-	isBoostActive(): boolean {
-
-		return this.boost;
-
-	}
-
-	/**
-	 * Enables or disables translation boost.
-	 *
-	 * @param value - The value.
-	 */
-
-	setBoost(value: boolean): void {
-
-		this.boost = value;
 		this.dispatchEvent({ type: "change" });
 
 	}

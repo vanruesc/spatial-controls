@@ -149,7 +149,7 @@ export class SpatialControls extends EventDispatcher
 			[Action.MOVE_UP, new MovementStrategy(state, Direction.UP)],
 			[Action.ZOOM_OUT, new ZoomStrategy(rm, false)],
 			[Action.ZOOM_IN, new ZoomStrategy(rm, true)],
-			[Action.BOOST, new BoostStrategy(settings.translation)]
+			[Action.BOOST, new BoostStrategy(state)]
 		]);
 
 		this.lastScreenPosition = new Vector2();
