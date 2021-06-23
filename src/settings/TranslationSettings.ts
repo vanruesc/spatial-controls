@@ -9,9 +9,8 @@ import { EventDispatcher } from "three";
 export interface TranslationSettingsJSON {
 
 	enabled: boolean;
-	boost: boolean;
 	sensitivity: number;
-	boostSensitivity: number;
+	boostMultiplier: number;
 
 }
 
@@ -28,22 +27,22 @@ export class TranslationSettings extends EventDispatcher {
 	private enabled: boolean;
 
 	/**
-	 * Whether the boost sensitivity should be used.
-	 */
-
-	private boost: boolean;
-
-	/**
 	 * The translation sensitivity.
 	 */
 
 	private sensitivity: number;
 
 	/**
-	 * The translation boost sensitivity.
+	 * The translation boost multiplier.
 	 */
 
-	private boostSensitivity: number;
+	private boostMultiplier: number;
+
+	/**
+	 * Whether the boost multiplier should be used.
+	 */
+
+	private boost: boolean;
 
 	/**
 	 * Constructs new translation settings.
@@ -54,9 +53,9 @@ export class TranslationSettings extends EventDispatcher {
 		super();
 
 		this.enabled = true;
-		this.boost = false;
 		this.sensitivity = 1.0;
-		this.boostSensitivity = 2.0;
+		this.boostMultiplier = 2.0;
+		this.boost = false;
 
 	}
 
@@ -136,26 +135,26 @@ export class TranslationSettings extends EventDispatcher {
 	}
 
 	/**
-	 * Returns the translation boost sensitivity.
+	 * Returns the translation boost multiplier.
 	 *
-	 * @return The sensitivity.
+	 * @return The multiplier.
 	 */
 
-	getBoostSensitivity() {
+	getBoostMultiplier() {
 
-		return this.boostSensitivity;
+		return this.boostMultiplier;
 
 	}
 
 	/**
-	 * Sets the translation boost sensitivity.
+	 * Sets the translation boost multiplier.
 	 *
-	 * @param value - The sensitivity.
+	 * @param value - The multiplier. Must be >= 1.
 	 */
 
-	setBoostSensitivity(value: number) {
+	setBoostMultiplier(value: number) {
 
-		this.boostSensitivity = value;
+		this.boostMultiplier = Math.max(value, 1.0);
 		this.dispatchEvent({ type: "change" });
 
 	}
@@ -170,9 +169,8 @@ export class TranslationSettings extends EventDispatcher {
 	copy(settings: TranslationSettings): TranslationSettings {
 
 		this.enabled = settings.isEnabled();
-		this.boost = settings.isBoostActive();
 		this.sensitivity = settings.getSensitivity();
-		this.boostSensitivity = settings.getBoostSensitivity();
+		this.boostMultiplier = settings.getBoostMultiplier();
 
 		return this;
 
@@ -202,9 +200,8 @@ export class TranslationSettings extends EventDispatcher {
 	fromJSON(json: TranslationSettingsJSON): TranslationSettings {
 
 		this.enabled = json.enabled;
-		this.boost = json.boost;
 		this.sensitivity = json.sensitivity;
-		this.boostSensitivity = json.boostSensitivity;
+		this.boostMultiplier = json.boostMultiplier;
 
 		return this;
 
@@ -214,9 +211,8 @@ export class TranslationSettings extends EventDispatcher {
 
 		return {
 			enabled: this.enabled,
-			boost: this.boost,
 			sensitivity: this.sensitivity,
-			boostSensitivity: this.boostSensitivity
+			boostMultiplier: this.boostMultiplier
 		};
 
 	}

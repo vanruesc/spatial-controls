@@ -177,7 +177,7 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 		const state = this.movementState;
 		const translation = this.settings.translation;
 		const sensitivity = translation.isBoostActive() ?
-			translation.getBoostSensitivity() :
+			translation.getSensitivity() * translation.getBoostMultiplier() :
 			translation.getSensitivity();
 
 		const step = deltaTime * sensitivity;
