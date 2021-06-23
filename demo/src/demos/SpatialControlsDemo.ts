@@ -137,7 +137,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		settings.zoom.setRange(0.25, 3.0);
 		settings.rotation.setSensitivity(2.2);
 		settings.translation.setSensitivity(0.25);
-		settings.translation.setBoostSensitivity(0.5);
+		settings.translation.setBoostMultiplier(2.0);
 		settings.zoom.setSensitivity(0.1);
 		this.controls = controls;
 
@@ -170,6 +170,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 				"rotation X": settings.rotation.getSensitivityX(),
 				"rotation Y": settings.rotation.getSensitivityY(),
 				"translation": settings.translation.getSensitivity(),
+				"boost multiplier": settings.translation.getBoostMultiplier(),
 				"zoom": settings.zoom.getSensitivity()
 			},
 			rotation: {
@@ -219,6 +220,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		folder.add(params.sensitivity, "rotation X", 0.1, 3.0, 0.01).onChange(value => settings.rotation.setSensitivityX(value));
 		folder.add(params.sensitivity, "rotation Y", 0.1, 3.0, 0.01).onChange(value => settings.rotation.setSensitivityY(value));
 		folder.add(params.sensitivity, "translation", 0.1, 2.0, 0.01).onChange(value => settings.translation.setSensitivity(value));
+		folder.add(params.sensitivity, "boost multiplier", 1.0, 4.0, 0.01).onChange(value => settings.translation.setBoostMultiplier(value));
 		folder.add(params.sensitivity, "zoom", 0.01, 3.0, 0.01).onChange(value => settings.zoom.setSensitivity(value));
 		folder.open();
 
