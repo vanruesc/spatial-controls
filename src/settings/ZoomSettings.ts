@@ -74,7 +74,7 @@ export class ZoomSettings extends EventDispatcher {
 	 * @return Whether zooming is enabled.
 	 */
 
-	isEnabled() {
+	isEnabled(): boolean {
 
 		return this.enabled;
 
@@ -86,7 +86,7 @@ export class ZoomSettings extends EventDispatcher {
 	 * @param value - The value.
 	 */
 
-	setEnabled(value: boolean) {
+	setEnabled(value: boolean): void {
 
 		this.enabled = value;
 		this.dispatchEvent({ type: "change" });
@@ -99,7 +99,7 @@ export class ZoomSettings extends EventDispatcher {
 	 * @return Whether zooming is enabled.
 	 */
 
-	isInverted() {
+	isInverted(): boolean {
 
 		return this.inverted;
 
@@ -111,7 +111,7 @@ export class ZoomSettings extends EventDispatcher {
 	 * @param value - The value.
 	 */
 
-	setInverted(value: boolean) {
+	setInverted(value: boolean): void {
 
 		this.inverted = value;
 		this.dispatchEvent({ type: "change" });
@@ -124,7 +124,7 @@ export class ZoomSettings extends EventDispatcher {
 	 * @return The distance.
 	 */
 
-	getMinDistance() {
+	getMinDistance(): number {
 
 		return this.minDistance;
 
@@ -136,7 +136,7 @@ export class ZoomSettings extends EventDispatcher {
 	 * @param value - The distance. Must be greater than zero.
 	 */
 
-	setMinDistance(value: number) {
+	setMinDistance(value: number): void {
 
 		this.minDistance = Math.min(Math.max(value, 1e-6), Number.POSITIVE_INFINITY);
 		this.dispatchEvent({ type: "change" });
@@ -149,7 +149,7 @@ export class ZoomSettings extends EventDispatcher {
 	 * @return The distance.
 	 */
 
-	getMaxDistance() {
+	getMaxDistance(): number {
 
 		return this.maxDistance;
 
@@ -161,7 +161,7 @@ export class ZoomSettings extends EventDispatcher {
 	 * @param value - The distance. Must be greater than the minimum distance.
 	 */
 
-	setMaxDistance(value: number) {
+	setMaxDistance(value: number): void {
 
 		this.maxDistance = Math.min(Math.max(value, this.minDistance), Number.POSITIVE_INFINITY);
 		this.dispatchEvent({ type: "change" });
@@ -175,7 +175,7 @@ export class ZoomSettings extends EventDispatcher {
 	 * @param max - The maximum distance.
 	 */
 
-	setRange(min: number, max: number) {
+	setRange(min: number, max: number): void {
 
 		this.minDistance = min;
 		this.maxDistance = max;
@@ -189,7 +189,7 @@ export class ZoomSettings extends EventDispatcher {
 	 * @return The sensitivity.
 	 */
 
-	getSensitivity() {
+	getSensitivity(): number {
 
 		return this.sensitivity;
 
@@ -201,7 +201,7 @@ export class ZoomSettings extends EventDispatcher {
 	 * @param value - The sensitivity.
 	 */
 
-	setSensitivity(value: number) {
+	setSensitivity(value: number): void {
 
 		this.sensitivity = value;
 		this.dispatchEvent({ type: "change" });

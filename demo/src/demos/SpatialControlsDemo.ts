@@ -45,7 +45,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 	}
 
-	handleEvent(event: Event) {
+	handleEvent(event: Event): void {
 
 		const controls = this.controls;
 		const keyboardEvent = event as KeyboardEvent;
@@ -264,7 +264,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 	}
 
-	dispose() {
+	dispose(): void {
 
 		document.removeEventListener("keydown", this);
 

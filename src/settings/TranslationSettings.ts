@@ -83,7 +83,7 @@ export class TranslationSettings extends EventDispatcher {
 	 * @return The sensitivity.
 	 */
 
-	getSensitivity() {
+	getSensitivity(): number {
 
 		return this.sensitivity;
 
@@ -95,7 +95,7 @@ export class TranslationSettings extends EventDispatcher {
 	 * @param value - The sensitivity.
 	 */
 
-	setSensitivity(value: number) {
+	setSensitivity(value: number): void {
 
 		this.sensitivity = value;
 		this.dispatchEvent({ type: "change" });
@@ -108,7 +108,7 @@ export class TranslationSettings extends EventDispatcher {
 	 * @return The multiplier.
 	 */
 
-	getBoostMultiplier() {
+	getBoostMultiplier(): number {
 
 		return this.boostMultiplier;
 
@@ -120,7 +120,7 @@ export class TranslationSettings extends EventDispatcher {
 	 * @param value - The multiplier. Must be >= 1.
 	 */
 
-	setBoostMultiplier(value: number) {
+	setBoostMultiplier(value: number): void {
 
 		this.boostMultiplier = Math.max(value, 1.0);
 		this.dispatchEvent({ type: "change" });

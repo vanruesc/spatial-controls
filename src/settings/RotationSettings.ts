@@ -320,7 +320,7 @@ export class RotationSettings extends EventDispatcher {
 	 * @return The sensitivity.
 	 */
 
-	getSensitivityX() {
+	getSensitivityX(): number {
 
 		return this.sensitivityX;
 
@@ -332,7 +332,7 @@ export class RotationSettings extends EventDispatcher {
 	 * @param value - The sensitivity.
 	 */
 
-	setSensitivityX(value: number) {
+	setSensitivityX(value: number): void {
 
 		this.sensitivityX = value;
 		this.dispatchEvent({ type: "change" });
@@ -345,7 +345,7 @@ export class RotationSettings extends EventDispatcher {
 	 * @return The sensitivity.
 	 */
 
-	getSensitivityY() {
+	getSensitivityY(): number {
 
 		return this.sensitivityY;
 
@@ -357,7 +357,7 @@ export class RotationSettings extends EventDispatcher {
 	 * @param value - The sensitivity.
 	 */
 
-	setSensitivityY(value: number) {
+	setSensitivityY(value: number): void {
 
 		this.sensitivityY = value;
 		this.dispatchEvent({ type: "change" });
@@ -370,7 +370,7 @@ export class RotationSettings extends EventDispatcher {
 	 * @param value - The sensitivity.
 	 */
 
-	setSensitivity(value: number) {
+	setSensitivity(value: number): void {
 
 		this.sensitivityX = this.sensitivityY = value;
 		this.dispatchEvent({ type: "change" });

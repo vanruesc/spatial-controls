@@ -76,7 +76,7 @@ export class PointerSettings extends EventDispatcher {
 	 * @return The sensitivity.
 	 */
 
-	getSensitivity() {
+	getSensitivity(): number {
 
 		return this.sensitivity;
 
@@ -90,7 +90,7 @@ export class PointerSettings extends EventDispatcher {
 	 * @param value - The sensitivity.
 	 */
 
-	setSensitivity(value: number) {
+	setSensitivity(value: number): void {
 
 		this.sensitivity = value;
 		this.dispatchEvent({ type: "change" });
