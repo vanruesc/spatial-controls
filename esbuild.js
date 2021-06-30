@@ -16,6 +16,7 @@ await esbuild.build({
 	outfile: `dist/${pkg.name}.js`,
 	external: Object.keys(pkg.peerDependencies || {}),
 	banner: { js: banner },
+	logLevel: "info",
 	format: "esm",
 	bundle: true
 }).catch(() => process.exit(1));
@@ -25,6 +26,7 @@ await esbuild.build({
 	outdir: "public/demo",
 	minify: process.argv.includes("-m"),
 	watch: process.argv.includes("-w"),
+	logLevel: "info",
 	format: "iife",
 	bundle: true
 }).catch(() => process.exit(1));
