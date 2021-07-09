@@ -97,7 +97,7 @@ export class SpatialControls extends EventDispatcher
 	 * The control settings.
 	 */
 
-	settings: Settings;
+	readonly settings: Settings;
 
 	/**
 	 * Constructs new controls.

@@ -35,37 +35,37 @@ export class Settings extends EventDispatcher {
 	 * Key bindings.
 	 */
 
-	keyBindings: KeyBindings;
+	readonly keyBindings: KeyBindings;
 
 	/**
 	 * General settings.
 	 */
 
-	general: GeneralSettings;
+	readonly general: GeneralSettings;
 
 	/**
 	 * Pointer settings.
 	 */
 
-	pointer: PointerSettings;
+	readonly pointer: PointerSettings;
 
 	/**
 	 * Rotation settings.
 	 */
 
-	rotation: RotationSettings;
+	readonly rotation: RotationSettings;
 
 	/**
 	 * Translation settings.
 	 */
 
-	translation: TranslationSettings;
+	readonly translation: TranslationSettings;
 
 	/**
 	 * Zoom settings.
 	 */
 
-	zoom: ZoomSettings;
+	readonly zoom: ZoomSettings;
 
 	/**
 	 * Constructs new settings.
