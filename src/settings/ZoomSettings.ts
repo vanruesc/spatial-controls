@@ -138,7 +138,11 @@ export class ZoomSettings extends EventDispatcher {
 
 	setMinDistance(value: number): void {
 
-		this.minDistance = Math.min(Math.max(value, 1e-6), Number.POSITIVE_INFINITY);
+		this.minDistance = Math.min(
+			Math.max(value, 1e-6),
+			Number.POSITIVE_INFINITY
+		);
+
 		this.dispatchEvent({ type: "change" });
 
 	}
@@ -163,7 +167,11 @@ export class ZoomSettings extends EventDispatcher {
 
 	setMaxDistance(value: number): void {
 
-		this.maxDistance = Math.min(Math.max(value, this.minDistance), Number.POSITIVE_INFINITY);
+		this.maxDistance = Math.min(
+			Math.max(value, this.minDistance),
+			Number.POSITIVE_INFINITY
+		);
+
 		this.dispatchEvent({ type: "change" });
 
 	}

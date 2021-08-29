@@ -202,57 +202,79 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		};
 
 		let folder = menu.addFolder("General");
-		folder.add(params.general, "mode", ControlMode).onChange((value: ControlMode) => {
+		folder.add(params.general, "mode", ControlMode)
+			.onChange((value: ControlMode) => {
 
-			mesh.visible = (value === ControlMode.THIRD_PERSON);
-			settings.general.setMode(value);
+				mesh.visible = (value === ControlMode.THIRD_PERSON);
+				settings.general.setMode(value);
 
-		});
+			});
 
 		folder.open();
 
 		folder = menu.addFolder("Pointer");
-		folder.add(params.pointer, "behaviour", PointerBehaviour).onChange(value => settings.pointer.setBehaviour(value));
+		folder.add(params.pointer, "behaviour", PointerBehaviour)
+			.onChange(value => settings.pointer.setBehaviour(value));
 		folder.open();
 
 		folder = menu.addFolder("Sensitivity");
-		folder.add(params.sensitivity, "rotation X", 0.1, 3.0, 0.01).onChange(value => settings.rotation.setSensitivityX(value));
-		folder.add(params.sensitivity, "rotation Y", 0.1, 3.0, 0.01).onChange(value => settings.rotation.setSensitivityY(value));
-		folder.add(params.sensitivity, "translation", 0.1, 2.0, 0.01).onChange(value => settings.translation.setSensitivity(value));
-		folder.add(params.sensitivity, "boost multiplier", 1.0, 4.0, 0.01).onChange(value => settings.translation.setBoostMultiplier(value));
-		folder.add(params.sensitivity, "zoom", 0.01, 3.0, 0.01).onChange(value => settings.zoom.setSensitivity(value));
+		folder.add(params.sensitivity, "rotation X", 0.1, 3.0, 0.01)
+			.onChange(value => settings.rotation.setSensitivityX(value));
+		folder.add(params.sensitivity, "rotation Y", 0.1, 3.0, 0.01)
+			.onChange(value => settings.rotation.setSensitivityY(value));
+		folder.add(params.sensitivity, "translation", 0.1, 2.0, 0.01)
+			.onChange(value => settings.translation.setSensitivity(value));
+		folder.add(params.sensitivity, "boost multiplier", 1.0, 4.0, 0.01)
+			.onChange(value => settings.translation.setBoostMultiplier(value));
+		folder.add(params.sensitivity, "zoom", 0.01, 3.0, 0.01)
+			.onChange(value => settings.zoom.setSensitivity(value));
 		folder.open();
 
 		folder = menu.addFolder("Rotation");
-		folder.add(params.rotation, "min azim. angle", -Math.PI, 0.0, 0.0001).onChange((value: number) => {
+		folder.add(params.rotation, "min azim. angle", -Math.PI, 0.0, 0.0001)
+			.onChange((value: number) => {
 
-			const angle = (value <= -Math.PI + 1e-6) ? Number.NEGATIVE_INFINITY : value;
-			params.rotation["min azim. angle"] = angle;
-			settings.rotation.setMinAzimuthalAngle(angle);
+				const angle = (value <= -Math.PI + 1e-6) ?
+					Number.NEGATIVE_INFINITY : value;
 
-		});
+				params.rotation["min azim. angle"] = angle;
+				settings.rotation.setMinAzimuthalAngle(angle);
 
-		folder.add(params.rotation, "max azim. angle", 0.0, Math.PI, 0.0001).onChange((value: number) => {
+			});
 
-			const angle = (value >= Math.PI - 1e-6) ? Number.POSITIVE_INFINITY : value;
-			params.rotation["max azim. angle"] = angle;
-			settings.rotation.setMaxAzimuthalAngle(angle);
+		folder.add(params.rotation, "max azim. angle", 0.0, Math.PI, 0.0001)
+			.onChange((value: number) => {
 
-		});
+				const angle = (value >= Math.PI - 1e-6) ?
+					Number.POSITIVE_INFINITY : value;
 
-		folder.add(params.rotation, "min polar angle", 0.0, Math.PI, 0.0001).onChange(value => settings.rotation.setMinPolarAngle(value));
-		folder.add(params.rotation, "max polar angle", 0.0, Math.PI, 0.0001).onChange(value => settings.rotation.setMaxPolarAngle(value));
-		folder.add(params.rotation, "inverted X").onChange(value => settings.rotation.setInvertedX(value));
-		folder.add(params.rotation, "inverted Y").onChange(value => settings.rotation.setInvertedY(value));
+				params.rotation["max azim. angle"] = angle;
+				settings.rotation.setMaxAzimuthalAngle(angle);
+
+			});
+
+		folder.add(params.rotation, "min polar angle", 0.0, Math.PI, 0.0001)
+			.onChange(value => settings.rotation.setMinPolarAngle(value));
+		folder.add(params.rotation, "max polar angle", 0.0, Math.PI, 0.0001)
+			.onChange(value => settings.rotation.setMaxPolarAngle(value));
+		folder.add(params.rotation, "inverted X")
+			.onChange(value => settings.rotation.setInvertedX(value));
+		folder.add(params.rotation, "inverted Y")
+			.onChange(value => settings.rotation.setInvertedY(value));
 
 		folder = menu.addFolder("Translation");
-		folder.add(params.translation, "enabled").onChange(value => settings.translation.setEnabled(value));
+		folder.add(params.translation, "enabled")
+			.onChange(value => settings.translation.setEnabled(value));
 
 		folder = menu.addFolder("Zooming");
-		folder.add(params.zoom, "enabled").onChange(value => settings.zoom.setEnabled(value));
-		folder.add(params.zoom, "inverted").onChange(value => settings.zoom.setInverted(value));
-		folder.add(params.zoom, "min distance", 0.1, 1.0, 0.01).onChange(value => settings.zoom.setMinDistance(value));
-		folder.add(params.zoom, "max distance", 1.0, 10.0, 0.01).onChange(value => settings.zoom.setMaxDistance(value));
+		folder.add(params.zoom, "enabled")
+			.onChange(value => settings.zoom.setEnabled(value));
+		folder.add(params.zoom, "inverted")
+			.onChange(value => settings.zoom.setInverted(value));
+		folder.add(params.zoom, "min distance", 0.1, 1.0, 0.01)
+			.onChange(value => settings.zoom.setMinDistance(value));
+		folder.add(params.zoom, "max distance", 1.0, 10.0, 0.01)
+			.onChange(value => settings.zoom.setMaxDistance(value));
 
 		menu.add(params, "save");
 

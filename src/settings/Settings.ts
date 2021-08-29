@@ -1,12 +1,36 @@
 import { EventDispatcher } from "three";
 import { Action } from "../core/Action";
 import { KeyCode } from "../input/KeyCode";
-import { GeneralSettings, GeneralSettingsJSON } from "./GeneralSettings";
-import { KeyBindings, KeyBindingsJSON } from "./KeyBindings";
-import { PointerSettings, PointerSettingsJSON } from "./PointerSettings";
-import { RotationSettings, RotationSettingsJSON } from "./RotationSettings";
-import { TranslationSettings, TranslationSettingsJSON } from "./TranslationSettings";
-import { ZoomSettings, ZoomSettingsJSON } from "./ZoomSettings";
+
+import {
+	GeneralSettings,
+	GeneralSettingsJSON
+} from "./GeneralSettings";
+
+import {
+	KeyBindings,
+	KeyBindingsJSON
+} from "./KeyBindings";
+
+import {
+	PointerSettings,
+	PointerSettingsJSON
+} from "./PointerSettings";
+
+import {
+	RotationSettings,
+	RotationSettingsJSON
+} from "./RotationSettings";
+
+import {
+	TranslationSettings,
+	TranslationSettingsJSON
+} from "./TranslationSettings";
+
+import {
+	ZoomSettings,
+	ZoomSettingsJSON
+} from "./ZoomSettings";
 
 /**
  * JSON representation of control settings.
