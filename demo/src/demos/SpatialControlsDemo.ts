@@ -11,7 +11,7 @@ import {
 } from "three";
 
 import { GUI } from "dat.gui";
-import { Demo } from "three-demo";
+import { calculateVerticalFoV, Demo } from "three-demo";
 import { ControlMode, PointerBehaviour, SpatialControls } from "../../../src";
 
 /**
@@ -61,7 +61,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 	}
 
-	load(): Promise<void> {
+	override load(): Promise<void> {
 
 		const assets = this.assets;
 		const loadingManager = this.loadingManager;
@@ -99,7 +99,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 	}
 
-	initialize(): void {
+	override initialize(): void {
 
 		const scene = this.scene;
 		const assets = this.assets;
@@ -112,7 +112,8 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		// Camera
 
 		const aspect = window.innerWidth / window.innerHeight;
-		const camera = new PerspectiveCamera(59, aspect, 0.1, 1000);
+		const vFoV = calculateVerticalFoV(90, Math.max(aspect, 16 / 9));
+		const camera = new PerspectiveCamera(vFoV, aspect, 0.1, 1000);
 		this.camera = camera;
 
 		// Objects
@@ -147,13 +148,13 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 	}
 
-	update(deltaTime: number, timestamp: number): void {
+	override update(deltaTime: number, timestamp: number): void {
 
 		this.controls.update(timestamp);
 
 	}
 
-	registerOptions(menu: GUI): void {
+	override registerOptions(menu: GUI): void {
 
 		const settings = this.controls.settings;
 		const mesh = this.mesh;
@@ -286,7 +287,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 	}
 
-	dispose(): void {
+	override dispose(): void {
 
 		document.removeEventListener("keydown", this);
 

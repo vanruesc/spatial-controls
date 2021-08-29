@@ -1,31 +1,12 @@
-import { DemoManager } from "three-demo";
-import { Event as Event3, sRGBEncoding, WebGLRenderer } from "three";
+import { PerspectiveCamera, sRGBEncoding, WebGLRenderer } from "three";
+
+import {
+	calculateVerticalFoV,
+	DemoManager,
+	DemoManagerEvent
+} from "three-demo";
+
 import { SpatialControlsDemo } from "./demos/SpatialControlsDemo";
-
-/**
- * A demo manager.
- */
-
-let manager: DemoManager;
-
-/**
- * The main render loop.
- *
- * @param timestamp - The current time in milliseconds.
- */
-
-function render(timestamp: number): void {
-
-	requestAnimationFrame(render);
-	manager.render(timestamp);
-
-}
-
-/**
- * Performs initialization tasks when the page has been fully loaded.
- *
- * @param event - An event.
- */
 
 window.addEventListener("load", (event: Event) => {
 
@@ -46,47 +27,52 @@ window.addEventListener("load", (event: Event) => {
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setClearColor(0x000000, 0.0);
 
-	manager = new DemoManager(viewport, {
+	const manager = new DemoManager(viewport, {
 		aside: document.getElementById("aside"),
 		renderer
 	});
 
-	manager.addEventListener("change", (event: Event3) => {
+	manager.addEventListener("change", (event: DemoManagerEvent) => {
 
 		document.querySelector(".loading").classList.remove("hidden");
 
 	});
 
-	manager.addEventListener("load", (event: Event3) => {
+	manager.addEventListener("load", (event: DemoManagerEvent) => {
 
 		document.querySelector(".loading").classList.add("hidden");
 
 	});
 
 	manager.addDemo(new SpatialControlsDemo());
-	requestAnimationFrame(render);
+
+	window.addEventListener("resize", (event: Event) => {
+
+		const width = window.innerWidth;
+		const height = window.innerHeight;
+		const demo = manager.getCurrentDemo();
+
+		if(demo !== null) {
+
+			const camera = demo.getCamera() as PerspectiveCamera;
+			const aspect = Math.max(width / height, 16 / 9);
+			const vFoV = calculateVerticalFoV(90, aspect);
+			camera.fov = vFoV;
+
+		}
+
+		manager.setSize(width, height);
+
+	});
+
+	requestAnimationFrame(function render(timestamp: number): void {
+
+		requestAnimationFrame(render);
+		manager.render(timestamp);
+
+	});
 
 });
-
-/**
- * Handles browser resizing.
- *
- * @param event - An event.
- */
-
-window.addEventListener("resize", (event: Event) => {
-
-	const width = window.innerWidth;
-	const height = window.innerHeight;
-	manager.setSize(width, height);
-
-});
-
-/**
- * Performs initialization tasks when the document is ready.
- *
- * @param event - An event.
- */
 
 document.addEventListener("DOMContentLoaded", (event: Event) => {
 
@@ -104,12 +90,6 @@ document.addEventListener("DOMContentLoaded", (event: Event) => {
 	}
 
 });
-
-/**
- * Handles keyboard events.
- *
- * @param event - An event.
- */
 
 document.addEventListener("keyup", (event: KeyboardEvent) => {
 
