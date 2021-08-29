@@ -1,5 +1,5 @@
 import { EventDispatcher } from "three";
-import { PointerBehaviour } from "../core";
+import { PointerBehaviour } from "../input";
 
 /**
  * JSON representation of pointer settings.
