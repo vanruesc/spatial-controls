@@ -1,9 +1,4 @@
-import {
-	EventDispatcher,
-	Quaternion,
-	Vector2,
-	Vector3
-} from "three";
+import { EventDispatcher, Quaternion, Vector3 } from "three";
 
 import {
 	BoostStrategy,
@@ -12,14 +7,13 @@ import {
 	ZoomStrategy
 } from "../strategies";
 
-import { PointerButton } from "../input/PointerButton";
+import { PointerBehaviour, PointerButton, PointerType } from "../input";
 import { RotationManager, TranslationManager } from "../managers";
 import { Settings } from "../settings/Settings";
 import { Action } from "./Action";
 import { ControlMode } from "./ControlMode";
 import { Direction } from "./Direction";
 import { Disposable } from "./Disposable";
-import { PointerBehaviour } from "./PointerBehaviour";
 import { Updatable } from "./Updatable";
 
 const v = new Vector3();
@@ -74,12 +68,6 @@ export class SpatialControls extends EventDispatcher
 	 */
 
 	private strategies: Map<Action, Strategy>;
-
-	/**
-	 * A screen position.
-	 */
-
-	private lastScreenPosition: Vector2;
 
 	/**
 	 * Indicates whether the user is currently holding the pointer button down.
@@ -152,7 +140,6 @@ export class SpatialControls extends EventDispatcher
 			[Action.BOOST, new BoostStrategy(state)]
 		]);
 
-		this.lastScreenPosition = new Vector2();
 		this.dragging = false;
 		this.enabled = false;
 
@@ -467,31 +454,34 @@ export class SpatialControls extends EventDispatcher
 
 		if(enabled && !this.enabled) {
 
+			domElement.style.touchAction = "none";
+
 			document.addEventListener("pointerlockchange", this);
+			document.addEventListener("pointerlockerror", this);
 			document.addEventListener("visibilitychange", this);
 			document.body.addEventListener("keyup", this);
 			document.body.addEventListener("keydown", this);
-			domElement.addEventListener("mousedown", this);
-			domElement.addEventListener("mouseup", this);
-			domElement.addEventListener("mouseleave", this);
-			domElement.addEventListener("touchstart", this);
-			domElement.addEventListener("touchend", this);
+			domElement.addEventListener("pointerdown", this);
+			domElement.addEventListener("pointerup", this);
+			domElement.addEventListener("pointercancel", this);
+			domElement.addEventListener("pointerleave", this);
 			domElement.addEventListener("wheel", this, { passive: true });
 
 		} else if(!enabled && this.enabled) {
 
+			domElement.style.touchAction = null;
+
 			document.removeEventListener("pointerlockchange", this);
+			document.removeEventListener("pointerlockerror", this);
 			document.removeEventListener("visibilitychange", this);
 			document.body.removeEventListener("keyup", this);
 			document.body.removeEventListener("keydown", this);
-			domElement.removeEventListener("mousedown", this);
-			domElement.removeEventListener("mouseup", this);
-			domElement.removeEventListener("mouseleave", this);
-			domElement.removeEventListener("touchstart", this);
-			domElement.removeEventListener("touchend", this);
+			domElement.removeEventListener("pointerdown", this);
+			domElement.removeEventListener("pointerup", this);
+			domElement.removeEventListener("pointercancel", this);
+			domElement.removeEventListener("pointerleave", this);
 			domElement.removeEventListener("wheel", this);
-			domElement.removeEventListener("mousemove", this);
-			domElement.removeEventListener("touchmove", this);
+			domElement.removeEventListener("pointermove", this);
 
 		}
 
@@ -508,68 +498,22 @@ export class SpatialControls extends EventDispatcher
 	 * @param event - A pointer event.
 	 */
 
-	private handlePointerMoveEvent(event: MouseEvent): void {
+	private handlePointerMoveEvent(event: PointerEvent): void {
 
 		const settings = this.settings;
 		const rotation = settings.rotation;
 		const pointerBehaviour = settings.pointer.getBehaviour();
 		const pointerSensitivity = settings.pointer.getSensitivity();
 		const rotationManager = this.rotationManager;
-		const lastScreenPosition = this.lastScreenPosition;
 
-		if(document.pointerLockElement === this.domElement) {
-
-			if(pointerBehaviour === PointerBehaviour.LOCK || this.dragging) {
-
-				rotationManager.adjustSpherical(
-					event.movementX * pointerSensitivity * rotation.getSensitivityX(),
-					event.movementY * pointerSensitivity * rotation.getSensitivityY()
-				).updateQuaternion();
-
-			}
-
-		} else {
-
-			// Compensate for inconsistent web APIs.
-			const movementX = event.screenX - lastScreenPosition.x;
-			const movementY = event.screenY - lastScreenPosition.y;
-
-			lastScreenPosition.set(event.screenX, event.screenY);
+		if(pointerBehaviour !== PointerBehaviour.LOCK_HOLD || this.dragging) {
 
 			rotationManager.adjustSpherical(
-				movementX * pointerSensitivity * rotation.getSensitivityX(),
-				movementY * pointerSensitivity * rotation.getSensitivityY()
+				event.movementX * pointerSensitivity * rotation.getSensitivityX(),
+				event.movementY * pointerSensitivity * rotation.getSensitivityY()
 			).updateQuaternion();
 
 		}
-
-	}
-
-	/**
-	 * Handles touch move events.
-	 *
-	 * @param event - A touch event.
-	 */
-
-	private handleTouchMoveEvent(event: TouchEvent): void {
-
-		const settings = this.settings;
-		const rotation = settings.rotation;
-		const pointerSensitivity = settings.pointer.getSensitivity();
-		const rotationManager = this.rotationManager;
-		const lastScreenPosition = this.lastScreenPosition;
-		const touch = event.touches[0];
-
-		// Compensate for inconsistent web APIs.
-		const movementX = touch.screenX - lastScreenPosition.x;
-		const movementY = touch.screenY - lastScreenPosition.y;
-
-		lastScreenPosition.set(touch.screenX, touch.screenY);
-
-		rotationManager.adjustSpherical(
-			movementX * pointerSensitivity * rotation.getSensitivityX(),
-			movementY * pointerSensitivity * rotation.getSensitivityY()
-		).updateQuaternion();
 
 	}
 
@@ -584,7 +528,8 @@ export class SpatialControls extends EventDispatcher
 
 		this.dragging = pressed;
 
-		if(this.settings.pointer.getBehaviour() !== PointerBehaviour.DEFAULT) {
+		if(event.pointerType === PointerType.MOUSE &&
+			this.settings.pointer.getBehaviour() !== PointerBehaviour.DEFAULT) {
 
 			this.setPointerLocked();
 
@@ -592,12 +537,13 @@ export class SpatialControls extends EventDispatcher
 
 			if(pressed) {
 
-				this.lastScreenPosition.set(event.screenX, event.screenY);
-				this.domElement.addEventListener("mousemove", this, { passive: true });
+				this.domElement.addEventListener("pointermove", this, {
+					passive: true
+				});
 
 			} else {
 
-				this.domElement.removeEventListener("mousemove", this);
+				this.domElement.removeEventListener("pointermove", this);
 
 			}
 
@@ -656,41 +602,26 @@ export class SpatialControls extends EventDispatcher
 	}
 
 	/**
-	 * Handles pointer leave events.
+	 * Handles pointer cancel and leave events.
 	 *
 	 * @param event - A pointer event.
 	 */
 
-	private handlePointerLeaveEvent(event: PointerEvent): void {
+	private handlePointerCancelEvent(event: PointerEvent): void {
 
-		this.domElement.removeEventListener("mousemove", this);
+		this.domElement.removeEventListener("pointermove", this);
 
 	}
 
 	/**
-	 * Handles touch start and end events.
+	 * Handles wheel events.
 	 *
-	 * @param event - A touch event.
-	 * @param start - Whether the event is a touch start event.
+	 * @param event - A wheel event.
 	 */
 
-	private handleTouchEvent(event: TouchEvent, start: boolean): void {
+	private handleWheelEvent(event: WheelEvent): void {
 
-		const touch = event.touches[0];
-
-		// Don't produce mouse events.
-		event.preventDefault();
-
-		if(start) {
-
-			this.lastScreenPosition.set(touch.screenX, touch.screenY);
-			this.domElement.addEventListener("touchmove", this, { passive: true });
-
-		} else {
-
-			this.domElement.removeEventListener("touchmove", this);
-
-		}
+		this.rotationManager.zoom(Math.sign(event.deltaY));
 
 	}
 
@@ -715,18 +646,6 @@ export class SpatialControls extends EventDispatcher
 	}
 
 	/**
-	 * Handles wheel events.
-	 *
-	 * @param event - A wheel event.
-	 */
-
-	private handleWheelEvent(event: WheelEvent): void {
-
-		this.rotationManager.zoom(Math.sign(event.deltaY));
-
-	}
-
-	/**
 	 * Enables or disables controls based on the pointer lock state.
 	 */
 
@@ -734,11 +653,13 @@ export class SpatialControls extends EventDispatcher
 
 		if(document.pointerLockElement === this.domElement) {
 
-			this.domElement.addEventListener("mousemove", this, { passive: true });
+			this.domElement.addEventListener("pointermove", this, {
+				passive: true
+			});
 
 		} else {
 
-			this.domElement.removeEventListener("mousemove", this);
+			this.domElement.removeEventListener("pointermove", this);
 
 		}
 
@@ -753,8 +674,7 @@ export class SpatialControls extends EventDispatcher
 		if(document.hidden) {
 
 			this.translationManager.getMovementState().reset();
-			this.domElement.removeEventListener("mousemove", this);
-			this.domElement.removeEventListener("touchmove", this);
+			this.domElement.removeEventListener("pointermove", this);
 
 		}
 
@@ -797,32 +717,21 @@ export class SpatialControls extends EventDispatcher
 
 		switch(event.type) {
 
-			case "mousemove":
+			case "pointermove":
 				this.handlePointerMoveEvent(event as PointerEvent);
 				break;
 
-			case "touchmove":
-				this.handleTouchMoveEvent(event as TouchEvent);
-				break;
-
-			case "mousedown":
+			case "pointerdown":
 				this.handlePointerButtonEvent(event as PointerEvent, true);
 				break;
 
-			case "mouseup":
+			case "pointerup":
 				this.handlePointerButtonEvent(event as PointerEvent, false);
 				break;
 
-			case "mouseleave":
-				this.handlePointerLeaveEvent(event as PointerEvent);
-				break;
-
-			case "touchstart":
-				this.handleTouchEvent(event as TouchEvent, true);
-				break;
-
-			case "touchend":
-				this.handleTouchEvent(event as TouchEvent, false);
+			case "pointercancel":
+			case "pointerleave":
+				this.handlePointerCancelEvent(event as PointerEvent);
 				break;
 
 			case "keydown":
