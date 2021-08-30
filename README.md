@@ -1,6 +1,6 @@
 # Spatial Controls
 
-[![CI](https://badgen.net/github/checks/vanruesc/spatial-controls/main)](https://github.com/vanruesc/spatial-controls/actions)
+[![CI](https://github.com/vanruesc/spatial-controls/actions/workflows/ci.yml/badge.svg)](https://github.com/vanruesc/spatial-controls/actions/workflows/ci.yml)
 [![Version](https://badgen.net/npm/v/spatial-controls?color=green)](https://www.npmjs.com/package/spatial-controls)
 [![Peer dependencies](https://badgen.net/david/peer/vanruesc/spatial-controls)](https://david-dm.org/vanruesc/spatial-controls?type=peer)
 
