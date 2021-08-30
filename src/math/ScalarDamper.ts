@@ -2,12 +2,6 @@
  * A scalar damper that retains velocity.
  *
  * Based on Game Programming Gems 4 Chapter 1.10.
- *
- * @param a - The initial value.
- * @param b - The target value.
- * @param lambda - The smoothing factor.
- * @param deltaTime - The delta time.
- * @return The interpolated value.
  */
 
 export class ScalarDamper {
