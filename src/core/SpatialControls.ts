@@ -511,7 +511,7 @@ export class SpatialControls extends EventDispatcher
 			rotationManager.adjustSpherical(
 				event.movementX * pointerSensitivity * rotation.getSensitivityX(),
 				event.movementY * pointerSensitivity * rotation.getSensitivityY()
-			).updateQuaternion();
+			);
 
 		}
 

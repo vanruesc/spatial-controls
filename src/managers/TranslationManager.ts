@@ -8,6 +8,7 @@ import {
 import { MovementState } from "./MovementState";
 import { ControlMode } from "../core";
 import { Settings } from "../settings";
+import { ScalarDamper } from "../math";
 import { Updatable } from "../core";
 import { MILLISECONDS_TO_SECONDS } from "../core/time";
 import * as axes from "../core/axes";
@@ -21,19 +22,19 @@ const v = new Vector3();
 export class TranslationManager extends EventDispatcher implements Updatable {
 
 	/**
-	 * The position that will be modified.
+	 * The current position.
 	 */
 
 	private position: Vector3;
 
 	/**
-	 * The quaternion that will be modified.
+	 * The quaternion.
 	 */
 
 	private quaternion: Quaternion;
 
 	/**
-	 * The target.
+	 * The current target.
 	 */
 
 	private target: Vector3;
@@ -49,6 +50,24 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	 */
 
 	private movementState: MovementState;
+
+	/**
+	 * The current velocity.
+	 */
+
+	private velocity0: Vector3;
+
+	/**
+	 * The target velocity.
+	 */
+
+	private velocity1: Vector3;
+
+	/**
+	 * Scalar dampers.
+	 */
+
+	private scalarDampers: ScalarDamper[];
 
 	/**
 	 * A timestamp.
@@ -81,8 +100,16 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 		this.target = target;
 		this.settings = settings;
 		this.movementState = new MovementState();
+		this.velocity0 = new Vector3();
+		this.velocity1 = new Vector3();
 		this.timestamp = 0;
 		this.updateEvent = { type: "update" };
+
+		this.scalarDampers = [
+			new ScalarDamper(),
+			new ScalarDamper(),
+			new ScalarDamper()
+		];
 
 	}
 
@@ -108,7 +135,6 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	setPosition(position: Vector3): TranslationManager {
 
 		this.position = position;
-
 		return this;
 
 	}
@@ -123,7 +149,6 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	setQuaternion(quaternion: Quaternion): TranslationManager {
 
 		this.quaternion = quaternion;
-
 		return this;
 
 	}
@@ -138,7 +163,6 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	setTarget(target: Vector3): TranslationManager {
 
 		this.target = target;
-
 		return this;
 
 	}
@@ -162,90 +186,35 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 
 		}
 
-		this.dispatchEvent(this.updateEvent);
-
 	}
 
 	/**
 	 * Modifies the position based on the current movement state and elapsed time.
-	 *
-	 * @param deltaTime - The time since the last update in seconds.
 	 */
 
-	private translate(deltaTime: number): void {
+	private translate(): void {
 
-		const state = this.movementState;
-		const translation = this.settings.translation;
-		const boost = state.boost ? translation.getBoostMultiplier() : 1.0;
-		const sensitivity = translation.getSensitivity();
+		const v = this.velocity0;
 
-		const step = deltaTime * sensitivity * boost;
+		if(v.z !== 0.0) {
 
-		if(state.backward && state.forward) {
-
-			if(state.backwardBeforeForward) {
-
-				this.translateOnAxis(axes.z, step);
-
-			} else {
-
-				this.translateOnAxis(axes.z, -step);
-
-			}
-
-		} else if(state.backward) {
-
-			this.translateOnAxis(axes.z, step);
-
-		} else if(state.forward) {
-
-			this.translateOnAxis(axes.z, -step);
+			this.translateOnAxis(axes.z, v.z);
 
 		}
 
-		if(state.right && state.left) {
+		if(v.y !== 0.0) {
 
-			if(state.rightBeforeLeft) {
-
-				this.translateOnAxis(axes.x, step);
-
-			} else {
-
-				this.translateOnAxis(axes.x, -step);
-
-			}
-
-		} else if(state.right) {
-
-			this.translateOnAxis(axes.x, step);
-
-		} else if(state.left) {
-
-			this.translateOnAxis(axes.x, -step);
+			this.translateOnAxis(axes.y, v.y);
 
 		}
 
-		if(state.up && state.down) {
+		if(v.x !== 0.0) {
 
-			if(state.upBeforeDown) {
-
-				this.translateOnAxis(axes.y, step);
-
-			} else {
-
-				this.translateOnAxis(axes.y, -step);
-
-			}
-
-		} else if(state.up) {
-
-			this.translateOnAxis(axes.y, step);
-
-		} else if(state.down) {
-
-			this.translateOnAxis(axes.y, -step);
+			this.translateOnAxis(axes.x, v.x);
 
 		}
+
+		this.dispatchEvent(this.updateEvent);
 
 	}
 
@@ -278,10 +247,96 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 
 	update(timestamp: number): void {
 
-		if(this.settings.translation.isEnabled()) {
+		const settings = this.settings;
+
+		if(settings.translation.isEnabled()) {
+
+			const state = this.movementState;
+			const translation = this.settings.translation;
+			const boost = state.boost ? translation.getBoostMultiplier() : 1.0;
+			const sensitivity = translation.getSensitivity();
+			const scalarDampers = this.scalarDampers;
+
+			const v0 = this.velocity0;
+			const v1 = this.velocity1;
 
 			const elapsed = (timestamp - this.timestamp) * MILLISECONDS_TO_SECONDS;
-			this.translate(elapsed);
+			const speed = elapsed * sensitivity * boost;
+
+			v1.setScalar(0.0);
+
+			if(state.active) {
+
+				if(state.backward && state.forward) {
+
+					v1.z = state.backwardBeforeForward ? speed : -speed;
+
+				} else if(state.backward) {
+
+					v1.z = speed;
+
+				} else if(state.forward) {
+
+					v1.z = -speed;
+
+				}
+
+				if(state.right && state.left) {
+
+					v1.x = state.rightBeforeLeft ? speed : -speed;
+
+				} else if(state.right) {
+
+					v1.x = speed;
+
+				} else if(state.left) {
+
+					v1.x = -speed;
+
+				}
+
+				if(state.up && state.down) {
+
+					v1.y = state.upBeforeDown ? speed : -speed;
+
+				} else if(state.up) {
+
+					v1.y = speed;
+
+				} else if(state.down) {
+
+					v1.y = -speed;
+
+				}
+
+			}
+
+			if(!v0.equals(v1)) {
+
+				if(translation.getDamping() > 0.0) {
+
+					const damping = translation.getDamping();
+					const omega = ScalarDamper.calculateOmega(damping);
+					const exp = ScalarDamper.calculateExp(damping, omega, elapsed);
+
+					v0.x = scalarDampers[0]
+						.interpolate(v0.x, v1.x, damping, omega, exp, elapsed);
+
+					v0.y = scalarDampers[1]
+						.interpolate(v0.y, v1.y, damping, omega, exp, elapsed);
+
+					v0.z = scalarDampers[2]
+						.interpolate(v0.z, v1.z, damping, omega, exp, elapsed);
+
+				} else {
+
+					v0.copy(v1);
+
+				}
+
+				this.translate();
+
+			}
 
 		}
 

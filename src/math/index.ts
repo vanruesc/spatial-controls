@@ -1,0 +1,1 @@
+export { ScalarDamper } from "./ScalarDamper";

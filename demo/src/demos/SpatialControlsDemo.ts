@@ -137,8 +137,10 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		settings.pointer.setBehaviour(PointerBehaviour.DEFAULT);
 		settings.zoom.setRange(0.25, 3.0);
 		settings.rotation.setSensitivity(2.2);
+		settings.rotation.setDamping(0.1);
 		settings.translation.setSensitivity(0.25);
 		settings.zoom.setSensitivity(0.1);
+		settings.zoom.setDamping(0.2);
 		this.controls = controls;
 
 		controls.setPosition(0, 0.17, 1);
@@ -172,6 +174,11 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 				"translation": settings.translation.getSensitivity(),
 				"boost multiplier": settings.translation.getBoostMultiplier(),
 				"zoom": settings.zoom.getSensitivity()
+			},
+			damping: {
+				"rotation": settings.rotation.getDamping(),
+				"zoom": settings.zoom.getDamping(),
+				"translation": settings.translation.getDamping()
 			},
 			rotation: {
 				"min azim. angle": settings.rotation.getMinAzimuthalAngle(),
@@ -229,6 +236,15 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 			.onChange(value => settings.translation.setBoostMultiplier(value));
 		folder.add(params.sensitivity, "zoom", 0.01, 3.0, 0.01)
 			.onChange(value => settings.zoom.setSensitivity(value));
+		folder.open();
+
+		folder = menu.addFolder("Damping");
+		folder.add(params.damping, "rotation", 0.0, 1.0, 0.01)
+			.onChange(value => settings.rotation.setDamping(value));
+		folder.add(params.damping, "zoom", 0.0, 1.0, 0.01)
+			.onChange(value => settings.zoom.setDamping(value));
+		folder.add(params.damping, "translation", 0.0, 1.0, 0.01)
+			.onChange(value => settings.translation.setDamping(value));
 		folder.open();
 
 		folder = menu.addFolder("Rotation");

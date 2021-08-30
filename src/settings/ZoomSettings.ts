@@ -13,6 +13,7 @@ export interface ZoomSettingsJSON {
 	minDistance: number;
 	maxDistance: number;
 	sensitivity: number;
+	damping: number;
 
 }
 
@@ -53,6 +54,12 @@ export class ZoomSettings extends EventDispatcher {
 	private sensitivity: number;
 
 	/**
+	 * The damping factor. Range is [0.0, +Infinity]. Set to 0 to disable.
+	 */
+
+	private damping: number;
+
+	/**
 	 * Constructs new zoom settings.
 	 */
 
@@ -65,6 +72,7 @@ export class ZoomSettings extends EventDispatcher {
 		this.minDistance = 1e-6;
 		this.maxDistance = Number.POSITIVE_INFINITY;
 		this.sensitivity = 1.0;
+		this.damping = 0.0;
 
 	}
 
@@ -217,6 +225,31 @@ export class ZoomSettings extends EventDispatcher {
 	}
 
 	/**
+	 * Returns the damping factor.
+	 *
+	 * @return The damping factor.
+	 */
+
+	getDamping(): number {
+
+		return this.damping;
+
+	}
+
+	/**
+	 * Sets the damping factor.
+	 *
+	 * @param value - The damping factor.
+	 */
+
+	setDamping(value: number): void {
+
+		this.damping = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
 	 * Copies the given zoom settings.
 	 *
 	 * @param settings - Zoom settings.
@@ -230,6 +263,7 @@ export class ZoomSettings extends EventDispatcher {
 		this.minDistance = settings.getMinDistance();
 		this.maxDistance = settings.getMaxDistance();
 		this.sensitivity = settings.getSensitivity();
+		this.damping = settings.getDamping();
 
 		return this;
 
@@ -244,7 +278,6 @@ export class ZoomSettings extends EventDispatcher {
 	clone(): ZoomSettings {
 
 		const clone = new ZoomSettings();
-
 		return clone.copy(this);
 
 	}
@@ -263,6 +296,7 @@ export class ZoomSettings extends EventDispatcher {
 		this.minDistance = json.minDistance;
 		this.maxDistance = json.maxDistance || Number.POSITIVE_INFINITY;
 		this.sensitivity = json.sensitivity;
+		this.damping = json.damping;
 
 		return this;
 
@@ -275,7 +309,8 @@ export class ZoomSettings extends EventDispatcher {
 			inverted: this.inverted,
 			minDistance: this.minDistance,
 			maxDistance: this.maxDistance,
-			sensitivity: this.sensitivity
+			sensitivity: this.sensitivity,
+			damping: this.damping
 		};
 
 	}

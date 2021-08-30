@@ -75,6 +75,20 @@ export class MovementState {
 	}
 
 	/**
+	 * Indicates whether any flag is currently active.
+	 */
+
+	get active(): boolean {
+
+		return (
+			this.forward || this.backward ||
+			this.left || this.right ||
+			this.up || this.down
+		);
+
+	}
+
+	/**
 	 * Resets this state.
 	 *
 	 * @return This state.

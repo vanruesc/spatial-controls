@@ -19,6 +19,7 @@ export interface RotationSettingsJSON {
 	invertedY: boolean;
 	sensitivityX: number;
 	sensitivityY: number;
+	damping: number;
 
 }
 
@@ -89,6 +90,12 @@ export class RotationSettings extends EventDispatcher {
 	private sensitivityY: number;
 
 	/**
+	 * The damping factor. Range is [0.0, +Infinity]. Set to 0 to disable.
+	 */
+
+	private damping: number;
+
+	/**
 	 * Constructs new rotation settings.
 	 */
 
@@ -111,6 +118,7 @@ export class RotationSettings extends EventDispatcher {
 
 		this.sensitivityX = 1.0;
 		this.sensitivityY = 1.0;
+		this.damping = 0.0;
 
 	}
 
@@ -378,6 +386,31 @@ export class RotationSettings extends EventDispatcher {
 	}
 
 	/**
+	 * Returns the damping factor.
+	 *
+	 * @return The damping factor.
+	 */
+
+	getDamping(): number {
+
+		return this.damping;
+
+	}
+
+	/**
+	 * Sets the damping factor.
+	 *
+	 * @param value - The damping factor.
+	 */
+
+	setDamping(value: number): void {
+
+		this.damping = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
 	 * Copies the given rotation settings.
 	 *
 	 * @param settings - Rotation settings.
@@ -400,6 +433,7 @@ export class RotationSettings extends EventDispatcher {
 
 		this.sensitivityX = settings.getSensitivityX();
 		this.sensitivityY = settings.getSensitivityY();
+		this.damping = settings.getDamping();
 
 		return this;
 
@@ -414,7 +448,6 @@ export class RotationSettings extends EventDispatcher {
 	clone(): RotationSettings {
 
 		const clone = new RotationSettings();
-
 		return clone.copy(this);
 
 	}
@@ -442,6 +475,7 @@ export class RotationSettings extends EventDispatcher {
 
 		this.sensitivityX = json.sensitivityX;
 		this.sensitivityY = json.sensitivityY;
+		this.damping = json.damping;
 
 		return this;
 
@@ -459,7 +493,8 @@ export class RotationSettings extends EventDispatcher {
 			invertedX: this.invertedX,
 			invertedY: this.invertedY,
 			sensitivityX: this.sensitivityX,
-			sensitivityY: this.sensitivityY
+			sensitivityY: this.sensitivityY,
+			damping: this.damping
 		};
 
 	}

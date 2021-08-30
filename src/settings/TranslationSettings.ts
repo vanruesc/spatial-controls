@@ -11,6 +11,7 @@ export interface TranslationSettingsJSON {
 	enabled: boolean;
 	sensitivity: number;
 	boostMultiplier: number;
+	damping: number;
 
 }
 
@@ -39,6 +40,12 @@ export class TranslationSettings extends EventDispatcher {
 	private boostMultiplier: number;
 
 	/**
+	 * The damping factor. Range is [0.0, +Infinity]. Set to 0 to disable.
+	 */
+
+	private damping: number;
+
+	/**
 	 * Constructs new translation settings.
 	 */
 
@@ -49,6 +56,7 @@ export class TranslationSettings extends EventDispatcher {
 		this.enabled = true;
 		this.sensitivity = 1.0;
 		this.boostMultiplier = 2.0;
+		this.damping = 0.0;
 
 	}
 
@@ -128,6 +136,31 @@ export class TranslationSettings extends EventDispatcher {
 	}
 
 	/**
+	 * Returns the damping factor.
+	 *
+	 * @return The damping factor.
+	 */
+
+	getDamping(): number {
+
+		return this.damping;
+
+	}
+
+	/**
+	 * Sets the damping factor.
+	 *
+	 * @param value - The damping factor.
+	 */
+
+	setDamping(value: number): void {
+
+		this.damping = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
 	 * Copies the given translation settings.
 	 *
 	 * @param settings - Translation settings.
@@ -139,6 +172,7 @@ export class TranslationSettings extends EventDispatcher {
 		this.enabled = settings.isEnabled();
 		this.sensitivity = settings.getSensitivity();
 		this.boostMultiplier = settings.getBoostMultiplier();
+		this.damping = settings.getDamping();
 
 		return this;
 
@@ -153,7 +187,6 @@ export class TranslationSettings extends EventDispatcher {
 	clone(): TranslationSettings {
 
 		const clone = new TranslationSettings();
-
 		return clone.copy(this);
 
 	}
@@ -170,6 +203,7 @@ export class TranslationSettings extends EventDispatcher {
 		this.enabled = json.enabled;
 		this.sensitivity = json.sensitivity;
 		this.boostMultiplier = json.boostMultiplier;
+		this.damping = json.damping;
 
 		return this;
 
@@ -180,7 +214,8 @@ export class TranslationSettings extends EventDispatcher {
 		return {
 			enabled: this.enabled,
 			sensitivity: this.sensitivity,
-			boostMultiplier: this.boostMultiplier
+			boostMultiplier: this.boostMultiplier,
+			damping: this.damping
 		};
 
 	}
