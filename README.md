@@ -67,9 +67,12 @@ import { Action, ControlMode, KeyCode } from "spatial-controls";
 
 const settings = controls.settings;
 settings.general.setMode(ControlMode.THIRD_PERSON);
-settings.zoom.setRange(0.25, 3.0);
 settings.rotation.setSensitivity(2.2);
+settings.rotation.setDamping(0.05);
 settings.translation.setSensitivity(0.25);
+settings.translation.setDamping(0.1);
+settings.zoom.setRange(0.25, 3.0);
+settings.zoom.setDamping(0.1);
 
 const keyBindings = settings.keyBindings;
 keyBindings.delete(KeyCode.X);
