@@ -329,7 +329,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 			const amount = sign * zoom.getSensitivity();
 			s.radius = zoom.isInverted() ? s.radius - amount : s.radius + amount;
-			this.restrictRadius().position.setFromSpherical(s).add(this.target);
+			this.restrictRadius();
 
 		}
 
