@@ -356,7 +356,6 @@ export class SpatialControls extends EventDispatcher
 	clone(): SpatialControls {
 
 		const clone = new SpatialControls();
-
 		return clone.copy(this);
 
 	}
@@ -580,8 +579,6 @@ export class SpatialControls extends EventDispatcher
 
 	private handlePointerButtonEvent(event: PointerEvent,
 		pressed: boolean): void {
-
-		event.preventDefault();
 
 		switch(event.button) {
 
