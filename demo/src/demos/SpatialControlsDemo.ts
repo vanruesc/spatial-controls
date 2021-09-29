@@ -156,6 +156,8 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		settings.zoom.setRange(0.25, 3.0);
 		settings.rotation.setSensitivity(2.2);
 		settings.rotation.setDamping(0.1);
+		settings.rotation.setMinPolarAngle(Number.NEGATIVE_INFINITY);
+		settings.rotation.setMaxPolarAngle(Number.POSITIVE_INFINITY);
 		settings.translation.setSensitivity(0.25);
 		settings.translation.setDamping(0.1);
 		settings.zoom.setSensitivity(0.1);
