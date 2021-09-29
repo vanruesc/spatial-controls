@@ -290,10 +290,11 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		folder.open();
 
 		folder = menu.addFolder("Rotation");
-		folder.add(params.rotation, "min azim. angle", -Math.PI, 0.0, 0.0001)
+
+		folder.add(params.rotation, "min azim. angle", -Math.PI, 0.0, 1e-3)
 			.onChange((value: number) => {
 
-				const angle = (value <= -Math.PI + 1e-6) ?
+				const angle = (value <= -Math.PI + 1e-3) ?
 					Number.NEGATIVE_INFINITY : value;
 
 				params.rotation["min azim. angle"] = angle;
@@ -301,10 +302,10 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 			});
 
-		folder.add(params.rotation, "max azim. angle", 0.0, Math.PI, 0.0001)
+		folder.add(params.rotation, "max azim. angle", 0.0, Math.PI, 1e-3)
 			.onChange((value: number) => {
 
-				const angle = (value >= Math.PI - 1e-6) ?
+				const angle = (value >= Math.PI - 1e-3) ?
 					Number.POSITIVE_INFINITY : value;
 
 				params.rotation["max azim. angle"] = angle;
@@ -312,10 +313,28 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 			});
 
-		folder.add(params.rotation, "min polar angle", 0.0, Math.PI, 0.0001)
-			.onChange(value => settings.rotation.setMinPolarAngle(value));
-		folder.add(params.rotation, "max polar angle", 0.0, Math.PI, 0.0001)
-			.onChange(value => settings.rotation.setMaxPolarAngle(value));
+		folder.add(params.rotation, "min polar angle", -Math.PI, Math.PI, 1e-3)
+			.onChange((value: number) => {
+
+				const angle = (value <= -Math.PI + 1e-3) ?
+					Number.NEGATIVE_INFINITY : value;
+
+				params.rotation["min polar angle"] = angle;
+				settings.rotation.setMinPolarAngle(angle);
+
+			});
+
+		folder.add(params.rotation, "max polar angle", 0.0, Math.PI * 2, 1e-3)
+			.onChange((value: number) => {
+
+				const angle = (value >= Math.PI * 2.0 - 1e-3) ?
+					Number.POSITIVE_INFINITY : value;
+
+				params.rotation["max polar angle"] = angle;
+				settings.rotation.setMaxPolarAngle(angle);
+
+			});
+
 		folder.add(params.rotation, "inverted X")
 			.onChange(value => settings.rotation.setInvertedX(value));
 		folder.add(params.rotation, "inverted Y")
