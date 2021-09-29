@@ -168,6 +168,25 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	}
 
 	/**
+	 * Resets the current velocity.
+	 *
+	 * @return This manager.
+	 */
+
+	resetVelocity(): void {
+
+		this.velocity0.set(0, 0, 0);
+		this.velocity1.set(0, 0, 0);
+
+		for(const scalarDamper of this.scalarDampers) {
+
+			scalarDamper.resetVelocity();
+
+		}
+
+	}
+
+	/**
 	 * Translates a position by a specific distance along a given axis.
 	 *
 	 * @param axis - The axis.
