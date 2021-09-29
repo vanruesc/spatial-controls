@@ -21,11 +21,11 @@ npm install three spatial-controls
 ## Usage
 
 ```js
-import { Quaternion, Vector3 } from "three";
+import { PerspectiveCamera } from "three";
 import { SpatialControls } from "spatial-controls";
 
-const position = new Vector3();
-const quaternion = new Quaternion();
+const camera = new PerspectiveCamera(...);
+const { position, quaternion } = camera;
 const domElement = document.getElementById("viewport");
 const controls = new SpatialControls(position, quaternion, domElement);
 
@@ -39,21 +39,18 @@ requestAnimationFrame(function render(timestamp) {
 
 #### Position, Target and Quaternion
 
-```js
-// First person: Sets the position.
-// Third person: Sets the target and adjusts the position.
-controls.moveTo(x, y, z);
-controls.moveTo(point);
+The position, target and quaternion can be modified directly at any time. A subsequent `update()` call synchronizes the internal state of the controls. The `quaternion` has a higher priority than the `target`, meaning that changes to the quaternion will always set the target. The following methods are provided for convenience:
 
-// Sets or replaces the position and looks at the target.
+```js
+// Sets or replaces the position.
 controls.setPosition(x, y, z);
 controls.setPosition(otherPosition);
 
-// Sets or replaces the target and updates the quaternion.
+// Sets or replaces the target.
 controls.setTarget(x, y, z);
 controls.setTarget(otherTarget);
 
-// Same as setTarget() but doesn't replace the target.
+// Sets the target without replacing it and updates the quaternion.
 controls.lookAt(x, y, z);
 controls.lookAt(target);
 ```
@@ -63,7 +60,7 @@ controls.lookAt(target);
 #### Configuration
 
 ```js
-import { Action, ControlMode, KeyCode } from "spatial-controls";
+import { Action, ControlMode, KeyCode, PointerButton } from "spatial-controls";
 
 const settings = controls.settings;
 settings.general.setMode(ControlMode.THIRD_PERSON);
@@ -77,6 +74,13 @@ settings.zoom.setDamping(0.1);
 const keyBindings = settings.keyBindings;
 keyBindings.delete(KeyCode.X);
 keyBindings.set(KeyCode.V, Action.MOVE_DOWN);
+
+const pointerBindings = settings.pointerBindings;
+pointerBindings.delete(PointerButton.MAIN);
+pointerBindings.set(PointerButton.SECONDARY, Action.ROTATE);
+
+// The context menu can be disabled like this:
+document.body.addEventListener("contextmenu", e => e.preventDefault());
 ```
 
 ### Saving and Loading
