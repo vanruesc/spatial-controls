@@ -661,6 +661,7 @@ export class SpatialControls extends EventDispatcher
 
 	private onSettingsChanged(event: Event): void {
 
+		const rotationManager = this.rotationManager;
 		const settings = this.settings;
 		const general = settings.general;
 
@@ -687,9 +688,15 @@ export class SpatialControls extends EventDispatcher
 
 			}
 
+			rotationManager.updateSpherical();
+
+		} else {
+
+			rotationManager.restrictSpherical()
+
 		}
 
-		this.rotationManager.updateSpherical().updatePosition().updateQuaternion();
+		rotationManager.updatePosition().updateQuaternion();
 
 		this.previousPosition.copy(this.position);
 		this.previousQuaternion.copy(this.quaternion);
