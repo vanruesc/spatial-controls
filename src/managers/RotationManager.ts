@@ -212,6 +212,18 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	}
 
 	/**
+	 * Returns the current radius.
+	 *
+	 * @return The radius.
+	 */
+
+	getRadius(): number {
+
+		return this.spherical0.radius;
+
+	}
+
+	/**
 	 * Restricts the spherical system.
 	 *
 	 * @return This manager.
