@@ -23,11 +23,10 @@ jobs:
         run: pnpm install --frozen-lockfile=false
       - name: Build and deploy
         run: pnpm run deploy
-      - uses: JamesIves/github-pages-deploy-action@4.1.4
+      - uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           branch: gh-pages
           folder: public
-          target-folder: public
           single-commit: true
           silent: true
           clean: true
