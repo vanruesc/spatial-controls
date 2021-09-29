@@ -6,7 +6,7 @@
 
 A 3D movement controller that supports multiple control modes and configurable input settings.
 
-*[Demo](https://vanruesc.github.io/spatial-controls/public/demo)&ensp;&middot;&ensp;[Documentation](https://vanruesc.github.io/spatial-controls/public/docs)*
+*[Demo](https://vanruesc.github.io/spatial-controls/demo)&ensp;&middot;&ensp;[Documentation](https://vanruesc.github.io/spatial-controls/docs)*
 
 
 ## Installation
