@@ -2,8 +2,6 @@ import { EventDispatcher } from "three";
 
 /**
  * JSON representation of translation settings.
- *
- * @ignore
  */
 
 export interface TranslationSettingsJSON {

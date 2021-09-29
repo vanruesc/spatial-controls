@@ -3,8 +3,6 @@ import * as axes from "../core/axes";
 
 /**
  * JSON representation of rotation settings.
- *
- * @ignore
  */
 
 export interface RotationSettingsJSON {

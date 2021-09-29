@@ -2,8 +2,6 @@ import { EventDispatcher } from "three";
 
 /**
  * JSON representation of zoom settings.
- *
- * @ignore
  */
 
 export interface ZoomSettingsJSON {

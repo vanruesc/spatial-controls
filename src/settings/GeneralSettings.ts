@@ -3,8 +3,6 @@ import { ControlMode } from "../core/ControlMode";
 
 /**
  * JSON representation of general settings.
- *
- * @ignore
  */
 
 export interface GeneralSettingsJSON {

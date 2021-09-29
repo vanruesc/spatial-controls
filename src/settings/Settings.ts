@@ -34,8 +34,6 @@ import {
 
 /**
  * JSON representation of control settings.
- *
- * @ignore
  */
 
 interface SettingsJSON {

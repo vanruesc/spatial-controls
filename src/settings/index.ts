@@ -1,7 +1,7 @@
-export { Bindings } from "./Bindings";
-export { GeneralSettings } from "./GeneralSettings";
-export { PointerSettings } from "./PointerSettings";
-export { RotationSettings } from "./RotationSettings";
-export { TranslationSettings } from "./TranslationSettings";
-export { Settings } from "./Settings";
-export { ZoomSettings } from "./ZoomSettings";
+export * from "./Bindings";
+export * from "./GeneralSettings";
+export * from "./PointerSettings";
+export * from "./RotationSettings";
+export * from "./TranslationSettings";
+export * from "./Settings";
+export * from "./ZoomSettings";

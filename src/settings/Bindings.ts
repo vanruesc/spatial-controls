@@ -2,8 +2,6 @@ import { Action } from "../core/Action";
 
 /**
  * JSON representation of input bindings.
- *
- * @ignore
  */
 
 export interface BindingsJSON<T> {

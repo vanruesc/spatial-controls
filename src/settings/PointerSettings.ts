@@ -3,8 +3,6 @@ import { PointerBehaviour } from "../input";
 
 /**
  * JSON representation of pointer settings.
- *
- * @ignore
  */
 
 export interface PointerSettingsJSON {
