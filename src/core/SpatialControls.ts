@@ -52,6 +52,24 @@ export class SpatialControls extends EventDispatcher
 	private target: Vector3;
 
 	/**
+	 * The previous position.
+	 */
+
+	private previousPosition: Vector3;
+
+	/**
+	 * The previous quaternion.
+	 */
+
+	private previousQuaternion: Quaternion;
+
+	/**
+	 * The previous target.
+	 */
+
+	private previousTarget: Vector3;
+
+	/**
 	 * A rotation manager.
 	 */
 
@@ -157,6 +175,10 @@ export class SpatialControls extends EventDispatcher
 
 		}
 
+		this.previousPosition = this.position.clone();
+		this.previousQuaternion = this.quaternion.clone();
+		this.previousTarget = this.target.clone();
+
 	}
 
 	/**
@@ -234,7 +256,7 @@ export class SpatialControls extends EventDispatcher
 
 		}
 
-		return this.lookAt(this.target);
+		return this;
 
 	}
 
@@ -263,13 +285,7 @@ export class SpatialControls extends EventDispatcher
 		this.rotationManager.setQuaternion(quaternion);
 		this.translationManager.setQuaternion(quaternion);
 
-		if(this.settings.general.getMode() === ControlMode.FIRST_PERSON) {
-
-			this.target.set(0, 0, -1).applyQuaternion(quaternion);
-
-		}
-
-		return this.lookAt(this.target);
+		return this;
 
 	}
 
@@ -308,55 +324,7 @@ export class SpatialControls extends EventDispatcher
 
 		}
 
-		return this.lookAt(this.target);
-
-	}
-
-	/**
-	 * Returns the current view direction.
-	 *
-	 * @param view - A vector to store the direction in.
-	 * @return The normalized view direction.
-	 */
-
-	getViewDirection(view: Vector3): Vector3 {
-
-		return this.rotationManager.getViewDirection(view);
-
-	}
-
-	/**
-	 * Copies the given controls.
-	 *
-	 * @param controls - A controls instance.
-	 * @return This instance.
-	 */
-
-	copy(controls: SpatialControls): SpatialControls {
-
-		const p = this.position = controls.getPosition();
-		const q = this.quaternion = controls.getQuaternion();
-		const t = this.target = controls.getTarget();
-
-		this.domElement = controls.getDomElement();
-		this.settings.copy(controls.settings);
-		this.rotationManager.setPosition(p).setQuaternion(q).setTarget(t);
-		this.translationManager.setPosition(p).setQuaternion(q).setTarget(t);
-
-		return this.lookAt(t);
-
-	}
-
-	/**
-	 * Clones this instance.
-	 *
-	 * @return The cloned controls.
-	 */
-
-	clone(): SpatialControls {
-
-		const clone = new SpatialControls();
-		return clone.copy(this);
+		return this;
 
 	}
 
@@ -386,27 +354,27 @@ export class SpatialControls extends EventDispatcher
 	}
 
 	/**
-	 * Locks or unlocks the pointer.
+	 * Returns the current view direction.
 	 *
-	 * @param locked - Whether the pointer should be locked.
+	 * @param view - A vector to store the direction in.
+	 * @return The normalized view direction.
 	 */
 
-	private setPointerLocked(locked = true): void {
+	getViewDirection(view: Vector3): Vector3 {
 
-		if(locked) {
+		return this.rotationManager.getViewDirection(view);
 
-			if(document.pointerLockElement !== this.domElement &&
-				this.domElement.requestPointerLock !== undefined) {
+	}
 
-				this.domElement.requestPointerLock();
+	/**
+	 * Indicates whether the controls are enabled.
+	 *
+	 * @return Whether the controls are enabled.
+	 */
 
-			}
+	isEnabled(): boolean {
 
-		} else if(document.exitPointerLock !== undefined) {
-
-			document.exitPointerLock();
-
-		}
+		return this.enabled;
 
 	}
 
@@ -460,6 +428,66 @@ export class SpatialControls extends EventDispatcher
 		this.enabled = enabled;
 
 		return this;
+
+	}
+
+	/**
+	 * Copies the given controls.
+	 *
+	 * @param controls - A controls instance.
+	 * @return This instance.
+	 */
+
+	copy(controls: SpatialControls): SpatialControls {
+
+		const p = this.position = controls.getPosition();
+		const q = this.quaternion = controls.getQuaternion();
+		const t = this.target = controls.getTarget();
+
+		this.domElement = controls.getDomElement();
+		this.settings.copy(controls.settings);
+		this.rotationManager.setPosition(p).setQuaternion(q).setTarget(t);
+		this.translationManager.setPosition(p).setQuaternion(q).setTarget(t);
+
+		return this.lookAt(t);
+
+	}
+
+	/**
+	 * Clones this instance.
+	 *
+	 * @return The cloned controls.
+	 */
+
+	clone(): SpatialControls {
+
+		const clone = new SpatialControls();
+		return clone.copy(this);
+
+	}
+
+	/**
+	 * Locks or unlocks the pointer.
+	 *
+	 * @param locked - Whether the pointer should be locked.
+	 */
+
+	private setPointerLocked(locked = true): void {
+
+		if(locked) {
+
+			if(document.pointerLockElement !== this.domElement &&
+				this.domElement.requestPointerLock !== undefined) {
+
+				this.domElement.requestPointerLock();
+
+			}
+
+		} else if(document.exitPointerLock !== undefined) {
+
+			document.exitPointerLock();
+
+		}
 
 	}
 
@@ -653,6 +681,10 @@ export class SpatialControls extends EventDispatcher
 
 		this.rotationManager.updateSpherical().updatePosition().updateQuaternion();
 
+		this.previousPosition.copy(this.position);
+		this.previousQuaternion.copy(this.quaternion);
+		this.previousTarget.copy(this.target);
+
 	}
 
 	handleEvent(event: Event): void {
@@ -706,8 +738,70 @@ export class SpatialControls extends EventDispatcher
 
 	update(timestamp: number): void {
 
-		this.rotationManager.update(timestamp);
-		this.translationManager.update(timestamp);
+		const mode = this.settings.general.getMode();
+		const rotationManager = this.rotationManager;
+		const translationManager = this.translationManager;
+
+		const previousPosition = this.previousPosition;
+		const previousQuaternion = this.previousQuaternion;
+		const previousTarget = this.previousTarget;
+
+		const position = this.position;
+		const quaternion = this.quaternion;
+		const target = this.target;
+
+		if(!previousQuaternion.equals(quaternion)) {
+
+			if(mode === ControlMode.THIRD_PERSON) {
+
+				target.set(0, 0, -1).applyQuaternion(quaternion);
+				target.multiplyScalar(rotationManager.getRadius());
+				target.add(position);
+
+			} else {
+
+				target.set(0, 0, -1).applyQuaternion(quaternion);
+
+			}
+
+			rotationManager.updateSpherical();
+
+		} else if(!previousTarget.equals(target)) {
+
+			if(!previousPosition.equals(position)) {
+
+				rotationManager.updateSpherical().updateQuaternion();
+
+			} else {
+
+				if(mode === ControlMode.THIRD_PERSON) {
+
+					rotationManager.updatePosition();
+
+				} else {
+
+					rotationManager.updateSpherical().updateQuaternion();
+
+				}
+
+			}
+
+		} else if(!previousPosition.equals(position)) {
+
+			if(mode === ControlMode.THIRD_PERSON) {
+
+				rotationManager.updateSpherical().updateQuaternion();
+
+			}
+
+		}
+
+		rotationManager.update(timestamp);
+		translationManager.update(timestamp);
+
+		previousPosition.copy(position);
+		previousQuaternion.copy(quaternion);
+		previousTarget.copy(target);
 
 	}
 
