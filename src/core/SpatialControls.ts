@@ -692,7 +692,7 @@ export class SpatialControls extends EventDispatcher
 
 		} else {
 
-			rotationManager.restrictSpherical()
+			rotationManager.restrictSpherical();
 
 		}
 
