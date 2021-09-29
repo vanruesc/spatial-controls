@@ -150,6 +150,25 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	}
 
 	/**
+	 * Resets the current velocity.
+	 *
+	 * @return This manager.
+	 */
+
+	resetVelocity(): void {
+
+		// Stop moving.
+		this.spherical1.copy(this.spherical0);
+
+		for(const scalarDamper of this.scalarDampers) {
+
+			scalarDamper.resetVelocity();
+
+		}
+
+	}
+
+	/**
 	 * Restricts the spherical angles.
 	 *
 	 * @return This manager.
