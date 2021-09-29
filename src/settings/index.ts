@@ -1,5 +1,5 @@
+export { Bindings } from "./Bindings";
 export { GeneralSettings } from "./GeneralSettings";
-export { KeyBindings } from "./KeyBindings";
 export { PointerSettings } from "./PointerSettings";
 export { RotationSettings } from "./RotationSettings";
 export { TranslationSettings } from "./TranslationSettings";
