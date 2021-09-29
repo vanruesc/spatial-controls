@@ -467,8 +467,8 @@ export class RotationSettings extends EventDispatcher {
 		this.minAzimuthalAngle = json.minAzimuthalAngle || Number.NEGATIVE_INFINITY;
 		this.maxAzimuthalAngle = json.maxAzimuthalAngle || Number.POSITIVE_INFINITY;
 
-		this.minPolarAngle = json.minPolarAngle;
-		this.maxPolarAngle = json.maxPolarAngle;
+		this.minPolarAngle = json.minPolarAngle || Number.NEGATIVE_INFINITY;
+		this.maxPolarAngle = json.maxPolarAngle || Number.POSITIVE_INFINITY;
 
 		this.invertedX = json.invertedX;
 		this.invertedY = json.invertedY;

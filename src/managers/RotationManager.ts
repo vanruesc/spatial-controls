@@ -13,6 +13,7 @@ import { ScalarDamper } from "../math";
 import { Settings } from "../settings";
 
 const TWO_PI = Math.PI * 2;
+const u = new Vector3();
 const v = new Vector3();
 const m = new Matrix4();
 
@@ -186,7 +187,12 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 		s.theta = Math.min(Math.max(s.theta, thetaMin), thetaMax);
 		s.phi = Math.min(Math.max(s.phi, phiMin), phiMax);
-		s.makeSafe();
+
+		if(s.phi === 0.0 || s.phi === Math.PI) {
+
+			s.makeSafe();
+
+		}
 
 		return this;
 
@@ -291,7 +297,15 @@ export class RotationManager extends EventDispatcher implements Updatable {
 		const settings = this.settings;
 		const rotation = settings.rotation;
 		const target = this.target;
-		const up = rotation.getUpVector();
+		const up = u.copy(rotation.getUpVector());
+		const phi = this.spherical0.phi % TWO_PI;
+
+		if((phi < 0.0 && phi > -Math.PI) || (phi > Math.PI && phi < TWO_PI)) {
+
+			// The orientation is currently upside down.
+			up.negate();
+
+		}
 
 		if(settings.general.getMode() === ControlMode.THIRD_PERSON) {
 
@@ -462,11 +476,19 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 		} else {
 
+			// Prevent overflow.
+
 			if(Math.abs(s0.theta) >= TWO_PI) {
 
-				// Prevent overflow.
 				s0.theta %= TWO_PI;
 				s1.theta %= TWO_PI;
+
+			}
+
+			if(Math.abs(s0.phi) >= TWO_PI) {
+
+				s0.phi %= TWO_PI;
+				s1.phi %= TWO_PI;
 
 			}
 
