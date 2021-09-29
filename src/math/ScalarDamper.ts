@@ -32,6 +32,16 @@ export class ScalarDamper {
 	}
 
 	/**
+	 * Resets the velocity.
+	 */
+
+	resetVelocity(): void {
+
+		this.velocity = 0.0;
+
+	}
+
+	/**
 	 * Smooth interpolation with exponential velocity gain/decay.
 	 *
 	 * @param a - The start value.
