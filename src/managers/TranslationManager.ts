@@ -237,33 +237,6 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 
 	}
 
-	/**
-	 * Moves to the given position.
-	 *
-	 * @param p - The position.
-	 * @return This instance.
-	 */
-
-	moveTo(position: Vector3): TranslationManager {
-
-		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
-
-			v.subVectors(position, this.target);
-			this.target.copy(position);
-			this.position.add(v);
-
-		} else {
-
-			this.position.copy(position);
-
-		}
-
-		this.dispatchEvent(this.updateEvent);
-
-		return this;
-
-	}
-
 	update(timestamp: number): void {
 
 		const settings = this.settings;

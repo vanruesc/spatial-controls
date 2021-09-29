@@ -361,34 +361,6 @@ export class SpatialControls extends EventDispatcher
 	}
 
 	/**
-	 * Moves to the given position.
-	 *
-	 * In third person mode, the target will be moved to the given location and
-	 * the position will be adjusted accordingly.
-	 *
-	 * @param x - The X-coordinate, or a point.
-	 * @param y - The Y-coordinate.
-	 * @param z - The Z-coordinate.
-	 * @return This instance.
-	 */
-
-	moveTo(x: number | Vector3, y?: number, z?: number): SpatialControls {
-
-		if(x instanceof Vector3) {
-
-			this.translationManager.moveTo(x);
-
-		} else {
-
-			this.translationManager.moveTo(v.set(x, y, z));
-
-		}
-
-		return this;
-
-	}
-
-	/**
 	 * Looks at the given point.
 	 *
 	 * @param x - The X-coordinate, or a point.
