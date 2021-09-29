@@ -96,7 +96,6 @@ export class GeneralSettings extends EventDispatcher {
 	copy(settings: GeneralSettings): GeneralSettings {
 
 		this.mode = settings.getMode();
-
 		return this;
 
 	}
@@ -110,7 +109,6 @@ export class GeneralSettings extends EventDispatcher {
 	clone(): GeneralSettings {
 
 		const clone = new GeneralSettings();
-
 		return clone.copy(this);
 
 	}
@@ -125,7 +123,6 @@ export class GeneralSettings extends EventDispatcher {
 	fromJSON(json: GeneralSettingsJSON): GeneralSettings {
 
 		this.mode = json.mode;
-
 		return this;
 
 	}

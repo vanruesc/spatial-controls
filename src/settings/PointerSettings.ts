@@ -122,7 +122,6 @@ export class PointerSettings extends EventDispatcher {
 	clone(): PointerSettings {
 
 		const clone = new PointerSettings();
-
 		return clone.copy(this);
 
 	}
