@@ -5,6 +5,7 @@ import {
 	PerspectiveCamera,
 	PolarGridHelper,
 	SphereBufferGeometry,
+	Spherical,
 	Texture,
 	sRGBEncoding,
 	Vector3
@@ -33,6 +34,18 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 	private mesh: Mesh;
 
 	/**
+	 * Spherical coordinates.
+	 */
+
+	private spherical: Spherical;
+
+	/**
+	 * Indicates whether the mesh should orbit by itself.
+	 */
+
+	private orbitEnabled: boolean;
+
+	/**
 	 * Constructs a new demo.
 	 */
 
@@ -42,6 +55,8 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 		this.controls = null;
 		this.mesh = null;
+		this.spherical = null;
+		this.orbitEnabled = false;
 
 	}
 
@@ -113,7 +128,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 		const aspect = window.innerWidth / window.innerHeight;
 		const vFoV = calculateVerticalFoV(90, Math.max(aspect, 16 / 9));
-		const camera = new PerspectiveCamera(vFoV, aspect, 0.1, 1000);
+		const camera = new PerspectiveCamera(vFoV, aspect, 0.03, 1000);
 		this.camera = camera;
 
 		// Objects
@@ -125,6 +140,9 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 		scene.add(new PolarGridHelper(1, 16, 8, 64, 0x444444, 0x888888));
 		scene.add(mesh);
+
+		const spherical = new Spherical(0.5, Math.PI / 2, 0);
+		this.spherical = spherical;
 
 		// Controls
 
@@ -139,6 +157,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		settings.rotation.setSensitivity(2.2);
 		settings.rotation.setDamping(0.1);
 		settings.translation.setSensitivity(0.25);
+		settings.translation.setDamping(0.1);
 		settings.zoom.setSensitivity(0.1);
 		settings.zoom.setDamping(0.2);
 		this.controls = controls;
@@ -152,7 +171,30 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 	override update(deltaTime: number, timestamp: number): void {
 
-		this.controls.update(timestamp);
+		const controls = this.controls;
+
+		if(this.orbitEnabled) {
+
+			const y = 0.075;
+			const s = this.spherical;
+			s.theta -= deltaTime * 0.25;
+			s.theta %= Math.PI * 2.0;
+
+			if(controls.settings.general.getMode() === ControlMode.THIRD_PERSON) {
+
+				controls.getTarget().setFromSpherical(s);
+				controls.getTarget().y = y;
+
+			} else {
+
+				controls.getPosition().setFromSpherical(s);
+				controls.getPosition().y = y;
+
+			}
+
+		}
+
+		controls.update(timestamp);
 
 	}
 
@@ -280,8 +322,21 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 			.onChange(value => settings.rotation.setInvertedY(value));
 
 		folder = menu.addFolder("Translation");
-		folder.add(params.translation, "enabled")
-			.onChange(value => settings.translation.setEnabled(value));
+		folder.add(params.translation, "enabled").listen()
+			.onChange(value => {
+
+				if(!this.orbitEnabled) {
+
+					settings.translation.setEnabled(value);
+
+				} else {
+
+					// Prevent translation.
+					params.translation.enabled = false;
+
+				}
+
+			});
 
 		folder = menu.addFolder("Zooming");
 		folder.add(params.zoom, "enabled")
@@ -294,6 +349,20 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 			.onChange(value => settings.zoom.setMaxDistance(value));
 
 		menu.add(params, "save");
+
+		menu.add(this, "orbitEnabled").name("orbit").onChange((value: boolean) => {
+
+			params.translation.enabled = !value;
+			settings.translation.setEnabled(!value);
+
+			if(!value && params.general.mode === ControlMode.THIRD_PERSON) {
+
+				this.spherical.theta = 0.0;
+				this.controls.setTarget(0, 0, 0);
+
+			}
+
+		});
 
 		if(window.innerWidth < 720) {
 
