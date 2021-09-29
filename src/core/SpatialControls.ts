@@ -424,6 +424,9 @@ export class SpatialControls extends EventDispatcher
 
 		}
 
+		this.translationManager.resetVelocity();
+		this.rotationManager.resetVelocity();
+
 		this.setPointerLocked(false);
 		this.enabled = enabled;
 
@@ -658,7 +661,14 @@ export class SpatialControls extends EventDispatcher
 
 	private onSettingsChanged(event: Event): void {
 
-		const general = this.settings.general;
+		const settings = this.settings;
+		const general = settings.general;
+
+		if(!settings.translation.isEnabled()) {
+
+			this.translationManager.resetVelocity();
+
+		}
 
 		if(general.getMode() !== general.getPreviousMode()) {
 
