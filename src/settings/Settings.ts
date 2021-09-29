@@ -1,6 +1,6 @@
 import { EventDispatcher } from "three";
 import { Action } from "../core/Action";
-import { KeyCode } from "../input/KeyCode";
+import { KeyCode, PointerButton } from "../input";
 
 import {
 	GeneralSettings,
@@ -8,9 +8,9 @@ import {
 } from "./GeneralSettings";
 
 import {
-	KeyBindings,
-	KeyBindingsJSON
-} from "./KeyBindings";
+	Bindings,
+	BindingsJSON
+} from "./Bindings";
 
 import {
 	PointerSettings,
@@ -40,7 +40,8 @@ import {
 
 interface SettingsJSON {
 
-	keyBindings: KeyBindingsJSON;
+	keyBindings: BindingsJSON<KeyCode>;
+	pointerBindings: BindingsJSON<PointerButton>;
 	general: GeneralSettingsJSON;
 	pointer: PointerSettingsJSON;
 	rotation: RotationSettingsJSON;
@@ -59,7 +60,13 @@ export class Settings extends EventDispatcher {
 	 * Key bindings.
 	 */
 
-	readonly keyBindings: KeyBindings;
+	readonly keyBindings: Bindings<KeyCode>;
+
+	/**
+	 * Key bindings.
+	 */
+
+	readonly pointerBindings: Bindings<PointerButton>;
 
 	/**
 	 * General settings.
@@ -99,7 +106,7 @@ export class Settings extends EventDispatcher {
 
 		super();
 
-		this.keyBindings = new KeyBindings();
+		this.keyBindings = new Bindings<KeyCode>();
 		this.keyBindings.setDefault(new Map([
 
 			[KeyCode.W, Action.MOVE_FORWARD],
@@ -121,6 +128,13 @@ export class Settings extends EventDispatcher {
 			[KeyCode.PAGE_UP, Action.ZOOM_IN],
 
 			[KeyCode.SHIFT, Action.BOOST]
+
+		]));
+
+		this.pointerBindings = new Bindings<PointerButton>();
+		this.pointerBindings.setDefault(new Map([
+
+			[PointerButton.MAIN, Action.ROTATE]
 
 		]));
 
@@ -149,6 +163,7 @@ export class Settings extends EventDispatcher {
 	copy(settings: Settings): Settings {
 
 		this.keyBindings.copy(settings.keyBindings);
+		this.pointerBindings.copy(settings.pointerBindings);
 		this.general.copy(settings.general);
 		this.pointer.copy(settings.pointer);
 		this.rotation.copy(settings.rotation);
@@ -170,7 +185,6 @@ export class Settings extends EventDispatcher {
 	clone(): Settings {
 
 		const clone = new Settings();
-
 		return clone.copy(this);
 
 	}
@@ -186,6 +200,7 @@ export class Settings extends EventDispatcher {
 
 		const settings = JSON.parse(json) as SettingsJSON;
 		this.keyBindings.fromJSON(settings.keyBindings);
+		this.pointerBindings.fromJSON(settings.pointerBindings);
 		this.general.fromJSON(settings.general);
 		this.pointer.fromJSON(settings.pointer);
 		this.rotation.fromJSON(settings.rotation);
@@ -216,6 +231,7 @@ export class Settings extends EventDispatcher {
 
 		return {
 			keyBindings: this.keyBindings,
+			pointerBindings: this.pointerBindings,
 			general: this.general,
 			pointer: this.pointer,
 			rotation: this.rotation,

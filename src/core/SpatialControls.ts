@@ -7,7 +7,7 @@ import {
 	ZoomStrategy
 } from "../strategies";
 
-import { PointerBehaviour, PointerButton, PointerType } from "../input";
+import { PointerBehaviour, PointerType } from "../input";
 import { RotationManager, TranslationManager } from "../managers";
 import { Settings } from "../settings/Settings";
 import { Action } from "./Action";
@@ -517,13 +517,13 @@ export class SpatialControls extends EventDispatcher
 	}
 
 	/**
-	 * Handles main pointer button events.
+	 * Enables or disables rotation.
 	 *
 	 * @param event - A pointer event.
 	 * @param pressed - Whether the pointer button has been pressed down.
 	 */
 
-	private handleMainPointerButton(event: PointerEvent, pressed: boolean): void {
+	private handleRotationTrigger(event: PointerEvent, pressed: boolean): void {
 
 		this.dragging = pressed;
 
@@ -551,26 +551,6 @@ export class SpatialControls extends EventDispatcher
 	}
 
 	/**
-	 * Handles auxiliary pointer button events.
-	 *
-	 * @param event - A pointer event.
-	 * @param pressed - Whether the pointer button has been pressed down.
-	 */
-
-	private handleAuxiliaryPointerButton(event: PointerEvent,
-		pressed: boolean): void {}
-
-	/**
-	 * Handles secondary pointer button events.
-	 *
-	 * @param event - A pointer event.
-	 * @param pressed - Whether the pointer button has been pressed down.
-	 */
-
-	private handleSecondaryPointerButton(event: PointerEvent,
-		pressed: boolean): void {}
-
-	/**
 	 * Handles pointer events.
 	 *
 	 * @param event - A pointer event.
@@ -580,18 +560,10 @@ export class SpatialControls extends EventDispatcher
 	private handlePointerButtonEvent(event: PointerEvent,
 		pressed: boolean): void {
 
-		switch(event.button) {
+		switch(this.settings.pointerBindings.get(event.button)) {
 
-			case PointerButton.MAIN:
-				this.handleMainPointerButton(event, pressed);
-				break;
-
-			case PointerButton.AUXILIARY:
-				this.handleAuxiliaryPointerButton(event, pressed);
-				break;
-
-			case PointerButton.SECONDARY:
-				this.handleSecondaryPointerButton(event, pressed);
+			case Action.ROTATE:
+				this.handleRotationTrigger(event, pressed);
 				break;
 
 		}
@@ -636,7 +608,8 @@ export class SpatialControls extends EventDispatcher
 		if(keyBindings.has(event.keyCode)) {
 
 			event.preventDefault();
-			this.strategies.get(keyBindings.get(event.keyCode)).execute(pressed);
+			const strategy = this.strategies.get(keyBindings.get(event.keyCode));
+			strategy.execute(pressed);
 
 		}
 
