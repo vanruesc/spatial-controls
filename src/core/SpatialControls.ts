@@ -120,7 +120,11 @@ export class SpatialControls extends EventDispatcher
 
 		this.domElement = domElement;
 		const settings = this.settings = new Settings();
-		settings.addEventListener("change", e => this.handleEvent(e as Event));
+		settings.addEventListener("change", (e: unknown) => {
+
+			this.handleEvent(e as Event);
+
+		});
 
 		this.position = position;
 		this.quaternion = quaternion;
