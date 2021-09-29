@@ -39,7 +39,7 @@ requestAnimationFrame(function render(timestamp) {
 
 #### Position, Target and Quaternion
 
-The position, target and quaternion can be modified directly at any time. A subsequent `update()` call synchronizes the internal state of the controls. The `quaternion` has a higher priority than the `target`, meaning that changes to the quaternion will always set the target. The following methods are provided for convenience:
+The position, target and quaternion can be modified directly at any time. A subsequent `update()` call synchronizes the internal state of the controls. The `quaternion` has a higher priority than the `target`, meaning that changes to the `quaternion` will always set the `target`. The following methods are provided for convenience:
 
 ```js
 // Sets or replaces the position.
