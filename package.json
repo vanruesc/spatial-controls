@@ -1,7 +1,7 @@
 {
 	"name": "spatial-controls",
 	"version": "4.3.2",
-	"description": "Customizable 3D controls.",
+	"description": "Configurable 3D movement controls.",
 	"homepage": "https://github.com/vanruesc/spatial-controls",
 	"main": "dist/spatial-controls.js",
 	"module": "dist/spatial-controls.js",
@@ -17,6 +17,8 @@
 		"translation",
 		"rotation",
 		"object",
+		"camera",
+		"orbit",
 		"controls",
 		"keybindings",
 		"3d"
@@ -67,7 +69,7 @@
 		"extends": "aether/typescript"
 	},
 	"peerDependencies": {
-		"three": ">= 0.126.0 < 0.133.0"
+		"three": ">= 0.132.0 < 0.133.0"
 	},
 	"devDependencies": {
 		"@types/dat.gui": "0.x.x",
