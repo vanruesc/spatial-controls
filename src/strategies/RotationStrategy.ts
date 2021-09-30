@@ -1,0 +1,47 @@
+import { SpatialControls } from "../core";
+import { PointerBehaviour, PointerType } from "../input";
+import { Strategy } from "./Strategy";
+
+/**
+ * A rotation strategy.
+ */
+
+export class RotationStrategy implements Strategy {
+
+	/**
+	 * The controls.
+	 */
+
+	private controls: SpatialControls;
+
+	/**
+	 * Constructs a new rotation strategy.
+	 *
+	 * @param controls - The controls.
+	 */
+
+	constructor(controls: SpatialControls) {
+
+		this.controls = controls;
+
+	}
+
+	execute(flag: boolean, event: Event): void {
+
+		const behaviour = this.controls.settings.pointer.getBehaviour();
+
+		if(event instanceof PointerEvent &&
+			event.pointerType === PointerType.MOUSE &&
+			behaviour !== PointerBehaviour.DEFAULT) {
+
+			this.controls.setPointerLocked();
+
+		} else {
+
+			this.controls.setRotationEnabled(flag);
+
+		}
+
+	}
+
+}
