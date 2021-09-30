@@ -479,7 +479,7 @@ export class SpatialControls extends EventDispatcher
 	 * @param locked - Whether the pointer should be locked.
 	 */
 
-	private setPointerLocked(locked = true): void {
+	setPointerLocked(locked = true): void {
 
 		if(locked) {
 
