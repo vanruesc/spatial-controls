@@ -3,11 +3,12 @@ import { EventDispatcher, Quaternion, Vector3 } from "three";
 import {
 	BoostStrategy,
 	MovementStrategy,
+	RotationStrategy,
 	Strategy,
 	ZoomStrategy
 } from "../strategies";
 
-import { PointerBehaviour, PointerType } from "../input";
+import { PointerBehaviour } from "../input";
 import { RotationManager, TranslationManager } from "../managers";
 import { Settings } from "../settings/Settings";
 import { Action } from "./Action";
@@ -159,7 +160,8 @@ export class SpatialControls extends EventDispatcher
 			[Action.MOVE_UP, new MovementStrategy(state, Direction.UP)],
 			[Action.ZOOM_OUT, new ZoomStrategy(rm, false)],
 			[Action.ZOOM_IN, new ZoomStrategy(rm, true)],
-			[Action.BOOST, new BoostStrategy(state)]
+			[Action.BOOST, new BoostStrategy(state)],
+			[Action.ROTATE, new RotationStrategy(this)]
 		]);
 
 		this.dragging = false;
@@ -499,6 +501,30 @@ export class SpatialControls extends EventDispatcher
 	}
 
 	/**
+	 * Enables or disables the rotation mode.
+	 *
+	 * @param pressed - Whether the rotation mode should be activated.
+	 */
+
+	setRotationEnabled(enabled: boolean): void {
+
+		//this.dragging = enabled;
+
+		if(enabled) {
+
+			this.domElement.addEventListener("pointermove", this, {
+				passive: true
+			});
+
+		} else {
+
+			this.domElement.removeEventListener("pointermove", this);
+
+		}
+
+	}
+
+	/**
 	 * Handles pointer move events.
 	 *
 	 * @param event - A pointer event.
@@ -524,40 +550,6 @@ export class SpatialControls extends EventDispatcher
 	}
 
 	/**
-	 * Enables or disables rotation.
-	 *
-	 * @param event - A pointer event.
-	 * @param pressed - Whether the pointer button has been pressed down.
-	 */
-
-	private handleRotationTrigger(event: PointerEvent, pressed: boolean): void {
-
-		this.dragging = pressed;
-
-		if(event.pointerType === PointerType.MOUSE &&
-			this.settings.pointer.getBehaviour() !== PointerBehaviour.DEFAULT) {
-
-			this.setPointerLocked();
-
-		} else {
-
-			if(pressed) {
-
-				this.domElement.addEventListener("pointermove", this, {
-					passive: true
-				});
-
-			} else {
-
-				this.domElement.removeEventListener("pointermove", this);
-
-			}
-
-		}
-
-	}
-
-	/**
 	 * Handles pointer events.
 	 *
 	 * @param event - A pointer event.
@@ -567,11 +559,19 @@ export class SpatialControls extends EventDispatcher
 	private handlePointerButtonEvent(event: PointerEvent,
 		pressed: boolean): void {
 
-		switch(this.settings.pointerBindings.get(event.button)) {
+		const pointerBindings = this.settings.pointerBindings;
 
-			case Action.ROTATE:
-				this.handleRotationTrigger(event, pressed);
-				break;
+		if(pointerBindings.has(event.button)) {
+
+			const action = pointerBindings.get(event.button);
+			const strategy = this.strategies.get(action);
+			strategy.execute(pressed, event);
+
+			if(action === Action.ROTATE) {
+
+				this.dragging = pressed;
+
+			}
 
 		}
 
