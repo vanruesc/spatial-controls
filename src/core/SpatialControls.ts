@@ -508,8 +508,6 @@ export class SpatialControls extends EventDispatcher
 
 	setRotationEnabled(enabled: boolean): void {
 
-		//this.dragging = enabled;
-
 		if(enabled) {
 
 			this.domElement.addEventListener("pointermove", this, {
