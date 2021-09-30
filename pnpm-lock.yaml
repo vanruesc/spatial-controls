@@ -36,8 +36,8 @@ devDependencies:
   eslint-watch: 7.0.0_eslint@7.32.0
   npm-run-all: 4.1.5
   serve: 12.0.1
-  three: 0.132.2
-  three-demo: 5.1.0_dat.gui@0.7.7+three@0.132.2
+  three: 0.133.0
+  three-demo: 5.1.1_dat.gui@0.7.7+three@0.133.0
   tslib: 2.3.1
   typedoc: 0.22.4_typescript@4.4.3
   typescript: 4.4.3
@@ -1589,7 +1589,7 @@ packages:
       semver: 7.3.5
       strip-ansi: 6.0.1
       strip-json-comments: 3.1.1
-      table: 6.7.1
+      table: 6.7.2
       text-table: 0.2.0
       v8-compile-cache: 2.3.0
     transitivePeerDependencies:
@@ -4066,8 +4066,8 @@ packages:
       has-flag: 4.0.0
     dev: true
 
-  /table/6.7.1:
-    resolution: {integrity: sha512-ZGum47Yi6KOOFDE8m223td53ath2enHcYLgOCjGr5ngu8bdIARQk6mN/wRMv4yMRcHnCSnHbCEha4sobQx5yWg==}
+  /table/6.7.2:
+    resolution: {integrity: sha512-UFZK67uvyNivLeQbVtkiUs8Uuuxv24aSL4/Vil2PJVtMgU8Lx0CYkP12uCGa3kjyQzOSgV1+z9Wkb82fCGsO0g==}
     engines: {node: '>=10.0.0'}
     dependencies:
       ajv: 8.6.3
@@ -4094,19 +4094,19 @@ packages:
     resolution: {integrity: sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=}
     dev: true
 
-  /three-demo/5.1.0_dat.gui@0.7.7+three@0.132.2:
-    resolution: {integrity: sha512-RIojfVf8N5tn8pPevgzchiaLsCn8zg7P2L/aefVRcbEOfMRMUy2fmS0L9deThDamVm5lndMm7fbLUXVolNr0Yw==}
+  /three-demo/5.1.1_dat.gui@0.7.7+three@0.133.0:
+    resolution: {integrity: sha512-XDNjzQOLbWcoxdHIoI2Cm4+NJt/CD/7TtrJa4nFU3EFeW+cAVBJi/kpZNwG13eXCKGLWeIXwPbx06cM5oAY7TQ==}
     engines: {node: '>= 0.14.0'}
     peerDependencies:
       dat.gui: '>= 0.0.0 < 1.0.0'
-      three: '>= 0.126.0 < 0.133.0'
+      three: '>= 0.130.0 < 0.134.0'
     dependencies:
       dat.gui: 0.7.7
-      three: 0.132.2
+      three: 0.133.0
     dev: true
 
-  /three/0.132.2:
-    resolution: {integrity: sha512-0wcR7LxxkXMn6Gi58gEs3QvY8WpTVXA31L2VOvpjm4ZPYFRHCZC13UqynheFoS5OXDYgtBneN0dhbaNBE8iLhQ==}
+  /three/0.133.0:
+    resolution: {integrity: sha512-1p8xTXnJD4hMM2Ktm7+FqOOBoImBoftKnKtAZT/b9AQeL3LhRkVu/HnIJhWA69qIMvUYpjfnunNsO4WdObw1ZQ==}
     dev: true
 
   /time-zone/1.0.0:
