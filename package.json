@@ -1,6 +1,6 @@
 {
 	"name": "spatial-controls",
-	"version": "5.0.0",
+	"version": "5.0.1",
 	"description": "Configurable 3D movement controls.",
 	"homepage": "https://github.com/vanruesc/spatial-controls",
 	"main": "dist/spatial-controls.js",
