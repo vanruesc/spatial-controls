@@ -706,60 +706,14 @@ export class SpatialControls extends EventDispatcher
 
 	}
 
-	handleEvent(event: Event): void {
+	/**
+	 * Synchronizes the internal state with external changes.
+	 */
 
-		switch(event.type) {
-
-			case "pointermove":
-				this.handlePointerMoveEvent(event as PointerEvent);
-				break;
-
-			case "pointerdown":
-				this.handlePointerButtonEvent(event as PointerEvent, true);
-				break;
-
-			case "pointerup":
-				this.handlePointerButtonEvent(event as PointerEvent, false);
-				break;
-
-			case "pointercancel":
-			case "pointerleave":
-				this.handlePointerCancelEvent(event as PointerEvent);
-				break;
-
-			case "keydown":
-				this.handleKeyboardEvent(event as KeyboardEvent, true);
-				break;
-
-			case "keyup":
-				this.handleKeyboardEvent(event as KeyboardEvent, false);
-				break;
-
-			case "wheel":
-				this.handleWheelEvent(event as WheelEvent);
-				break;
-
-			case "pointerlockchange":
-				this.handlePointerLockEvent();
-				break;
-
-			case "visibilitychange":
-				this.handleVisibilityChangeEvent();
-				break;
-
-			case "change":
-				this.onSettingsChanged(event);
-				break;
-
-		}
-
-	}
-
-	update(timestamp: number): void {
+	private synchronize(): void {
 
 		const mode = this.settings.general.getMode();
 		const rotationManager = this.rotationManager;
-		const translationManager = this.translationManager;
 
 		const previousPosition = this.previousPosition;
 		const previousQuaternion = this.previousQuaternion;
@@ -815,12 +769,67 @@ export class SpatialControls extends EventDispatcher
 
 		}
 
-		rotationManager.update(timestamp);
-		translationManager.update(timestamp);
+	}
 
-		previousPosition.copy(position);
-		previousQuaternion.copy(quaternion);
-		previousTarget.copy(target);
+	handleEvent(event: Event): void {
+
+		switch(event.type) {
+
+			case "pointermove":
+				this.handlePointerMoveEvent(event as PointerEvent);
+				break;
+
+			case "pointerdown":
+				this.handlePointerButtonEvent(event as PointerEvent, true);
+				break;
+
+			case "pointerup":
+				this.handlePointerButtonEvent(event as PointerEvent, false);
+				break;
+
+			case "pointercancel":
+			case "pointerleave":
+				this.handlePointerCancelEvent(event as PointerEvent);
+				break;
+
+			case "keydown":
+				this.handleKeyboardEvent(event as KeyboardEvent, true);
+				break;
+
+			case "keyup":
+				this.handleKeyboardEvent(event as KeyboardEvent, false);
+				break;
+
+			case "wheel":
+				this.handleWheelEvent(event as WheelEvent);
+				break;
+
+			case "pointerlockchange":
+				this.handlePointerLockEvent();
+				break;
+
+			case "visibilitychange":
+				this.handleVisibilityChangeEvent();
+				break;
+
+			case "change":
+				this.onSettingsChanged(event);
+				break;
+
+		}
+
+	}
+
+	update(timestamp: number): void {
+
+		this.synchronize();
+
+		this.rotationManager.update(timestamp);
+		this.translationManager.update(timestamp);
+
+		this.previousPosition.copy(this.position);
+		this.previousQuaternion.copy(this.quaternion);
+		this.previousTarget.copy(this.target);
 
 	}
 

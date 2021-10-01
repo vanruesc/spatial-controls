@@ -110,7 +110,8 @@ export class ScalarDamper {
 	static calculateExp(omega: number, dt: number): number {
 
 		const x = omega * dt;
-		return 1.0 / (1.0 + x + 0.48 * x * x + 0.235 * x * x * x);
+		const x2 = x * x;
+		return 1.0 / (1.0 + x + 0.48 * x2 + 0.235 * x * x2);
 
 	}
 
