@@ -46,6 +46,24 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 	private orbitEnabled: boolean;
 
 	/**
+	 * The current frame rate.
+	 */
+
+	private fps: string;
+
+	/**
+	 * A time accumulator.
+	 */
+
+	private acc: number;
+
+	/**
+	 * A frame accumulator.
+	 */
+
+	private frames: number;
+
+	/**
 	 * Constructs a new demo.
 	 */
 
@@ -57,6 +75,9 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		this.mesh = null;
 		this.spherical = null;
 		this.orbitEnabled = false;
+		this.fps = "0";
+		this.acc = 0;
+		this.frames = 0;
 
 	}
 
@@ -169,6 +190,11 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 		document.addEventListener("keydown", this);
 
+		// FPS counter
+
+		this.acc = 0.0;
+		this.frames = 0;
+
 	}
 
 	override update(deltaTime: number, timestamp: number): void {
@@ -197,6 +223,20 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		}
 
 		controls.update(timestamp);
+
+		this.acc += deltaTime;
+
+		if(this.acc >= 1.0) {
+
+			this.fps = this.frames.toFixed();
+			this.acc = 0.0;
+			this.frames = 0;
+
+		} else {
+
+			++this.frames;
+
+		}
 
 	}
 
@@ -384,6 +424,8 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 			}
 
 		});
+
+		menu.add(this, "fps").listen();
 
 		if(window.innerWidth < 720) {
 
