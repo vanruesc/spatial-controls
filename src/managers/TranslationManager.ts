@@ -187,7 +187,7 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	}
 
 	/**
-	 * Translates a position by a specific distance along a given axis.
+	 * Translates the position along a given axis.
 	 *
 	 * @param axis - The axis.
 	 * @param distance - The distance.
@@ -208,28 +208,30 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	}
 
 	/**
-	 * Modifies the position based on the current movement state and elapsed time.
+	 * Changes the position based on the current velocity and elapsed time.
+	 *
+	 * @param elapsed - The time since the last frame in seconds.
 	 */
 
-	private translate(): void {
+	private translate(elapsed: number): void {
 
 		const v = this.velocity0;
 
-		if(v.z !== 0.0) {
+		if(v.x !== 0.0) {
 
-			this.translateOnAxis(axes.z, v.z);
+			this.translateOnAxis(axes.x, v.x * elapsed);
 
 		}
 
 		if(v.y !== 0.0) {
 
-			this.translateOnAxis(axes.y, v.y);
+			this.translateOnAxis(axes.y, v.y * elapsed);
 
 		}
 
-		if(v.x !== 0.0) {
+		if(v.z !== 0.0) {
 
-			this.translateOnAxis(axes.x, v.x);
+			this.translateOnAxis(axes.z, v.z * elapsed);
 
 		}
 
@@ -253,7 +255,7 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 			const v1 = this.velocity1;
 
 			const elapsed = (timestamp - this.timestamp) * MILLISECONDS_TO_SECONDS;
-			const speed = elapsed * sensitivity * boost;
+			const speed = sensitivity * boost;
 
 			v1.setScalar(0.0);
 
@@ -326,7 +328,11 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 
 				}
 
-				this.translate();
+			}
+
+			if(v0.x !== 0.0 || v0.y !== 0.0 || v0.z !== 0.0) {
+
+				this.translate(elapsed);
 
 			}
 
