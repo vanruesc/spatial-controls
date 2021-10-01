@@ -57,7 +57,7 @@ export class ScalarDamper {
 		dt: number): number {
 
 		// Calculate the difference and clamp to max speed.
-		const maxChange = this.maxSpeed * Math.max(lambda, 1e-6);
+		const maxChange = this.maxSpeed * Math.max(lambda, 1e-4);
 		const change = Math.min(Math.max(a - b, -maxChange), maxChange);
 		const c = a - change;
 
@@ -85,8 +85,8 @@ export class ScalarDamper {
 	}
 
 	/**
-	 * Calculates the Omega factor which can be reused for interpolations during
-	 * the same frame.
+	 * Calculates the Omega coefficient which can be reused for interpolations
+	 * during the same frame.
 	 *
 	 * @param lambda - A smoothing factor.
 	 * @return Omega.
@@ -94,7 +94,7 @@ export class ScalarDamper {
 
 	static calculateOmega(lambda: number): number {
 
-		return 2.0 / Math.max(lambda, 1e-6);
+		return 2.0 / Math.max(lambda, 1e-4);
 
 	}
 
