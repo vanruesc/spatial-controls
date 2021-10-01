@@ -75,8 +75,8 @@ export class ScalarDamper {
 
 		} else if(((b - a) > 0.0) === (result > b)) {
 
-			result = b;
 			this.velocity = (result - b) / dt;
+			result = b;
 
 		}
 
