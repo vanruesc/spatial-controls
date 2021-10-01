@@ -443,7 +443,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 				const damping = settings.rotation.getDamping();
 				const omega = ScalarDamper.calculateOmega(damping);
-				const exp = ScalarDamper.calculateExp(damping, omega, elapsed);
+				const exp = ScalarDamper.calculateExp(omega, elapsed);
 
 				s0.theta = scalarDampers[0]
 					.interpolate(s0.theta, s1.theta, damping, omega, exp, elapsed);
@@ -461,7 +461,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 				const damping = settings.zoom.getDamping();
 				const omega = ScalarDamper.calculateOmega(damping);
-				const exp = ScalarDamper.calculateExp(damping, omega, elapsed);
+				const exp = ScalarDamper.calculateExp(omega, elapsed);
 
 				s0.radius = scalarDampers[2]
 					.interpolate(s0.radius, s1.radius, damping, omega, exp, elapsed);

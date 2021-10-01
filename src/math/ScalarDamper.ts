@@ -102,13 +102,12 @@ export class ScalarDamper {
 	 * Calculates the exponentional factor which can be reused for interpolations
 	 * during the same frame.
 	 *
-	 * @param lambda - A smoothing factor.
 	 * @param omega - See {@link ScalarDamper.calculateOmega}.
 	 * @param dt - The delta time in seconds.
 	 * @return The exponentional interpolation factor.
 	 */
 
-	static calculateExp(lambda: number, omega: number, dt: number): number {
+	static calculateExp(omega: number, dt: number): number {
 
 		const x = omega * dt;
 		return 1.0 / (1.0 + x + 0.48 * x * x + 0.235 * x * x * x);

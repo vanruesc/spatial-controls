@@ -309,7 +309,7 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 
 					const damping = translation.getDamping();
 					const omega = ScalarDamper.calculateOmega(damping);
-					const exp = ScalarDamper.calculateExp(damping, omega, elapsed);
+					const exp = ScalarDamper.calculateExp(omega, elapsed);
 
 					v0.x = scalarDampers[0]
 						.interpolate(v0.x, v1.x, damping, omega, exp, elapsed);
