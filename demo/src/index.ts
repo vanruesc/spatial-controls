@@ -24,7 +24,7 @@ window.addEventListener("load", (event: Event) => {
 	renderer.outputEncoding = sRGBEncoding;
 	renderer.debug.checkShaderErrors = debug;
 	renderer.setSize(viewport.clientWidth, viewport.clientHeight);
-	renderer.setPixelRatio(window.devicePixelRatio);
+	renderer.setPixelRatio(1);
 	renderer.setClearColor(0x000000, 0.0);
 
 	const manager = new DemoManager(viewport, {
