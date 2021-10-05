@@ -8,7 +8,7 @@ import {
 	ZoomStrategy
 } from "../strategies";
 
-import { PointerBehaviour } from "../input";
+import { PointerBehaviour, PointerType } from "../input";
 import { RotationManager, TranslationManager } from "../managers";
 import { Settings } from "../settings/Settings";
 import { Action } from "./Action";
@@ -406,10 +406,11 @@ export class SpatialControls extends EventDispatcher
 			document.addEventListener("visibilitychange", this);
 			document.body.addEventListener("keyup", this);
 			document.body.addEventListener("keydown", this);
+			domElement.addEventListener("mousedown", this);
+			domElement.addEventListener("mouseup", this);
 			domElement.addEventListener("pointerdown", this);
 			domElement.addEventListener("pointerup", this);
 			domElement.addEventListener("pointercancel", this);
-			domElement.addEventListener("pointerleave", this);
 			domElement.addEventListener("wheel", this, { passive: true });
 
 		} else if(!enabled && this.enabled) {
@@ -421,6 +422,8 @@ export class SpatialControls extends EventDispatcher
 			document.removeEventListener("visibilitychange", this);
 			document.body.removeEventListener("keyup", this);
 			document.body.removeEventListener("keydown", this);
+			domElement.removeEventListener("mousedown", this);
+			domElement.removeEventListener("mouseup", this);
 			domElement.removeEventListener("pointerdown", this);
 			domElement.removeEventListener("pointerup", this);
 			domElement.removeEventListener("pointercancel", this);
@@ -557,17 +560,28 @@ export class SpatialControls extends EventDispatcher
 	private handlePointerButtonEvent(event: PointerEvent,
 		pressed: boolean): void {
 
-		const pointerBindings = this.settings.pointerBindings;
+		const bindings = this.settings.pointerBindings;
+		const behaviour = this.settings.pointer.getBehaviour();
 
-		if(pointerBindings.has(event.button)) {
+		if(bindings.has(event.button)) {
 
-			const action = pointerBindings.get(event.button);
-			const strategy = this.strategies.get(action);
-			strategy.execute(pressed, event);
+			const action = bindings.get(event.button);
 
-			if(action === Action.ROTATE) {
+			/* Mouse buttons will be handled via mousedown and mouseup events because
+			pointerdown and pointerup events don't fire for each button. */
+			if(!(event instanceof PointerEvent &&
+				event.pointerType === PointerType.MOUSE)) {
 
-				this.dragging = pressed;
+				const strategy = this.strategies.get(action);
+				strategy.execute(pressed, event);
+
+				if(action === Action.ROTATE) {
+
+					this.dragging = pressed;
+
+				}
+
+			}
 
 			}
 
@@ -780,10 +794,12 @@ export class SpatialControls extends EventDispatcher
 				break;
 
 			case "pointerdown":
+			case "mousedown":
 				this.handlePointerButtonEvent(event as PointerEvent, true);
 				break;
 
 			case "pointerup":
+			case "mouseup":
 				this.handlePointerButtonEvent(event as PointerEvent, false);
 				break;
 
