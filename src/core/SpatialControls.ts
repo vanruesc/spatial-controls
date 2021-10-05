@@ -427,7 +427,6 @@ export class SpatialControls extends EventDispatcher
 			domElement.removeEventListener("pointerdown", this);
 			domElement.removeEventListener("pointerup", this);
 			domElement.removeEventListener("pointercancel", this);
-			domElement.removeEventListener("pointerleave", this);
 			domElement.removeEventListener("wheel", this);
 			domElement.removeEventListener("pointermove", this);
 
@@ -551,7 +550,7 @@ export class SpatialControls extends EventDispatcher
 	}
 
 	/**
-	 * Handles pointer events.
+	 * Handles pointer button events.
 	 *
 	 * @param event - A pointer event.
 	 * @param pressed - Whether the pointer button has been pressed down.
@@ -582,6 +581,14 @@ export class SpatialControls extends EventDispatcher
 				}
 
 			}
+
+			if(event instanceof PointerEvent) {
+
+				if(pressed && behaviour === PointerBehaviour.DEFAULT) {
+
+					this.domElement.setPointerCapture(event.pointerId);
+
+				}
 
 			}
 
@@ -804,7 +811,6 @@ export class SpatialControls extends EventDispatcher
 				break;
 
 			case "pointercancel":
-			case "pointerleave":
 				this.handlePointerCancelEvent(event as PointerEvent);
 				break;
 
