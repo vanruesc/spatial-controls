@@ -1,5 +1,5 @@
 import { SpatialControls } from "../core";
-import { PointerBehaviour, PointerType } from "../input";
+import { PointerBehaviour } from "../input";
 import { Strategy } from "./Strategy";
 
 /**
