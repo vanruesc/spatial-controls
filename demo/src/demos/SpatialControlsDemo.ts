@@ -306,29 +306,37 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 		folder = menu.addFolder("Pointer");
 		folder.add(params.pointer, "behaviour", PointerBehaviour)
-			.onChange(value => settings.pointer.setBehaviour(value));
+			.onChange((value: PointerBehaviour) => {
+
+				settings.pointer.setBehaviour(value);
+
+			});
 		folder.open();
 
 		folder = menu.addFolder("Sensitivity");
 		folder.add(params.sensitivity, "rotation X", 0.1, 3.0, 0.01)
-			.onChange(value => settings.rotation.setSensitivityX(value));
+			.onChange((value: number) => settings.rotation.setSensitivityX(value));
 		folder.add(params.sensitivity, "rotation Y", 0.1, 3.0, 0.01)
-			.onChange(value => settings.rotation.setSensitivityY(value));
+			.onChange((value: number) => settings.rotation.setSensitivityY(value));
 		folder.add(params.sensitivity, "translation", 0.1, 2.0, 0.01)
-			.onChange(value => settings.translation.setSensitivity(value));
+			.onChange((value: number) => settings.translation.setSensitivity(value));
 		folder.add(params.sensitivity, "boost multiplier", 1.0, 4.0, 0.01)
-			.onChange(value => settings.translation.setBoostMultiplier(value));
+			.onChange((value: number) => {
+
+				settings.translation.setBoostMultiplier(value);
+
+			});
 		folder.add(params.sensitivity, "zoom", 0.01, 3.0, 0.01)
-			.onChange(value => settings.zoom.setSensitivity(value));
+			.onChange((value: number) => settings.zoom.setSensitivity(value));
 		folder.open();
 
 		folder = menu.addFolder("Damping");
 		folder.add(params.damping, "rotation", 0.0, 1.0, 0.01)
-			.onChange(value => settings.rotation.setDamping(value));
+			.onChange((value: number) => settings.rotation.setDamping(value));
 		folder.add(params.damping, "zoom", 0.0, 1.0, 0.01)
-			.onChange(value => settings.zoom.setDamping(value));
+			.onChange((value: number) => settings.zoom.setDamping(value));
 		folder.add(params.damping, "translation", 0.0, 1.0, 0.01)
-			.onChange(value => settings.translation.setDamping(value));
+			.onChange((value: number) => settings.translation.setDamping(value));
 		folder.open();
 
 		folder = menu.addFolder("Rotation");
@@ -378,13 +386,13 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 			});
 
 		folder.add(params.rotation, "inverted X")
-			.onChange(value => settings.rotation.setInvertedX(value));
+			.onChange((value: boolean) => settings.rotation.setInvertedX(value));
 		folder.add(params.rotation, "inverted Y")
-			.onChange(value => settings.rotation.setInvertedY(value));
+			.onChange((value: boolean) => settings.rotation.setInvertedY(value));
 
 		folder = menu.addFolder("Translation");
 		folder.add(params.translation, "enabled").listen()
-			.onChange(value => {
+			.onChange((value: boolean) => {
 
 				if(!this.orbitEnabled) {
 
@@ -401,13 +409,13 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 		folder = menu.addFolder("Zooming");
 		folder.add(params.zoom, "enabled")
-			.onChange(value => settings.zoom.setEnabled(value));
+			.onChange((value: boolean) => settings.zoom.setEnabled(value));
 		folder.add(params.zoom, "inverted")
-			.onChange(value => settings.zoom.setInverted(value));
+			.onChange((value: boolean) => settings.zoom.setInverted(value));
 		folder.add(params.zoom, "min distance", 0.1, 1.0, 0.01)
-			.onChange(value => settings.zoom.setMinDistance(value));
+			.onChange((value: number) => settings.zoom.setMinDistance(value));
 		folder.add(params.zoom, "max distance", 1.0, 10.0, 0.01)
-			.onChange(value => settings.zoom.setMaxDistance(value));
+			.onChange((value: number) => settings.zoom.setMaxDistance(value));
 
 		menu.add(params, "save");
 
