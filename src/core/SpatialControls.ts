@@ -111,25 +111,38 @@ export class SpatialControls extends EventDispatcher
 	 *
 	 * @param position - A position.
 	 * @param quaternion - A quaternion.
-	 * @param domElement - A DOM element. Acts as the primary event target.
+	 * @param domElement - A DOM element. Serves as the primary event target.
 	 */
 
-	constructor(position: Vector3 = null, quaternion: Quaternion = null,
-		domElement: HTMLElement = document.body) {
+	constructor(position = new Vector3(), quaternion = new Quaternion(),
+		domElement: HTMLElement = null) {
 
 		super();
 
-		this.domElement = domElement;
+		if(domElement === null && typeof document !== "undefined") {
+
+			this.domElement = document.body;
+
+		} else {
+
+			this.domElement = domElement;
+
+		}
+
+		this.position = position;
+		this.quaternion = quaternion;
+		this.target = new Vector3();
+
+		this.previousPosition = new Vector3();
+		this.previousQuaternion = new Quaternion();
+		this.previousTarget = new Vector3();
+
 		const settings = this.settings = new Settings();
 		settings.addEventListener("change", (e: unknown) => {
 
 			this.handleEvent(e as Event);
 
 		});
-
-		this.position = position;
-		this.quaternion = quaternion;
-		this.target = new Vector3();
 
 		this.rotationManager = new RotationManager(
 			position,
@@ -179,11 +192,11 @@ export class SpatialControls extends EventDispatcher
 
 			}
 
-		}
+			this.previousPosition.copy(this.position);
+			this.previousQuaternion.copy(this.quaternion);
+			this.previousTarget.copy(this.target);
 
-		this.previousPosition = this.position.clone();
-		this.previousQuaternion = this.quaternion.clone();
-		this.previousTarget = this.target.clone();
+		}
 
 	}
 
