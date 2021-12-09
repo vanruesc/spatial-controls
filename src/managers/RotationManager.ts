@@ -251,7 +251,8 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
 
-			v.subVectors(this.position, this.target);
+			const pivotOffset = this.settings.rotation.getPivotOffset();
+			v.subVectors(u.subVectors(this.position, pivotOffset), this.target);
 			this.spherical1.setFromVector3(v);
 
 		} else {
@@ -278,7 +279,8 @@ export class RotationManager extends EventDispatcher implements Updatable {
 		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
 
 			// Construct the position using the spherical coordinates and the target.
-			this.position.setFromSpherical(this.spherical0).add(this.target);
+			const pivotOffset = this.settings.rotation.getPivotOffset();
+			this.position.setFromSpherical(this.spherical0).add(this.target).add(pivotOffset);
 
 		}
 
