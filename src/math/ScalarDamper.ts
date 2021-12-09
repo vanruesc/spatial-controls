@@ -84,8 +84,7 @@ export class ScalarDamper {
 	}
 
 	/**
-	 * Calculates the Omega coefficient which can be reused for interpolations
-	 * during the same frame.
+	 * Calculates the Omega coefficient which can be reused for interpolations during the same frame.
 	 *
 	 * @param lambda - A smoothing factor.
 	 * @return Omega.
@@ -98,8 +97,7 @@ export class ScalarDamper {
 	}
 
 	/**
-	 * Calculates the exponentional factor which can be reused for interpolations
-	 * during the same frame.
+	 * Calculates the exponentional factor which can be reused for interpolations during the same frame.
 	 *
 	 * @param omega - See {@link ScalarDamper.calculateOmega}.
 	 * @param dt - The delta time in seconds.

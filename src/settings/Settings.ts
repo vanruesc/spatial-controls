@@ -33,12 +33,16 @@ export class Settings extends EventDispatcher {
 
 	/**
 	 * Key bindings.
+	 *
+	 * This collection maps {@linkplain KeyCode key codes} to {@linkplain Action actions}.
 	 */
 
 	readonly keyBindings: Bindings<KeyCode>;
 
 	/**
-	 * Key bindings.
+	 * Pointer bindings.
+	 *
+	 * This collection maps {@linkplain PointerButton pointer buttons} to {@linkplain Action actions}.
 	 */
 
 	readonly pointerBindings: Bindings<PointerButton>;

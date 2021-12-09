@@ -14,7 +14,7 @@ const v = new Vector3();
 /**
  * Spatial controls for 3D translation and rotation.
  *
- * This class emits "update" events during interaction.
+ * This class emits "update" events when the position or quaternion is changed.
  */
 
 export class SpatialControls extends EventDispatcher implements Disposable, EventListenerObject, Updatable {
@@ -547,8 +547,7 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 			const action = bindings.get(event.button);
 
-			/* Mouse buttons will be handled via mousedown and mouseup events because
-			pointerdown and pointerup events don't fire for each button. */
+			// Mouse buttons are handled via mousedown/mouseup since pointer events don't fire for each button.
 			if(!(event instanceof PointerEvent && event.pointerType === PointerType.MOUSE)) {
 
 				const strategy = this.strategies.get(action);
