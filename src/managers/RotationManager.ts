@@ -1,12 +1,4 @@
-import {
-	Event as Event3,
-	EventDispatcher,
-	Matrix4,
-	Quaternion,
-	Spherical,
-	Vector3
-} from "three";
-
+import { Event as Event3, EventDispatcher, Matrix4, Quaternion, Spherical, Vector3 } from "three";
 import { MILLISECONDS_TO_SECONDS } from "../core/time";
 import { ControlMode, Updatable } from "../core";
 import { ScalarDamper } from "../math";
@@ -86,8 +78,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
  	 * @param settings - The settings.
 	 */
 
-	constructor(position: Vector3, quaternion: Quaternion, target: Vector3,
-		settings: Settings) {
+	constructor(position: Vector3, quaternion: Quaternion, target: Vector3, settings: Settings) {
 
 		super();
 
@@ -311,19 +302,11 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 		if(settings.general.getMode() === ControlMode.THIRD_PERSON) {
 
-			m.lookAt(
-				v.subVectors(this.position, target),
-				rotation.getPivotOffset(),
-				up
-			);
+			m.lookAt(v.subVectors(this.position, target), rotation.getPivotOffset(), up);
 
 		} else {
 
-			m.lookAt(
-				v.set(0, 0, 0),
-				target.setFromSpherical(this.spherical0),
-				up
-			);
+			m.lookAt(v.set(0, 0, 0), target.setFromSpherical(this.spherical0), up);
 
 		}
 
@@ -370,9 +353,8 @@ export class RotationManager extends EventDispatcher implements Updatable {
 		const s = this.spherical1;
 		const settings = this.settings;
 		const zoom = settings.zoom;
-		const orbit = (settings.general.getMode() === ControlMode.THIRD_PERSON);
 
-		if(zoom.isEnabled() && orbit) {
+		if(zoom.isEnabled() && settings.general.getMode() === ControlMode.THIRD_PERSON) {
 
 			const amount = sign * zoom.getSensitivity();
 			s.radius = zoom.isInverted() ? s.radius - amount : s.radius + amount;
@@ -429,11 +411,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 		const s0 = this.spherical0;
 		const s1 = this.spherical1;
 
-		const equal = (
-			s0.radius === s1.radius &&
-			s0.theta === s1.theta &&
-			s0.phi === s1.phi
-		);
+		const equal = (s0.radius === s1.radius && s0.theta === s1.theta && s0.phi === s1.phi);
 
 		if(!equal) {
 
@@ -447,10 +425,8 @@ export class RotationManager extends EventDispatcher implements Updatable {
 				const omega = ScalarDamper.calculateOmega(damping);
 				const exp = ScalarDamper.calculateExp(omega, elapsed);
 
-				s0.theta = scalarDampers[0]
-					.interpolate(s0.theta, s1.theta, damping, omega, exp, elapsed);
-				s0.phi = scalarDampers[1]
-					.interpolate(s0.phi, s1.phi, damping, omega, exp, elapsed);
+				s0.theta = scalarDampers[0].interpolate(s0.theta, s1.theta, damping, omega, exp, elapsed);
+				s0.phi = scalarDampers[1].interpolate(s0.phi, s1.phi, damping, omega, exp, elapsed);
 
 			} else {
 
@@ -465,8 +441,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 				const omega = ScalarDamper.calculateOmega(damping);
 				const exp = ScalarDamper.calculateExp(omega, elapsed);
 
-				s0.radius = scalarDampers[2]
-					.interpolate(s0.radius, s1.radius, damping, omega, exp, elapsed);
+				s0.radius = scalarDampers[2].interpolate(s0.radius, s1.radius, damping, omega, exp, elapsed);
 
 			} else {
 

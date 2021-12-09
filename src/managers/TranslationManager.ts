@@ -1,10 +1,4 @@
-import {
-	Event as Event3,
-	EventDispatcher,
-	Quaternion,
-	Vector3
-} from "three";
-
+import { Event as Event3, EventDispatcher, Quaternion, Vector3 } from "three";
 import { MovementState } from "./MovementState";
 import { ControlMode } from "../core";
 import { Settings } from "../settings";
@@ -90,8 +84,7 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	 * @param settings - The settings.
 	 */
 
-	constructor(position: Vector3, quaternion: Quaternion, target: Vector3,
-		settings: Settings) {
+	constructor(position: Vector3, quaternion: Quaternion, target: Vector3, settings: Settings) {
 
 		super();
 
@@ -313,14 +306,9 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 					const omega = ScalarDamper.calculateOmega(damping);
 					const exp = ScalarDamper.calculateExp(omega, elapsed);
 
-					v0.x = scalarDampers[0]
-						.interpolate(v0.x, v1.x, damping, omega, exp, elapsed);
-
-					v0.y = scalarDampers[1]
-						.interpolate(v0.y, v1.y, damping, omega, exp, elapsed);
-
-					v0.z = scalarDampers[2]
-						.interpolate(v0.z, v1.z, damping, omega, exp, elapsed);
+					v0.x = scalarDampers[0].interpolate(v0.x, v1.x, damping, omega, exp, elapsed);
+					v0.y = scalarDampers[1].interpolate(v0.y, v1.y, damping, omega, exp, elapsed);
+					v0.z = scalarDampers[2].interpolate(v0.z, v1.z, damping, omega, exp, elapsed);
 
 				} else {
 

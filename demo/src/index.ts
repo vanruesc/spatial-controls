@@ -1,11 +1,5 @@
 import { PerspectiveCamera, sRGBEncoding, WebGLRenderer } from "three";
-
-import {
-	calculateVerticalFoV,
-	DemoManager,
-	DemoManagerEvent
-} from "three-demo";
-
+import { calculateVerticalFoV, DemoManager, DemoManagerEvent } from "three-demo";
 import { SpatialControlsDemo } from "./demos/SpatialControlsDemo";
 
 window.addEventListener("load", (event: Event) => {

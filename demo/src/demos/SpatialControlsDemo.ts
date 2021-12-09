@@ -306,11 +306,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 
 		folder = menu.addFolder("Pointer");
 		folder.add(params.pointer, "behaviour", PointerBehaviour)
-			.onChange((value: PointerBehaviour) => {
-
-				settings.pointer.setBehaviour(value);
-
-			});
+			.onChange((value: PointerBehaviour) => settings.pointer.setBehaviour(value));
 		folder.open();
 
 		folder = menu.addFolder("Sensitivity");
@@ -321,11 +317,7 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		folder.add(params.sensitivity, "translation", 0.1, 2.0, 0.01)
 			.onChange((value: number) => settings.translation.setSensitivity(value));
 		folder.add(params.sensitivity, "boost multiplier", 1.0, 4.0, 0.01)
-			.onChange((value: number) => {
-
-				settings.translation.setBoostMultiplier(value);
-
-			});
+			.onChange((value: number) => settings.translation.setBoostMultiplier(value));
 		folder.add(params.sensitivity, "zoom", 0.01, 3.0, 0.01)
 			.onChange((value: number) => settings.zoom.setSensitivity(value));
 		folder.open();
@@ -340,51 +332,38 @@ export class SpatialControlsDemo extends Demo implements EventListenerObject {
 		folder.open();
 
 		folder = menu.addFolder("Rotation");
-
 		folder.add(params.rotation, "min azim. angle", -Math.PI, 0.0, 1e-3)
 			.onChange((value: number) => {
 
-				const angle = (value <= -Math.PI + 1e-3) ?
-					Number.NEGATIVE_INFINITY : value;
-
+				const angle = (value <= -Math.PI + 1e-3) ? Number.NEGATIVE_INFINITY : value;
 				params.rotation["min azim. angle"] = angle;
 				settings.rotation.setMinAzimuthalAngle(angle);
 
 			});
-
 		folder.add(params.rotation, "max azim. angle", 0.0, Math.PI, 1e-3)
 			.onChange((value: number) => {
 
-				const angle = (value >= Math.PI - 1e-3) ?
-					Number.POSITIVE_INFINITY : value;
-
+				const angle = (value >= Math.PI - 1e-3) ? Number.POSITIVE_INFINITY : value;
 				params.rotation["max azim. angle"] = angle;
 				settings.rotation.setMaxAzimuthalAngle(angle);
 
 			});
-
 		folder.add(params.rotation, "min polar angle", -Math.PI, Math.PI, 1e-3)
 			.onChange((value: number) => {
 
-				const angle = (value <= -Math.PI + 1e-3) ?
-					Number.NEGATIVE_INFINITY : value;
-
+				const angle = (value <= -Math.PI + 1e-3) ? Number.NEGATIVE_INFINITY : value;
 				params.rotation["min polar angle"] = angle;
 				settings.rotation.setMinPolarAngle(angle);
 
 			});
-
 		folder.add(params.rotation, "max polar angle", 0.0, Math.PI * 2, 1e-3)
 			.onChange((value: number) => {
 
-				const angle = (value >= Math.PI * 2.0 - 1e-3) ?
-					Number.POSITIVE_INFINITY : value;
-
+				const angle = (value >= Math.PI * 2.0 - 1e-3) ? Number.POSITIVE_INFINITY : value;
 				params.rotation["max polar angle"] = angle;
 				settings.rotation.setMaxPolarAngle(angle);
 
 			});
-
 		folder.add(params.rotation, "inverted X")
 			.onChange((value: boolean) => settings.rotation.setInvertedX(value));
 		folder.add(params.rotation, "inverted Y")

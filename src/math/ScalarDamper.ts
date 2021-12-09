@@ -53,8 +53,7 @@ export class ScalarDamper {
 	 * @return The interpolated value.
 	 */
 
-	interpolate(a: number, b: number, lambda: number, omega: number, exp: number,
-		dt: number): number {
+	interpolate(a: number, b: number, lambda: number, omega: number, exp: number, dt: number): number {
 
 		// Calculate the difference and clamp to max speed.
 		const maxChange = this.maxSpeed * Math.max(lambda, 1e-4);

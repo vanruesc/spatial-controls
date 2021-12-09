@@ -1,13 +1,5 @@
 import { EventDispatcher, Quaternion, Vector3 } from "three";
-
-import {
-	BoostStrategy,
-	MovementStrategy,
-	RotationStrategy,
-	Strategy,
-	ZoomStrategy
-} from "../strategies";
-
+import { BoostStrategy, MovementStrategy, RotationStrategy, Strategy, ZoomStrategy } from "../strategies";
 import { PointerBehaviour, PointerType } from "../input";
 import { RotationManager, TranslationManager } from "../managers";
 import { Settings } from "../settings/Settings";
@@ -25,8 +17,7 @@ const v = new Vector3();
  * This class emits "update" events during interaction.
  */
 
-export class SpatialControls extends EventDispatcher
-	implements Disposable, EventListenerObject, Updatable {
+export class SpatialControls extends EventDispatcher implements Disposable, EventListenerObject, Updatable {
 
 	/**
 	 * A DOM element. Acts as the primary event target.
@@ -114,8 +105,7 @@ export class SpatialControls extends EventDispatcher
 	 * @param domElement - A DOM element. Serves as the primary event target.
 	 */
 
-	constructor(position = new Vector3(), quaternion = new Quaternion(),
-		domElement: HTMLElement = null) {
+	constructor(position = new Vector3(), quaternion = new Quaternion(), domElement: HTMLElement = null) {
 
 		super();
 
@@ -138,31 +128,14 @@ export class SpatialControls extends EventDispatcher
 		this.previousTarget = new Vector3();
 
 		const settings = this.settings = new Settings();
-		settings.addEventListener("change", (e: unknown) => {
+		settings.addEventListener("change", (e: unknown) => this.handleEvent(e as Event));
 
-			this.handleEvent(e as Event);
+		this.rotationManager = new RotationManager(position, quaternion, this.target, settings);
+		this.translationManager = new TranslationManager(position, quaternion, this.target, settings);
+		this.rotationManager.addEventListener("update", e => this.dispatchEvent(e));
+		this.translationManager.addEventListener("update", e => this.dispatchEvent(e));
 
-		});
-
-		this.rotationManager = new RotationManager(
-			position,
-			quaternion,
-			this.target,
-			settings
-		);
-
-		this.translationManager = new TranslationManager(
-			position,
-			quaternion,
-			this.target,
-			settings
-		);
-
-		const rm = this.rotationManager, tm = this.translationManager;
-		rm.addEventListener("update", e => this.dispatchEvent(e));
-		tm.addEventListener("update", e => this.dispatchEvent(e));
-
-		const state = tm.getMovementState();
+		const state = this.translationManager.getMovementState();
 
 		this.strategies = new Map<Action, Strategy>([
 			[Action.MOVE_FORWARD, new MovementStrategy(state, Direction.FORWARD)],
@@ -171,8 +144,8 @@ export class SpatialControls extends EventDispatcher
 			[Action.MOVE_RIGHT, new MovementStrategy(state, Direction.RIGHT)],
 			[Action.MOVE_DOWN, new MovementStrategy(state, Direction.DOWN)],
 			[Action.MOVE_UP, new MovementStrategy(state, Direction.UP)],
-			[Action.ZOOM_OUT, new ZoomStrategy(rm, false)],
-			[Action.ZOOM_IN, new ZoomStrategy(rm, true)],
+			[Action.ZOOM_OUT, new ZoomStrategy(this.rotationManager, false)],
+			[Action.ZOOM_IN, new ZoomStrategy(this.rotationManager, true)],
 			[Action.BOOST, new BoostStrategy(state)],
 			[Action.ROTATE, new RotationStrategy(this)]
 		]);
@@ -407,7 +380,6 @@ export class SpatialControls extends EventDispatcher
 	setEnabled(enabled = true): SpatialControls {
 
 		const domElement = this.domElement;
-
 		this.translationManager.getMovementState().reset();
 
 		if(enabled && !this.enabled) {
@@ -500,8 +472,7 @@ export class SpatialControls extends EventDispatcher
 
 		if(locked) {
 
-			if(document.pointerLockElement !== this.domElement &&
-				this.domElement.requestPointerLock !== undefined) {
+			if(document.pointerLockElement !== this.domElement && this.domElement.requestPointerLock !== undefined) {
 
 				this.domElement.requestPointerLock();
 
@@ -525,9 +496,7 @@ export class SpatialControls extends EventDispatcher
 
 		if(enabled) {
 
-			this.domElement.addEventListener("pointermove", this, {
-				passive: true
-			});
+			this.domElement.addEventListener("pointermove", this, { passive: true });
 
 		} else {
 
@@ -569,8 +538,7 @@ export class SpatialControls extends EventDispatcher
 	 * @param pressed - Whether the pointer button has been pressed down.
 	 */
 
-	private handlePointerButtonEvent(event: PointerEvent,
-		pressed: boolean): void {
+	private handlePointerButtonEvent(event: PointerEvent, pressed: boolean): void {
 
 		const bindings = this.settings.pointerBindings;
 		const behaviour = this.settings.pointer.getBehaviour();
@@ -581,8 +549,7 @@ export class SpatialControls extends EventDispatcher
 
 			/* Mouse buttons will be handled via mousedown and mouseup events because
 			pointerdown and pointerup events don't fire for each button. */
-			if(!(event instanceof PointerEvent &&
-				event.pointerType === PointerType.MOUSE)) {
+			if(!(event instanceof PointerEvent && event.pointerType === PointerType.MOUSE)) {
 
 				const strategy = this.strategies.get(action);
 				strategy.execute(pressed, event);
@@ -662,9 +629,7 @@ export class SpatialControls extends EventDispatcher
 
 		if(document.pointerLockElement === this.domElement) {
 
-			this.domElement.addEventListener("pointermove", this, {
-				passive: true
-			});
+			this.domElement.addEventListener("pointermove", this, { passive: true });
 
 		} else {
 
