@@ -3,7 +3,7 @@
 [![CI](https://github.com/vanruesc/spatial-controls/actions/workflows/ci.yml/badge.svg)](https://github.com/vanruesc/spatial-controls/actions/workflows/ci.yml)
 [![Version](https://badgen.net/npm/v/spatial-controls?color=green)](https://www.npmjs.com/package/spatial-controls)
 
-A 3D movement controller that supports multiple control modes and configurable input settings.
+A 3D movement controller that supports 1st and 3rd person mode and configurable input settings.
 
 *[Demo](https://vanruesc.github.io/spatial-controls/demo)&ensp;&middot;&ensp;[Documentation](https://vanruesc.github.io/spatial-controls/docs)*
 
@@ -81,6 +81,8 @@ pointerBindings.set(PointerButton.SECONDARY, Action.ROTATE);
 // The context menu can be disabled like this:
 document.body.addEventListener("contextmenu", e => e.preventDefault());
 ```
+
+Check the [docs](https://vanruesc.github.io/spatial-controls/docs/classes/Settings.html) for more information on all available settings.
 
 ### Saving and Loading
 
