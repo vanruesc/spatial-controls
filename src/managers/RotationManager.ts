@@ -385,7 +385,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 		}
 
-		return this.updatePosition().updateSpherical();
+		return this;
 
 	}
 
