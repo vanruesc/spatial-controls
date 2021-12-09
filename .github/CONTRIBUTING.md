@@ -19,11 +19,11 @@ Thank you for considering to contribute! :speech_balloon:
 When contributing to this repository, please first discuss the changes you wish to make with the owners of this repository via the issue tracker.
 A proposed change should be focused and concise. Please adhere to the following guideline:
 
-1. Create a feature branch based on the `dev` branch.
+1. Create a feature branch based on the `main` branch.
 2. Implement your patch or feature on that branch.
 3. Lint and test your changes. Maintain the existing coding style.
 4. Add unit tests for any new or changed functionality.
-5. Navigate to your fork on Github, select your feature branch and create a new Pull Request targeting the `dev` branch.
+5. Navigate to your fork on Github, select your feature branch and create a new Pull Request targeting the `main` branch.
 6. Once your PR has been merged, you can safely remove your feature-branch.
 
 
@@ -42,7 +42,7 @@ The following table provides an overview of the most important scripts:
 
 ### Testing :heavy_check_mark:
 
-Use the script `npm run dev` to run an HTTP server, build the demo bundle and watch files for changes. Open your web browser and navigate to http://localhost:5000/demo/index.html. Extend one of the existing demos or create a new one depending on the kind of feature you wish to implement. Make sure that your changes don't break the existing demos.
+Use the script `npm run dev` to run an HTTP server, build the demo bundle and watch files for changes. Open your web browser and navigate to http://localhost:3000/demo/index.html. Extend one of the existing demos or create a new one depending on the kind of feature you wish to implement. Make sure that your changes don't break the existing demos.
 
 __Hint__: Open the development tools in your browser and make sure that the cache is disabled while it's open.
 
