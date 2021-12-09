@@ -82,7 +82,7 @@ pointerBindings.set(PointerButton.SECONDARY, Action.ROTATE);
 document.body.addEventListener("contextmenu", e => e.preventDefault());
 ```
 
-Check the [docs](https://vanruesc.github.io/spatial-controls/docs/classes/Settings.html) for more information on all available settings.
+See the [docs](https://vanruesc.github.io/spatial-controls/docs/classes/Settings.html) for more information.
 
 ### Saving and Loading
 
