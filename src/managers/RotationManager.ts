@@ -377,7 +377,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
 
-			this.target.copy(point);
+			this.target.copy(point).sub(this.settings.rotation.getPivotOffset());
 
 		} else {
 
@@ -385,7 +385,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 		}
 
-		return this.updateSpherical().updateQuaternion();
+		return this.updatePosition().updateSpherical();
 
 	}
 
