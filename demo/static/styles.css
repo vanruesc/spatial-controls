@@ -22,6 +22,25 @@ main {
 	height: 100%;
 }
 
+footer {
+	bottom: 0;
+	left: 0;
+	position: absolute;
+	user-select: none;
+	z-index: 1;
+}
+
+footer img {
+	cursor: pointer;
+	display: block;
+	opacity: 0.075;
+	transition: opacity 0.2s;
+}
+
+footer img:hover {
+	opacity: 0.25;
+}
+
 .loading {
 	align-items: center;
 	bottom: 0;
@@ -33,6 +52,19 @@ main {
 	right: 0;
 	top: 0;
 	user-select: none;
+}
+
+.github, .code {
+	bottom: 20px;
+	position: absolute;
+}
+
+.code {
+	left: 20px;
+}
+
+.github {
+	left: 60px;
 }
 
 .hidden {

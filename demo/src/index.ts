@@ -15,7 +15,6 @@ import {
 	TextureLoader,
 	Clock,
 	FogExp2,
-	GridHelper,
 	RepeatWrapping,
 	Texture,
 	AdditiveBlending,
