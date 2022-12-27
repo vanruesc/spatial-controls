@@ -1,13 +1,17 @@
 import { createRequire } from "module";
+import alias from "esbuild-plugin-alias";
 import esbuild from "esbuild";
+import path from "path";
+import url from "url";
 
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 const require = createRequire(import.meta.url);
 const pkg = require("./package");
-const date = (new Date()).toDateString();
+const date = new Date();
 const banner = `/**
- * ${pkg.name} v${pkg.version} build ${date}
+ * ${pkg.name} v${pkg.version} build ${date.toDateString()}
  * ${pkg.homepage}
- * Copyright ${date.slice(-4)} ${pkg.author.name}
+ * Copyright 2017 ${pkg.author.name}
  * @license ${pkg.license}
  */`;
 
@@ -29,5 +33,10 @@ await esbuild.build({
 	logLevel: "info",
 	format: "iife",
 	target: "es6",
-	bundle: true
+	bundle: true,
+	plugins: [
+		alias({
+			[pkg.name]: path.resolve(__dirname, "./src/index.ts")
+		})
+	]
 }).catch(() => process.exit(1));
