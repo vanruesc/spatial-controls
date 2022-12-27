@@ -1,7 +1,7 @@
 /**
  * An enumeration of key codes.
  *
- * @see {@link KeyboardEvent.code}
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
  * @group Input
  */
 
