@@ -1,8 +1,9 @@
 import { Event as Event3, EventDispatcher, Matrix4, Quaternion, Spherical, Vector3 } from "three";
-import { MILLISECONDS_TO_SECONDS } from "../core/time";
-import { ControlMode, Updatable } from "../core";
-import { ScalarDamper } from "../math";
-import { Settings } from "../settings";
+import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
+import { ControlMode } from "../core/ControlMode.js";
+import { Updatable } from "../core/Updatable.js";
+import { ScalarDamper } from "../math/ScalarDamper.js";
+import { Settings } from "../settings/Settings.js";
 
 const TWO_PI = Math.PI * 2;
 const u = new Vector3();
@@ -11,27 +12,37 @@ const m = new Matrix4();
 
 /**
  * A rotation manager.
+ *
+ * @group Managers
  */
 
 export class RotationManager extends EventDispatcher implements Updatable {
 
 	/**
-	 * The position that will be modified.
+	 * Triggers when the position or quaternion is changed.
+	 *
+	 * @event
 	 */
 
-	private position: Vector3;
+	static readonly EVENT_UPDATE = "update";
 
 	/**
-	 * The quaternion that will be modified.
+	 * @see {@link position}
 	 */
 
-	private quaternion: Quaternion;
+	private _position: Vector3;
 
 	/**
-	 * The target.
+	 * @see {@link quaternion}
 	 */
 
-	private target: Vector3;
+	private _quaternion: Quaternion;
+
+	/**
+	 * @see {@link target}
+	 */
+
+	private _target: Vector3;
 
 	/**
 	 * The settings.
@@ -82,14 +93,14 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 		super();
 
-		this.position = position;
-		this.quaternion = quaternion;
-		this.target = target;
+		this._position = position;
+		this._quaternion = quaternion;
+		this._target = target;
 		this.settings = settings;
 		this.spherical0 = new Spherical();
 		this.spherical1 = new Spherical();
 		this.timestamp = 0;
-		this.updateEvent = { type: "update" };
+		this.updateEvent = { type: RotationManager.EVENT_UPDATE };
 
 		this.scalarDampers = [
 			new ScalarDamper(),
@@ -100,51 +111,65 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	}
 
 	/**
-	 * Sets the position.
-	 *
-	 * @param position - A position.
-	 * @return This manager.
+	 * The position.
 	 */
 
-	setPosition(position: Vector3): RotationManager {
+	get position(): Vector3 {
 
-		this.position = position;
-		return this;
+		return this._position;
+
+	}
+
+	set position(value: Vector3) {
+
+		this._position = value;
 
 	}
 
 	/**
-	 * Sets the quaternion.
-	 *
-	 * @param quaternion - A quaternion.
-	 * @return This manager.
+	 * The quaternion.
 	 */
 
-	setQuaternion(quaternion: Quaternion): RotationManager {
+	get quaternion(): Quaternion {
 
-		this.quaternion = quaternion;
-		return this;
+		return this._quaternion;
+
+	}
+
+	set quaternion(value: Quaternion) {
+
+		this._quaternion = value;
 
 	}
 
 	/**
-	 * Sets the target.
-	 *
-	 * @param target - A target.
-	 * @return This manager.
+	 * The target.
 	 */
 
-	setTarget(target: Vector3): RotationManager {
+	get target(): Vector3 {
 
-		this.target = target;
-		return this;
+		return this._target;
+
+	}
+
+	set target(value: Vector3) {
+
+		this._target = value;
+
+	}
+
+	/**
+	 * The current radius.
+	 */
+
+	get radius(): number {
+
+		return this.spherical0.radius;
 
 	}
 
 	/**
 	 * Resets the current velocity.
-	 *
-	 * @return This manager.
 	 */
 
 	resetVelocity(): void {
@@ -166,15 +191,15 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	 * @return This manager.
 	 */
 
-	private restrictAngles(): RotationManager {
+	private restrictAngles(): this {
 
 		const s = this.spherical1;
 		const rotation = this.settings.rotation;
 
-		const thetaMin = rotation.getMinAzimuthalAngle();
-		const thetaMax = rotation.getMaxAzimuthalAngle();
-		const phiMin = rotation.getMinPolarAngle();
-		const phiMax = rotation.getMaxPolarAngle();
+		const thetaMin = rotation.minAzimuthalAngle;
+		const thetaMax = rotation.maxAzimuthalAngle;
+		const phiMin = rotation.minPolarAngle;
+		const phiMax = rotation.maxPolarAngle;
 
 		s.theta = Math.min(Math.max(s.theta, thetaMin), thetaMax);
 		s.phi = Math.min(Math.max(s.phi, phiMin), phiMax);
@@ -195,28 +220,16 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	 * @return This manager.
 	 */
 
-	private restrictRadius(): RotationManager {
+	private restrictRadius(): this {
 
 		const s = this.spherical1;
 		const zoom = this.settings.zoom;
-		const min = zoom.getMinDistance();
-		const max = zoom.getMaxDistance();
+		const min = zoom.minDistance;
+		const max = zoom.maxDistance;
 
 		s.radius = Math.min(Math.max(s.radius, min), max);
 
 		return this;
-
-	}
-
-	/**
-	 * Returns the current radius.
-	 *
-	 * @return The radius.
-	 */
-
-	getRadius(): number {
-
-		return this.spherical0.radius;
 
 	}
 
@@ -226,7 +239,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	 * @return This manager.
 	 */
 
-	restrictSpherical(): RotationManager {
+	restrictSpherical(): this {
 
 		return this.restrictRadius().restrictAngles();
 
@@ -238,11 +251,11 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	 * @return This manager.
 	 */
 
-	updateSpherical(): RotationManager {
+	updateSpherical(): this {
 
-		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
+		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
 
-			const pivotOffset = this.settings.rotation.getPivotOffset();
+			const pivotOffset = this.settings.rotation.pivotOffset;
 			v.subVectors(u.subVectors(this.position, pivotOffset), this.target);
 			this.spherical1.setFromVector3(v);
 
@@ -265,12 +278,12 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	 * @return This manager.
 	 */
 
-	updatePosition(): RotationManager {
+	updatePosition(): this {
 
-		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
+		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
 
 			// Construct the position using the spherical coordinates and the target.
-			const pivotOffset = this.settings.rotation.getPivotOffset();
+			const pivotOffset = this.settings.rotation.pivotOffset;
 			this.position.setFromSpherical(this.spherical0).add(this.target).add(pivotOffset);
 
 		}
@@ -285,24 +298,24 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	 * @return This manager.
 	 */
 
-	updateQuaternion(): RotationManager {
+	updateQuaternion(): this {
 
 		const settings = this.settings;
 		const rotation = settings.rotation;
 		const target = this.target;
-		const up = u.copy(rotation.getUpVector());
+		const up = u.copy(rotation.up);
 		const phi = this.spherical0.phi % TWO_PI;
 
 		if((phi < 0.0 && phi > -Math.PI) || (phi > Math.PI && phi < TWO_PI)) {
 
-			// The orientation is currently upside down.
+			// The current orientation is upside down.
 			up.negate();
 
 		}
 
-		if(settings.general.getMode() === ControlMode.THIRD_PERSON) {
+		if(settings.general.mode === ControlMode.THIRD_PERSON) {
 
-			m.lookAt(v.subVectors(this.position, target), rotation.getPivotOffset(), up);
+			m.lookAt(v.subVectors(this.position, target), rotation.pivotOffset, up);
 
 		} else {
 
@@ -325,16 +338,16 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	 * @return This manager.
 	 */
 
-	adjustSpherical(theta: number, phi: number): RotationManager {
+	adjustSpherical(theta: number, phi: number): this {
 
 		const s = this.spherical1;
 		const settings = this.settings;
 		const rotation = settings.rotation;
-		const invertedY = rotation.isInvertedY();
-		const orbit = (settings.general.getMode() === ControlMode.THIRD_PERSON);
+		const invertedY = rotation.invertedY;
+		const orbit = (settings.general.mode === ControlMode.THIRD_PERSON);
 		const orbitXorInvertedY = ((orbit || invertedY) && !(orbit && invertedY));
 
-		s.theta = !rotation.isInvertedX() ? s.theta - theta : s.theta + theta;
+		s.theta = rotation.invertedX ? s.theta + theta : s.theta - theta;
 		s.phi = orbitXorInvertedY ? s.phi - phi : s.phi + phi;
 
 		return this.restrictAngles();
@@ -348,16 +361,16 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	 * @return This manager.
 	 */
 
-	zoom(sign: number): RotationManager {
+	zoom(sign: number): this {
 
 		const s = this.spherical1;
 		const settings = this.settings;
 		const zoom = settings.zoom;
 
-		if(zoom.isEnabled() && settings.general.getMode() === ControlMode.THIRD_PERSON) {
+		if(zoom.enabled && settings.general.mode === ControlMode.THIRD_PERSON) {
 
-			const amount = sign * zoom.getSensitivity();
-			s.radius = zoom.isInverted() ? s.radius - amount : s.radius + amount;
+			const amount = sign * zoom.sensitivity;
+			s.radius = zoom.inverted ? s.radius - amount : s.radius + amount;
 			this.restrictRadius();
 
 		}
@@ -373,11 +386,11 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	 * @return This manager.
 	 */
 
-	lookAt(point: Vector3): RotationManager {
+	lookAt(point: Vector3): this {
 
-		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
+		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
 
-			this.target.copy(point).sub(this.settings.rotation.getPivotOffset());
+			this.target.copy(point).sub(this.settings.rotation.pivotOffset);
 
 		} else {
 
@@ -399,7 +412,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	getViewDirection(view: Vector3): Vector3 {
 
 		const settings = this.settings;
-		const orbit = (settings.general.getMode() === ControlMode.THIRD_PERSON);
+		const orbit = (settings.general.mode === ControlMode.THIRD_PERSON);
 		view.setFromSpherical(this.spherical0).normalize();
 
 		return orbit ? view.negate() : view;
@@ -419,9 +432,9 @@ export class RotationManager extends EventDispatcher implements Updatable {
 			const scalarDampers = this.scalarDampers;
 			const elapsed = (timestamp - this.timestamp) * MILLISECONDS_TO_SECONDS;
 
-			if(settings.rotation.getDamping() > 0.0) {
+			if(settings.rotation.damping > 0.0) {
 
-				const damping = settings.rotation.getDamping();
+				const damping = settings.rotation.damping;
 				const omega = ScalarDamper.calculateOmega(damping);
 				const exp = ScalarDamper.calculateExp(omega, elapsed);
 
@@ -435,9 +448,9 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 			}
 
-			if(settings.zoom.getDamping() > 0.0) {
+			if(settings.zoom.damping > 0.0) {
 
-				const damping = settings.zoom.getDamping();
+				const damping = settings.zoom.damping;
 				const omega = ScalarDamper.calculateOmega(damping);
 				const exp = ScalarDamper.calculateExp(omega, elapsed);
 

@@ -1,4 +1,4 @@
-export { KeyCode } from "./KeyCode";
-export { PointerBehaviour } from "./PointerBehaviour";
-export { PointerButton } from "./PointerButton";
-export { PointerType } from "./PointerType";
+export { KeyCode } from "./KeyCode.js";
+export { PointerBehaviour } from "./PointerBehaviour.js";
+export { PointerButton } from "./PointerButton.js";
+export { PointerType } from "./PointerType.js";

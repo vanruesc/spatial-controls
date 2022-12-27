@@ -1,9 +1,11 @@
-import { Direction } from "../core";
-import { MovementState } from "../managers";
-import { Strategy } from "./Strategy";
+import { Direction } from "../core/Direction.js";
+import { MovementState } from "../managers/MovementState.js";
+import { Strategy } from "./Strategy.js";
 
 /**
  * A movement strategy.
+ *
+ * @group Strategies
  */
 
 export class MovementStrategy implements Strategy {

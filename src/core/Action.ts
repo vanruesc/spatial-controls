@@ -1,5 +1,7 @@
 /**
  * An enumeration of control actions.
+ *
+ * @group Core
  */
 
 export enum Action {

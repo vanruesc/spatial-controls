@@ -1,5 +1,7 @@
 /**
  * A strategy.
+ *
+ * @group Strategies
  */
 
 export interface Strategy {

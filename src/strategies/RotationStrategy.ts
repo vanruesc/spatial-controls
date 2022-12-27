@@ -1,9 +1,11 @@
-import { SpatialControls } from "../core";
-import { PointerBehaviour } from "../input";
-import { Strategy } from "./Strategy";
+import { SpatialControls } from "../core/SpatialControls.js";
+import { PointerBehaviour } from "../input/PointerBehaviour.js";
+import { Strategy } from "./Strategy.js";
 
 /**
  * A rotation strategy.
+ *
+ * @group Strategies
  */
 
 export class RotationStrategy implements Strategy {
@@ -28,7 +30,7 @@ export class RotationStrategy implements Strategy {
 
 	execute(flag: boolean, event: Event): void {
 
-		const behaviour = this.controls.settings.pointer.getBehaviour();
+		const behaviour = this.controls.settings.pointer.behaviour;
 		const isMouse = (event.type === "mousedown" || event.type === "mouseup");
 
 		if(isMouse && behaviour !== PointerBehaviour.DEFAULT) {

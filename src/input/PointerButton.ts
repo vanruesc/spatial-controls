@@ -1,5 +1,7 @@
 /**
  * An enumeration of pointer buttons.
+ *
+ * @group Input
  */
 
 export enum PointerButton {

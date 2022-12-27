@@ -1,15 +1,18 @@
 {
-	"include": ["src", "demo/src"],
+	"include": ["./src", "./demo/src"],
 	"compilerOptions": {
 		"rootDir": ".",
-		"moduleResolution": "node",
+		"baseUrl": ".",
+		"paths": {
+			"spatial-controls": ["./src/index.js"]
+		},
+		"moduleResolution": "NodeNext",
 		"module": "ESNext",
 		"target": "ESNext",
 		"strict": true,
 		"sourceMap": false,
 		"importHelpers": true,
 		"skipLibCheck": true,
-		"strictNullChecks": false,
 		"noImplicitOverride": true
 	},
 	"typedocOptions": {

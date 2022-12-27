@@ -2,6 +2,8 @@
  * A scalar damper that retains velocity.
  *
  * Based on Game Programming Gems 4 Chapter 1.10.
+ *
+ * @group Math
  */
 
 export class ScalarDamper {

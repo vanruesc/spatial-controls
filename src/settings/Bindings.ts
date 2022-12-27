@@ -1,18 +1,9 @@
-import { Action } from "../core/Action";
-
-/**
- * JSON representation of input bindings.
- */
-
-export interface BindingsJSON<T> {
-
-	defaultActions: [[T, Action]];
-	actions: [[T, Action]];
-
-}
+import { Action } from "../core/Action.js";
 
 /**
  * Input bindings.
+ *
+ * @group Settings
  */
 
 export class Bindings<T> {
@@ -129,7 +120,7 @@ export class Bindings<T> {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: BindingsJSON<T>): Bindings<T> {
+	fromJSON(json: Bindings<T>): Bindings<T> {
 
 		if(json !== undefined) {
 
@@ -162,7 +153,7 @@ export class Bindings<T> {
 	 * @return The action, or undefined if the key is not bound to any action.
 	 */
 
-	get(key: T): Action {
+	get(key: T): Action | undefined {
 
 		return this.actions.get(key);
 

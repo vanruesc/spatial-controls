@@ -1,5 +1,5 @@
-export { BoostStrategy } from "./BoostStrategy";
-export { MovementStrategy } from "./MovementStrategy";
-export { RotationStrategy } from "./RotationStrategy";
-export { Strategy } from "./Strategy";
-export { ZoomStrategy } from "./ZoomStrategy";
+export { BoostStrategy } from "./BoostStrategy.js";
+export { MovementStrategy } from "./MovementStrategy.js";
+export { RotationStrategy } from "./RotationStrategy.js";
+export { Strategy } from "./Strategy.js";
+export { ZoomStrategy } from "./ZoomStrategy.js";

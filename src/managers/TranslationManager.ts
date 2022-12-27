@@ -1,37 +1,47 @@
 import { Event as Event3, EventDispatcher, Quaternion, Vector3 } from "three";
-import { MovementState } from "./MovementState";
-import { ControlMode } from "../core";
-import { Settings } from "../settings";
-import { ScalarDamper } from "../math";
-import { Updatable } from "../core";
-import { MILLISECONDS_TO_SECONDS } from "../core/time";
-import * as axes from "../core/axes";
+import { MovementState } from "./MovementState.js";
+import { ControlMode } from "../core/ControlMode.js";
+import { Settings } from "../settings/Settings.js";
+import { ScalarDamper } from "../math/ScalarDamper.js";
+import { Updatable } from "../core/Updatable.js";
+import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
+import * as axes from "../core/axes.js";
 
 const v = new Vector3();
 
 /**
  * A translation manager.
+ *
+ * @group Managers
  */
 
 export class TranslationManager extends EventDispatcher implements Updatable {
 
 	/**
-	 * The current position.
+	 * Triggers when the position or quaternion is changed.
+	 *
+	 * @event
 	 */
 
-	private position: Vector3;
+	static readonly EVENT_UPDATE = "update";
 
 	/**
-	 * The quaternion.
+	 * @see {@link position}
 	 */
 
-	private quaternion: Quaternion;
+	private _position: Vector3;
 
 	/**
-	 * The current target.
+	 * @see {@link quaternion}
 	 */
 
-	private target: Vector3;
+	private _quaternion: Quaternion;
+
+	/**
+	 * @see {@link target}
+	 */
+
+	private _target: Vector3;
 
 	/**
 	 * The settings.
@@ -40,10 +50,10 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	private settings: Settings;
 
 	/**
-	 * The current movement state.
+	 * The movement state.
 	 */
 
-	private movementState: MovementState;
+	readonly movementState: MovementState;
 
 	/**
 	 * The current velocity.
@@ -88,15 +98,15 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 
 		super();
 
-		this.position = position;
-		this.quaternion = quaternion;
-		this.target = target;
+		this._position = position;
+		this._quaternion = quaternion;
+		this._target = target;
 		this.settings = settings;
 		this.movementState = new MovementState();
 		this.velocity0 = new Vector3();
 		this.velocity1 = new Vector3();
 		this.timestamp = 0;
-		this.updateEvent = { type: "update" };
+		this.updateEvent = { type: TranslationManager.EVENT_UPDATE };
 
 		this.scalarDampers = [
 			new ScalarDamper(),
@@ -107,63 +117,55 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	}
 
 	/**
-	 * Returns the movement state.
-	 *
-	 * @return The movement state.
+	 * The position.
 	 */
 
-	getMovementState(): MovementState {
+	get position(): Vector3 {
 
-		return this.movementState;
+		return this._position;
+
+	}
+
+	set position(value: Vector3) {
+
+		this._position = value;
 
 	}
 
 	/**
-	 * Sets the position.
-	 *
-	 * @param position - A position.
-	 * @return This manager.
+	 * The quaternion.
 	 */
 
-	setPosition(position: Vector3): TranslationManager {
+	get quaternion(): Quaternion {
 
-		this.position = position;
-		return this;
+		return this._quaternion;
+
+	}
+
+	set quaternion(value: Quaternion) {
+
+		this._quaternion = value;
 
 	}
 
 	/**
-	 * Sets the quaternion.
-	 *
-	 * @param quaternion - A quaternion.
-	 * @return This manager.
+	 * The target.
 	 */
 
-	setQuaternion(quaternion: Quaternion): TranslationManager {
+	get target(): Vector3 {
 
-		this.quaternion = quaternion;
-		return this;
+		return this._target;
 
 	}
 
-	/**
-	 * Sets the target.
-	 *
-	 * @param target - A target.
-	 * @return This manager.
-	 */
+	set target(value: Vector3) {
 
-	setTarget(target: Vector3): TranslationManager {
-
-		this.target = target;
-		return this;
+		this._target = value;
 
 	}
 
 	/**
 	 * Resets the current velocity.
-	 *
-	 * @return This manager.
 	 */
 
 	resetVelocity(): void {
@@ -191,7 +193,7 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 		v.copy(axis).applyQuaternion(this.quaternion).multiplyScalar(distance);
 		this.position.add(v);
 
-		if(this.settings.general.getMode() === ControlMode.THIRD_PERSON) {
+		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
 
 			// Move the target together with the position.
 			this.target.add(v);
@@ -236,12 +238,12 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 
 		const settings = this.settings;
 
-		if(settings.translation.isEnabled()) {
+		if(settings.translation.enabled) {
 
 			const state = this.movementState;
 			const translation = this.settings.translation;
-			const boost = state.boost ? translation.getBoostMultiplier() : 1.0;
-			const sensitivity = translation.getSensitivity();
+			const boost = state.boost ? translation.boostMultiplier : 1.0;
+			const sensitivity = translation.sensitivity;
 			const scalarDampers = this.scalarDampers;
 
 			const v0 = this.velocity0;
@@ -300,9 +302,9 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 
 			if(!v0.equals(v1)) {
 
-				if(translation.getDamping() > 0.0) {
+				if(translation.damping > 0.0) {
 
-					const damping = translation.getDamping();
+					const damping = translation.damping;
 					const omega = ScalarDamper.calculateOmega(damping);
 					const exp = ScalarDamper.calculateExp(omega, elapsed);
 

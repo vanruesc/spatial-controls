@@ -1,8 +1,10 @@
-import { MovementState } from "../managers";
-import { Strategy } from "./Strategy";
+import { MovementState } from "../managers/MovementState.js";
+import { Strategy } from "./Strategy.js";
 
 /**
  * A boost strategy.
+ *
+ * @group Strategies
  */
 
 export class BoostStrategy implements Strategy {

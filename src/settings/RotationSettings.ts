@@ -1,97 +1,87 @@
 import { EventDispatcher, Vector3 } from "three";
-import * as axes from "../core/axes";
-
-/**
- * JSON representation of rotation settings.
- */
-
-export interface RotationSettingsJSON {
-
-	up: Vector3;
-	pivotOffset: Vector3;
-	minAzimuthalAngle: number;
-	maxAzimuthalAngle: number;
-	minPolarAngle: number;
-	maxPolarAngle: number;
-	invertedX: boolean;
-	invertedY: boolean;
-	sensitivityX: number;
-	sensitivityY: number;
-	damping: number;
-
-}
+import * as axes from "../core/axes.js";
 
 /**
  * Rotation settings.
+ *
+ * @group Settings
  */
 
 export class RotationSettings extends EventDispatcher {
 
 	/**
-	 * The up vector. Must be normalized.
+	 * Triggers when the settings are changed.
+	 *
+	 * @event
 	 */
 
-	private up: Vector3;
+	static readonly EVENT_CHANGE = "change";
 
 	/**
-	 * A pivot offset. Only affects third person orbiting.
+	 * @see {@link up}
 	 */
 
-	private pivotOffset: Vector3;
+	private _up: Vector3;
 
 	/**
-	 * The minimum azimuthal angle in radians.
+	 * @see {@link pivotOffset}
 	 */
 
-	private minAzimuthalAngle: number;
+	private _pivotOffset: Vector3;
 
 	/**
-	 * The maximum azimuthal angle in radians.
+	 * @see {@link minAzimuthalAngle}
 	 */
 
-	private maxAzimuthalAngle: number;
+	private _minAzimuthalAngle: number;
 
 	/**
-	 * The minimum polar angle in radians.
+	 * @see {@link maxAzimuthalAngle}
 	 */
 
-	private minPolarAngle: number;
+	private _maxAzimuthalAngle: number;
 
 	/**
-	 * The maximum polar angle in radians.
+	 * @see {@link minPolarAngle}
 	 */
 
-	private maxPolarAngle: number;
+	private _minPolarAngle: number;
 
 	/**
-	 * Indicates whether the horizontal rotation is inverted.
+	 * @see {@link maxPolarAngle}
 	 */
 
-	private invertedX: boolean;
+	private _maxPolarAngle: number;
 
 	/**
-	 * Indicates whether the vertical rotation is inverted.
+	 * @see {@link invertedX}
 	 */
 
-	private invertedY: boolean;
+	private _invertedX: boolean;
 
 	/**
-	 * The horizontal rotation sensitivity.
+	 * @see {@link invertedY}
 	 */
 
-	private sensitivityX: number;
+	private _invertedY: boolean;
 
 	/**
-	 * The vertical rotation sensitivity.
+	 * @see {@link sensitivityX}
 	 */
 
-	private sensitivityY: number;
+	private _sensitivityX: number;
 
 	/**
-	 * The damping factor. Range is [0.0, +Infinity]. Set to 0 to disable.
+	 * @see {@link sensitivityY}
 	 */
 
-	private damping: number;
+	private _sensitivityY: number;
+
+	/**
+	 * @see {@link damping}
+	 */
+
+	private _damping: number;
 
 	/**
 	 * Constructs new rotation settings.
@@ -101,310 +91,220 @@ export class RotationSettings extends EventDispatcher {
 
 		super();
 
-		this.up = new Vector3();
-		this.up.copy(axes.y);
-		this.pivotOffset = new Vector3();
+		this._up = new Vector3();
+		this._up.copy(axes.y);
+		this._pivotOffset = new Vector3();
 
-		this.minAzimuthalAngle = Number.NEGATIVE_INFINITY;
-		this.maxAzimuthalAngle = Number.POSITIVE_INFINITY;
+		this._minAzimuthalAngle = Number.NEGATIVE_INFINITY;
+		this._maxAzimuthalAngle = Number.POSITIVE_INFINITY;
 
-		this.minPolarAngle = 0.0;
-		this.maxPolarAngle = Math.PI;
+		this._minPolarAngle = 0.0;
+		this._maxPolarAngle = Math.PI;
 
-		this.invertedX = false;
-		this.invertedY = false;
+		this._invertedX = false;
+		this._invertedY = false;
 
-		this.sensitivityX = 1.0;
-		this.sensitivityY = 1.0;
-		this.damping = 0.0;
-
-	}
-
-	/**
-	 * Returns the up vector offset.
-	 *
-	 * @return The up vector.
-	 */
-
-	getUpVector(): Vector3 {
-
-		return this.up;
+		this._sensitivityX = 1.0;
+		this._sensitivityY = 1.0;
+		this._damping = 0.0;
 
 	}
 
 	/**
-	 * Sets the up vector.
-	 *
-	 * @param value - The up vector.
+	 * A normalized up vector.
 	 */
 
-	setUpVector(value: Vector3): void {
+	get up(): Vector3 {
 
-		this.up = value;
-		this.dispatchEvent({ type: "change" });
+		return this._up;
+
+	}
+
+	set up(value: Vector3) {
+
+		this._up = value;
+		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Returns the pivot offset.
-	 *
-	 * @return The offset.
+	 * The pivot offset.
 	 */
 
-	getPivotOffset(): Vector3 {
+	get pivotOffset(): Vector3 {
 
-		return this.pivotOffset;
+		return this._pivotOffset;
+
+	}
+
+	set pivotOffset(value: Vector3) {
+
+		this._pivotOffset = value;
+		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Sets the pivot offset.
-	 *
-	 * @param value - The offset.
+	 * The minimum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
 	 */
 
-	setPivotOffset(value: Vector3): void {
+	get minAzimuthalAngle(): number {
 
-		this.pivotOffset = value;
-		this.dispatchEvent({ type: "change" });
+		return this._minAzimuthalAngle;
+
+	}
+
+	set minAzimuthalAngle(value: number) {
+
+		this._minAzimuthalAngle = value;
+		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Returns the minimum azimuthal angle in radians.
-	 *
-	 * @return The angle.
+	 * The maximum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
 	 */
 
-	getMinAzimuthalAngle(): number {
+	get maxAzimuthalAngle(): number {
 
-		return this.minAzimuthalAngle;
+		return this._maxAzimuthalAngle;
+
+	}
+
+	set maxAzimuthalAngle(value: number) {
+
+		this._maxAzimuthalAngle = value;
+		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Sets the minimum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
-	 *
-	 * @param value - The angle.
+	 * The minimum polar angle in radians. Range: [0, Math.PI].
 	 */
 
-	setMinAzimuthalAngle(value: number): void {
+	get minPolarAngle(): number {
 
-		this.minAzimuthalAngle = value;
-		this.dispatchEvent({ type: "change" });
+		return this._minPolarAngle;
+
+	}
+
+	set minPolarAngle(value: number) {
+
+		this._minPolarAngle = value;
+		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Returns the maximum azimuthal angle in radians.
-	 *
-	 * @return The angle.
+	 * The maximum polar angle in radians. Range: [0, Math.PI].
 	 */
 
-	getMaxAzimuthalAngle(): number {
+	get maxPolarAngle(): number {
 
-		return this.maxAzimuthalAngle;
+		return this._maxPolarAngle;
 
 	}
 
-	/**
-	 * Sets the maximum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
-	 *
-	 * @param value - The angle.
-	 */
+	set maxPolarAngle(value: number) {
 
-	setMaxAzimuthalAngle(value: number): void {
-
-		this.maxAzimuthalAngle = value;
-		this.dispatchEvent({ type: "change" });
-
-	}
-
-	/**
-	 * Returns the minimum polar angle in radians.
-	 *
-	 * @return The angle.
-	 */
-
-	getMinPolarAngle(): number {
-
-		return this.minPolarAngle;
-
-	}
-
-	/**
-	 * Sets the minimum polar angle in radians. Range: [0, Math.PI].
-	 *
-	 * @param value - The angle.
-	 */
-
-	setMinPolarAngle(value: number): void {
-
-		this.minPolarAngle = value;
-		this.dispatchEvent({ type: "change" });
-
-	}
-
-	/**
-	 * Returns the maximum polar angle in radians.
-	 *
-	 * @return The angle.
-	 */
-
-	getMaxPolarAngle(): number {
-
-		return this.maxPolarAngle;
-
-	}
-
-	/**
-	 * Sets the maximum polar angle in radians. Range: [0, Math.PI].
-	 *
-	 * @param value - The angle.
-	 */
-
-	setMaxPolarAngle(value: number): void {
-
-		this.maxPolarAngle = value;
-		this.dispatchEvent({ type: "change" });
+		this._maxPolarAngle = value;
+		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
 	 * Indicates whether the horizontal rotation is inverted.
-	 *
-	 * @return Whether the horizontal rotation is inverted.
 	 */
 
-	isInvertedX(): boolean {
+	get invertedX(): boolean {
 
-		return this.invertedX;
+		return this._invertedX;
 
 	}
 
-	/**
-	 * Defines whether the horizontal rotation should be inverted.
-	 *
-	 * @param value - The value.
-	 */
+	set invertedX(value: boolean) {
 
-	setInvertedX(value: boolean): void {
-
-		this.invertedX = value;
-		this.dispatchEvent({ type: "change" });
+		this._invertedX = value;
+		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
 	 * Indicates whether the vertical rotation is inverted.
-	 *
-	 * @return Whether the vertical rotation is inverted.
 	 */
 
-	isInvertedY(): boolean {
+	get invertedY(): boolean {
 
-		return this.invertedY;
+		return this._invertedY;
+
+	}
+
+	set invertedY(value: boolean) {
+
+		this._invertedY = value;
+		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Defines whether the vertical rotation should be inverted.
-	 *
-	 * @param value - The value.
+	 * The horizontal rotation sensitivity.
 	 */
 
-	setInvertedY(value: boolean): void {
+	get sensitivityX(): number {
 
-		this.invertedY = value;
-		this.dispatchEvent({ type: "change" });
+		return this._sensitivityX;
+
+	}
+
+	set sensitivityX(value: number) {
+
+		this._sensitivityX = value;
+		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Returns the horizontal rotation sensitivity.
-	 *
-	 * @return The sensitivity.
+	 * The vertical rotation sensitivity.
 	 */
 
-	getSensitivityX(): number {
+	get sensitivityY(): number {
 
-		return this.sensitivityX;
+		return this._sensitivityY;
+
+	}
+
+	set sensitivityY(value: number) {
+
+		this._sensitivityY = value;
+		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Sets the horizontal rotation sensitivity.
-	 *
-	 * @param value - The sensitivity.
+	 * Sets the horizontal and vertical rotation sensitivity.
 	 */
 
-	setSensitivityX(value: number): void {
+	set sensitivity(value: number) {
 
-		this.sensitivityX = value;
-		this.dispatchEvent({ type: "change" });
+		this._sensitivityX = this._sensitivityY = value;
+		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Returns the vertical rotation sensitivity.
-	 *
-	 * @return The sensitivity.
+	 * The damping factor.
 	 */
 
-	getSensitivityY(): number {
+	get damping(): number {
 
-		return this.sensitivityY;
+		return this._damping;
 
 	}
 
-	/**
-	 * Sets the vertical rotation sensitivity.
-	 *
-	 * @param value - The sensitivity.
-	 */
+	set damping(value: number) {
 
-	setSensitivityY(value: number): void {
-
-		this.sensitivityY = value;
-		this.dispatchEvent({ type: "change" });
-
-	}
-
-	/**
-	 * Sets the rotation sensitivity.
-	 *
-	 * @param value - The sensitivity.
-	 */
-
-	setSensitivity(value: number): void {
-
-		this.sensitivityX = this.sensitivityY = value;
-		this.dispatchEvent({ type: "change" });
-
-	}
-
-	/**
-	 * Returns the damping factor.
-	 *
-	 * @return The damping factor.
-	 */
-
-	getDamping(): number {
-
-		return this.damping;
-
-	}
-
-	/**
-	 * Sets the damping factor.
-	 *
-	 * @param value - The damping factor.
-	 */
-
-	setDamping(value: number): void {
-
-		this.damping = value;
-		this.dispatchEvent({ type: "change" });
+		this._damping = value;
+		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
 
 	}
 
@@ -417,21 +317,21 @@ export class RotationSettings extends EventDispatcher {
 
 	copy(settings: RotationSettings): RotationSettings {
 
-		this.up.copy(settings.getUpVector());
-		this.pivotOffset.copy(settings.getPivotOffset());
+		this.up.copy(settings.up);
+		this.pivotOffset.copy(settings.pivotOffset);
 
-		this.minAzimuthalAngle = settings.getMinAzimuthalAngle();
-		this.maxAzimuthalAngle = settings.getMaxAzimuthalAngle();
+		this.minAzimuthalAngle = settings.minAzimuthalAngle;
+		this.maxAzimuthalAngle = settings.maxAzimuthalAngle;
 
-		this.minPolarAngle = settings.getMinPolarAngle();
-		this.maxPolarAngle = settings.getMaxPolarAngle();
+		this.minPolarAngle = settings.minPolarAngle;
+		this.maxPolarAngle = settings.maxPolarAngle;
 
-		this.invertedX = settings.isInvertedX();
-		this.invertedY = settings.isInvertedY();
+		this.invertedX = settings.invertedX;
+		this.invertedY = settings.invertedY;
 
-		this.sensitivityX = settings.getSensitivityX();
-		this.sensitivityY = settings.getSensitivityY();
-		this.damping = settings.getDamping();
+		this.sensitivityX = settings.sensitivityX;
+		this.sensitivityY = settings.sensitivityY;
+		this.damping = settings.damping;
 
 		return this;
 
@@ -457,7 +357,7 @@ export class RotationSettings extends EventDispatcher {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: RotationSettingsJSON): RotationSettings {
+	fromJSON(json: RotationSettings): RotationSettings {
 
 		this.up.copy(json.up);
 		this.pivotOffset.copy(json.pivotOffset);

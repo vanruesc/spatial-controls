@@ -1,8 +1,10 @@
-import { Strategy } from "./Strategy";
-import { RotationManager } from "../managers";
+import { RotationManager } from "../managers/RotationManager.js";
+import { Strategy } from "./Strategy.js";
 
 /**
  * A zoom strategy.
+ *
+ * @group Strategies
  */
 
 export class ZoomStrategy implements Strategy {

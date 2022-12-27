@@ -1,5 +1,7 @@
 /**
  * An enumeration of pointer behaviours.
+ *
+ * @group Input
  */
 
 export enum PointerBehaviour {

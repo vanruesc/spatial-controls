@@ -1,47 +1,44 @@
 import { EventDispatcher } from "three";
 
 /**
- * JSON representation of translation settings.
- */
-
-export interface TranslationSettingsJSON {
-
-	enabled: boolean;
-	sensitivity: number;
-	boostMultiplier: number;
-	damping: number;
-
-}
-
-/**
  * Translation settings.
+ *
+ * @group Settings
  */
 
 export class TranslationSettings extends EventDispatcher {
 
 	/**
-	 * Whether positional translation is enabled.
+	 * Triggers when the settings are changed.
+	 *
+	 * @event
 	 */
 
-	private enabled: boolean;
+	static readonly EVENT_CHANGE = "change";
 
 	/**
-	 * The translation sensitivity.
+	 * @see {@link enabled}
 	 */
 
-	private sensitivity: number;
+	private _enabled: boolean;
 
 	/**
-	 * The translation boost multiplier.
+	 * @see {@link sensitivity}
 	 */
 
-	private boostMultiplier: number;
+	private _sensitivity: number;
 
 	/**
-	 * The damping factor. Range is [0.0, +Infinity]. Set to 0 to disable.
+	 * @see {@link boostMultiplier}
 	 */
 
-	private damping: number;
+	private _boostMultiplier: number;
+
+	/**
+	 * @see {@link damping}
+	 */
+
+	private _damping: number;
 
 	/**
 	 * Constructs new translation settings.
@@ -51,110 +48,78 @@ export class TranslationSettings extends EventDispatcher {
 
 		super();
 
-		this.enabled = true;
-		this.sensitivity = 1.0;
-		this.boostMultiplier = 2.0;
-		this.damping = 0.0;
+		this._enabled = true;
+		this._sensitivity = 1.0;
+		this._boostMultiplier = 2.0;
+		this._damping = 0.0;
 
 	}
 
 	/**
-	 * Indicates whether translation is enabled.
-	 *
-	 * @return Whether translation is enabled.
+	 * Indicates whether positional translation is enabled.
 	 */
 
-	isEnabled(): boolean {
+	get enabled(): boolean {
 
-		return this.enabled;
+		return this._enabled;
+
+	}
+
+	set enabled(value: boolean) {
+
+		this._enabled = value;
+		this.dispatchEvent({ type: TranslationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Enables or disables translation.
-	 *
-	 * @param value - The value.
+	 * The translation sensitivity.
 	 */
 
-	setEnabled(value: boolean): void {
+	get sensitivity(): number {
 
-		this.enabled = value;
-		this.dispatchEvent({ type: "change" });
+		return this._sensitivity;
+
+	}
+
+	set sensitivity(value: number) {
+
+		this._sensitivity = value;
+		this.dispatchEvent({ type: TranslationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Returns the translation sensitivity.
-	 *
-	 * @return The sensitivity.
+	 * The translation boost multiplier.
 	 */
 
-	getSensitivity(): number {
+	get boostMultiplier(): number {
 
-		return this.sensitivity;
+		return this._boostMultiplier;
+
+	}
+
+	set boostMultiplier(value: number) {
+
+		this._boostMultiplier = Math.max(value, 1.0);
+		this.dispatchEvent({ type: TranslationSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Sets the translation sensitivity.
-	 *
-	 * @param value - The sensitivity.
+	 * The damping factor. Range is [0.0, +Infinity]. Set to 0 to disable.
 	 */
 
-	setSensitivity(value: number): void {
+	get damping(): number {
 
-		this.sensitivity = value;
-		this.dispatchEvent({ type: "change" });
+		return this._damping;
 
 	}
 
-	/**
-	 * Returns the translation boost multiplier.
-	 *
-	 * @return The multiplier.
-	 */
+	set damping(value: number) {
 
-	getBoostMultiplier(): number {
-
-		return this.boostMultiplier;
-
-	}
-
-	/**
-	 * Sets the translation boost multiplier.
-	 *
-	 * @param value - The multiplier. Must be >= 1.
-	 */
-
-	setBoostMultiplier(value: number): void {
-
-		this.boostMultiplier = Math.max(value, 1.0);
-		this.dispatchEvent({ type: "change" });
-
-	}
-
-	/**
-	 * Returns the damping factor.
-	 *
-	 * @return The damping factor.
-	 */
-
-	getDamping(): number {
-
-		return this.damping;
-
-	}
-
-	/**
-	 * Sets the damping factor.
-	 *
-	 * @param value - The damping factor.
-	 */
-
-	setDamping(value: number): void {
-
-		this.damping = value;
-		this.dispatchEvent({ type: "change" });
+		this._damping = value;
+		this.dispatchEvent({ type: TranslationSettings.EVENT_CHANGE });
 
 	}
 
@@ -167,10 +132,10 @@ export class TranslationSettings extends EventDispatcher {
 
 	copy(settings: TranslationSettings): TranslationSettings {
 
-		this.enabled = settings.isEnabled();
-		this.sensitivity = settings.getSensitivity();
-		this.boostMultiplier = settings.getBoostMultiplier();
-		this.damping = settings.getDamping();
+		this.enabled = settings.enabled;
+		this.sensitivity = settings.sensitivity;
+		this.boostMultiplier = settings.boostMultiplier;
+		this.damping = settings.damping;
 
 		return this;
 
@@ -196,7 +161,7 @@ export class TranslationSettings extends EventDispatcher {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: TranslationSettingsJSON): TranslationSettings {
+	fromJSON(json: TranslationSettings): TranslationSettings {
 
 		this.enabled = json.enabled;
 		this.sensitivity = json.sensitivity;

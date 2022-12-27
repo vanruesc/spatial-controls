@@ -1,35 +1,30 @@
 import { EventDispatcher } from "three";
-import { Action } from "../core/Action";
-import { KeyCode, PointerButton } from "../input";
+import { Action } from "../core/Action.js";
+import { KeyCode } from "../input/KeyCode.js";
+import { PointerButton } from "../input/PointerButton.js";
 
-import { GeneralSettings, GeneralSettingsJSON } from "./GeneralSettings";
-import { Bindings, BindingsJSON } from "./Bindings";
-import { PointerSettings, PointerSettingsJSON } from "./PointerSettings";
-import { RotationSettings, RotationSettingsJSON } from "./RotationSettings";
-import { TranslationSettings, TranslationSettingsJSON } from "./TranslationSettings";
-import { ZoomSettings, ZoomSettingsJSON } from "./ZoomSettings";
-
-/**
- * JSON representation of control settings.
- */
-
-interface SettingsJSON {
-
-	keyBindings: BindingsJSON<KeyCode>;
-	pointerBindings: BindingsJSON<PointerButton>;
-	general: GeneralSettingsJSON;
-	pointer: PointerSettingsJSON;
-	rotation: RotationSettingsJSON;
-	translation: TranslationSettingsJSON;
-	zoom: ZoomSettingsJSON;
-
-}
+import { GeneralSettings } from "./GeneralSettings.js";
+import { Bindings } from "./Bindings.js";
+import { PointerSettings } from "./PointerSettings.js";
+import { RotationSettings } from "./RotationSettings.js";
+import { TranslationSettings } from "./TranslationSettings.js";
+import { ZoomSettings } from "./ZoomSettings.js";
 
 /**
  * Control settings.
+ *
+ * @group Settings
  */
 
 export class Settings extends EventDispatcher {
+
+	/**
+	 * Triggers when the settings are changed.
+	 *
+	 * @event
+	 */
+
+	static readonly EVENT_CHANGE = "change";
 
 	/**
 	 * Key bindings.
@@ -86,35 +81,25 @@ export class Settings extends EventDispatcher {
 		super();
 
 		this.keyBindings = new Bindings<KeyCode>();
-		this.keyBindings.setDefault(new Map([
-
-			[KeyCode.W, Action.MOVE_FORWARD],
-			[KeyCode.UP, Action.MOVE_FORWARD],
-
-			[KeyCode.A, Action.MOVE_LEFT],
-			[KeyCode.LEFT, Action.MOVE_LEFT],
-
-			[KeyCode.S, Action.MOVE_BACKWARD],
-			[KeyCode.DOWN, Action.MOVE_BACKWARD],
-
-			[KeyCode.D, Action.MOVE_RIGHT],
-			[KeyCode.RIGHT, Action.MOVE_RIGHT],
-
-			[KeyCode.X, Action.MOVE_DOWN],
+		this.keyBindings.setDefault(new Map<KeyCode, Action>([
+			[KeyCode.KEY_W, Action.MOVE_FORWARD],
+			[KeyCode.ARROW_UP, Action.MOVE_FORWARD],
+			[KeyCode.KEY_A, Action.MOVE_LEFT],
+			[KeyCode.ARROW_LEFT, Action.MOVE_LEFT],
+			[KeyCode.KEY_S, Action.MOVE_BACKWARD],
+			[KeyCode.ARROW_DOWN, Action.MOVE_BACKWARD],
+			[KeyCode.KEY_D, Action.MOVE_RIGHT],
+			[KeyCode.ARROW_RIGHT, Action.MOVE_RIGHT],
+			[KeyCode.KEY_X, Action.MOVE_DOWN],
 			[KeyCode.SPACE, Action.MOVE_UP],
-
 			[KeyCode.PAGE_DOWN, Action.ZOOM_OUT],
 			[KeyCode.PAGE_UP, Action.ZOOM_IN],
-
-			[KeyCode.SHIFT, Action.BOOST]
-
+			[KeyCode.SHIFT_LEFT, Action.BOOST]
 		]));
 
 		this.pointerBindings = new Bindings<PointerButton>();
 		this.pointerBindings.setDefault(new Map([
-
 			[PointerButton.MAIN, Action.ROTATE]
-
 		]));
 
 		this.general = new GeneralSettings();
@@ -124,11 +109,11 @@ export class Settings extends EventDispatcher {
 		this.zoom = new ZoomSettings();
 
 		// Forward events.
-		this.general.addEventListener("change", e => this.dispatchEvent(e));
-		this.pointer.addEventListener("change", e => this.dispatchEvent(e));
-		this.rotation.addEventListener("change", e => this.dispatchEvent(e));
-		this.translation.addEventListener("change", e => this.dispatchEvent(e));
-		this.zoom.addEventListener("change", e => this.dispatchEvent(e));
+		this.general.addEventListener(Settings.EVENT_CHANGE, e => this.dispatchEvent(e));
+		this.pointer.addEventListener(Settings.EVENT_CHANGE, e => this.dispatchEvent(e));
+		this.rotation.addEventListener(Settings.EVENT_CHANGE, e => this.dispatchEvent(e));
+		this.translation.addEventListener(Settings.EVENT_CHANGE, e => this.dispatchEvent(e));
+		this.zoom.addEventListener(Settings.EVENT_CHANGE, e => this.dispatchEvent(e));
 
 	}
 
@@ -149,7 +134,7 @@ export class Settings extends EventDispatcher {
 		this.translation.copy(settings.translation);
 		this.zoom.copy(settings.zoom);
 
-		this.dispatchEvent({ type: "change" });
+		this.dispatchEvent({ type: Settings.EVENT_CHANGE });
 
 		return this;
 
@@ -177,7 +162,7 @@ export class Settings extends EventDispatcher {
 
 	fromJSON(json: string): Settings {
 
-		const settings = JSON.parse(json) as SettingsJSON;
+		const settings = JSON.parse(json) as Settings;
 		this.keyBindings.fromJSON(settings.keyBindings);
 		this.pointerBindings.fromJSON(settings.pointerBindings);
 		this.general.fromJSON(settings.general);
@@ -186,7 +171,7 @@ export class Settings extends EventDispatcher {
 		this.translation.fromJSON(settings.translation);
 		this.zoom.fromJSON(settings.zoom);
 
-		this.dispatchEvent({ type: "change" });
+		this.dispatchEvent({ type: Settings.EVENT_CHANGE });
 
 		return this;
 

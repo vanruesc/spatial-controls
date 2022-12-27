@@ -1,3 +1,3 @@
-export { MovementState } from "./MovementState";
-export { RotationManager } from "./RotationManager";
-export { TranslationManager } from "./TranslationManager";
+export { MovementState } from "./MovementState.js";
+export { RotationManager } from "./RotationManager.js";
+export { TranslationManager } from "./TranslationManager.js";

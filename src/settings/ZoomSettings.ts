@@ -1,61 +1,56 @@
 import { EventDispatcher } from "three";
 
 /**
- * JSON representation of zoom settings.
- */
-
-export interface ZoomSettingsJSON {
-
-	enabled: boolean;
-	inverted: boolean;
-	minDistance: number;
-	maxDistance: number;
-	sensitivity: number;
-	damping: number;
-
-}
-
-/**
  * Zoom settings.
+ *
+ * @group Settings
  */
 
 export class ZoomSettings extends EventDispatcher {
 
 	/**
-	 * Whether zooming is enabled.
+	 * Triggers when the settings are changed.
+	 *
+	 * @event
 	 */
 
-	private enabled: boolean;
+	static readonly EVENT_CHANGE = "change";
 
 	/**
-	 * Indicates whether the zoom controls should be inverted.
+	 * @see {@link enabled}
 	 */
 
-	private inverted: boolean;
+	private _enabled: boolean;
 
 	/**
-	 * The minimum zoom distance.
+	 * @see {@link inverted}
 	 */
 
-	private minDistance: number;
+	private _inverted: boolean;
 
 	/**
-	 * The maximum zoom distance.
+	 * @see {@link minDistance}
 	 */
 
-	private maxDistance: number;
+	private _minDistance: number;
 
 	/**
-	 * The zoom sensitivity.
+	 * @see {@link maxDistance}
 	 */
 
-	private sensitivity: number;
+	private _maxDistance: number;
 
 	/**
-	 * The damping factor. Range is [0.0, +Infinity]. Set to 0 to disable.
+	 * @see {@link sensitivity}
 	 */
 
-	private damping: number;
+	private _sensitivity: number;
+
+	/**
+	 * @see {@link damping}
+	 */
+
+	private _damping: number;
 
 	/**
 	 * Constructs new zoom settings.
@@ -65,120 +60,88 @@ export class ZoomSettings extends EventDispatcher {
 
 		super();
 
-		this.enabled = true;
-		this.inverted = false;
-		this.minDistance = 1e-6;
-		this.maxDistance = Number.POSITIVE_INFINITY;
-		this.sensitivity = 1.0;
-		this.damping = 0.0;
+		this._enabled = true;
+		this._inverted = false;
+		this._minDistance = 1e-6;
+		this._maxDistance = Number.POSITIVE_INFINITY;
+		this._sensitivity = 1.0;
+		this._damping = 0.0;
 
 	}
 
 	/**
 	 * Indicates whether zooming is enabled.
-	 *
-	 * @return Whether zooming is enabled.
 	 */
 
-	isEnabled(): boolean {
+	get enabled(): boolean {
 
-		return this.enabled;
+		return this._enabled;
 
 	}
 
-	/**
-	 * Enables or disables zooming.
-	 *
-	 * @param value - The value.
-	 */
+	set enabled(value: boolean) {
 
-	setEnabled(value: boolean): void {
-
-		this.enabled = value;
-		this.dispatchEvent({ type: "change" });
+		this._enabled = value;
+		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
 
 	}
 
 	/**
 	 * Indicates whether the zoom controls should be inverted.
-	 *
-	 * @return Whether zooming is enabled.
 	 */
 
-	isInverted(): boolean {
+	get inverted(): boolean {
 
-		return this.inverted;
+		return this._inverted;
+
+	}
+
+	set inverted(value: boolean) {
+
+		this._inverted = value;
+		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Defines whether the zoom controls should be inverted.
-	 *
-	 * @param value - The value.
+	 * The minimum zoom distance.
 	 */
 
-	setInverted(value: boolean): void {
+	get minDistance(): number {
 
-		this.inverted = value;
-		this.dispatchEvent({ type: "change" });
+		return this._minDistance;
 
 	}
 
-	/**
-	 * Returns the minimum zoom distance.
-	 *
-	 * @return The distance.
-	 */
+	set minDistance(value: number) {
 
-	getMinDistance(): number {
-
-		return this.minDistance;
-
-	}
-
-	/**
-	 * Sets the minimum zoom distance.
-	 *
-	 * @param value - The distance. Must be greater than zero.
-	 */
-
-	setMinDistance(value: number): void {
-
-		this.minDistance = Math.min(
+		this._minDistance = Math.min(
 			Math.max(value, 1e-6),
 			Number.POSITIVE_INFINITY
 		);
 
-		this.dispatchEvent({ type: "change" });
+		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Returns the maximum zoom distance.
-	 *
-	 * @return The distance.
+	 * The maximum zoom distance.
 	 */
 
-	getMaxDistance(): number {
+	get maxDistance(): number {
 
-		return this.maxDistance;
+		return this._maxDistance;
 
 	}
 
-	/**
-	 * Sets the maximum zoom distance.
-	 *
-	 * @param value - The distance. Must be greater than the minimum distance.
-	 */
+	set maxDistance(value: number) {
 
-	setMaxDistance(value: number): void {
-
-		this.maxDistance = Math.min(
-			Math.max(value, this.minDistance),
+		this._maxDistance = Math.min(
+			Math.max(value, this._minDistance),
 			Number.POSITIVE_INFINITY
 		);
 
-		this.dispatchEvent({ type: "change" });
+		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
 
 	}
 
@@ -191,59 +154,43 @@ export class ZoomSettings extends EventDispatcher {
 
 	setRange(min: number, max: number): void {
 
-		this.minDistance = min;
-		this.maxDistance = max;
-		this.dispatchEvent({ type: "change" });
+		this._minDistance = min;
+		this._maxDistance = max;
+		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Returns the zoom sensitivity.
-	 *
-	 * @return The sensitivity.
+	 * The zoom sensitivity.
 	 */
 
-	getSensitivity(): number {
+	get sensitivity(): number {
 
-		return this.sensitivity;
+		return this._sensitivity;
+
+	}
+
+	set sensitivity(value: number) {
+
+		this._sensitivity = value;
+		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
 
 	}
 
 	/**
-	 * Sets the zoom sensitivity.
-	 *
-	 * @param value - The sensitivity.
+	 * The damping factor.
 	 */
 
-	setSensitivity(value: number): void {
+	get damping(): number {
 
-		this.sensitivity = value;
-		this.dispatchEvent({ type: "change" });
+		return this._damping;
 
 	}
 
-	/**
-	 * Returns the damping factor.
-	 *
-	 * @return The damping factor.
-	 */
+	set damping(value: number) {
 
-	getDamping(): number {
-
-		return this.damping;
-
-	}
-
-	/**
-	 * Sets the damping factor.
-	 *
-	 * @param value - The damping factor.
-	 */
-
-	setDamping(value: number): void {
-
-		this.damping = value;
-		this.dispatchEvent({ type: "change" });
+		this._damping = value;
+		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
 
 	}
 
@@ -256,12 +203,12 @@ export class ZoomSettings extends EventDispatcher {
 
 	copy(settings: ZoomSettings): ZoomSettings {
 
-		this.enabled = settings.isEnabled();
-		this.inverted = settings.isInverted();
-		this.minDistance = settings.getMinDistance();
-		this.maxDistance = settings.getMaxDistance();
-		this.sensitivity = settings.getSensitivity();
-		this.damping = settings.getDamping();
+		this.enabled = settings.enabled;
+		this.inverted = settings.inverted;
+		this.minDistance = settings.minDistance;
+		this.maxDistance = settings.maxDistance;
+		this.sensitivity = settings.sensitivity;
+		this.damping = settings.damping;
 
 		return this;
 
@@ -287,7 +234,7 @@ export class ZoomSettings extends EventDispatcher {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: ZoomSettingsJSON): ZoomSettings {
+	fromJSON(json: ZoomSettings): ZoomSettings {
 
 		this.enabled = json.enabled;
 		this.inverted = json.inverted;

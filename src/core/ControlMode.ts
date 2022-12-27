@@ -1,5 +1,7 @@
 /**
  * An enumeration of control modes.
+ *
+ * @group Core
  */
 
 export enum ControlMode {

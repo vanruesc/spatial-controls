@@ -1,33 +1,33 @@
 import { EventDispatcher } from "three";
-import { ControlMode } from "../core/ControlMode";
-
-/**
- * JSON representation of general settings.
- */
-
-export interface GeneralSettingsJSON {
-
-	mode: ControlMode;
-
-}
+import { ControlMode } from "../core/ControlMode.js";
 
 /**
  * General settings.
+ *
+ * @group Settings
  */
 
 export class GeneralSettings extends EventDispatcher {
 
 	/**
-	 * The control mode.
+	 * Triggers when the settings are changed.
+	 *
+	 * @event
 	 */
 
-	private mode: ControlMode;
+	static readonly EVENT_CHANGE = "change";
 
 	/**
-	 * The previous control mode.
+	 * @see {@link mode}
 	 */
 
-	private previousMode: ControlMode;
+	private _mode: ControlMode;
+
+	/**
+	 * @see {@link previousMode}
+	 */
+
+	private _previousMode: ControlMode;
 
 	/**
 	 * Constructs new general settings.
@@ -37,48 +37,38 @@ export class GeneralSettings extends EventDispatcher {
 
 		super();
 
-		this.mode = ControlMode.FIRST_PERSON;
-		this.previousMode = this.mode;
+		this._mode = ControlMode.FIRST_PERSON;
+		this._previousMode = this._mode;
 
 	}
 
 	/**
-	 * Returns the previous control mode.
-	 *
-	 * @return The mode.
+	 * The previous control mode.
 	 */
 
-	getPreviousMode(): ControlMode {
+	get previousMode(): ControlMode {
 
-		return this.previousMode;
+		return this._previousMode;
 
 	}
 
 	/**
-	 * Returns the control mode.
-	 *
-	 * @return The mode.
+	 * The control mode.
 	 */
 
-	getMode(): ControlMode {
+	get mode(): ControlMode {
 
-		return this.mode;
+		return this._mode;
 
 	}
 
-	/**
-	 * Sets the control mode.
-	 *
-	 * @param value - The value.
-	 */
+	set mode(value: ControlMode) {
 
-	setMode(value: ControlMode): void {
+		if(this._mode !== value) {
 
-		if(this.mode !== value) {
-
-			this.mode = value;
-			this.dispatchEvent({ type: "change" });
-			this.previousMode = value;
+			this._mode = value;
+			this.dispatchEvent({ type: GeneralSettings.EVENT_CHANGE });
+			this._previousMode = value;
 
 		}
 
@@ -93,7 +83,7 @@ export class GeneralSettings extends EventDispatcher {
 
 	copy(settings: GeneralSettings): GeneralSettings {
 
-		this.mode = settings.getMode();
+		this.mode = settings.mode;
 		return this;
 
 	}
@@ -118,7 +108,7 @@ export class GeneralSettings extends EventDispatcher {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: GeneralSettingsJSON): GeneralSettings {
+	fromJSON(json: GeneralSettings): GeneralSettings {
 
 		this.mode = json.mode;
 		return this;

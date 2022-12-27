@@ -1,5 +1,7 @@
 /**
  * Describes objects that can be updated.
+ *
+ * @group Core
  */
 
 export interface Updatable {

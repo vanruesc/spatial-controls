@@ -1,47 +1,65 @@
 import { EventDispatcher, Quaternion, Vector3 } from "three";
-import { BoostStrategy, MovementStrategy, RotationStrategy, Strategy, ZoomStrategy } from "../strategies";
-import { PointerBehaviour, PointerType } from "../input";
-import { RotationManager, TranslationManager } from "../managers";
-import { Settings } from "../settings/Settings";
-import { Action } from "./Action";
-import { ControlMode } from "./ControlMode";
-import { Direction } from "./Direction";
-import { Disposable } from "./Disposable";
-import { Updatable } from "./Updatable";
+import { BoostStrategy } from "../strategies/BoostStrategy.js";
+import { MovementStrategy } from "../strategies/MovementStrategy.js";
+import { RotationStrategy } from "../strategies/RotationStrategy.js";
+import { Strategy } from "../strategies/Strategy.js";
+import { ZoomStrategy } from "../strategies/ZoomStrategy.js";
+import { PointerBehaviour } from "../input/PointerBehaviour.js";
+import { PointerType } from "../input/PointerType.js";
+import { KeyCode } from "../input/KeyCode.js";
+import { keyCodeLegacy } from "../input/keyCodeLegacy.js";
+import { RotationManager } from "../managers/RotationManager.js";
+import { TranslationManager } from "../managers/TranslationManager.js";
+import { Settings } from "../settings/Settings.js";
+import { Action } from "./Action.js";
+import { ControlMode } from "./ControlMode.js";
+import { Direction } from "./Direction.js";
+import { Disposable } from "./Disposable.js";
+import { Updatable } from "./Updatable.js";
 
 const v = new Vector3();
 
 /**
  * Spatial controls for 3D translation and rotation.
  *
- * This class emits "update" events when the position or quaternion is changed.
+ * This class emits events of type {@link EVENT_UPDATE} when the position or quaternion is changed.
+ *
+ * @group Core
  */
 
 export class SpatialControls extends EventDispatcher implements Disposable, EventListenerObject, Updatable {
 
 	/**
-	 * A DOM element. Acts as the primary event target.
+	 * Triggers when the position or quaternion is changed.
+	 *
+	 * @event
 	 */
 
-	private domElement: HTMLElement;
+	static readonly EVENT_UPDATE = "update";
 
 	/**
-	 * The position that will be modified.
+	 * @see {@link domElement}
 	 */
 
-	private position: Vector3;
+	private _domElement: HTMLElement | null;
 
 	/**
-	 * The quaternion that will be modified.
+	 * @see {@link position}
 	 */
 
-	private quaternion: Quaternion;
+	private _position: Vector3;
 
 	/**
-	 * The target.
+	 * @see {@link quaternion}
 	 */
 
-	private target: Vector3;
+	private _quaternion: Quaternion;
+
+	/**
+	 * @see {@link target}
+	 */
+
+	private _target: Vector3;
 
 	/**
 	 * The previous position.
@@ -86,10 +104,10 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 	private dragging: boolean;
 
 	/**
-	 * The internal enabled state.
+	 * @see {@link enabled}
 	 */
 
-	private enabled: boolean;
+	private _enabled: boolean;
 
 	/**
 	 * The control settings.
@@ -105,23 +123,23 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 	 * @param domElement - A DOM element. Serves as the primary event target.
 	 */
 
-	constructor(position = new Vector3(), quaternion = new Quaternion(), domElement: HTMLElement = null) {
+	constructor(position = new Vector3(), quaternion = new Quaternion(), domElement: HTMLElement | null = null) {
 
 		super();
 
 		if(domElement === null && typeof document !== "undefined") {
 
-			this.domElement = document.body;
+			this._domElement = document.body;
 
 		} else {
 
-			this.domElement = domElement;
+			this._domElement = domElement;
 
 		}
 
-		this.position = position;
-		this.quaternion = quaternion;
-		this.target = new Vector3();
+		this._position = position;
+		this._quaternion = quaternion;
+		this._target = new Vector3();
 
 		this.previousPosition = new Vector3();
 		this.previousQuaternion = new Quaternion();
@@ -130,12 +148,12 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 		const settings = this.settings = new Settings();
 		settings.addEventListener("change", (e: unknown) => this.handleEvent(e as Event));
 
-		this.rotationManager = new RotationManager(position, quaternion, this.target, settings);
-		this.translationManager = new TranslationManager(position, quaternion, this.target, settings);
-		this.rotationManager.addEventListener("update", e => this.dispatchEvent(e));
-		this.translationManager.addEventListener("update", e => this.dispatchEvent(e));
+		this.rotationManager = new RotationManager(position, quaternion, this._target, settings);
+		this.translationManager = new TranslationManager(position, quaternion, this._target, settings);
+		this.rotationManager.addEventListener(SpatialControls.EVENT_UPDATE, e => this.dispatchEvent(e));
+		this.translationManager.addEventListener(SpatialControls.EVENT_UPDATE, e => this.dispatchEvent(e));
 
-		const state = this.translationManager.getMovementState();
+		const state = this.translationManager.movementState;
 
 		this.strategies = new Map<Action, Strategy>([
 			[Action.MOVE_FORWARD, new MovementStrategy(state, Direction.FORWARD)],
@@ -151,48 +169,39 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 		]);
 
 		this.dragging = false;
-		this.enabled = false;
+		this._enabled = false;
 
 		if(position !== null && quaternion !== null) {
 
 			// Note: Default mode is first person.
-			this.target.set(0, 0, -1).applyQuaternion(this.quaternion);
-			this.lookAt(this.target);
+			this._target.set(0, 0, -1).applyQuaternion(this._quaternion);
+			this.lookAt(this._target);
 
 			if(domElement !== null) {
 
-				this.setEnabled();
+				this.enabled = true;
 
 			}
 
-			this.previousPosition.copy(this.position);
-			this.previousQuaternion.copy(this.quaternion);
-			this.previousTarget.copy(this.target);
+			this.previousPosition.copy(this._position);
+			this.previousQuaternion.copy(this._quaternion);
+			this.previousTarget.copy(this._target);
 
 		}
 
 	}
 
 	/**
-	 * Returns the DOM element.
-	 *
-	 * @return The DOM element.
+	 * A DOM element. Acts as the primary event target.
 	 */
 
-	getDomElement(): HTMLElement {
+	get domElement(): HTMLElement | null {
 
-		return this.domElement;
+		return this._domElement;
 
 	}
 
-	/**
-	 * Sets the DOM element.
-	 *
-	 * @param domElement - The new DOM element.
-	 * @return This instance.
-	 */
-
-	setDomElement(domElement: HTMLElement): SpatialControls {
+	set domElement(domElement: HTMLElement | null) {
 
 		const enabled = this.enabled;
 
@@ -200,123 +209,68 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 			if(enabled) {
 
-				this.setEnabled(false);
+				this.enabled = false;
 
 			}
 
-			this.domElement = domElement;
-			this.setEnabled(enabled);
+			this._domElement = domElement;
+			this.enabled = enabled;
 
 		}
 
-		return this;
+	}
+
+	/**
+	 * The position.
+	 */
+
+	get position(): Vector3 {
+
+		return this._position;
+
+	}
+
+	set position(value: Vector3) {
+
+		this._position = value;
+		this.rotationManager.position = value;
+		this.translationManager.position = value;
 
 	}
 
 	/**
-	 * Returns the position.
-	 *
-	 * @return The position.
+	 * The quaternion.
 	 */
 
-	getPosition(): Vector3 {
+	get quaternion(): Quaternion {
 
-		return this.position;
+		return this._quaternion;
+
+	}
+
+	set quaternion(value: Quaternion) {
+
+		this._quaternion = value;
+		this.rotationManager.quaternion = value;
+		this.translationManager.quaternion = value;
 
 	}
 
 	/**
-	 * Sets the position.
-	 *
-	 * @param x - The X-coordinate, or a new position vector.
-	 * @param y - The Y-coordinate.
-	 * @param z - The Z-coordinate.
-	 * @return This instance.
+	 * The target.
 	 */
 
-	setPosition(x: number | Vector3, y?: number, z?: number): SpatialControls {
+	get target(): Vector3 {
 
-		if(x instanceof Vector3) {
-
-			this.position = x;
-			this.rotationManager.setPosition(x);
-			this.translationManager.setPosition(x);
-
-		} else {
-
-			this.position.set(x, y, z);
-
-		}
-
-		return this;
+		return this._target;
 
 	}
 
-	/**
-	 * Returns the quaternion.
-	 *
-	 * @return The quaternion.
-	 */
+	set target(value: Vector3) {
 
-	getQuaternion(): Quaternion {
-
-		return this.quaternion;
-
-	}
-
-	/**
-	 * Sets the quaternion.
-	 *
-	 * @param quaternion - The new quaternion.
-	 * @return This instance.
-	 */
-
-	setQuaternion(quaternion: Quaternion): SpatialControls {
-
-		this.quaternion = quaternion;
-		this.rotationManager.setQuaternion(quaternion);
-		this.translationManager.setQuaternion(quaternion);
-
-		return this;
-
-	}
-
-	/**
-	 * Returns the target.
-	 *
-	 * @return The target.
-	 */
-
-	getTarget(): Vector3 {
-
-		return this.target;
-
-	}
-
-	/**
-	 * Sets the target.
-	 *
-	 * @param x - The X-coordinate, or a new target vector.
-	 * @param y - The Y-coordinate.
-	 * @param z - The Z-coordinate.
-	 * @return This instance.
-	 */
-
-	setTarget(x: number | Vector3, y?: number, z?: number): SpatialControls {
-
-		if(x instanceof Vector3) {
-
-			this.target = x;
-			this.rotationManager.setTarget(x);
-			this.translationManager.setTarget(x);
-
-		} else {
-
-			this.target.set(x, y, z);
-
-		}
-
-		return this;
+		this._target = value;
+		this.rotationManager.target = value;
+		this.translationManager.target = value;
 
 	}
 
@@ -337,7 +291,7 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 		} else {
 
-			this.rotationManager.lookAt(v.set(x, y, z));
+			this.rotationManager.lookAt(v.set(x, y as number, z as number));
 
 		}
 
@@ -361,28 +315,27 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 	/**
 	 * Indicates whether the controls are enabled.
 	 *
-	 * @return Whether the controls are enabled.
+	 * Event listeners will be registered or unregistered depending on this flag.
 	 */
 
-	isEnabled(): boolean {
+	get enabled(): boolean {
 
-		return this.enabled;
+		return this._enabled;
 
 	}
 
-	/**
-	 * Enables or disables the controls.
-	 *
-	 * @param enabled - Whether the controls should be enabled or disabled.
-	 * @return This instance.
-	 */
+	set enabled(value: boolean) {
 
-	setEnabled(enabled = true): SpatialControls {
+		if(this.domElement === null) {
+
+			return;
+
+		}
 
 		const domElement = this.domElement;
-		this.translationManager.getMovementState().reset();
+		this.translationManager.movementState.reset();
 
-		if(enabled && !this.enabled) {
+		if(value && !this._enabled) {
 
 			domElement.style.touchAction = "none";
 
@@ -398,9 +351,9 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 			domElement.addEventListener("pointercancel", this);
 			domElement.addEventListener("wheel", this, { passive: true });
 
-		} else if(!enabled && this.enabled) {
+		} else if(!value && this._enabled) {
 
-			domElement.style.touchAction = null;
+			domElement.style.touchAction = "";
 
 			document.removeEventListener("pointerlockchange", this);
 			document.removeEventListener("pointerlockerror", this);
@@ -421,9 +374,7 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 		this.rotationManager.resetVelocity();
 
 		this.setPointerLocked(false);
-		this.enabled = enabled;
-
-		return this;
+		this._enabled = value;
 
 	}
 
@@ -436,14 +387,20 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 	copy(controls: SpatialControls): SpatialControls {
 
-		const p = this.position = controls.getPosition();
-		const q = this.quaternion = controls.getQuaternion();
-		const t = this.target = controls.getTarget();
+		const p = this.position = controls.position;
+		const q = this.quaternion = controls.quaternion;
+		const t = this.target = controls.target;
 
-		this.domElement = controls.getDomElement();
+		this.domElement = controls.domElement;
 		this.settings.copy(controls.settings);
-		this.rotationManager.setPosition(p).setQuaternion(q).setTarget(t);
-		this.translationManager.setPosition(p).setQuaternion(q).setTarget(t);
+
+		this.rotationManager.position = p;
+		this.rotationManager.quaternion = q;
+		this.rotationManager.target = t;
+
+		this.translationManager.position = p;
+		this.translationManager.quaternion = q;
+		this.translationManager.target = t;
 
 		return this.lookAt(t);
 
@@ -472,7 +429,7 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 		if(locked) {
 
-			if(document.pointerLockElement !== this.domElement && this.domElement.requestPointerLock !== undefined) {
+			if(document.pointerLockElement !== this.domElement && this.domElement?.requestPointerLock !== undefined) {
 
 				this.domElement.requestPointerLock();
 
@@ -496,11 +453,11 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 		if(enabled) {
 
-			this.domElement.addEventListener("pointermove", this, { passive: true });
+			this.domElement?.addEventListener("pointermove", this, { passive: true });
 
 		} else {
 
-			this.domElement.removeEventListener("pointermove", this);
+			this.domElement?.removeEventListener("pointermove", this);
 
 		}
 
@@ -516,15 +473,15 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 		const settings = this.settings;
 		const rotation = settings.rotation;
-		const pointerBehaviour = settings.pointer.getBehaviour();
-		const pointerSensitivity = settings.pointer.getSensitivity();
+		const pointerBehaviour = settings.pointer.behaviour;
+		const pointerSensitivity = settings.pointer.sensitivity;
 		const rotationManager = this.rotationManager;
 
 		if(pointerBehaviour !== PointerBehaviour.LOCK_HOLD || this.dragging) {
 
 			rotationManager.adjustSpherical(
-				event.movementX * pointerSensitivity * rotation.getSensitivityX(),
-				event.movementY * pointerSensitivity * rotation.getSensitivityY()
+				event.movementX * pointerSensitivity * rotation.sensitivityX,
+				event.movementY * pointerSensitivity * rotation.sensitivityY
 			);
 
 		}
@@ -541,17 +498,17 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 	private handlePointerButtonEvent(event: PointerEvent, pressed: boolean): void {
 
 		const bindings = this.settings.pointerBindings;
-		const behaviour = this.settings.pointer.getBehaviour();
+		const behaviour = this.settings.pointer.behaviour;
 
 		if(bindings.has(event.button)) {
 
-			const action = bindings.get(event.button);
+			const action = bindings.get(event.button) as Action;
 
 			// Mouse buttons are handled via mousedown/mouseup since pointer events don't fire for each button.
 			if(!(event instanceof PointerEvent && event.pointerType === PointerType.MOUSE)) {
 
 				const strategy = this.strategies.get(action);
-				strategy.execute(pressed, event);
+				strategy?.execute(pressed, event);
 
 				if(action === Action.ROTATE) {
 
@@ -565,7 +522,7 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 				if(pressed && behaviour === PointerBehaviour.DEFAULT) {
 
-					this.domElement.setPointerCapture(event.pointerId);
+					this.domElement?.setPointerCapture(event.pointerId);
 
 				}
 
@@ -583,7 +540,7 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 	private handlePointerCancelEvent(event: PointerEvent): void {
 
-		this.domElement.removeEventListener("pointermove", this);
+		this.domElement?.removeEventListener("pointermove", this);
 
 	}
 
@@ -609,12 +566,13 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 	private handleKeyboardEvent(event: KeyboardEvent, pressed: boolean): void {
 
 		const keyBindings = this.settings.keyBindings;
+		const code = event.code !== undefined ? event.code as KeyCode : keyCodeLegacy.get(event.keyCode) as KeyCode;
 
-		if(keyBindings.has(event.keyCode)) {
+		if(keyBindings.has(code)) {
 
 			event.preventDefault();
-			const strategy = this.strategies.get(keyBindings.get(event.keyCode));
-			strategy.execute(pressed);
+			const strategy = this.strategies.get(keyBindings.get(code) as Action);
+			strategy?.execute(pressed);
 
 		}
 
@@ -628,11 +586,11 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 		if(document.pointerLockElement === this.domElement) {
 
-			this.domElement.addEventListener("pointermove", this, { passive: true });
+			this.domElement?.addEventListener("pointermove", this, { passive: true });
 
 		} else {
 
-			this.domElement.removeEventListener("pointermove", this);
+			this.domElement?.removeEventListener("pointermove", this);
 
 		}
 
@@ -646,8 +604,8 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 		if(document.hidden) {
 
-			this.translationManager.getMovementState().reset();
-			this.domElement.removeEventListener("pointermove", this);
+			this.translationManager.movementState.reset();
+			this.domElement?.removeEventListener("pointermove", this);
 
 		}
 
@@ -665,15 +623,15 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 		const settings = this.settings;
 		const general = settings.general;
 
-		if(!settings.translation.isEnabled()) {
+		if(!settings.translation.enabled) {
 
 			this.translationManager.resetVelocity();
 
 		}
 
-		if(general.getMode() !== general.getPreviousMode()) {
+		if(general.mode !== general.previousMode) {
 
-			if(general.getMode() === ControlMode.THIRD_PERSON) {
+			if(general.mode === ControlMode.THIRD_PERSON) {
 
 				// Switch to third person.
 				v.copy(this.target);
@@ -710,7 +668,7 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 	private synchronize(): void {
 
-		const mode = this.settings.general.getMode();
+		const mode = this.settings.general.mode;
 		const rotationManager = this.rotationManager;
 
 		const previousPosition = this.previousPosition;
@@ -726,7 +684,7 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 			if(mode === ControlMode.THIRD_PERSON) {
 
 				target.set(0, 0, -1).applyQuaternion(quaternion);
-				target.multiplyScalar(rotationManager.getRadius());
+				target.multiplyScalar(rotationManager.radius);
 				target.add(position);
 
 			} else {
@@ -834,7 +792,7 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 	dispose(): void {
 
-		this.setEnabled(false);
+		this.enabled = false;
 
 	}
 

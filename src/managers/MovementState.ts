@@ -1,5 +1,7 @@
 /**
  * A collection of movement flags.
+ *
+ * @group Managers
  */
 
 export class MovementState {
@@ -8,61 +10,61 @@ export class MovementState {
 	 * Movement to the left.
 	 */
 
-	left: boolean;
+	left!: boolean;
 
 	/**
 	 * Movement to the right.
 	 */
 
-	right: boolean;
+	right!: boolean;
 
 	/**
 	 * Forward motion.
 	 */
 
-	forward: boolean;
+	forward!: boolean;
 
 	/**
 	 * Backward motion.
 	 */
 
-	backward: boolean;
+	backward!: boolean;
 
 	/**
 	 * Ascension.
 	 */
 
-	up: boolean;
+	up!: boolean;
 
 	/**
 	 * Descent.
 	 */
 
-	down: boolean;
+	down!: boolean;
 
 	/**
 	 * Controls whether backward movement currently has priority.
 	 */
 
-	backwardBeforeForward: boolean;
+	backwardBeforeForward!: boolean;
 
 	/**
 	 * Controls whether right movement currently has priority.
 	 */
 
-	rightBeforeLeft: boolean;
+	rightBeforeLeft!: boolean;
 
 	/**
 	 * Controls whether up movement currently has priority.
 	 */
 
-	upBeforeDown: boolean;
+	upBeforeDown!: boolean;
 
 	/**
 	 * Whether the boost multiplier should be used.
 	 */
 
-	boost: boolean;
+	boost!: boolean;
 
 	/**
 	 * Constructs a new movement state.
@@ -94,7 +96,7 @@ export class MovementState {
 	 * @return This state.
 	 */
 
-	reset(): MovementState {
+	reset(): this {
 
 		this.left = false;
 		this.right = false;

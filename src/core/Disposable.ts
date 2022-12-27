@@ -1,5 +1,7 @@
 /**
  * Describes objects that can dispose internal resources.
+ *
+ * @group Core
  */
 
 export interface Disposable {

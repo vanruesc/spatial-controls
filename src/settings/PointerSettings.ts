@@ -1,34 +1,33 @@
 import { EventDispatcher } from "three";
-import { PointerBehaviour } from "../input";
-
-/**
- * JSON representation of pointer settings.
- */
-
-export interface PointerSettingsJSON {
-
-	behaviour: PointerBehaviour;
-	sensitivity: number;
-
-}
+import { PointerBehaviour } from "../input/PointerBehaviour.js";
 
 /**
  * Pointer settings.
+ *
+ * @group Settings
  */
 
 export class PointerSettings extends EventDispatcher {
 
 	/**
-	 * The pointer behaviour.
+	 * Triggers when the settings are changed.
+	 *
+	 * @event
 	 */
 
-	private behaviour: PointerBehaviour;
+	static readonly EVENT_CHANGE = "change";
 
 	/**
-	 * The baseline pointer sensitivity.
+	 * @see {@link behaviour}
 	 */
 
-	private sensitivity: number;
+	private _behaviour: PointerBehaviour;
+
+	/**
+	 * @see {@link sensitivity}
+	 */
+
+	private _sensitivity: number;
 
 	/**
 	 * Constructs new pointer settings.
@@ -38,60 +37,44 @@ export class PointerSettings extends EventDispatcher {
 
 		super();
 
-		this.behaviour = PointerBehaviour.DEFAULT;
-		this.sensitivity = 1e-3;
+		this._behaviour = PointerBehaviour.DEFAULT;
+		this._sensitivity = 1e-3;
 
 	}
 
 	/**
-	 * Returns the pointer behaviour.
-	 *
-	 * @return The pointer behaviour.
+	 * The pointer behaviour.
 	 */
 
-	getBehaviour(): PointerBehaviour {
+	get behaviour(): PointerBehaviour {
 
-		return this.behaviour;
+		return this._behaviour;
 
 	}
 
-	/**
-	 * Sets the pointer behaviour.
-	 *
-	 * @param value - The behaviour.
-	 */
+	set behaviour(value: PointerBehaviour) {
 
-	setBehaviour(value: PointerBehaviour): void {
-
-		this.behaviour = value;
-		this.dispatchEvent({ type: "change" });
-
-	}
-
-	/**
-	 * Returns the sensitivity. The default is 1e-3.
-	 *
-	 * @return The sensitivity.
-	 */
-
-	getSensitivity(): number {
-
-		return this.sensitivity;
+		this._behaviour = value;
+		this.dispatchEvent({ type: PointerSettings.EVENT_CHANGE });
 
 	}
 
 	/**
 	 * Sets the sensitivity.
 	 *
-	 * This sensitivity acts as a baseline scale for pointer movement deltas.
-	 *
-	 * @param value - The sensitivity.
+	 * This sensitivity acts as a baseline scale for pointer movement deltas. Default is `1e-3`.
 	 */
 
-	setSensitivity(value: number): void {
+	get sensitivity(): number {
 
-		this.sensitivity = value;
-		this.dispatchEvent({ type: "change" });
+		return this._sensitivity;
+
+	}
+
+	set sensitivity(value: number) {
+
+		this._sensitivity = value;
+		this.dispatchEvent({ type: PointerSettings.EVENT_CHANGE });
 
 	}
 
@@ -104,8 +87,8 @@ export class PointerSettings extends EventDispatcher {
 
 	copy(settings: PointerSettings): PointerSettings {
 
-		this.behaviour = settings.getBehaviour();
-		this.sensitivity = settings.getSensitivity();
+		this.behaviour = settings.behaviour;
+		this.sensitivity = settings.sensitivity;
 
 		return this;
 
@@ -131,7 +114,7 @@ export class PointerSettings extends EventDispatcher {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: PointerSettingsJSON): PointerSettings {
+	fromJSON(json: PointerSettings): PointerSettings {
 
 		this.behaviour = json.behaviour;
 		this.sensitivity = json.sensitivity;
