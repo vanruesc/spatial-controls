@@ -52,7 +52,7 @@
 		"build:dts": "tsc -p tsconfig.d.json",
 		"clean": "del-cli dist public",
 		"copy": "copyfiles -u 2 \"demo/static/**/*\" public/demo",
-		"deploy": "copy",
+		"deploy": "npm run copy",
 		"doc": "typedoc",
 		"lint": "run-s lint:*",
 		"lint:js": "eslint --ext .ts --fix src demo/src",
