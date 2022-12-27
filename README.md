@@ -3,7 +3,7 @@
 [![CI](https://github.com/vanruesc/spatial-controls/actions/workflows/ci.yml/badge.svg)](https://github.com/vanruesc/spatial-controls/actions/workflows/ci.yml)
 [![Version](https://badgen.net/npm/v/spatial-controls?color=green)](https://www.npmjs.com/package/spatial-controls)
 
-A 3D movement controller that supports multiple control modes and configurable input settings.
+A movement controller for 3D objects and cameras that supports multiple control modes, smooth interpolation and configurable input settings.
 
 *[Demo](https://vanruesc.github.io/spatial-controls/demo)&ensp;&middot;&ensp;[Documentation](https://vanruesc.github.io/spatial-controls/docs)*
 
@@ -41,13 +41,13 @@ requestAnimationFrame(function render(timestamp) {
 The position, target and quaternion can be modified directly at any time. A subsequent `update()` call synchronizes the internal state of the controls. The `quaternion` has a higher priority than the `target`, meaning that changes to the `quaternion` will always set the `target`. The following methods are provided for convenience:
 
 ```js
-// Sets or replaces the position.
-controls.setPosition(x, y, z);
-controls.setPosition(otherPosition);
+// Sets or replaces the position vector.
+controls.position.set(x, y, z);
+controls.position = otherPosition;
 
-// Sets or replaces the target.
-controls.setTarget(x, y, z);
-controls.setTarget(otherTarget);
+// Sets or replaces the target vector.
+controls.target.set(x, y, z);
+controls.target = otherTarget;
 
 // Sets the target without replacing it and updates the quaternion.
 controls.lookAt(x, y, z);
@@ -62,17 +62,17 @@ controls.lookAt(target);
 import { Action, ControlMode, KeyCode, PointerButton } from "spatial-controls";
 
 const settings = controls.settings;
-settings.general.setMode(ControlMode.THIRD_PERSON);
-settings.rotation.setSensitivity(2.2);
-settings.rotation.setDamping(0.05);
-settings.translation.setSensitivity(0.25);
-settings.translation.setDamping(0.1);
+settings.general.mode = ControlMode.THIRD_PERSON;
+settings.rotation.sensitivity = 2.2;
+settings.rotation.damping = 0.05;
+settings.translation.sensitivity = 0.25;
+settings.translation.damping = 0.1;
 settings.zoom.setRange(0.25, 3.0);
-settings.zoom.setDamping(0.1);
+settings.zoom.damping = 0.1;
 
 const keyBindings = settings.keyBindings;
-keyBindings.delete(KeyCode.X);
-keyBindings.set(KeyCode.V, Action.MOVE_DOWN);
+keyBindings.delete(KeyCode.KEY_X);
+keyBindings.set(KeyCode.KEY_V, Action.MOVE_DOWN);
 
 const pointerBindings = settings.pointerBindings;
 pointerBindings.delete(PointerButton.MAIN);
