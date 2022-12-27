@@ -210,6 +210,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 	folder.addInput(settings.translation, "damping", { label: "translation", min: 0, max: 1, step: 0.01 });
 
 	folder = pane.addFolder({ title: "Rotation", expanded: false });
+	folder.addInput(settings.rotation, "pivotOffset");
 	folder.addInput(params.rotation, "min azim. angle", { min: -Math.PI, max: 0, step: 1e-3 })
 		.on("change", (e) => {
 
