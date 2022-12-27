@@ -12,54 +12,14 @@ body {
 	min-height: 100vh;
 }
 
-a {
-	color: grey;
-	transition: color 0.2s;
-}
-
-a:hover, a:active {
-	color: white;
-}
-
-aside, footer {
-	position: absolute;
-	z-index: 1;
-}
-
-aside {
-	right: 0;
-	top: 0;
-}
-
 canvas {
 	display: block;
 	max-height: 100%;
 	max-width: 100%;
 }
 
-footer {
-	bottom: 0;
-	left: 0;
-	user-select: none;
-}
-
-footer img {
-	cursor: pointer;
-	display: block;
-	opacity: 0.075;
-	transition: opacity 0.2s;
-}
-
-footer img:hover {
-	opacity: 0.25;
-}
-
 main {
 	height: 100%;
-}
-
-p {
-	margin: 0;
 }
 
 .loading {
@@ -75,47 +35,15 @@ p {
 	user-select: none;
 }
 
-.github, .code, .info {
-	bottom: 15px;
-	position: absolute;
-}
-
-.code {
-	left: 50px;
-}
-
-.github {
-	left: 90px;
-}
-
-.info {
-	bottom: 12px;
-	left: 8px;
-}
-
-.info div {
-	bottom: 100%;
-	color: rgb(90, 95, 90);
-	font-size: 75%;
-	max-width: calc(100vw - 12px);
-	position: absolute;
-	width: max-content;
-}
-
-.dg {
-	user-select: none;
-}
-
-.dg ul {
-	max-height: calc(100vh - 20px);
-	overflow: auto;
-	scrollbar-width: thin;
-}
-
-.dg select {
-	max-width: 100%;
-}
-
 .hidden {
 	display: none;
+}
+
+.tp {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	user-select: none;
+	width: 300px;
+	z-index: 1;
 }
