@@ -1,10 +1,9 @@
 import test from "ava";
-import { PointerSettings } from "../../dist/spatial-controls.js";
+import { PointerSettings } from "spatial-controls";
 
 test("can be instantiated", t => {
 
 	const object = new PointerSettings();
-
 	t.pass();
 
 });
@@ -12,7 +11,6 @@ test("can be instantiated", t => {
 test("can be cloned", t => {
 
 	const object = new PointerSettings();
-
 	object.clone();
 	t.pass();
 

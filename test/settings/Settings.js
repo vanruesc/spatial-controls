@@ -1,10 +1,9 @@
 import test from "ava";
-import { Settings } from "../../dist/spatial-controls.js";
+import { Settings } from "spatial-controls";
 
 test("can be instantiated", t => {
 
 	const object = new Settings();
-
 	t.pass();
 
 });
@@ -12,7 +11,6 @@ test("can be instantiated", t => {
 test("can be cloned", t => {
 
 	const object = new Settings();
-
 	object.clone();
 	t.pass();
 
@@ -21,7 +19,6 @@ test("can be cloned", t => {
 test("can be serialized", t => {
 
 	const object = new Settings();
-
 	JSON.stringify(object);
 	t.pass();
 
