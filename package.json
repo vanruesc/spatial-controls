@@ -51,7 +51,7 @@
 		"clean": "del-cli dist public",
 		"copy": "copyfiles -u 2 \"demo/static/**/*\" public/demo",
 		"deploy": "npm run copy",
-		"doc": "typedoc",
+		"doc": "typedoc --plugin typedoc-plugin-mdn-links",
 		"lint": "run-s lint:*",
 		"lint:js": "eslint --ext .ts --fix src demo/src",
 		"lint:tsc": "tsc --noemit",
@@ -97,6 +97,6 @@
 		"tweakpane": "3.x.x",
 		"typedoc": "0.x.x",
 		"typedoc-plugin-mdn-links": "3.x.x",
-		"typescript": "5.x.x"
+		"typescript": "5.0.x"
 	}
 }
