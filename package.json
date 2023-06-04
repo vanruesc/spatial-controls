@@ -6,13 +6,13 @@
 	"license": "Zlib",
 	"type": "module",
 	"sideEffects": false,
-	"main": "./dist/spatial-controls.js",
-	"module": "./dist/spatial-controls.js",
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
 	"types": "./dist/types/index.d.ts",
 	"exports": {
 		".": {
 			"types": "./dist/types/index.d.ts",
-			"default": "./dist/spatial-controls.js"
+			"default": "./dist/index.js"
 		}
 	},
 	"keywords": [
@@ -45,20 +45,20 @@
 	},
 	"scripts": {
 		"ava": "ava",
+		"build": "run-s build:js:min build:dts",
 		"build:js": "node esbuild",
 		"build:js:min": "node esbuild -m",
 		"build:dts": "tsc -p tsconfig.d.json",
+		"postbuild": "copyfiles -u 2 demo/static/**/* public/demo",
 		"clean": "del-cli dist public",
-		"copy": "copyfiles -u 2 \"demo/static/**/*\" public/demo",
-		"deploy": "npm run copy",
 		"doc": "typedoc --plugin typedoc-plugin-mdn-links",
 		"lint": "run-s lint:*",
 		"lint:js": "eslint --ext .ts --fix src demo/src",
 		"lint:tsc": "tsc --noemit",
 		"prepublishOnly": "run-s test doc",
-		"prewatch": "run-s clean copy build:js",
-		"test": "run-s lint clean build:js:min build:dts ava",
 		"start": "serve public",
+		"test": "run-s lint clean build ava",
+		"prewatch": "run-s clean build:js build:dts postbuild",
 		"watch": "run-p watch:* start",
 		"watch:tsc": "tsc --noemit --watch --preserveWatchOutput",
 		"watch:eslint": "esw -w --ext .ts --color src demo/src",
@@ -86,7 +86,6 @@
 		"copyfiles": "2.x.x",
 		"del-cli": "5.x.x",
 		"esbuild": "0.x.x",
-		"esbuild-plugin-alias": "0.x.x",
 		"eslint": "8.x.x",
 		"eslint-config-aether": "1.x.x",
 		"eslint-watch": "8.x.x",
@@ -97,6 +96,6 @@
 		"tweakpane": "3.x.x",
 		"typedoc": "0.x.x",
 		"typedoc-plugin-mdn-links": "3.x.x",
-		"typescript": "5.0.x"
+		"typescript": "5.x.x"
 	}
 }
