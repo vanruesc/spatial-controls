@@ -28,10 +28,11 @@ jobs:
         uses: JS-DevTools/npm-publish@v2
         with:
           token: ${{ secrets.NPM_TOKEN }}
+          ignore-scripts: false
       - if: ${{ steps.publish.outputs.type }}
         run: |
           echo "Version changed: ${{ steps.publish.outputs.old-version }} → ${{ steps.publish.outputs.version }}"
-      - if: steps.publish.outputs.type == 'none'
+      - if: ${{ !steps.publish.outputs.type }}
         run: |
           pnpm run prepublishOnly
       - name: Deploy
