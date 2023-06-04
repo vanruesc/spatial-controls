@@ -6,7 +6,7 @@ import {
 	PlaneGeometry,
 	SphereGeometry,
 	Spherical,
-	sRGBEncoding,
+	SRGBColorSpace,
 	Vector3,
 	LoadingManager,
 	WebGLRenderer,
@@ -49,7 +49,7 @@ function load(): Promise<Map<string, unknown>> {
 
 		cubeTextureLoader.load(urls, (t) => {
 
-			t.encoding = sRGBEncoding;
+			t.colorSpace = SRGBColorSpace;
 			assets.set("sky", t);
 
 		});
@@ -57,7 +57,7 @@ function load(): Promise<Map<string, unknown>> {
 		textureLoader.load("textures/checkerboard.png", (t) => {
 
 			t.wrapS = t.wrapT = RepeatWrapping;
-			t.encoding = sRGBEncoding;
+			t.colorSpace = SRGBColorSpace;
 			assets.set("checkerboard", t);
 
 		});
@@ -80,9 +80,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 	});
 
 	renderer.debug.checkShaderErrors = (window.location.hostname === "localhost");
-	renderer.outputEncoding = sRGBEncoding;
 	renderer.setClearColor(0x000000, 0);
-	renderer.physicallyCorrectLights = true;
 
 	const container = document.querySelector(".viewport") as HTMLElement;
 	container.append(renderer.domElement);
@@ -210,6 +208,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 	folder.addInput(settings.translation, "damping", { label: "translation", min: 0, max: 1, step: 0.01 });
 
 	folder = pane.addFolder({ title: "Rotation", expanded: false });
+	folder.addInput(settings.rotation, "enabled");
 	folder.addInput(settings.rotation, "pivotOffset");
 	folder.addInput(params.rotation, "min azim. angle", { min: -Math.PI, max: 0, step: 1e-3 })
 		.on("change", (e) => {
