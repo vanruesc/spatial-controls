@@ -1,38 +1,20 @@
 {
-	"include": ["./src", "./demo/src"],
+	"include": ["./*.js", "./src", "./demo/src", "./test"],
 	"compilerOptions": {
-		"rootDir": ".",
 		"baseUrl": ".",
-		"paths": {
-			"spatial-controls": ["./src/index.js"]
-		},
-		"moduleResolution": "NodeNext",
+		"outDir": "./dist",
+		"moduleResolution": "node",
 		"module": "ESNext",
 		"target": "ESNext",
 		"strict": true,
 		"sourceMap": false,
-		"importHelpers": true,
 		"skipLibCheck": true,
-		"noImplicitOverride": true
-	},
-	"typedocOptions": {
-		"entryPoints": ["./src/index.ts"],
-		"exclude": "**/node_modules/**",
-		"out": "./public/docs",
-		"theme": "default",
-		"readme": "none",
-		"excludePrivate": true,
-		"excludeInternal": true,
-		"includeVersion": true,
-		"hideGenerator": true,
-		"treatWarningsAsErrors": true,
-		"externalSymbolLinkMappings": {
-			"@types/three": {
-				"*": "https://threejs.org/docs/"
-			},
-			"three": {
-				"*": "https://threejs.org/docs/"
-			}
-    }
+		"importHelpers": true,
+		"resolveJsonModule": true,
+		"noImplicitOverride": true,
+		"allowSyntheticDefaultImports": true,
+		"paths": {
+			"spatial-controls": ["./src/index.js"]
+		}
 	}
 }
