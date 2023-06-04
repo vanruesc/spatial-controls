@@ -11,7 +11,7 @@ const banner = `/**
 
 const lib = {
 	entryPoints: ["./src/index.ts"],
-	outfile: `./dist/${pkg.name}.js`,
+	outfile: "./dist/index.js",
 	banner: { js: banner },
 	external: ["three"],
 	logLevel: "info",
