@@ -3,20 +3,18 @@
 	"version": "6.0.0",
 	"description": "Configurable 3D movement controls.",
 	"homepage": "https://github.com/vanruesc/spatial-controls",
-	"main": "dist/spatial-controls.js",
-	"module": "dist/spatial-controls.js",
-	"types": "dist/types/index.d.ts",
-	"exports": {
-		".": {
-			"import": {
-				"types": "./dist/types/index.d.ts",
-				"default": "./dist/spatial-controls.js"
-			}
-		}
-	},
+	"license": "Zlib",
 	"type": "module",
 	"sideEffects": false,
-	"license": "Zlib",
+	"main": "./dist/spatial-controls.js",
+	"module": "./dist/spatial-controls.js",
+	"types": "./dist/types/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/types/index.d.ts",
+			"default": "./dist/spatial-controls.js"
+		}
+	},
 	"keywords": [
 		"movement",
 		"translation",
@@ -80,6 +78,7 @@
 	},
 	"devDependencies": {
 		"@tweakpane/core": "1.x.x",
+		"@types/node": "20.x.x",
 		"@types/three": "0.x.x",
 		"@typescript-eslint/eslint-plugin": "5.x.x",
 		"@typescript-eslint/parser": "5.x.x",
@@ -97,7 +96,7 @@
 		"tslib": "2.x.x",
 		"tweakpane": "3.x.x",
 		"typedoc": "0.x.x",
-		"typedoc-plugin-mdn-links": "2.x.x",
-		"typescript": "4.x.x"
+		"typedoc-plugin-mdn-links": "3.x.x",
+		"typescript": "5.x.x"
 	}
 }
