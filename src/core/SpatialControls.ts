@@ -451,7 +451,7 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 
 	setRotationEnabled(enabled: boolean): void {
 
-		if(enabled) {
+		if(this.settings.rotation.enabled && enabled) {
 
 			this.domElement?.addEventListener("pointermove", this, { passive: true });
 
@@ -626,6 +626,12 @@ export class SpatialControls extends EventDispatcher implements Disposable, Even
 		if(!settings.translation.enabled) {
 
 			this.translationManager.resetVelocity();
+
+		}
+
+		if(!settings.rotation.enabled) {
+
+			this.rotationManager.resetVelocity();
 
 		}
 

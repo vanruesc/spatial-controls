@@ -18,6 +18,12 @@ export class RotationSettings extends EventDispatcher {
 	static readonly EVENT_CHANGE = "change";
 
 	/**
+	 * @see {@link enabled}
+	 */
+
+	private _enabled: boolean;
+
+	/**
 	 * @see {@link up}
 	 */
 
@@ -91,6 +97,7 @@ export class RotationSettings extends EventDispatcher {
 
 		super();
 
+		this._enabled = true;
 		this._up = new Vector3();
 		this._up.copy(axes.y);
 		this._pivotOffset = new Vector3();
@@ -107,6 +114,23 @@ export class RotationSettings extends EventDispatcher {
 		this._sensitivityX = 1.0;
 		this._sensitivityY = 1.0;
 		this._damping = 0.0;
+
+	}
+
+	/**
+	 * Indicates whether rotation is enabled.
+	 */
+
+	get enabled(): boolean {
+
+		return this._enabled;
+
+	}
+
+	set enabled(value: boolean) {
+
+		this._enabled = value;
+		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
 
 	}
 
@@ -359,6 +383,8 @@ export class RotationSettings extends EventDispatcher {
 
 	fromJSON(json: RotationSettings): RotationSettings {
 
+		this.enabled = json.enabled;
+
 		this.up.copy(json.up);
 		this.pivotOffset.copy(json.pivotOffset);
 
@@ -386,6 +412,7 @@ export class RotationSettings extends EventDispatcher {
 	toJSON(): Record<string, unknown> {
 
 		return {
+			enabled: this.enabled,
 			up: this.up,
 			pivotOffset: this.pivotOffset,
 			minAzimuthalAngle: this.minAzimuthalAngle,

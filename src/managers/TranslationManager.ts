@@ -101,6 +101,7 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 		this._position = position;
 		this._quaternion = quaternion;
 		this._target = target;
+
 		this.settings = settings;
 		this.movementState = new MovementState();
 		this.velocity0 = new Vector3();
@@ -238,97 +239,102 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 
 		const settings = this.settings;
 
-		if(settings.translation.enabled) {
+		if(!settings.translation.enabled) {
 
-			const state = this.movementState;
-			const translation = this.settings.translation;
-			const boost = state.boost ? translation.boostMultiplier : 1.0;
-			const sensitivity = translation.sensitivity;
-			const scalarDampers = this.scalarDampers;
+			this.timestamp = timestamp;
+			return;
 
-			const v0 = this.velocity0;
-			const v1 = this.velocity1;
+		}
 
-			const elapsed = (timestamp - this.timestamp) * MILLISECONDS_TO_SECONDS;
-			const speed = sensitivity * boost;
+		const state = this.movementState;
+		const translation = this.settings.translation;
+		const boost = state.boost ? translation.boostMultiplier : 1.0;
+		const sensitivity = translation.sensitivity;
+		const scalarDampers = this.scalarDampers;
 
-			v1.setScalar(0.0);
+		const v0 = this.velocity0;
+		const v1 = this.velocity1;
 
-			if(state.active) {
+		const speed = sensitivity * boost;
 
-				if(state.backward && state.forward) {
+		v1.setScalar(0.0);
 
-					v1.z = state.backwardBeforeForward ? speed : -speed;
+		if(state.active) {
 
-				} else if(state.backward) {
+			if(state.backward && state.forward) {
 
-					v1.z = speed;
+				v1.z = state.backwardBeforeForward ? speed : -speed;
 
-				} else if(state.forward) {
+			} else if(state.backward) {
 
-					v1.z = -speed;
+				v1.z = speed;
 
-				}
+			} else if(state.forward) {
 
-				if(state.right && state.left) {
-
-					v1.x = state.rightBeforeLeft ? speed : -speed;
-
-				} else if(state.right) {
-
-					v1.x = speed;
-
-				} else if(state.left) {
-
-					v1.x = -speed;
-
-				}
-
-				if(state.up && state.down) {
-
-					v1.y = state.upBeforeDown ? speed : -speed;
-
-				} else if(state.up) {
-
-					v1.y = speed;
-
-				} else if(state.down) {
-
-					v1.y = -speed;
-
-				}
+				v1.z = -speed;
 
 			}
 
-			if(!v0.equals(v1)) {
+			if(state.right && state.left) {
 
-				if(translation.damping > 0.0) {
+				v1.x = state.rightBeforeLeft ? speed : -speed;
 
-					const damping = translation.damping;
-					const omega = ScalarDamper.calculateOmega(damping);
-					const exp = ScalarDamper.calculateExp(omega, elapsed);
+			} else if(state.right) {
 
-					v0.x = scalarDampers[0].interpolate(v0.x, v1.x, damping, omega, exp, elapsed);
-					v0.y = scalarDampers[1].interpolate(v0.y, v1.y, damping, omega, exp, elapsed);
-					v0.z = scalarDampers[2].interpolate(v0.z, v1.z, damping, omega, exp, elapsed);
+				v1.x = speed;
 
-				} else {
+			} else if(state.left) {
 
-					v0.copy(v1);
-
-				}
+				v1.x = -speed;
 
 			}
 
-			if(v0.x !== 0.0 || v0.y !== 0.0 || v0.z !== 0.0) {
+			if(state.up && state.down) {
 
-				this.translate(elapsed);
+				v1.y = state.upBeforeDown ? speed : -speed;
+
+			} else if(state.up) {
+
+				v1.y = speed;
+
+			} else if(state.down) {
+
+				v1.y = -speed;
 
 			}
 
 		}
 
+		const elapsed = (timestamp - this.timestamp) * MILLISECONDS_TO_SECONDS;
 		this.timestamp = timestamp;
+
+		if(!v0.equals(v1)) {
+
+			// TODO Calculate new position with v1, apply constraints, adjust v1.
+
+			if(translation.damping > 0.0) {
+
+				const damping = translation.damping;
+				const omega = ScalarDamper.calculateOmega(damping);
+				const exp = ScalarDamper.calculateExp(omega, elapsed);
+
+				v0.x = scalarDampers[0].interpolate(v0.x, v1.x, damping, omega, exp, elapsed);
+				v0.y = scalarDampers[1].interpolate(v0.y, v1.y, damping, omega, exp, elapsed);
+				v0.z = scalarDampers[2].interpolate(v0.z, v1.z, damping, omega, exp, elapsed);
+
+			} else {
+
+				v0.copy(v1);
+
+			}
+
+		}
+
+		if(v0.x !== 0.0 || v0.y !== 0.0 || v0.z !== 0.0) {
+
+			this.translate(elapsed);
+
+		}
 
 	}
 

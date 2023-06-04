@@ -96,6 +96,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 		this._position = position;
 		this._quaternion = quaternion;
 		this._target = target;
+
 		this.settings = settings;
 		this.spherical0 = new Spherical();
 		this.spherical1 = new Spherical();
@@ -286,6 +287,8 @@ export class RotationManager extends EventDispatcher implements Updatable {
 			const pivotOffset = this.settings.rotation.pivotOffset;
 			this.position.setFromSpherical(this.spherical0).add(this.target).add(pivotOffset);
 
+			// TODO Calculate new position with spherical1, apply constraints, adjust spherical1.
+
 		}
 
 		return this;
@@ -423,7 +426,6 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 		const s0 = this.spherical0;
 		const s1 = this.spherical1;
-
 		const equal = (s0.radius === s1.radius && s0.theta === s1.theta && s0.phi === s1.phi);
 
 		if(!equal) {
