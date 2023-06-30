@@ -5,8 +5,9 @@ import { Settings } from "../settings/Settings.js";
 import { ScalarDamper } from "../math/ScalarDamper.js";
 import { Updatable } from "../core/Updatable.js";
 import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
-import * as axes from "../core/axes.js";
+import { Constraint } from "../core/Constraint.js";
 
+const u = new Vector3();
 const v = new Vector3();
 
 /**
@@ -48,6 +49,12 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	 */
 
 	private settings: Settings;
+
+	/**
+	 * A list of constraints.
+	 */
+
+	private constraints: Set<Constraint<Vector3>>;
 
 	/**
 	 * The movement state.
@@ -94,7 +101,13 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	 * @param settings - The settings.
 	 */
 
-	constructor(position: Vector3, quaternion: Quaternion, target: Vector3, settings: Settings) {
+	constructor(
+		position: Vector3,
+		quaternion: Quaternion,
+		target: Vector3,
+		settings: Settings,
+		constraints: Set<Constraint<Vector3>>
+	) {
 
 		super();
 
@@ -103,6 +116,7 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 		this._target = target;
 
 		this.settings = settings;
+		this.constraints = constraints;
 		this.movementState = new MovementState();
 		this.velocity0 = new Vector3();
 		this.velocity1 = new Vector3();
@@ -183,53 +197,49 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	}
 
 	/**
-	 * Translates the position along a given axis.
+	 * Constrains the given vector.
 	 *
-	 * @param axis - The axis.
-	 * @param distance - The distance.
+	 * @param A vector.
+	 * @return The constrained vector.
 	 */
 
-	private translateOnAxis(axis: Vector3, distance: number): void {
+	private applyConstraints(p: Vector3): Vector3 {
 
-		v.copy(axis).applyQuaternion(this.quaternion).multiplyScalar(distance);
-		this.position.add(v);
+		for(const applyConstraint of this.constraints) {
 
-		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
-
-			// Move the target together with the position.
-			this.target.add(v);
+			p = applyConstraint(p);
 
 		}
+
+		return p;
 
 	}
 
 	/**
 	 * Changes the position based on the current velocity and elapsed time.
 	 *
+	 * @param position - The position to translate.
+	 * @param velocity - The velocity.
 	 * @param elapsed - The time since the last frame in seconds.
 	 */
 
-	private translate(elapsed: number): void {
+	private translate(position: Vector3, velocity: Vector3, elapsed: number): void {
 
-		const v = this.velocity0;
+		const axisWeights = this.settings.translation.axisWeights;
+		v.copy(velocity).applyQuaternion(this.quaternion);
 
-		if(v.x !== 0.0) {
+		if(axisWeights.x !== 1 || axisWeights.y !== 1 || axisWeights.z !== 1) {
 
-			this.translateOnAxis(axes.x, v.x * elapsed);
+			v.multiply(this.settings.translation.axisWeights).normalize();
+			v.multiplyScalar(velocity.length() * elapsed);
 
-		}
+		} else {
 
-		if(v.y !== 0.0) {
-
-			this.translateOnAxis(axes.y, v.y * elapsed);
-
-		}
-
-		if(v.z !== 0.0) {
-
-			this.translateOnAxis(axes.z, v.z * elapsed);
+			v.multiplyScalar(elapsed);
 
 		}
+
+		position.add(v);
 
 		this.dispatchEvent(this.updateEvent);
 
@@ -254,63 +264,61 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 
 		const v0 = this.velocity0;
 		const v1 = this.velocity1;
-
-		const speed = sensitivity * boost;
-
 		v1.setScalar(0.0);
 
 		if(state.active) {
 
 			if(state.backward && state.forward) {
 
-				v1.z = state.backwardBeforeForward ? speed : -speed;
+				v1.z = state.backwardBeforeForward ? 1 : -1;
 
 			} else if(state.backward) {
 
-				v1.z = speed;
+				v1.z = 1;
 
 			} else if(state.forward) {
 
-				v1.z = -speed;
+				v1.z = -1;
 
 			}
 
 			if(state.right && state.left) {
 
-				v1.x = state.rightBeforeLeft ? speed : -speed;
+				v1.x = state.rightBeforeLeft ? 1 : -1;
 
 			} else if(state.right) {
 
-				v1.x = speed;
+				v1.x = 1;
 
 			} else if(state.left) {
 
-				v1.x = -speed;
+				v1.x = -1;
 
 			}
 
 			if(state.up && state.down) {
 
-				v1.y = state.upBeforeDown ? speed : -speed;
+				v1.y = state.upBeforeDown ? 1 : -1;
 
 			} else if(state.up) {
 
-				v1.y = speed;
+				v1.y = 1;
 
 			} else if(state.down) {
 
-				v1.y = -speed;
+				v1.y = -1;
 
 			}
 
 		}
 
+		const distance = sensitivity * boost;
+		v1.normalize().multiplyScalar(distance);
+
 		const elapsed = (timestamp - this.timestamp) * MILLISECONDS_TO_SECONDS;
 		this.timestamp = timestamp;
 
 		if(!v0.equals(v1)) {
-
-			// TODO Calculate new position with v1, apply constraints, adjust v1.
 
 			if(translation.damping > 0.0) {
 
@@ -332,7 +340,24 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 
 		if(v0.x !== 0.0 || v0.y !== 0.0 || v0.z !== 0.0) {
 
-			this.translate(elapsed);
+			if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
+
+				// Update and constrain the target.
+				u.copy(this.target);
+				this.translate(this.target, v0, elapsed);
+				this.target.copy(this.applyConstraints(this.target));
+
+				// Move the position together with the target.
+				this.position.add(v.subVectors(this.target, u));
+
+			} else {
+
+				// Update and constrain the position.
+				u.copy(this.position);
+				this.translate(this.position, v0, elapsed);
+				this.position.copy(this.applyConstraints(this.position));
+
+			}
 
 		}
 

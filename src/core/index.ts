@@ -1,6 +1,9 @@
 export { Action } from "./Action.js";
+export { Constraint } from "./Constraint.js";
 export { ControlMode } from "./ControlMode.js";
 export { Direction } from "./Direction.js";
 export { Disposable } from "./Disposable.js";
+export { RotationControls } from "./RotationControls.js";
 export { SpatialControls } from "./SpatialControls.js";
+export { TranslationControls } from "./TranslationControls.js";
 export { Updatable } from "./Updatable.js";

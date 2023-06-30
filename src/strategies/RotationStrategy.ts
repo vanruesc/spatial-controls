@@ -1,4 +1,4 @@
-import { SpatialControls } from "../core/SpatialControls.js";
+import { RotationControls } from "../core/RotationControls.js";
 import { PointerBehaviour } from "../input/PointerBehaviour.js";
 import { Strategy } from "./Strategy.js";
 
@@ -14,7 +14,7 @@ export class RotationStrategy implements Strategy {
 	 * The controls.
 	 */
 
-	private controls: SpatialControls;
+	private controls: RotationControls;
 
 	/**
 	 * Constructs a new rotation strategy.
@@ -22,7 +22,7 @@ export class RotationStrategy implements Strategy {
 	 * @param controls - The controls.
 	 */
 
-	constructor(controls: SpatialControls) {
+	constructor(controls: RotationControls) {
 
 		this.controls = controls;
 

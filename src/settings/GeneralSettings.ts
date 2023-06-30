@@ -44,6 +44,8 @@ export class GeneralSettings extends EventDispatcher {
 
 	/**
 	 * The previous control mode.
+	 *
+	 * @internal
 	 */
 
 	get previousMode(): ControlMode {

@@ -3,8 +3,7 @@ import { Settings } from "spatial-controls";
 
 test("can be instantiated", t => {
 
-	const object = new Settings();
-	t.pass();
+	t.truthy(new Settings());
 
 });
 

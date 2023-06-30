@@ -1,4 +1,4 @@
-import { EventDispatcher } from "three";
+import { EventDispatcher, Vector3 } from "three";
 
 /**
  * Translation settings.
@@ -35,6 +35,12 @@ export class TranslationSettings extends EventDispatcher {
 	private _boostMultiplier: number;
 
 	/**
+	 * @see {@link axisModifier}
+	 */
+
+	private _axisWeights: Vector3;
+
+	/**
 	 * @see {@link damping}
 	 */
 
@@ -51,6 +57,7 @@ export class TranslationSettings extends EventDispatcher {
 		this._enabled = true;
 		this._sensitivity = 1.0;
 		this._boostMultiplier = 2.0;
+		this._axisWeights = new Vector3(1, 1, 1);
 		this._damping = 0.0;
 
 	}
@@ -102,6 +109,23 @@ export class TranslationSettings extends EventDispatcher {
 	set boostMultiplier(value: number) {
 
 		this._boostMultiplier = Math.max(value, 1.0);
+		this.dispatchEvent({ type: TranslationSettings.EVENT_CHANGE });
+
+	}
+
+	/**
+	 * Weights that influence movement along each axis.
+	 */
+
+	get axisWeights(): Vector3 {
+
+		return this._axisWeights;
+
+	}
+
+	set axisWeights(value: Vector3) {
+
+		this._axisWeights = value;
 		this.dispatchEvent({ type: TranslationSettings.EVENT_CHANGE });
 
 	}
@@ -168,6 +192,12 @@ export class TranslationSettings extends EventDispatcher {
 		this.boostMultiplier = json.boostMultiplier;
 		this.damping = json.damping;
 
+		if(json.axisWeights !== undefined) {
+
+			this.axisWeights.copy(json.axisWeights);
+
+		}
+
 		return this;
 
 	}
@@ -178,6 +208,7 @@ export class TranslationSettings extends EventDispatcher {
 			enabled: this.enabled,
 			sensitivity: this.sensitivity,
 			boostMultiplier: this.boostMultiplier,
+			axisWeights: this.axisWeights,
 			damping: this.damping
 		};
 

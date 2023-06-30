@@ -89,7 +89,12 @@ export class RotationManager extends EventDispatcher implements Updatable {
  	 * @param settings - The settings.
 	 */
 
-	constructor(position: Vector3, quaternion: Quaternion, target: Vector3, settings: Settings) {
+	constructor(
+		position: Vector3,
+		quaternion: Quaternion,
+		target: Vector3,
+		settings: Settings
+	) {
 
 		super();
 
@@ -283,11 +288,9 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
 
-			// Construct the position using the spherical coordinates and the target.
+			// Construct the position using spherical0 and the target.
 			const pivotOffset = this.settings.rotation.pivotOffset;
 			this.position.setFromSpherical(this.spherical0).add(this.target).add(pivotOffset);
-
-			// TODO Calculate new position with spherical1, apply constraints, adjust spherical1.
 
 		}
 
@@ -426,6 +429,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 
 		const s0 = this.spherical0;
 		const s1 = this.spherical1;
+
 		const equal = (s0.radius === s1.radius && s0.theta === s1.theta && s0.phi === s1.phi);
 
 		if(!equal) {
