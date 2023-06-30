@@ -138,6 +138,12 @@ export class TranslationControls extends EventDispatcher implements Disposable, 
 
 	set enabled(value: boolean) {
 
+		if(typeof document === "undefined") {
+
+			return;
+
+		}
+
 		this.translationManager.movementState.reset();
 
 		if(value && !this._enabled) {
