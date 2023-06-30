@@ -56,7 +56,7 @@ controls.lookAt(target);
 
 ## Settings
 
-#### Configuration
+### Configuration
 
 ```js
 import { Action, ControlMode, KeyCode, PointerButton } from "spatial-controls";
@@ -108,6 +108,20 @@ fetch("./spatial-controls.json")
 	.then(response => response.text())
 	.then(data => settings.fromJSON(data))
 	.catch(e => console.error(e));
+```
+
+## Constraints
+
+Custom constraints can be used to restrict the position in first person mode and the target in third person mode.
+
+```js
+const box = new Box3();
+box.min.set(-1, -1, -1);
+box.max.set(1, 1, 1);
+
+const boxConstraint = (p: Vector3) => box.clampPoint(p, p);
+controls.constraints.add(boxConstraint);
+controls.constraints.delete(boxConstraint);
 ```
 
 
