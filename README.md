@@ -112,7 +112,7 @@ fetch("./spatial-controls.json")
 
 ## Constraints
 
-Custom constraints can be used to restrict the position in first person mode and the target in third person mode.
+Custom constraints are applied to the `position` in 1st person mode and to the `target` in 3rd person mode.
 
 ```js
 const box = new Box3();
