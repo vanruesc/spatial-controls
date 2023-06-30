@@ -19,12 +19,13 @@ import {
 	Texture,
 	AdditiveBlending,
 	MeshStandardMaterial,
-	DoubleSide
+	DoubleSide,
+	Box3,
+	Box3Helper
 } from "three";
 
 import { Pane } from "tweakpane";
 import { calculateVerticalFoV } from "./utils/CameraUtils.js";
-import { FPSMeter } from "./utils/FPSMeter.js";
 import { ControlMode, PointerBehaviour, SpatialControls } from "spatial-controls";
 
 function load(): Promise<Map<string, unknown>> {
@@ -105,10 +106,20 @@ window.addEventListener("load", () => void load().then((assets) => {
 	settings.rotation.damping = 0.1;
 	settings.rotation.minPolarAngle = Number.NEGATIVE_INFINITY;
 	settings.rotation.maxPolarAngle = Number.POSITIVE_INFINITY;
-	settings.translation.sensitivity = 0.25;
+	settings.translation.sensitivity = 1;
 	settings.translation.damping = 0.1;
 	settings.zoom.sensitivity = 0.1;
 	settings.zoom.damping = 0.2;
+
+	const box = new Box3();
+	box.min.set(-2, 0, -4);
+	box.max.set(2, 2, 4);
+
+	const boxHelper = new Box3Helper(box);
+	boxHelper.visible = false;
+	scene.add(boxHelper);
+
+	const boxConstraint = (p: Vector3) => box.clampPoint(p, p);
 
 	// Objects
 
@@ -148,6 +159,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 
 	const params = {
 		orbitEnabled: false,
+		constraintEnabled: false,
 		rotation: {
 			"min azim. angle": -Math.PI,
 			"max azim. angle": Math.PI,
@@ -161,32 +173,30 @@ window.addEventListener("load", () => void load().then((assets) => {
 
 	function orbit() {
 
-		if(params.orbitEnabled) {
+		const y = 0.5;
+		const s = spherical;
+		s.theta -= clock.getDelta() * 0.25;
+		s.theta %= Math.PI * 2.0;
 
-			const y = 0.5;
-			const s = spherical;
-			s.theta -= clock.getDelta() * 0.25;
-			s.theta %= Math.PI * 2.0;
+		if(controls.settings.general.mode === ControlMode.THIRD_PERSON) {
 
-			if(controls.settings.general.mode === ControlMode.THIRD_PERSON) {
+			controls.target.setFromSpherical(s);
+			controls.target.y = y;
 
-				controls.target.setFromSpherical(s);
-				controls.target.y = y;
+		} else {
 
-			} else {
-
-				controls.position.setFromSpherical(s);
-				controls.position.y = y;
-
-			}
+			controls.position.setFromSpherical(s);
+			controls.position.y = y;
 
 		}
 
 	}
 
-	const fpsMeter = new FPSMeter();
-	const pane = new Pane({ container: container.querySelector(".tp") as HTMLElement });
-	pane.addMonitor(fpsMeter, "fps", { label: "FPS" });
+	const pane = new Pane({
+		title: "Settings",
+		container: container.querySelector(".tp") as HTMLElement,
+		expanded: container.clientWidth >= 800
+	});
 
 	let folder = pane.addFolder({ title: "General" });
 	folder.addInput(settings.general, "mode", { options: ControlMode })
@@ -198,7 +208,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 	folder = pane.addFolder({ title: "Sensitivity" });
 	folder.addInput(settings.rotation, "sensitivityX", { label: "rotation X", min: 0.1, max: 3.0, step: 0.01 });
 	folder.addInput(settings.rotation, "sensitivityY", { label: "rotation Y", min: 0.1, max: 3.0, step: 0.01 });
-	folder.addInput(settings.translation, "sensitivity", { label: "translation", min: 0.1, max: 2.0, step: 0.01 });
+	folder.addInput(settings.translation, "sensitivity", { label: "translation", min: 0.1, max: 3.0, step: 0.01 });
 	folder.addInput(settings.translation, "boostMultiplier", { min: 0.1, max: 4.0, step: 0.01 });
 	folder.addInput(settings.zoom, "sensitivity", { label: "zoom", min: 0.01, max: 3.0, step: 0.01 });
 
@@ -257,6 +267,11 @@ window.addEventListener("load", () => void load().then((assets) => {
 			}
 
 		});
+	folder.addInput(settings.translation, "axisWeights", {
+		x: { min: 0, max: 1, step: 1 },
+		y: { min: 0, max: 1, step: 1 },
+		z: { min: 0, max: 1, step: 1 }
+	});
 
 	folder = pane.addFolder({ title: "Zooming", expanded: false });
 	folder.addInput(settings.zoom, "enabled");
@@ -285,6 +300,23 @@ window.addEventListener("load", () => void load().then((assets) => {
 
 				spherical.theta = 0.0;
 				controls.target.set(0, 0.5, 0);
+
+			}
+
+		});
+
+	pane.addInput(params, "constraintEnabled", { label: "constrain" })
+		.on("change", (e) => {
+
+			boxHelper.visible = e.value;
+
+			if(e.value) {
+
+				controls.constraints.add(boxConstraint);
+
+			} else {
+
+				controls.constraints.delete(boxConstraint);
 
 			}
 
@@ -338,9 +370,14 @@ window.addEventListener("load", () => void load().then((assets) => {
 
 	requestAnimationFrame(function render(timestamp: number): void {
 
-		fpsMeter.update(timestamp);
-		orbit();
 		controls.update(timestamp);
+
+		if(params.orbitEnabled) {
+
+			orbit();
+
+		}
+
 		renderer.render(scene, camera);
 		requestAnimationFrame(render);
 
