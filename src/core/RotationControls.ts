@@ -12,8 +12,8 @@ import { ControlsEventMap } from "./ControlsEventMap.js";
 import { Disposable } from "./Disposable.js";
 import { Updatable } from "./Updatable.js";
 
-const v = new Vector3();
-const p = new Vector2();
+const v = /* @__PURE__ */ new Vector3();
+const p = /* @__PURE__ */ new Vector2();
 
 /**
  * 3D rotation controls.
@@ -371,7 +371,7 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 			const action = bindings.get(event.button) as Action;
 
 			// Mouse buttons are handled via mousedown/mouseup since pointer events don't fire for each button.
-			if(!(event instanceof PointerEvent && event.pointerType === PointerType.MOUSE)) {
+			if(!(event instanceof PointerEvent && event.pointerType === PointerType.MOUSE as string)) {
 
 				const strategy = this.strategies.get(action);
 				strategy?.execute(pressed, event);

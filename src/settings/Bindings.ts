@@ -4,21 +4,22 @@ import { Action } from "../core/Action.js";
  * Input bindings.
  *
  * @group Settings
+ * @param TKey - The type of the binding keys.
  */
 
-export class Bindings<T> {
+export class Bindings<TKey> {
 
 	/**
 	 * The default bindings.
 	 */
 
-	defaultActions: Map<T, Action>;
+	defaultActions: Map<TKey, Action>;
 
 	/**
 	 * A collection that maps keys to actions.
 	 */
 
-	actions: Map<T, Action>;
+	actions: Map<TKey, Action>;
 
 	/**
 	 * Constructs new input bindings.
@@ -26,8 +27,8 @@ export class Bindings<T> {
 
 	constructor() {
 
-		this.defaultActions = new Map<T, Action>();
-		this.actions = new Map<T, Action>();
+		this.defaultActions = new Map<TKey, Action>();
+		this.actions = new Map<TKey, Action>();
 
 	}
 
@@ -37,7 +38,7 @@ export class Bindings<T> {
 	 * @return This instance.
 	 */
 
-	reset(): Bindings<T> {
+	reset(): Bindings<TKey> {
 
 		this.actions = new Map(this.defaultActions);
 		return this;
@@ -51,7 +52,7 @@ export class Bindings<T> {
 	 * @return This instance.
 	 */
 
-	setDefault(actions: Map<T, Action>): Bindings<T> {
+	setDefault(actions: Map<TKey, Action>): Bindings<TKey> {
 
 		this.defaultActions = actions;
 		return this.reset();
@@ -64,7 +65,7 @@ export class Bindings<T> {
 	 * @return This instance.
 	 */
 
-	clearDefault(): Bindings<T> {
+	clearDefault(): Bindings<TKey> {
 
 		this.defaultActions.clear();
 		return this;
@@ -77,7 +78,7 @@ export class Bindings<T> {
 	 * @return This instance.
 	 */
 
-	clear(): Bindings<T> {
+	clear(): Bindings<TKey> {
 
 		this.actions.clear();
 		return this;
@@ -91,7 +92,7 @@ export class Bindings<T> {
 	 * @return This instance.
 	 */
 
-	copy(bindings: Bindings<T>): Bindings<T> {
+	copy(bindings: Bindings<TKey>): Bindings<TKey> {
 
 		this.defaultActions = new Map(bindings.defaultActions);
 		this.actions = new Map(bindings.actions);
@@ -106,9 +107,9 @@ export class Bindings<T> {
 	 * @return The cloned bindings.
 	 */
 
-	clone(): Bindings<T> {
+	clone(): Bindings<TKey> {
 
-		const clone = new Bindings<T>();
+		const clone = new Bindings<TKey>();
 		return clone.copy(this);
 
 	}
@@ -120,12 +121,12 @@ export class Bindings<T> {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: Bindings<T>): Bindings<T> {
+	fromJSON(json: Bindings<TKey>): Bindings<TKey> {
 
 		if(json !== undefined) {
 
-			this.defaultActions = new Map<T, Action>(json.defaultActions);
-			this.actions = new Map<T, Action>(json.actions);
+			this.defaultActions = new Map<TKey, Action>(json.defaultActions);
+			this.actions = new Map<TKey, Action>(json.actions);
 
 		}
 
@@ -140,7 +141,7 @@ export class Bindings<T> {
 	 * @return Whether the given key is bound to an action.
 	 */
 
-	has(key: T): boolean {
+	has(key: TKey): boolean {
 
 		return this.actions.has(key);
 
@@ -153,7 +154,7 @@ export class Bindings<T> {
 	 * @return The action, or undefined if the key is not bound to any action.
 	 */
 
-	get(key: T): Action | undefined {
+	get(key: TKey): Action | undefined {
 
 		return this.actions.get(key);
 
@@ -167,7 +168,7 @@ export class Bindings<T> {
 	 * @return This instance.
 	 */
 
-	set(key: T, action: Action): Bindings<T> {
+	set(key: TKey, action: Action): Bindings<TKey> {
 
 		this.actions.set(key, action);
 		return this;
@@ -181,7 +182,7 @@ export class Bindings<T> {
 	 * @return Whether the binding existed.
 	 */
 
-	delete(key: T): boolean {
+	delete(key: TKey): boolean {
 
 		return this.actions.delete(key);
 

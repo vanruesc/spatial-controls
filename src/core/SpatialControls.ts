@@ -8,7 +8,7 @@ import { TranslationControls } from "./TranslationControls.js";
 import { Updatable } from "./Updatable.js";
 import { ControlMode } from "./ControlMode.js";
 
-const v = new Vector3();
+const v = /* @__PURE__ */ new Vector3();
 
 /**
  * Constrains the given vector.

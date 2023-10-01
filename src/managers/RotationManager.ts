@@ -6,10 +6,10 @@ import { ScalarDamper } from "../math/ScalarDamper.js";
 import { Settings } from "../settings/Settings.js";
 import { ManagerEventMap } from "./ManagerEventMap.js";
 
-const TWO_PI = Math.PI * 2;
-const u = new Vector3();
-const v = new Vector3();
-const m = new Matrix4();
+const TWO_PI = 2 * Math.PI;
+const u = /* @__PURE__ */ new Vector3();
+const v = /* @__PURE__ */ new Vector3();
+const m = /* @__PURE__ */ new Matrix4();
 
 /**
  * A rotation manager.

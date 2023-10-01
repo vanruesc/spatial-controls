@@ -7,8 +7,8 @@ import { Settings } from "../settings/Settings.js";
 import { MovementState } from "./MovementState.js";
 import { ManagerEventMap } from "./ManagerEventMap.js";
 
-const u = new Vector3();
-const v = new Vector3();
+const u = /* @__PURE__ */ new Vector3();
+const v = /* @__PURE__ */ new Vector3();
 
 /**
  * A translation manager.
