@@ -1,13 +1,33 @@
 import { EventDispatcher, Quaternion, Vector3 } from "three";
 import { Settings } from "../settings/Settings.js";
+import { Constraint } from "./Constraint.js";
 import { ControlsEventMap } from "./ControlsEventMap.js";
 import { Disposable } from "./Disposable.js";
 import { RotationControls } from "./RotationControls.js";
 import { TranslationControls } from "./TranslationControls.js";
-import { Constraint } from "./Constraint.js";
 import { Updatable } from "./Updatable.js";
+import { ControlMode } from "./ControlMode.js";
 
 const v = new Vector3();
+
+/**
+ * Constrains the given vector.
+ *
+ * @param A vector.
+ * @return The constrained vector.
+ */
+
+function applyConstraints(p: Vector3, constraints: Set<Constraint<Vector3>>): Vector3 {
+
+	for(const applyConstraint of constraints) {
+
+		p = applyConstraint(p);
+
+	}
+
+	return p;
+
+}
 
 /**
  * Spatial controls for 3D translation and rotation.
@@ -138,7 +158,7 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 		this.constraints = constraints;
 
 		this.rotationControls = new RotationControls(position, quaternion, target, settings);
-		this.translationControls = new TranslationControls(position, quaternion, target, settings, constraints);
+		this.translationControls = new TranslationControls(position, quaternion, target, settings);
 		this.rotationControls.addEventListener(SpatialControls.EVENT_UPDATE, e => this.dispatchEvent(e));
 		this.translationControls.addEventListener(SpatialControls.EVENT_UPDATE, e => this.dispatchEvent(e));
 
@@ -339,6 +359,39 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 	}
 
 	/**
+	 * Constrains the given vector.
+	 *
+	 * @param A vector.
+	 * @return The constrained vector.
+	 */
+
+	private applyConstraints(): void {
+
+		if(this.constraints.size === 0) {
+
+			return;
+
+		}
+
+		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
+
+			// Constrain the target.
+			v.copy(this.target);
+			this.target.copy(applyConstraints(this.target, this.constraints));
+
+			// Move the position together with the target.
+			this.position.add(v.subVectors(this.target, v));
+
+		} else {
+
+			// Constrain the position.
+			this.position.copy(applyConstraints(this.position, this.constraints));
+
+		}
+
+	}
+
+	/**
 	 * Reacts to setting changes.
 	 *
 	 * @param event - An event.
@@ -370,6 +423,8 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 
 		this.rotationControls.update(timestamp);
 		this.translationControls.update(timestamp);
+
+		this.applyConstraints();
 
 		this.previousPosition.copy(this.position);
 		this.previousQuaternion.copy(this.quaternion);

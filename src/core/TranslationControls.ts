@@ -11,7 +11,6 @@ import { ControlsEventMap } from "./ControlsEventMap.js";
 import { Direction } from "./Direction.js";
 import { Disposable } from "./Disposable.js";
 import { Updatable } from "./Updatable.js";
-import { Constraint } from "./Constraint.js";
 
 /**
  * 3D translation controls.
@@ -70,8 +69,7 @@ export class TranslationControls extends EventDispatcher<ControlsEventMap>
 		position = new Vector3(),
 		quaternion = new Quaternion(),
 		target = new Vector3(),
-		settings = new Settings(),
-		constraints = new Set<Constraint<Vector3>>()
+		settings = new Settings()
 	) {
 
 		super();
@@ -80,7 +78,7 @@ export class TranslationControls extends EventDispatcher<ControlsEventMap>
 		this.settings = settings;
 		settings.addEventListener("change", (e: unknown) => this.handleEvent(e as Event));
 
-		this.translationManager = new TranslationManager(position, quaternion, target, settings, constraints);
+		this.translationManager = new TranslationManager(position, quaternion, target, settings);
 		this.translationManager.addEventListener(TranslationControls.EVENT_UPDATE, e => this.dispatchEvent(e));
 
 		const state = this.translationManager.movementState;

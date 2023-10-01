@@ -1,7 +1,6 @@
 import { BaseEvent, EventDispatcher, Quaternion, Vector3 } from "three";
 import { ControlMode } from "../core/ControlMode.js";
 import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
-import { Constraint } from "../core/Constraint.js";
 import { Updatable } from "../core/Updatable.js";
 import { ScalarDamper } from "../math/ScalarDamper.js";
 import { Settings } from "../settings/Settings.js";
@@ -52,12 +51,6 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 	private settings: Settings;
 
 	/**
-	 * A list of constraints.
-	 */
-
-	private constraints: Set<Constraint<Vector3>>;
-
-	/**
 	 * The movement state.
 	 */
 
@@ -106,8 +99,7 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 		position: Vector3,
 		quaternion: Quaternion,
 		target: Vector3,
-		settings: Settings,
-		constraints: Set<Constraint<Vector3>>
+		settings: Settings
 	) {
 
 		super();
@@ -117,7 +109,6 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 		this._target = target;
 
 		this.settings = settings;
-		this.constraints = constraints;
 		this.movementState = new MovementState();
 		this.velocity0 = new Vector3();
 		this.velocity1 = new Vector3();
@@ -194,25 +185,6 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 			scalarDamper.resetVelocity();
 
 		}
-
-	}
-
-	/**
-	 * Constrains the given vector.
-	 *
-	 * @param A vector.
-	 * @return The constrained vector.
-	 */
-
-	private applyConstraints(p: Vector3): Vector3 {
-
-		for(const applyConstraint of this.constraints) {
-
-			p = applyConstraint(p);
-
-		}
-
-		return p;
 
 	}
 
@@ -343,20 +315,20 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 
 			if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
 
-				// Update and constrain the target.
+				// Update the target.
 				u.copy(this.target);
 				this.translate(this.target, v0, elapsed);
-				this.target.copy(this.applyConstraints(this.target));
+				this.target.copy(this.target);
 
 				// Move the position together with the target.
 				this.position.add(v.subVectors(this.target, u));
 
 			} else {
 
-				// Update and constrain the position.
+				// Update the position.
 				u.copy(this.position);
 				this.translate(this.position, v0, elapsed);
-				this.position.copy(this.applyConstraints(this.position));
+				this.position.copy(this.position);
 
 			}
 
