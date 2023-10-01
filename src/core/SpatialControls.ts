@@ -1,10 +1,11 @@
 import { EventDispatcher, Quaternion, Vector3 } from "three";
 import { Settings } from "../settings/Settings.js";
+import { ControlsEventMap } from "./ControlsEventMap.js";
 import { Disposable } from "./Disposable.js";
-import { Updatable } from "./Updatable.js";
 import { RotationControls } from "./RotationControls.js";
 import { TranslationControls } from "./TranslationControls.js";
 import { Constraint } from "./Constraint.js";
+import { Updatable } from "./Updatable.js";
 
 const v = new Vector3();
 
@@ -16,7 +17,8 @@ const v = new Vector3();
  * @group Core
  */
 
-export class SpatialControls extends EventDispatcher implements Disposable, EventListenerObject, Updatable {
+export class SpatialControls extends EventDispatcher<ControlsEventMap>
+	implements Disposable, EventListenerObject, Updatable {
 
 	/**
 	 * Triggers when the position or quaternion is changed.

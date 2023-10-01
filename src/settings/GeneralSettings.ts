@@ -1,5 +1,6 @@
 import { EventDispatcher } from "three";
 import { ControlMode } from "../core/ControlMode.js";
+import { SettingsEventMap } from "./SettingsEventMap.js";
 
 /**
  * General settings.
@@ -7,7 +8,7 @@ import { ControlMode } from "../core/ControlMode.js";
  * @group Settings
  */
 
-export class GeneralSettings extends EventDispatcher {
+export class GeneralSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Triggers when the settings are changed.

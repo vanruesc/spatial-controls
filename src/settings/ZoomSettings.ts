@@ -1,4 +1,5 @@
 import { EventDispatcher } from "three";
+import { SettingsEventMap } from "./SettingsEventMap.js";
 
 /**
  * Zoom settings.
@@ -6,7 +7,7 @@ import { EventDispatcher } from "three";
  * @group Settings
  */
 
-export class ZoomSettings extends EventDispatcher {
+export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Triggers when the settings are changed.

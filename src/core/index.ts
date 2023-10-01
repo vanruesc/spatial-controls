@@ -1,6 +1,7 @@
 export { Action } from "./Action.js";
 export { Constraint } from "./Constraint.js";
 export { ControlMode } from "./ControlMode.js";
+export { ControlsEventMap } from "./ControlsEventMap.js";
 export { Direction } from "./Direction.js";
 export { Disposable } from "./Disposable.js";
 export { RotationControls } from "./RotationControls.js";

@@ -1,9 +1,10 @@
-import { Event as Event3, EventDispatcher, Matrix4, Quaternion, Spherical, Vector3 } from "three";
-import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
+import { BaseEvent, EventDispatcher, Matrix4, Quaternion, Spherical, Vector3 } from "three";
 import { ControlMode } from "../core/ControlMode.js";
+import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
 import { Updatable } from "../core/Updatable.js";
 import { ScalarDamper } from "../math/ScalarDamper.js";
 import { Settings } from "../settings/Settings.js";
+import { ManagerEventMap } from "./ManagerEventMap.js";
 
 const TWO_PI = Math.PI * 2;
 const u = new Vector3();
@@ -16,7 +17,7 @@ const m = new Matrix4();
  * @group Managers
  */
 
-export class RotationManager extends EventDispatcher implements Updatable {
+export class RotationManager extends EventDispatcher<ManagerEventMap> implements Updatable {
 
 	/**
 	 * Triggers when the position or quaternion is changed.
@@ -78,7 +79,7 @@ export class RotationManager extends EventDispatcher implements Updatable {
 	 * A reusable update event.
 	 */
 
-	private updateEvent: Event3;
+	private updateEvent: BaseEvent<"update">;
 
 	/**
 	 * Constructs a new rotation manager.

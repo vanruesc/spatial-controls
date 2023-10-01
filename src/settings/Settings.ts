@@ -2,11 +2,11 @@ import { EventDispatcher } from "three";
 import { Action } from "../core/Action.js";
 import { KeyCode } from "../input/KeyCode.js";
 import { PointerButton } from "../input/PointerButton.js";
-
-import { GeneralSettings } from "./GeneralSettings.js";
 import { Bindings } from "./Bindings.js";
+import { GeneralSettings } from "./GeneralSettings.js";
 import { PointerSettings } from "./PointerSettings.js";
 import { RotationSettings } from "./RotationSettings.js";
+import { SettingsEventMap } from "./SettingsEventMap.js";
 import { TranslationSettings } from "./TranslationSettings.js";
 import { ZoomSettings } from "./ZoomSettings.js";
 
@@ -16,7 +16,7 @@ import { ZoomSettings } from "./ZoomSettings.js";
  * @group Settings
  */
 
-export class Settings extends EventDispatcher {
+export class Settings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Triggers when the settings are changed.

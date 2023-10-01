@@ -1,11 +1,12 @@
-import { Event as Event3, EventDispatcher, Quaternion, Vector3 } from "three";
-import { MovementState } from "./MovementState.js";
+import { BaseEvent, EventDispatcher, Quaternion, Vector3 } from "three";
 import { ControlMode } from "../core/ControlMode.js";
-import { Settings } from "../settings/Settings.js";
-import { ScalarDamper } from "../math/ScalarDamper.js";
-import { Updatable } from "../core/Updatable.js";
 import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
 import { Constraint } from "../core/Constraint.js";
+import { Updatable } from "../core/Updatable.js";
+import { ScalarDamper } from "../math/ScalarDamper.js";
+import { Settings } from "../settings/Settings.js";
+import { MovementState } from "./MovementState.js";
+import { ManagerEventMap } from "./ManagerEventMap.js";
 
 const u = new Vector3();
 const v = new Vector3();
@@ -16,7 +17,7 @@ const v = new Vector3();
  * @group Managers
  */
 
-export class TranslationManager extends EventDispatcher implements Updatable {
+export class TranslationManager extends EventDispatcher<ManagerEventMap> implements Updatable {
 
 	/**
 	 * Triggers when the position or quaternion is changed.
@@ -90,7 +91,7 @@ export class TranslationManager extends EventDispatcher implements Updatable {
 	 * A reusable update event.
 	 */
 
-	private updateEvent: Event3;
+	private updateEvent: BaseEvent<"update">;
 
 	/**
 	 * Constructs a new translation manager.

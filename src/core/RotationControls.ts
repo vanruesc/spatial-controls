@@ -8,6 +8,7 @@ import { RotationManager } from "../managers/RotationManager.js";
 import { Settings } from "../settings/Settings.js";
 import { Action } from "./Action.js";
 import { ControlMode } from "./ControlMode.js";
+import { ControlsEventMap } from "./ControlsEventMap.js";
 import { Disposable } from "./Disposable.js";
 import { Updatable } from "./Updatable.js";
 
@@ -22,7 +23,8 @@ const p = new Vector2();
  * @group Core
  */
 
-export class RotationControls extends EventDispatcher implements Disposable, EventListenerObject, Updatable {
+export class RotationControls extends EventDispatcher<ControlsEventMap>
+	implements Disposable, EventListenerObject, Updatable {
 
 	/**
 	 * Triggers when the quaternion is changed.

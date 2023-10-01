@@ -1,5 +1,6 @@
 import { EventDispatcher, Vector3 } from "three";
 import * as axes from "../core/axes.js";
+import { SettingsEventMap } from "./SettingsEventMap.js";
 
 /**
  * Rotation settings.
@@ -7,7 +8,7 @@ import * as axes from "../core/axes.js";
  * @group Settings
  */
 
-export class RotationSettings extends EventDispatcher {
+export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Triggers when the settings are changed.

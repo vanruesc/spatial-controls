@@ -7,6 +7,7 @@ import { keyCodeLegacy } from "../input/keyCodeLegacy.js";
 import { TranslationManager } from "../managers/TranslationManager.js";
 import { Settings } from "../settings/Settings.js";
 import { Action } from "./Action.js";
+import { ControlsEventMap } from "./ControlsEventMap.js";
 import { Direction } from "./Direction.js";
 import { Disposable } from "./Disposable.js";
 import { Updatable } from "./Updatable.js";
@@ -20,7 +21,8 @@ import { Constraint } from "./Constraint.js";
  * @group Core
  */
 
-export class TranslationControls extends EventDispatcher implements Disposable, EventListenerObject, Updatable {
+export class TranslationControls extends EventDispatcher<ControlsEventMap>
+	implements Disposable, EventListenerObject, Updatable {
 
 	/**
 	 * Triggers when the position or quaternion is changed.

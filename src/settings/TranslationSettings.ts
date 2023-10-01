@@ -1,4 +1,5 @@
 import { EventDispatcher, Vector3 } from "three";
+import { SettingsEventMap } from "./SettingsEventMap.js";
 
 /**
  * Translation settings.
@@ -6,7 +7,7 @@ import { EventDispatcher, Vector3 } from "three";
  * @group Settings
  */
 
-export class TranslationSettings extends EventDispatcher {
+export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Triggers when the settings are changed.

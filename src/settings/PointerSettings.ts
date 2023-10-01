@@ -1,5 +1,6 @@
 import { EventDispatcher } from "three";
 import { PointerBehaviour } from "../input/PointerBehaviour.js";
+import { SettingsEventMap } from "./SettingsEventMap.js";
 
 /**
  * Pointer settings.
@@ -7,7 +8,7 @@ import { PointerBehaviour } from "../input/PointerBehaviour.js";
  * @group Settings
  */
 
-export class PointerSettings extends EventDispatcher {
+export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Triggers when the settings are changed.
