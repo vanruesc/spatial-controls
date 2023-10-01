@@ -25,7 +25,7 @@ import {
 } from "three";
 
 import { Pane } from "tweakpane";
-import { calculateVerticalFoV } from "./utils/CameraUtils.js";
+import { calculateVerticalFoV, getSkyboxUrls } from "./utils/index.js";
 import { ControlMode, PointerBehaviour, SpatialControls } from "spatial-controls";
 
 function load(): Promise<Map<string, unknown>> {
@@ -35,20 +35,12 @@ function load(): Promise<Map<string, unknown>> {
 	const textureLoader = new TextureLoader(loadingManager);
 	const cubeTextureLoader = new CubeTextureLoader(loadingManager);
 
-	const path = "textures/skies/space/";
-	const format = ".png";
-	const urls = [
-		path + "px" + format, path + "nx" + format,
-		path + "py" + format, path + "ny" + format,
-		path + "pz" + format, path + "nz" + format
-	];
-
 	return new Promise<Map<string, unknown>>((resolve, reject) => {
 
 		loadingManager.onLoad = () => resolve(assets);
 		loadingManager.onError = (url: string) => reject(new Error(`Failed to load ${url}`));
 
-		cubeTextureLoader.load(urls, (t) => {
+		cubeTextureLoader.load(getSkyboxUrls("space", ".jpg"), (t) => {
 
 			t.colorSpace = SRGBColorSpace;
 			assets.set("sky", t);
@@ -199,128 +191,123 @@ window.addEventListener("load", () => void load().then((assets) => {
 	});
 
 	let folder = pane.addFolder({ title: "General" });
-	folder.addInput(settings.general, "mode", { options: ControlMode })
+	folder.addBinding(settings.general, "mode", { options: ControlMode })
 		.on("change", (e) => void (sphere.visible = (e.value === ControlMode.THIRD_PERSON)));
 
 	folder = pane.addFolder({ title: "Pointer" });
-	folder.addInput(settings.pointer, "behaviour", { options: PointerBehaviour });
+	folder.addBinding(settings.pointer, "behaviour", { options: PointerBehaviour });
 
 	folder = pane.addFolder({ title: "Sensitivity" });
-	folder.addInput(settings.rotation, "sensitivityX", { label: "rotation X", min: 0.1, max: 3.0, step: 0.01 });
-	folder.addInput(settings.rotation, "sensitivityY", { label: "rotation Y", min: 0.1, max: 3.0, step: 0.01 });
-	folder.addInput(settings.translation, "sensitivity", { label: "translation", min: 0.1, max: 3.0, step: 0.01 });
-	folder.addInput(settings.translation, "boostMultiplier", { min: 0.1, max: 4.0, step: 0.01 });
-	folder.addInput(settings.zoom, "sensitivity", { label: "zoom", min: 0.01, max: 3.0, step: 0.01 });
+	folder.addBinding(settings.rotation, "sensitivityX", { label: "rotation X", min: 0.1, max: 3.0, step: 0.01 });
+	folder.addBinding(settings.rotation, "sensitivityY", { label: "rotation Y", min: 0.1, max: 3.0, step: 0.01 });
+	folder.addBinding(settings.translation, "sensitivity", { label: "translation", min: 0.1, max: 3.0, step: 0.01 });
+	folder.addBinding(settings.translation, "boostMultiplier", { min: 0.1, max: 4.0, step: 0.01 });
+	folder.addBinding(settings.zoom, "sensitivity", { label: "zoom", min: 0.01, max: 3.0, step: 0.01 });
 
 	folder = pane.addFolder({ title: "Damping" });
-	folder.addInput(settings.rotation, "damping", { label: "rotation", min: 0, max: 1, step: 0.01 });
-	folder.addInput(settings.zoom, "damping", { label: "zoom", min: 0, max: 1, step: 0.01 });
-	folder.addInput(settings.translation, "damping", { label: "translation", min: 0, max: 1, step: 0.01 });
+	folder.addBinding(settings.rotation, "damping", { label: "rotation", min: 0, max: 1, step: 0.01 });
+	folder.addBinding(settings.zoom, "damping", { label: "zoom", min: 0, max: 1, step: 0.01 });
+	folder.addBinding(settings.translation, "damping", { label: "translation", min: 0, max: 1, step: 0.01 });
 
 	folder = pane.addFolder({ title: "Rotation", expanded: false });
-	folder.addInput(settings.rotation, "enabled");
-	folder.addInput(settings.rotation, "pivotOffset");
-	folder.addInput(params.rotation, "min azim. angle", { min: -Math.PI, max: 0, step: 1e-3 })
-		.on("change", (e) => {
+	folder.addBinding(settings.rotation, "enabled");
+	folder.addBinding(settings.rotation, "pivotOffset");
 
-			const angle = (e.value <= -Math.PI + 1e-3) ? Number.NEGATIVE_INFINITY : e.value;
-			settings.rotation.minAzimuthalAngle = angle;
+	folder.addBinding(params.rotation, "min azim. angle", { min: -Math.PI, max: 0, step: 1e-3 }).on("change", (e) => {
 
-		});
+		const angle = (e.value <= -Math.PI + 1e-3) ? Number.NEGATIVE_INFINITY : e.value;
+		settings.rotation.minAzimuthalAngle = angle;
 
-	folder.addInput(params.rotation, "max azim. angle", { min: 0, max: Math.PI, step: 1e-3 })
-		.on("change", (e) => {
+	});
 
-			const angle = (e.value >= Math.PI - 1e-3) ? Number.POSITIVE_INFINITY : e.value;
-			settings.rotation.maxAzimuthalAngle = angle;
+	folder.addBinding(params.rotation, "max azim. angle", { min: 0, max: Math.PI, step: 1e-3 }).on("change", (e) => {
 
-		});
+		const angle = (e.value >= Math.PI - 1e-3) ? Number.POSITIVE_INFINITY : e.value;
+		settings.rotation.maxAzimuthalAngle = angle;
 
-	folder.addInput(params.rotation, "min polar angle", { min: -Math.PI, max: 0, step: 1e-3 })
-		.on("change", (e) => {
+	});
 
-			const angle = (e.value <= -Math.PI + 1e-3) ? Number.NEGATIVE_INFINITY : e.value;
-			settings.rotation.minPolarAngle = angle;
+	folder.addBinding(params.rotation, "min polar angle", { min: -Math.PI, max: 0, step: 1e-3 }).on("change", (e) => {
 
-		});
+		const angle = (e.value <= -Math.PI + 1e-3) ? Number.NEGATIVE_INFINITY : e.value;
+		settings.rotation.minPolarAngle = angle;
 
-	folder.addInput(params.rotation, "max polar angle", { min: 0, max: Math.PI, step: 1e-3 })
-		.on("change", (e) => {
+	});
 
-			const angle = (e.value >= Math.PI - 1e-3) ? Number.POSITIVE_INFINITY : e.value;
-			settings.rotation.maxPolarAngle = angle;
+	folder.addBinding(params.rotation, "max polar angle", { min: 0, max: Math.PI, step: 1e-3 }).on("change", (e) => {
 
-		});
+		const angle = (e.value >= Math.PI - 1e-3) ? Number.POSITIVE_INFINITY : e.value;
+		settings.rotation.maxPolarAngle = angle;
 
-	folder.addInput(settings.rotation, "invertedX");
-	folder.addInput(settings.rotation, "invertedY");
+	});
+
+	folder.addBinding(settings.rotation, "invertedX");
+	folder.addBinding(settings.rotation, "invertedY");
 
 	folder = pane.addFolder({ title: "Translation", expanded: false });
-	folder.addInput(settings.translation, "enabled")
-		.on("change", (e) => {
 
-			if(params.orbitEnabled) {
+	folder.addBinding(settings.translation, "enabled").on("change", (e) => {
 
-				// Prevent translation when auto-orbiting.
-				settings.translation.enabled = false;
+		if(params.orbitEnabled) {
 
-			}
+			// Prevent translation when auto-orbiting.
+			settings.translation.enabled = false;
 
-		});
-	folder.addInput(settings.translation, "axisWeights", {
+		}
+
+	});
+
+	folder.addBinding(settings.translation, "axisWeights", {
 		x: { min: 0, max: 1, step: 1 },
 		y: { min: 0, max: 1, step: 1 },
 		z: { min: 0, max: 1, step: 1 }
 	});
 
 	folder = pane.addFolder({ title: "Zooming", expanded: false });
-	folder.addInput(settings.zoom, "enabled");
-	folder.addInput(settings.zoom, "inverted");
-	folder.addInput(settings.zoom, "minDistance", { min: 0.1, max: 1, step: 0.01 });
-	folder.addInput(settings.zoom, "maxDistance", { min: 1, max: 10, step: 0.01 });
+	folder.addBinding(settings.zoom, "enabled");
+	folder.addBinding(settings.zoom, "inverted");
+	folder.addBinding(settings.zoom, "minDistance", { min: 0.1, max: 1, step: 0.01 });
+	folder.addBinding(settings.zoom, "maxDistance", { min: 1, max: 10, step: 0.01 });
 
-	pane.addButton({ title: "save" })
-		.on("click", () => {
+	pane.addButton({ title: "save as JSON" }).on("click", () => {
 
-			const settingsURL = URL.createObjectURL(settings.toBlob());
-			const a = document.createElement("a");
-			a.setAttribute("href", settingsURL);
-			a.setAttribute("download", "spatial-controls.json");
-			a.click();
-			URL.revokeObjectURL(settingsURL);
+		const settingsURL = URL.createObjectURL(settings.toBlob());
+		const a = document.createElement("a");
+		a.setAttribute("href", settingsURL);
+		a.setAttribute("download", "spatial-controls.json");
+		a.click();
+		URL.revokeObjectURL(settingsURL);
 
-		});
+	});
 
-	pane.addInput(params, "orbitEnabled", { label: "orbit" })
-		.on("change", (e) => {
+	pane.addBinding(params, "orbitEnabled", { label: "orbit" }).on("change", (e) => {
 
-			settings.translation.enabled = !e.value;
+		settings.translation.enabled = !e.value;
 
-			if(!e.value && settings.general.mode === ControlMode.THIRD_PERSON) {
+		if(!e.value && settings.general.mode === ControlMode.THIRD_PERSON) {
 
-				spherical.theta = 0.0;
-				controls.target.set(0, 0.5, 0);
+			spherical.theta = 0.0;
+			controls.target.set(0, 0.5, 0);
 
-			}
+		}
 
-		});
+	});
 
-	pane.addInput(params, "constraintEnabled", { label: "constrain" })
-		.on("change", (e) => {
+	pane.addBinding(params, "constraintEnabled", { label: "constrain" }).on("change", (e) => {
 
-			boxHelper.visible = e.value;
+		boxHelper.visible = e.value;
 
-			if(e.value) {
+		if(e.value) {
 
-				controls.constraints.add(boxConstraint);
+			controls.constraints.add(boxConstraint);
 
-			} else {
+		} else {
 
-				controls.constraints.delete(boxConstraint);
+			controls.constraints.delete(boxConstraint);
 
-			}
+		}
 
-		});
+	});
 
 	// Debug Keys
 
