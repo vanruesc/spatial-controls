@@ -1,6 +1,6 @@
 {
 	"name": "spatial-controls",
-	"version": "6.1.1",
+	"version": "6.1.2",
 	"description": "Configurable 3D movement controls.",
 	"homepage": "https://github.com/vanruesc/spatial-controls",
 	"license": "Zlib",
