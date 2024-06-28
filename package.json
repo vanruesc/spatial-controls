@@ -54,7 +54,7 @@
 		"lint": "run-p lint:*",
 		"lint:js": "eslint --ext .ts --fix src demo/src",
 		"lint:tsc": "tsc --noemit",
-		"prepublishOnly": "run-p test doc",
+		"prepublishOnly": "run-s test doc",
 		"start": "serve public",
 		"test": "run-s lint clean build ava",
 		"prewatch": "run-s clean build:js build:dts postbuild",
