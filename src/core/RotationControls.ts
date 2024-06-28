@@ -2,6 +2,8 @@ import { EventDispatcher, Quaternion, Vector2, Vector3 } from "three";
 import { RotationStrategy } from "../strategies/RotationStrategy.js";
 import { Strategy } from "../strategies/Strategy.js";
 import { ZoomStrategy } from "../strategies/ZoomStrategy.js";
+import { KeyCode } from "../input/KeyCode.js";
+import { keyCodeLegacy } from "../input/keyCodeLegacy.js";
 import { PointerBehaviour } from "../input/PointerBehaviour.js";
 import { PointerType } from "../input/PointerType.js";
 import { RotationManager } from "../managers/RotationManager.js";
@@ -226,7 +228,7 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 
 	set enabled(value: boolean) {
 
-		if(this.domElement === null) {
+		if(this.domElement === null || typeof document === "undefined") {
 
 			return;
 
@@ -241,6 +243,8 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 			document.addEventListener("pointerlockchange", this);
 			document.addEventListener("pointerlockerror", this);
 			document.addEventListener("visibilitychange", this);
+			document.body.addEventListener("keyup", this);
+			document.body.addEventListener("keydown", this);
 			domElement.addEventListener("mousedown", this);
 			domElement.addEventListener("mouseup", this);
 			domElement.addEventListener("pointerdown", this);
@@ -255,6 +259,8 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 			document.removeEventListener("pointerlockchange", this);
 			document.removeEventListener("pointerlockerror", this);
 			document.removeEventListener("visibilitychange", this);
+			document.body.removeEventListener("keyup", this);
+			document.body.removeEventListener("keydown", this);
 			domElement.removeEventListener("mousedown", this);
 			domElement.removeEventListener("mouseup", this);
 			domElement.removeEventListener("pointerdown", this);
@@ -274,6 +280,7 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	/**
 	 * Locks or unlocks the pointer.
 	 *
+	 * @see {@link handlePointerLockEvent}
 	 * @param locked - Whether the pointer should be locked.
 	 */
 
@@ -433,6 +440,28 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	}
 
 	/**
+	 * Handles keyboard events.
+	 *
+	 * @param event - A keyboard event.
+	 * @param pressed - Whether the key has been pressed down.
+	 */
+
+	private handleKeyboardEvent(event: KeyboardEvent, pressed: boolean): void {
+
+		const keyBindings = this.settings.keyBindings;
+		const code = event.code !== undefined ? event.code as KeyCode : keyCodeLegacy.get(event.keyCode) as KeyCode;
+
+		if(keyBindings.has(code)) {
+
+			event.preventDefault();
+			const strategy = this.strategies.get(keyBindings.get(code) as Action);
+			strategy?.execute(pressed);
+
+		}
+
+	}
+
+	/**
 	 * Cancels active interactions on visibility loss.
 	 */
 
@@ -586,6 +615,14 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 
 			case "pointerlockchange":
 				this.handlePointerLockEvent();
+				break;
+
+			case "keydown":
+				this.handleKeyboardEvent(event as KeyboardEvent, true);
+				break;
+
+			case "keyup":
+				this.handleKeyboardEvent(event as KeyboardEvent, false);
 				break;
 
 			case "visibilitychange":

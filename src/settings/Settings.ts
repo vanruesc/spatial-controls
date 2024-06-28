@@ -83,12 +83,12 @@ export class Settings extends EventDispatcher<SettingsEventMap> {
 		this.keyBindings = new Bindings<KeyCode>();
 		this.keyBindings.setDefault(new Map<KeyCode, Action>([
 			[KeyCode.KEY_W, Action.MOVE_FORWARD],
-			[KeyCode.ARROW_UP, Action.MOVE_FORWARD],
 			[KeyCode.KEY_A, Action.MOVE_LEFT],
-			[KeyCode.ARROW_LEFT, Action.MOVE_LEFT],
 			[KeyCode.KEY_S, Action.MOVE_BACKWARD],
-			[KeyCode.ARROW_DOWN, Action.MOVE_BACKWARD],
 			[KeyCode.KEY_D, Action.MOVE_RIGHT],
+			[KeyCode.ARROW_UP, Action.MOVE_FORWARD],
+			[KeyCode.ARROW_LEFT, Action.MOVE_LEFT],
+			[KeyCode.ARROW_DOWN, Action.MOVE_BACKWARD],
 			[KeyCode.ARROW_RIGHT, Action.MOVE_RIGHT],
 			[KeyCode.KEY_X, Action.MOVE_DOWN],
 			[KeyCode.SPACE, Action.MOVE_UP],
