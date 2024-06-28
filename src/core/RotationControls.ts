@@ -305,7 +305,7 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	/**
 	 * Enables or disables the rotation mode.
 	 *
-	 * @param pressed - Whether the rotation mode should be activated.
+	 * @param enabled - Whether the rotation mode should be activated.
 	 */
 
 	setRotationEnabled(enabled: boolean): void {

@@ -62,7 +62,6 @@ export class TranslationControls extends EventDispatcher<ControlsEventMap>
 	 * @param quaternion - A quaternion.
 	 * @param target - A target.
 	 * @param settings - The settings.
-	 * @param constraints - A set of constraints.
 	 */
 
 	constructor(
