@@ -6,6 +6,7 @@
 		"declarationDir": "./dist/types",
 		"declaration": true,
 		"emitDeclarationOnly": true,
-		"downlevelIteration": true
+		"downlevelIteration": true,
+		"stripInternal": true
 	}
 }
