@@ -420,6 +420,25 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 
 	}
 
+	/**
+	 * Returns the projected view direction.
+	 *
+	 * The projected direction will be reached if there are no further rotation adjustments. If damping is disabled,
+	 * the vector will be equal to the direction returned by {@link getViewDirection}.
+	 *
+	 * @param view - A vector to store the direction in.
+	 * @return The normalized view direction.
+	 */
+
+	getProjectedViewDirection(view: Vector3): Vector3 {
+
+		const orbit = (this.settings.general.mode === ControlMode.THIRD_PERSON);
+		view.setFromSpherical(this.spherical1).normalize();
+
+		return orbit ? view.negate() : view;
+
+	}
+
 	update(timestamp: number): void {
 
 		const s0 = this.spherical0;

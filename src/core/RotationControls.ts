@@ -215,6 +215,22 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	}
 
 	/**
+	 * Returns the projected view direction.
+	 *
+	 * The projected direction will be reached if there are no further rotation adjustments. If damping is disabled,
+	 * the vector will be equal to the direction returned by {@link getViewDirection}.
+	 *
+	 * @param view - A vector to store the direction in.
+	 * @return The normalized view direction.
+	 */
+
+	getProjectedViewDirection(view: Vector3): Vector3 {
+
+		return this.rotationManager.getProjectedViewDirection(view);
+
+	}
+
+	/**
 	 * Indicates whether the controls are enabled.
 	 *
 	 * Event listeners will be registered or unregistered depending on this flag.
