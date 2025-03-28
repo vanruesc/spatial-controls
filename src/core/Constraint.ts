@@ -1,18 +1,9 @@
 /**
- * A constraint.
+ * Constrains a given value.
  *
  * @param T - The type of the value that will be constrained.
+ * @param value - The value to constrain.
+ * @return The constrained value.
  */
 
-export interface Constraint<T> {
-
-	/**
-	 * Constrains a given value.
-	 *
-	 * @param value - The value to constrain.
-	 * @return The constrained value.
-	 */
-
-	(value: T): T;
-
-}
+export type Constraint<T> = (value: T) => T;

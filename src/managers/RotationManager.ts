@@ -90,12 +90,7 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
  	 * @param settings - The settings.
 	 */
 
-	constructor(
-		position: Vector3,
-		quaternion: Quaternion,
-		target: Vector3,
-		settings: Settings
-	) {
+	constructor(position: Vector3, quaternion: Quaternion, target: Vector3, settings: Settings) {
 
 		super();
 
@@ -418,8 +413,7 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 
 	getViewDirection(view: Vector3): Vector3 {
 
-		const settings = this.settings;
-		const orbit = (settings.general.mode === ControlMode.THIRD_PERSON);
+		const orbit = (this.settings.general.mode === ControlMode.THIRD_PERSON);
 		view.setFromSpherical(this.spherical0).normalize();
 
 		return orbit ? view.negate() : view;

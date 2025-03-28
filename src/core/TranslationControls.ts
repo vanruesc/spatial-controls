@@ -174,12 +174,12 @@ export class TranslationControls extends EventDispatcher<ControlsEventMap>
 	private handleKeyboardEvent(event: KeyboardEvent, pressed: boolean): void {
 
 		const keyBindings = this.settings.keyBindings;
-		const code = event.code !== undefined ? event.code as KeyCode : keyCodeLegacy.get(event.keyCode) as KeyCode;
+		const code = event.code !== undefined ? event.code as KeyCode : keyCodeLegacy.get(event.keyCode)!;
 
 		if(keyBindings.has(code)) {
 
 			event.preventDefault();
-			const strategy = this.strategies.get(keyBindings.get(code) as Action);
+			const strategy = this.strategies.get(keyBindings.get(code)!);
 			strategy?.execute(pressed);
 
 		}

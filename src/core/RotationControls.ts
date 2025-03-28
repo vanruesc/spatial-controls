@@ -193,7 +193,7 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 
 		} else {
 
-			this.rotationManager.lookAt(v.set(x, y as number, z as number));
+			this.rotationManager.lookAt(v.set(x, y!, z!));
 
 		}
 
@@ -280,7 +280,6 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	/**
 	 * Locks or unlocks the pointer.
 	 *
-	 * @see {@link handlePointerLockEvent}
 	 * @param locked - Whether the pointer should be locked.
 	 */
 
@@ -290,7 +289,7 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 
 			if(document.pointerLockElement !== this.domElement && this.domElement?.requestPointerLock !== undefined) {
 
-				this.domElement.requestPointerLock();
+				void this.domElement.requestPointerLock();
 
 			}
 
@@ -369,35 +368,38 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	private handlePointerButtonEvent(event: PointerEvent, pressed: boolean): void {
 
 		const bindings = this.settings.pointerBindings;
-		const behaviour = this.settings.pointer.behaviour;
 
-		if(bindings.has(event.button)) {
+		if(!bindings.has(event.button)) {
 
-			p.set(event.clientX, event.clientY);
+			return;
 
-			const action = bindings.get(event.button) as Action;
+		}
 
-			// Mouse buttons are handled via mousedown/mouseup since pointer events don't fire for each button.
-			if(!(event instanceof PointerEvent && event.pointerType === PointerType.MOUSE as string)) {
+		p.set(event.clientX, event.clientY);
 
-				const strategy = this.strategies.get(action);
-				strategy?.execute(pressed, event);
+		const action = bindings.get(event.button)!;
 
-				if(action === Action.ROTATE) {
+		// Mouse buttons are handled via mousedown/mouseup since pointer events don't fire for each button.
+		if(!(event instanceof PointerEvent && event.pointerType === PointerType.MOUSE as string)) {
 
-					this.dragging = pressed;
+			const strategy = this.strategies.get(action);
+			strategy?.execute(pressed, event);
 
-				}
+			if(action === Action.ROTATE) {
+
+				this.dragging = pressed;
 
 			}
 
-			if(event instanceof PointerEvent) {
+		}
 
-				if(pressed && behaviour === PointerBehaviour.DEFAULT) {
+		if(event instanceof PointerEvent) {
 
-					this.domElement?.setPointerCapture(event.pointerId);
+			const behaviour = this.settings.pointer.behaviour;
 
-				}
+			if(pressed && behaviour === PointerBehaviour.DEFAULT) {
+
+				this.domElement?.setPointerCapture(event.pointerId);
 
 			}
 
@@ -449,12 +451,12 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	private handleKeyboardEvent(event: KeyboardEvent, pressed: boolean): void {
 
 		const keyBindings = this.settings.keyBindings;
-		const code = event.code !== undefined ? event.code as KeyCode : keyCodeLegacy.get(event.keyCode) as KeyCode;
+		const code = event.code !== undefined ? event.code as KeyCode : keyCodeLegacy.get(event.keyCode)!;
 
 		if(keyBindings.has(code)) {
 
 			event.preventDefault();
-			const strategy = this.strategies.get(keyBindings.get(code) as Action);
+			const strategy = this.strategies.get(keyBindings.get(code)!);
 			strategy?.execute(pressed);
 
 		}
@@ -614,6 +616,7 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 				break;
 
 			case "pointerlockchange":
+			case "pointerlockerror":
 				this.handlePointerLockEvent();
 				break;
 
