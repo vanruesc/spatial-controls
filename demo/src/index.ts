@@ -145,9 +145,9 @@ window.addEventListener("load", () => void load().then((assets) => {
 	scene.add(ground);
 	scene.add(sphere);
 
-	controls.position.set(0, 0.67, 1);
+	controls.position.set(0, 0.67, 2);
 	controls.target = sphere.position;
-	controls.target.set(0, 0.5, 0);
+	controls.target.set(0, 0.5, 1);
 
 	// Settings
 
@@ -163,7 +163,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 	};
 
 	const timer = new Timer();
-	const spherical = new Spherical(0.5, Math.PI / 2, 0);
+	const spherical = new Spherical(1, Math.PI / 2, 0);
 
 	function orbit(timestamp: number) {
 
