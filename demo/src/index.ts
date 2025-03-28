@@ -1,32 +1,33 @@
 import {
+	ACESFilmicToneMapping,
+	AdditiveBlending,
+	Box3,
+	Box3Helper,
+	CubeTexture,
 	CubeTextureLoader,
+	DoubleSide,
+	FogExp2,
+	LoadingManager,
 	Mesh,
 	MeshBasicMaterial,
+	MeshStandardMaterial,
 	PerspectiveCamera,
 	PlaneGeometry,
+	RepeatWrapping,
+	Scene,
 	SphereGeometry,
 	Spherical,
 	SRGBColorSpace,
-	Vector3,
-	LoadingManager,
-	WebGLRenderer,
-	CubeTexture,
-	Scene,
-	TextureLoader,
-	Clock,
-	FogExp2,
-	RepeatWrapping,
 	Texture,
-	AdditiveBlending,
-	MeshStandardMaterial,
-	DoubleSide,
-	Box3,
-	Box3Helper
+	TextureLoader,
+	Vector3,
+	WebGLRenderer
 } from "three";
 
+import { Timer } from "three/examples/jsm/misc/Timer.js";
+import { ControlMode, PointerBehaviour, SpatialControls } from "spatial-controls";
 import { Pane } from "tweakpane";
 import { calculateVerticalFoV, getSkyboxUrls } from "./utils/index.js";
-import { ControlMode, PointerBehaviour, SpatialControls } from "spatial-controls";
 
 function load(): Promise<Map<string, unknown>> {
 
@@ -72,10 +73,11 @@ window.addEventListener("load", () => void load().then((assets) => {
 		depth: true
 	});
 
+	renderer.toneMapping = ACESFilmicToneMapping;
 	renderer.debug.checkShaderErrors = (window.location.hostname === "localhost");
 	renderer.setClearColor(0x000000, 0);
 
-	const container = document.querySelector(".viewport") as HTMLElement;
+	const container = document.querySelector(".viewport")!;
 	container.append(renderer.domElement);
 
 	// Scene
@@ -160,14 +162,16 @@ window.addEventListener("load", () => void load().then((assets) => {
 		}
 	};
 
-	const clock = new Clock();
+	const timer = new Timer();
 	const spherical = new Spherical(0.5, Math.PI / 2, 0);
 
-	function orbit() {
+	function orbit(timestamp: number) {
+
+		timer.update(timestamp);
 
 		const y = 0.5;
 		const s = spherical;
-		s.theta -= clock.getDelta() * 0.25;
+		s.theta -= timer.getDelta() * 0.25;
 		s.theta %= Math.PI * 2.0;
 
 		if(controls.settings.general.mode === ControlMode.THIRD_PERSON) {
@@ -186,7 +190,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 
 	const pane = new Pane({
 		title: "Settings",
-		container: container.querySelector(".tp") as HTMLElement,
+		container: container.querySelector<HTMLElement>(".tp")!,
 		expanded: container.clientWidth >= 800
 	});
 
@@ -283,13 +287,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 	pane.addBinding(params, "orbitEnabled", { label: "orbit" }).on("change", (e) => {
 
 		settings.translation.enabled = !e.value;
-
-		if(!e.value && settings.general.mode === ControlMode.THIRD_PERSON) {
-
-			spherical.theta = 0.0;
-			controls.target.set(0, 0.5, 0);
-
-		}
+		timer.reset();
 
 	});
 
@@ -355,18 +353,16 @@ window.addEventListener("load", () => void load().then((assets) => {
 
 	// Render Loop
 
-	requestAnimationFrame(function render(timestamp: number): void {
-
-		controls.update(timestamp);
+	renderer.setAnimationLoop((timestamp) => {
 
 		if(params.orbitEnabled) {
 
-			orbit();
+			orbit(timestamp);
 
 		}
 
+		controls.update(timestamp);
 		renderer.render(scene, camera);
-		requestAnimationFrame(render);
 
 	});
 
