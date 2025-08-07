@@ -13,7 +13,8 @@ const v = /* @__PURE__ */ new Vector3();
 /**
  * Constrains the given vector.
  *
- * @param A vector.
+ * @param p - A vector.
+ * @param constraints - A collection of constraints.
  * @return The constrained vector.
  */
 
@@ -48,6 +49,8 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 
 	static readonly EVENT_UPDATE = "update";
 
+	// #region Backing Data
+
 	/**
 	 * @see {@link domElement}
 	 */
@@ -71,6 +74,14 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 	 */
 
 	private _target: Vector3;
+
+	/**
+	 * @see {@link enabled}
+	 */
+
+	private _enabled: boolean;
+
+	// #endregion
 
 	/**
 	 * The previous position.
@@ -101,12 +112,6 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 	 */
 
 	private translationControls: TranslationControls;
-
-	/**
-	 * @see {@link enabled}
-	 */
-
-	private _enabled: boolean;
 
 	/**
 	 * The control settings.
