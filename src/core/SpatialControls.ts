@@ -87,31 +87,31 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 	 * The previous position.
 	 */
 
-	private previousPosition: Vector3;
+	private readonly previousPosition: Vector3;
 
 	/**
 	 * The previous quaternion.
 	 */
 
-	private previousQuaternion: Quaternion;
+	private readonly previousQuaternion: Quaternion;
 
 	/**
 	 * The previous target.
 	 */
 
-	private previousTarget: Vector3;
+	private readonly previousTarget: Vector3;
 
 	/**
 	 * Rotation controls.
 	 */
 
-	private rotationControls: RotationControls;
+	private readonly rotationControls: RotationControls;
 
 	/**
 	 * Translation controls.
 	 */
 
-	private translationControls: TranslationControls;
+	private readonly translationControls: TranslationControls;
 
 	/**
 	 * The control settings.

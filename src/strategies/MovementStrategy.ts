@@ -14,13 +14,13 @@ export class MovementStrategy implements Strategy {
 	 * A movement state.
 	 */
 
-	private movementState: MovementState;
+	private readonly movementState: MovementState;
 
 	/**
 	 * A direction.
 	 */
 
-	private direction: Direction;
+	private readonly direction: Direction;
 
 	/**
 	 * Constructs a new movement strategy.

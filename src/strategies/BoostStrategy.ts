@@ -13,7 +13,7 @@ export class BoostStrategy implements Strategy {
 	 * A movement state.
 	 */
 
-	private movementState: MovementState;
+	private readonly movementState: MovementState;
 
 	/**
 	 * Constructs a new boost strategy.

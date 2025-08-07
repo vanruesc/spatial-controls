@@ -13,7 +13,7 @@ export class ZoomStrategy implements Strategy {
 	 * A rotation manager.
 	 */
 
-	private rotationManager: RotationManager;
+	private readonly rotationManager: RotationManager;
 
 	/**
 	 * Indicates whether this zoom strategy should zoom in.

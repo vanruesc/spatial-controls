@@ -49,25 +49,25 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	 * The settings.
 	 */
 
-	private settings: Settings;
+	private readonly settings: Settings;
 
 	/**
 	 * The current spherical coordinates.
 	 */
 
-	private spherical0: Spherical;
+	private readonly spherical0: Spherical;
 
 	/**
 	 * The spherical target coordinates.
 	 */
 
-	private spherical1: Spherical;
+	private readonly spherical1: Spherical;
 
 	/**
 	 * Scalar dampers.
 	 */
 
-	private scalarDampers: ScalarDamper[];
+	private readonly scalarDampers: readonly ScalarDamper[];
 
 	/**
 	 * A timestamp.
@@ -79,7 +79,7 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	 * A reusable update event.
 	 */
 
-	private updateEvent: BaseEvent<"update">;
+	private readonly updateEvent: BaseEvent<"update">;
 
 	/**
 	 * Constructs a new rotation manager.
@@ -104,11 +104,11 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 		this.timestamp = 0;
 		this.updateEvent = { type: RotationManager.EVENT_UPDATE };
 
-		this.scalarDampers = [
+		this.scalarDampers = Object.freeze([
 			new ScalarDamper(),
 			new ScalarDamper(),
 			new ScalarDamper()
-		];
+		]);
 
 	}
 
@@ -458,8 +458,8 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 				const omega = ScalarDamper.calculateOmega(damping);
 				const exp = ScalarDamper.calculateExp(omega, elapsed);
 
-				s0.theta = scalarDampers[0].interpolate(s0.theta, s1.theta, damping, omega, exp, elapsed);
-				s0.phi = scalarDampers[1].interpolate(s0.phi, s1.phi, damping, omega, exp, elapsed);
+				s0.theta = scalarDampers[0]!.interpolate(s0.theta, s1.theta, damping, omega, exp, elapsed);
+				s0.phi = scalarDampers[1]!.interpolate(s0.phi, s1.phi, damping, omega, exp, elapsed);
 
 			} else {
 
@@ -474,7 +474,7 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 				const omega = ScalarDamper.calculateOmega(damping);
 				const exp = ScalarDamper.calculateExp(omega, elapsed);
 
-				s0.radius = scalarDampers[2].interpolate(s0.radius, s1.radius, damping, omega, exp, elapsed);
+				s0.radius = scalarDampers[2]!.interpolate(s0.radius, s1.radius, damping, omega, exp, elapsed);
 
 			} else {
 

@@ -46,13 +46,13 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	 * A rotation manager.
 	 */
 
-	private rotationManager: RotationManager;
+	private readonly rotationManager: RotationManager;
 
 	/**
 	 * A map that links actions to specific strategies.
 	 */
 
-	private strategies: Map<Action, Strategy>;
+	private readonly strategies: Map<Action, Strategy>;
 
 	/**
 	 * Indicates whether the user is currently holding the pointer button down.
@@ -393,11 +393,10 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 
 		p.set(event.clientX, event.clientY);
 
-		const action = bindings.get(event.button)!;
-
 		// Mouse buttons are handled via mousedown/mouseup since pointer events don't fire for each button.
 		if(!(event instanceof PointerEvent && event.pointerType === PointerType.MOUSE as string)) {
 
+			const action = bindings.get(event.button)!;
 			const strategy = this.strategies.get(action);
 			strategy?.execute(pressed, event);
 

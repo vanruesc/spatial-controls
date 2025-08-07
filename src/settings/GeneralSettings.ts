@@ -18,6 +18,8 @@ export class GeneralSettings extends EventDispatcher<SettingsEventMap> {
 
 	static readonly EVENT_CHANGE = "change";
 
+	// #region Backing Data
+
 	/**
 	 * @see {@link mode}
 	 */
@@ -29,6 +31,8 @@ export class GeneralSettings extends EventDispatcher<SettingsEventMap> {
 	 */
 
 	private _previousMode: ControlMode;
+
+	// #endegion
 
 	/**
 	 * Constructs new general settings.

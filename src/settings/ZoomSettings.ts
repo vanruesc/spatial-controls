@@ -17,6 +17,8 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 
 	static readonly EVENT_CHANGE = "change";
 
+	// #region Backing Data
+
 	/**
 	 * @see {@link enabled}
 	 */
@@ -52,6 +54,8 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	 */
 
 	private _damping: number;
+
+	// #endregion
 
 	/**
 	 * Constructs new zoom settings.

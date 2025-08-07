@@ -35,13 +35,13 @@ export class TranslationControls extends EventDispatcher<ControlsEventMap>
 	 * A translation manager.
 	 */
 
-	private translationManager: TranslationManager;
+	private readonly translationManager: TranslationManager;
 
 	/**
 	 * A map that links actions to specific strategies.
 	 */
 
-	private strategies: Map<Action, Strategy>;
+	private readonly strategies: Map<Action, Strategy>;
 
 	/**
 	 * @see {@link enabled}

@@ -48,7 +48,7 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 	 * The settings.
 	 */
 
-	private settings: Settings;
+	private readonly settings: Settings;
 
 	/**
 	 * The movement state.
@@ -60,19 +60,19 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 	 * The current velocity.
 	 */
 
-	private velocity0: Vector3;
+	private readonly velocity0: Vector3;
 
 	/**
 	 * The target velocity.
 	 */
 
-	private velocity1: Vector3;
+	private readonly velocity1: Vector3;
 
 	/**
 	 * Scalar dampers.
 	 */
 
-	private scalarDampers: ScalarDamper[];
+	private readonly scalarDampers: readonly ScalarDamper[];
 
 	/**
 	 * A timestamp.
@@ -84,7 +84,7 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 	 * A reusable update event.
 	 */
 
-	private updateEvent: BaseEvent<"update">;
+	private readonly updateEvent: BaseEvent<"update">;
 
 	/**
 	 * Constructs a new translation manager.
@@ -115,11 +115,11 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 		this.timestamp = 0;
 		this.updateEvent = { type: TranslationManager.EVENT_UPDATE };
 
-		this.scalarDampers = [
+		this.scalarDampers = Object.freeze([
 			new ScalarDamper(),
 			new ScalarDamper(),
 			new ScalarDamper()
-		];
+		]);
 
 	}
 
@@ -299,9 +299,9 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 				const omega = ScalarDamper.calculateOmega(damping);
 				const exp = ScalarDamper.calculateExp(omega, elapsed);
 
-				v0.x = scalarDampers[0].interpolate(v0.x, v1.x, damping, omega, exp, elapsed);
-				v0.y = scalarDampers[1].interpolate(v0.y, v1.y, damping, omega, exp, elapsed);
-				v0.z = scalarDampers[2].interpolate(v0.z, v1.z, damping, omega, exp, elapsed);
+				v0.x = scalarDampers[0]!.interpolate(v0.x, v1.x, damping, omega, exp, elapsed);
+				v0.y = scalarDampers[1]!.interpolate(v0.y, v1.y, damping, omega, exp, elapsed);
+				v0.z = scalarDampers[2]!.interpolate(v0.z, v1.z, damping, omega, exp, elapsed);
 
 			} else {
 

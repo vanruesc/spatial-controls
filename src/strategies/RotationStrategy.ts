@@ -14,7 +14,7 @@ export class RotationStrategy implements Strategy {
 	 * The controls.
 	 */
 
-	private controls: RotationControls;
+	private readonly controls: RotationControls;
 
 	/**
 	 * Constructs a new rotation strategy.

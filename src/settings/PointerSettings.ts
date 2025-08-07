@@ -18,6 +18,8 @@ export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 
 	static readonly EVENT_CHANGE = "change";
 
+	// #region Backing Data
+
 	/**
 	 * @see {@link behaviour}
 	 */
@@ -29,6 +31,8 @@ export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 	 */
 
 	private _sensitivity: number;
+
+	// #endregion
 
 	/**
 	 * Constructs new pointer settings.

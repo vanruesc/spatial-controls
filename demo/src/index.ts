@@ -20,11 +20,11 @@ import {
 	SRGBColorSpace,
 	Texture,
 	TextureLoader,
+	Timer,
 	Vector3,
 	WebGLRenderer
 } from "three";
 
-import { Timer } from "three/examples/jsm/misc/Timer.js";
 import { ControlMode, PointerBehaviour, SpatialControls } from "spatial-controls";
 import { Pane } from "tweakpane";
 import { calculateVerticalFoV, getSkyboxUrls } from "./utils/index.js";
