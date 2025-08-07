@@ -11,12 +11,12 @@
 		"moduleResolution": "bundler",
 		"module": "es2022",
 		"target": "es2022",
-    // Style Options
+		// Style Options
 		"noImplicitReturns": true,
 		"noImplicitOverride": true,
-    "noUncheckedIndexedAccess": true,
+		"noUncheckedIndexedAccess": true,
 		// Other
-    "noUncheckedSideEffectImports": true,
+		"noUncheckedSideEffectImports": true,
 		"resolveJsonModule": true,
 		"strict": true,
 		"sourceMap": false,
