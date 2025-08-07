@@ -137,12 +137,6 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 
 		super();
 
-		if(domElement === null && typeof document !== "undefined") {
-
-			domElement = document.body;
-
-		}
-
 		this._domElement = null;
 		this._enabled = false;
 
