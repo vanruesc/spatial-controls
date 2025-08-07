@@ -75,13 +75,13 @@
 	},
 	"devDependencies": {
 		"@tweakpane/core": "2.x.x",
-		"@types/node": "22.x.x",
+		"@types/node": "24.x.x",
 		"@types/three": "0.x.x",
 		"@typescript-eslint/eslint-plugin": "8.x.x",
 		"@typescript-eslint/parser": "8.x.x",
 		"ava": "6.x.x",
 		"cpy-cli": "5.x.x",
-		"del-cli": "5.x.x",
+		"del-cli": "6.x.x",
 		"esbuild": "0.25.x",
 		"eslint": "9.x.x",
 		"eslint-config-aether": "2.x.x",
@@ -92,6 +92,6 @@
 		"tweakpane": "4.x.x",
 		"typedoc": "0.x.x",
 		"typedoc-plugin-mdn-links": "5.x.x",
-		"typescript": "5.8.x"
+		"typescript": "5.9.x"
 	}
 }
