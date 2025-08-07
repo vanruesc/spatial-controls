@@ -153,8 +153,7 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 		settings.addEventListener("change", (e: unknown) => this.handleEvent(e as Event));
 		this.settings = settings;
 
-		const constraints = new Set<Constraint<Vector3>>();
-		this.constraints = constraints;
+		this.constraints = new Set<Constraint<Vector3>>();
 
 		this.rotationControls = new RotationControls(position, quaternion, target, settings);
 		this.translationControls = new TranslationControls(position, quaternion, target, settings);
