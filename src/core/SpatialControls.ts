@@ -189,11 +189,11 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 
 	set domElement(value: HTMLElement | null) {
 
-		this._domElement = value;
-		this.rotationControls.domElement = value;
-
 		const enabled = this.enabled;
 		this.dispose();
+
+		this._domElement = value;
+		this.rotationControls.domElement = value;
 		this.enabled = enabled;
 
 	}
