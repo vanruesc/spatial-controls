@@ -1,5 +1,10 @@
 {
-	"include": ["./*.js", "./src", "./demo/src", "./test"],
+	"include": [
+		"./*.js",
+		"./src",
+		"./demo/src",
+		"./test"
+	],
 	"compilerOptions": {
 		// File Layout
 		"baseUrl": ".",
@@ -14,7 +19,6 @@
 		// Style Options
 		"noImplicitReturns": true,
 		"noImplicitOverride": true,
-		"noUncheckedIndexedAccess": true,
 		// Other
 		"noUncheckedSideEffectImports": true,
 		"resolveJsonModule": true,

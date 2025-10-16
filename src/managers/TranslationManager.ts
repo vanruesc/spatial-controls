@@ -299,9 +299,9 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 				const omega = ScalarDamper.calculateOmega(damping);
 				const exp = ScalarDamper.calculateExp(omega, elapsed);
 
-				v0.x = scalarDampers[0]!.interpolate(v0.x, v1.x, damping, omega, exp, elapsed);
-				v0.y = scalarDampers[1]!.interpolate(v0.y, v1.y, damping, omega, exp, elapsed);
-				v0.z = scalarDampers[2]!.interpolate(v0.z, v1.z, damping, omega, exp, elapsed);
+				v0.x = scalarDampers[0].interpolate(v0.x, v1.x, damping, omega, exp, elapsed);
+				v0.y = scalarDampers[1].interpolate(v0.y, v1.y, damping, omega, exp, elapsed);
+				v0.z = scalarDampers[2].interpolate(v0.z, v1.z, damping, omega, exp, elapsed);
 
 			} else {
 

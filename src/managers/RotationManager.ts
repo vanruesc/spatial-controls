@@ -458,8 +458,8 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 				const omega = ScalarDamper.calculateOmega(damping);
 				const exp = ScalarDamper.calculateExp(omega, elapsed);
 
-				s0.theta = scalarDampers[0]!.interpolate(s0.theta, s1.theta, damping, omega, exp, elapsed);
-				s0.phi = scalarDampers[1]!.interpolate(s0.phi, s1.phi, damping, omega, exp, elapsed);
+				s0.theta = scalarDampers[0].interpolate(s0.theta, s1.theta, damping, omega, exp, elapsed);
+				s0.phi = scalarDampers[1].interpolate(s0.phi, s1.phi, damping, omega, exp, elapsed);
 
 			} else {
 
@@ -474,7 +474,7 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 				const omega = ScalarDamper.calculateOmega(damping);
 				const exp = ScalarDamper.calculateExp(omega, elapsed);
 
-				s0.radius = scalarDampers[2]!.interpolate(s0.radius, s1.radius, damping, omega, exp, elapsed);
+				s0.radius = scalarDampers[2].interpolate(s0.radius, s1.radius, damping, omega, exp, elapsed);
 
 			} else {
 
