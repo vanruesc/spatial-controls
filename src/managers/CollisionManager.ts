@@ -42,7 +42,7 @@ export class CollisionManager extends EventDispatcher<ManagerEventMap> implement
 	 * The settings.
 	 */
 
-	private settings: Settings;
+	private readonly settings: Settings;
 
 	/**
 	 * Constructs a new translation manager.
