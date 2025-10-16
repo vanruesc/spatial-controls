@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - "*"
+      - "v*"
 
 jobs:
   deploy:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Install PNPM
         uses: pnpm/action-setup@v4
         with:
@@ -20,18 +20,14 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: "pnpm"
       - name: Install dependencies and test
         run: pnpm install-test --frozen-lockfile
       - name: Publish
-        id: publish
-        uses: JS-DevTools/npm-publish@v3
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-      - if: ${{ steps.publish.outputs.type }}
-        run: |
-          echo "Published version: ${{ steps.publish.outputs.version }}"
+        run: pnpm publish --ignore-scripts --no-git-checks
+        env:
+          NPM_CONFIG_PROVENANCE: true
       - uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
