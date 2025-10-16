@@ -60,7 +60,7 @@
 		"clean": "del-cli dist public",
 		"doc": "typedoc --plugin typedoc-plugin-mdn-links",
 		"lint": "run-p lint:*",
-		"lint:js": "eslint --ext .ts --fix src demo/src",
+		"lint:js": "eslint --fix src demo/src",
 		"lint:tsc": "tsc --noEmit",
 		"prepublishOnly": "npm test",
 		"start": "serve public",
