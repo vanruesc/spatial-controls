@@ -30,10 +30,11 @@ export class RotationStrategy implements Strategy {
 
 	execute(flag: boolean, event: Event): void {
 
-		const behaviour = this.controls.settings.pointer.behaviour;
+		const settings = this.controls.settings;
 		const isMouse = (event.type === "mousedown" || event.type === "mouseup");
 
-		if(isMouse && behaviour !== PointerBehaviour.DEFAULT) {
+		// Pointer lock is only supported on desktop.
+		if(isMouse && settings.pointer.behaviour !== PointerBehaviour.DEFAULT) {
 
 			this.controls.setPointerLocked();
 
