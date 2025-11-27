@@ -7,7 +7,6 @@ A movement controller for 3D objects and cameras that supports multiple control 
 
 *[Demo](https://vanruesc.github.io/spatial-controls/demo)&ensp;&middot;&ensp;[Documentation](https://vanruesc.github.io/spatial-controls/docs)*
 
-
 ## Installation
 
 This library requires the peer dependency [three](https://github.com/mrdoob/three.js/).
@@ -15,7 +14,6 @@ This library requires the peer dependency [three](https://github.com/mrdoob/thre
 ```sh
 npm install three spatial-controls
 ```
-
 
 ## Usage
 
@@ -49,7 +47,7 @@ controls.position = otherPosition;
 controls.target.set(x, y, z);
 controls.target = otherTarget;
 
-// Sets the target without replacing it and updates the quaternion.
+// Adjusts the target and the quaternion.
 controls.lookAt(x, y, z);
 controls.lookAt(target);
 ```
@@ -59,7 +57,7 @@ controls.lookAt(target);
 ### Configuration
 
 ```js
-import { Action, ControlMode, KeyCode, PointerButton } from "spatial-controls";
+import { Action, ControlMode, Input, PointerButton } from "spatial-controls";
 
 const settings = controls.settings;
 settings.general.mode = ControlMode.THIRD_PERSON;
@@ -71,8 +69,10 @@ settings.zoom.setRange(0.25, 3.0);
 settings.zoom.damping = 0.1;
 
 const keyBindings = settings.keyBindings;
-keyBindings.delete(KeyCode.KEY_X);
-keyBindings.set(KeyCode.KEY_V, Action.MOVE_DOWN);
+keyBindings.set("KeyR", Action.ROTATE);
+keyBindings.delete("KeyX");
+// Input bindings also support modifiers.
+keyBindings.set(new Input<KeyCode>("Space", { modifiers: ["Ctrl"] }), Action.MOVE_DOWN);
 
 const pointerBindings = settings.pointerBindings;
 pointerBindings.delete(PointerButton.MAIN);
@@ -112,7 +112,7 @@ fetch("./spatial-controls.json")
 
 ## Constraints
 
-Custom constraints are applied to the `position` in 1st person mode and to the `target` in 3rd person mode.
+Custom constraints can be applied to the `position` in 1st person mode and to the `target` in 3rd person mode.
 
 ```js
 const box = new Box3();
@@ -123,7 +123,6 @@ const boxConstraint = (p: Vector3) => box.clampPoint(p, p);
 controls.constraints.add(boxConstraint);
 controls.constraints.delete(boxConstraint);
 ```
-
 
 ## Contributing
 
