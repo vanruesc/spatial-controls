@@ -1,1 +1,1 @@
-export { ScalarDamper } from "./ScalarDamper.js";
+export * from "./ScalarDamper.js";
