@@ -3,6 +3,7 @@ import { Action } from "./Action.js";
 /**
  * A bound action with optional modifiers.
  *
+ * @group Core
  * @internal
  */
 

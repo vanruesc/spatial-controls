@@ -1,6 +1,7 @@
 /**
  * Converts milliseconds to seconds.
  *
+ * @group Core
  * @ignore
  */
 
