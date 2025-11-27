@@ -24,14 +24,6 @@ export class TranslationControls extends EventDispatcher<ControlsEventMap>
 	implements Disposable, EventListenerObject, Updatable {
 
 	/**
-	 * Triggers when the position or quaternion is changed.
-	 *
-	 * @event
-	 */
-
-	static readonly EVENT_UPDATE = "update";
-
-	/**
 	 * A translation manager.
 	 */
 
@@ -78,7 +70,7 @@ export class TranslationControls extends EventDispatcher<ControlsEventMap>
 		settings.addEventListener("change", (e: unknown) => this.handleEvent(e as Event));
 
 		this.translationManager = new TranslationManager(position, quaternion, target, settings);
-		this.translationManager.addEventListener(TranslationControls.EVENT_UPDATE, e => this.dispatchEvent(e));
+		this.translationManager.addEventListener("update", e => this.dispatchEvent(e));
 
 		const state = this.translationManager.movementState;
 		this.strategies = new Map<Action, Strategy>([

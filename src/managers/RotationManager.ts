@@ -20,14 +20,6 @@ const m = /* @__PURE__ */ new Matrix4();
 export class RotationManager extends EventDispatcher<ManagerEventMap> implements Updatable {
 
 	/**
-	 * Triggers when the position or quaternion is changed.
-	 *
-	 * @event
-	 */
-
-	static readonly EVENT_UPDATE = "update";
-
-	/**
 	 * @see {@link position}
 	 */
 
@@ -102,7 +94,7 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 		this.spherical0 = new Spherical();
 		this.spherical1 = new Spherical();
 		this.timestamp = 0;
-		this.updateEvent = { type: RotationManager.EVENT_UPDATE };
+		this.updateEvent = { type: "update" };
 
 		this.scalarDampers = Object.freeze([
 			new ScalarDamper(),

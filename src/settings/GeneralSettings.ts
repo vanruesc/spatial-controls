@@ -10,14 +10,6 @@ import { SettingsEventMap } from "./SettingsEventMap.js";
 
 export class GeneralSettings extends EventDispatcher<SettingsEventMap> {
 
-	/**
-	 * Triggers when the settings are changed.
-	 *
-	 * @event
-	 */
-
-	static readonly EVENT_CHANGE = "change";
-
 	// #region Backing Data
 
 	/**
@@ -74,7 +66,7 @@ export class GeneralSettings extends EventDispatcher<SettingsEventMap> {
 		if(this._mode !== value) {
 
 			this._mode = value;
-			this.dispatchEvent({ type: GeneralSettings.EVENT_CHANGE });
+			this.dispatchEvent({ type: "change" });
 			this._previousMode = value;
 
 		}

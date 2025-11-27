@@ -29,14 +29,6 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	implements Disposable, EventListenerObject, Updatable {
 
 	/**
-	 * Triggers when the quaternion is changed.
-	 *
-	 * @event
-	 */
-
-	static readonly EVENT_UPDATE = "update";
-
-	/**
 	 * @see {@link domElement}
 	 */
 
@@ -98,7 +90,7 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 		settings.addEventListener("change", (e: unknown) => this.handleEvent(e as Event));
 
 		this.rotationManager = new RotationManager(position, quaternion, target, settings);
-		this.rotationManager.addEventListener(RotationControls.EVENT_UPDATE, e => this.dispatchEvent(e));
+		this.rotationManager.addEventListener("update", e => this.dispatchEvent(e));
 
 		this.strategies = new Map<Action, Strategy>([
 			[Action.ZOOM_OUT, new ZoomStrategy(this.rotationManager, false)],

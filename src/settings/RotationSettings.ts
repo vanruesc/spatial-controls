@@ -10,14 +10,6 @@ import { SettingsEventMap } from "./SettingsEventMap.js";
 
 export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
-	/**
-	 * Triggers when the settings are changed.
-	 *
-	 * @event
-	 */
-
-	static readonly EVENT_CHANGE = "change";
-
 	// #region Backing Data
 
 	/**
@@ -135,7 +127,7 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	set enabled(value: boolean) {
 
 		this._enabled = value;
-		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -152,7 +144,7 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	set up(value: Vector3) {
 
 		this._up = value;
-		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -169,7 +161,7 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	set pivotOffset(value: Vector3) {
 
 		this._pivotOffset = value;
-		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -186,7 +178,7 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	set minAzimuthalAngle(value: number) {
 
 		this._minAzimuthalAngle = value;
-		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -203,7 +195,7 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	set maxAzimuthalAngle(value: number) {
 
 		this._maxAzimuthalAngle = value;
-		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -220,7 +212,7 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	set minPolarAngle(value: number) {
 
 		this._minPolarAngle = value;
-		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -237,7 +229,7 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	set maxPolarAngle(value: number) {
 
 		this._maxPolarAngle = value;
-		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -254,7 +246,7 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	set invertedX(value: boolean) {
 
 		this._invertedX = value;
-		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -271,7 +263,7 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	set invertedY(value: boolean) {
 
 		this._invertedY = value;
-		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -288,7 +280,7 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	set sensitivityX(value: number) {
 
 		this._sensitivityX = value;
-		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -305,7 +297,7 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	set sensitivityY(value: number) {
 
 		this._sensitivityY = value;
-		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -316,7 +308,7 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	set sensitivity(value: number) {
 
 		this._sensitivityX = this._sensitivityY = value;
-		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -333,7 +325,7 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	set damping(value: number) {
 
 		this._damping = value;
-		this.dispatchEvent({ type: RotationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 

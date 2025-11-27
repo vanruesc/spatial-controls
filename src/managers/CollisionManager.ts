@@ -13,14 +13,6 @@ import { ManagerEventMap } from "./ManagerEventMap.js";
 export class CollisionManager extends EventDispatcher<ManagerEventMap> implements Updatable {
 
 	/**
-	 * Triggers when the position or quaternion is changed.
-	 *
-	 * @event
-	 */
-
-	static readonly EVENT_UPDATE = "update";
-
-	/**
 	 * @see {@link position}
 	 */
 

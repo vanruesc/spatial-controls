@@ -41,14 +41,6 @@ function applyConstraints(p: Vector3, constraints: Set<Constraint<Vector3>>): Ve
 export class SpatialControls extends EventDispatcher<ControlsEventMap>
 	implements Disposable, EventListenerObject, Updatable {
 
-	/**
-	 * Triggers when the position or quaternion is changed.
-	 *
-	 * @event
-	 */
-
-	static readonly EVENT_UPDATE = "update";
-
 	// #region Backing Data
 
 	/**
@@ -157,8 +149,8 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 
 		this.rotationControls = new RotationControls(position, quaternion, target, settings);
 		this.translationControls = new TranslationControls(position, quaternion, target, settings);
-		this.rotationControls.addEventListener(SpatialControls.EVENT_UPDATE, e => this.dispatchEvent(e));
-		this.translationControls.addEventListener(SpatialControls.EVENT_UPDATE, e => this.dispatchEvent(e));
+		this.rotationControls.addEventListener("update", e => this.dispatchEvent(e));
+		this.translationControls.addEventListener("update", e => this.dispatchEvent(e));
 
 		if(position !== null && quaternion !== null) {
 

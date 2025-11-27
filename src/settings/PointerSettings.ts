@@ -10,14 +10,6 @@ import { SettingsEventMap } from "./SettingsEventMap.js";
 
 export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 
-	/**
-	 * Triggers when the settings are changed.
-	 *
-	 * @event
-	 */
-
-	static readonly EVENT_CHANGE = "change";
-
 	// #region Backing Data
 
 	/**
@@ -60,7 +52,7 @@ export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 	set behaviour(value: PointerBehaviour) {
 
 		this._behaviour = value;
-		this.dispatchEvent({ type: PointerSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -79,7 +71,7 @@ export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 	set sensitivity(value: number) {
 
 		this._sensitivity = value;
-		this.dispatchEvent({ type: PointerSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 

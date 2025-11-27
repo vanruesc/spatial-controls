@@ -9,14 +9,6 @@ import { SettingsEventMap } from "./SettingsEventMap.js";
 
 export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 
-	/**
-	 * Triggers when the settings are changed.
-	 *
-	 * @event
-	 */
-
-	static readonly EVENT_CHANGE = "change";
-
 	// #region Backing Data
 
 	/**
@@ -80,7 +72,7 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 	set enabled(value: boolean) {
 
 		this._enabled = value;
-		this.dispatchEvent({ type: TranslationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -97,7 +89,7 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 	set sensitivity(value: number) {
 
 		this._sensitivity = value;
-		this.dispatchEvent({ type: TranslationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -114,7 +106,7 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 	set boostMultiplier(value: number) {
 
 		this._boostMultiplier = Math.max(value, 1.0);
-		this.dispatchEvent({ type: TranslationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -131,7 +123,7 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 	set axisWeights(value: Vector3) {
 
 		this._axisWeights = value;
-		this.dispatchEvent({ type: TranslationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -148,7 +140,7 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 	set damping(value: number) {
 
 		this._damping = value;
-		this.dispatchEvent({ type: TranslationSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 

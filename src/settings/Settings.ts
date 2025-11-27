@@ -19,14 +19,6 @@ import { ZoomSettings } from "./ZoomSettings.js";
 export class Settings extends EventDispatcher<SettingsEventMap> {
 
 	/**
-	 * Triggers when the settings are changed.
-	 *
-	 * @event
-	 */
-
-	static readonly EVENT_CHANGE = "change";
-
-	/**
 	 * Key bindings.
 	 *
 	 * This collection maps {@linkplain KeyCode key codes} to {@linkplain Action actions}.
@@ -109,11 +101,11 @@ export class Settings extends EventDispatcher<SettingsEventMap> {
 		this.zoom = new ZoomSettings();
 
 		// Forward events.
-		this.general.addEventListener(Settings.EVENT_CHANGE, e => this.dispatchEvent(e));
-		this.pointer.addEventListener(Settings.EVENT_CHANGE, e => this.dispatchEvent(e));
-		this.rotation.addEventListener(Settings.EVENT_CHANGE, e => this.dispatchEvent(e));
-		this.translation.addEventListener(Settings.EVENT_CHANGE, e => this.dispatchEvent(e));
-		this.zoom.addEventListener(Settings.EVENT_CHANGE, e => this.dispatchEvent(e));
+		this.general.addEventListener("change", e => this.dispatchEvent(e));
+		this.pointer.addEventListener("change", e => this.dispatchEvent(e));
+		this.rotation.addEventListener("change", e => this.dispatchEvent(e));
+		this.translation.addEventListener("change", e => this.dispatchEvent(e));
+		this.zoom.addEventListener("change", e => this.dispatchEvent(e));
 
 	}
 
@@ -134,7 +126,7 @@ export class Settings extends EventDispatcher<SettingsEventMap> {
 		this.translation.copy(settings.translation);
 		this.zoom.copy(settings.zoom);
 
-		this.dispatchEvent({ type: Settings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 		return this;
 
@@ -171,7 +163,7 @@ export class Settings extends EventDispatcher<SettingsEventMap> {
 		this.translation.fromJSON(settings.translation);
 		this.zoom.fromJSON(settings.zoom);
 
-		this.dispatchEvent({ type: Settings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 		return this;
 

@@ -9,14 +9,6 @@ import { SettingsEventMap } from "./SettingsEventMap.js";
 
 export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 
-	/**
-	 * Triggers when the settings are changed.
-	 *
-	 * @event
-	 */
-
-	static readonly EVENT_CHANGE = "change";
-
 	// #region Backing Data
 
 	/**
@@ -87,7 +79,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	set enabled(value: boolean) {
 
 		this._enabled = value;
-		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -104,7 +96,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	set inverted(value: boolean) {
 
 		this._inverted = value;
-		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -125,7 +117,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 			Number.POSITIVE_INFINITY
 		);
 
-		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -146,7 +138,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 			Number.POSITIVE_INFINITY
 		);
 
-		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -161,7 +153,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 
 		this._minDistance = min;
 		this._maxDistance = max;
-		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -178,7 +170,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	set sensitivity(value: number) {
 
 		this._sensitivity = value;
-		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 
@@ -195,7 +187,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	set damping(value: number) {
 
 		this._damping = value;
-		this.dispatchEvent({ type: ZoomSettings.EVENT_CHANGE });
+		this.dispatchEvent({ type: "change" });
 
 	}
 

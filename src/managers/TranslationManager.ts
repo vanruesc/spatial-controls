@@ -19,14 +19,6 @@ const v = /* @__PURE__ */ new Vector3();
 export class TranslationManager extends EventDispatcher<ManagerEventMap> implements Updatable {
 
 	/**
-	 * Triggers when the position or quaternion is changed.
-	 *
-	 * @event
-	 */
-
-	static readonly EVENT_UPDATE = "update";
-
-	/**
 	 * @see {@link position}
 	 */
 
@@ -113,7 +105,7 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 		this.velocity0 = new Vector3();
 		this.velocity1 = new Vector3();
 		this.timestamp = 0;
-		this.updateEvent = { type: TranslationManager.EVENT_UPDATE };
+		this.updateEvent = { type: "update" };
 
 		this.scalarDampers = Object.freeze([
 			new ScalarDamper(),
