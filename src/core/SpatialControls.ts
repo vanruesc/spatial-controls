@@ -155,15 +155,15 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 		if(position !== null && quaternion !== null) {
 
 			// Note: Default mode is first person.
-			this._target.set(0, 0, -1).applyQuaternion(this._quaternion);
-			this.lookAt(this._target);
+			target.set(0, 0, -1).applyQuaternion(quaternion);
+			this.lookAt(target);
 
 			this.domElement = domElement;
 			this.enabled = true;
 
-			this.previousPosition.copy(this.position);
-			this.previousQuaternion.copy(this.quaternion);
-			this.previousTarget.copy(this.target);
+			this.previousPosition.copy(position);
+			this.previousQuaternion.copy(quaternion);
+			this.previousTarget.copy(target);
 
 		}
 

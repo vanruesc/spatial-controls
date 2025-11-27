@@ -1,13 +1,11 @@
 import { EventDispatcher, Quaternion, Vector2, Vector3 } from "three";
+import { KeyCode } from "../input/KeyCode.js";
+import { PointerBehaviour } from "../input/PointerBehaviour.js";
+import { RotationManager } from "../managers/RotationManager.js";
+import { Settings } from "../settings/Settings.js";
 import { RotationStrategy } from "../strategies/RotationStrategy.js";
 import { Strategy } from "../strategies/Strategy.js";
 import { ZoomStrategy } from "../strategies/ZoomStrategy.js";
-import { KeyCode } from "../input/KeyCode.js";
-import { keyCodeLegacy } from "../input/keyCodeLegacy.js";
-import { PointerBehaviour } from "../input/PointerBehaviour.js";
-import { PointerType } from "../input/PointerType.js";
-import { RotationManager } from "../managers/RotationManager.js";
-import { Settings } from "../settings/Settings.js";
 import { Action } from "./Action.js";
 import { ControlMode } from "./ControlMode.js";
 import { ControlsEventMap } from "./ControlsEventMap.js";
@@ -15,7 +13,7 @@ import { Disposable } from "./Disposable.js";
 import { Updatable } from "./Updatable.js";
 
 const v = /* @__PURE__ */ new Vector3();
-const p = /* @__PURE__ */ new Vector2();
+const screen = /* @__PURE__ */ new Vector2();
 
 /**
  * 3D rotation controls.
@@ -47,10 +45,10 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	private readonly strategies: Map<Action, Strategy>;
 
 	/**
-	 * Indicates whether the user is currently holding the pointer button down.
+	 * Indicates whether the rotation mode is currently enabled.
 	 */
 
-	private dragging: boolean;
+	private rotationEnabled: boolean;
 
 	/**
 	 * @see {@link enabled}
@@ -84,7 +82,7 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 
 		this._domElement = null;
 		this._enabled = false;
-		this.dragging = false;
+		this.rotationEnabled = false;
 
 		this.settings = settings;
 		settings.addEventListener("change", (e: unknown) => this.handleEvent(e as Event));
@@ -169,6 +167,77 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	}
 
 	/**
+	 * Indicates whether the controls are enabled.
+	 *
+	 * Event listeners will be registered or unregistered depending on this flag.
+	 */
+
+	get enabled(): boolean {
+
+		return this._enabled;
+
+	}
+
+	set enabled(value: boolean) {
+
+		if(value === this.enabled) {
+
+			return;
+
+		}
+
+		this._enabled = value;
+
+		if(value) {
+
+			this.addEventListeners();
+
+		} else {
+
+			this.removeEventListeners();
+			this.rotationManager.resetVelocity();
+			this.setPointerLocked(false);
+			this.resetPointerState();
+
+		}
+
+	}
+
+	/**
+	 * Adds all necessary event listeners.
+	 */
+
+	private addEventListeners(): void {
+
+		if(typeof document === "undefined") {
+
+			return;
+
+		}
+
+		document.addEventListener("pointerlockchange", this);
+		document.addEventListener("pointerlockerror", this);
+
+	}
+
+	/**
+	 * Removes all event listeners.
+	 */
+
+	private removeEventListeners(): void {
+
+		if(typeof document === "undefined") {
+
+			return;
+
+		}
+
+		document.removeEventListener("pointerlockchange", this);
+		document.removeEventListener("pointerlockerror", this);
+
+	}
+
+	/**
 	 * Looks at the given point.
 	 *
 	 * @param x - The X-coordinate, or a point.
@@ -223,77 +292,14 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	}
 
 	/**
-	 * Indicates whether the controls are enabled.
-	 *
-	 * Event listeners will be registered or unregistered depending on this flag.
-	 */
-
-	get enabled(): boolean {
-
-		return this._enabled;
-
-	}
-
-	set enabled(value: boolean) {
-
-		if(this.domElement === null || typeof document === "undefined") {
-
-			return;
-
-		}
-
-		const domElement = this.domElement;
-
-		if(value && !this._enabled) {
-
-			domElement.style.touchAction = "none";
-
-			document.addEventListener("pointerlockchange", this);
-			document.addEventListener("pointerlockerror", this);
-			document.addEventListener("visibilitychange", this);
-			document.body.addEventListener("keyup", this);
-			document.body.addEventListener("keydown", this);
-			domElement.addEventListener("mousedown", this);
-			domElement.addEventListener("mouseup", this);
-			domElement.addEventListener("pointerdown", this);
-			domElement.addEventListener("pointerup", this);
-			domElement.addEventListener("pointercancel", this);
-			domElement.addEventListener("wheel", this, { passive: true });
-
-		} else if(!value && this._enabled) {
-
-			domElement.style.touchAction = "";
-
-			document.removeEventListener("pointerlockchange", this);
-			document.removeEventListener("pointerlockerror", this);
-			document.removeEventListener("visibilitychange", this);
-			document.body.removeEventListener("keyup", this);
-			document.body.removeEventListener("keydown", this);
-			domElement.removeEventListener("mousedown", this);
-			domElement.removeEventListener("mouseup", this);
-			domElement.removeEventListener("pointerdown", this);
-			domElement.removeEventListener("pointerup", this);
-			domElement.removeEventListener("pointercancel", this);
-			domElement.removeEventListener("wheel", this);
-			domElement.removeEventListener("pointermove", this);
-
-		}
-
-		this.rotationManager.resetVelocity();
-		this.setPointerLocked(false);
-		this._enabled = value;
-
-	}
-
-	/**
 	 * Locks or unlocks the pointer.
 	 *
-	 * @param locked - Whether the pointer should be locked.
+	 * @param value - Whether the pointer should be locked.
 	 */
 
-	setPointerLocked(locked = true): void {
+	setPointerLocked(value = true): void {
 
-		if(locked) {
+		if(value) {
 
 			if(document.pointerLockElement !== this.domElement && this.domElement?.requestPointerLock !== undefined) {
 
@@ -312,20 +318,24 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	/**
 	 * Enables or disables the rotation mode.
 	 *
-	 * @param enabled - Whether the rotation mode should be activated.
+	 * @param value - Whether the rotation mode should be activated.
 	 */
 
-	setRotationEnabled(enabled: boolean): void {
+	setRotationEnabled(value: boolean): void {
 
-		if(this.settings.rotation.enabled && enabled) {
+		this.rotationEnabled = (value && this.settings.rotation.enabled);
 
-			this.domElement?.addEventListener("pointermove", this, { passive: true });
+	}
 
-		} else {
+	/**
+	 * Reset the current pointer state.
+	 */
 
-			this.domElement?.removeEventListener("pointermove", this);
+	private resetPointerState(): void {
 
-		}
+		this.pointerEvents.clear();
+		this.dragging = false;
+		this.rotationEnabled = false;
 
 	}
 
@@ -338,28 +348,27 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	private handlePointerMoveEvent(event: PointerEvent): void {
 
 		const settings = this.settings;
-		const rotation = settings.rotation;
-		const pointerBehaviour = settings.pointer.behaviour;
-		const pointerSensitivity = settings.pointer.sensitivity;
-		const rotationManager = this.rotationManager;
+		let { movementX, movementY } = event;
 
-		if(pointerBehaviour !== PointerBehaviour.LOCK_HOLD || this.dragging) {
+		if(movementX === undefined || movementY === undefined) {
 
-			let { movementX, movementY } = event;
+			movementX = event.screenX - screen.x;
+			movementY = event.screenY - screen.y;
+			screen.set(event.screenX, event.screenY);
 
-			if(movementX === undefined || movementY === undefined) {
+		}
 
-				// Webkit (Safari, Chrome) on iOS doesn't support movementX/Y for PointerEvents.
-				// Note: clientX/Y is always 0 when the pointer is locked, but mobile devices don't have pointer lock.
-				movementX = event.clientX - p.x;
-				movementY = event.clientY - p.y;
-				p.set(event.clientX, event.clientY);
+		if(this.rotationEnabled) {
+
+			if(settings.pointer.behaviour === PointerBehaviour.LOCK_HOLD && !this.dragging) {
+
+				return;
 
 			}
 
-			rotationManager.adjustSpherical(
-				movementX * pointerSensitivity * rotation.sensitivityX,
-				movementY * pointerSensitivity * rotation.sensitivityY
+			this.rotationManager.adjustSpherical(
+				movementX * settings.pointer.sensitivity * settings.rotation.sensitivityX,
+				movementY * settings.pointer.sensitivity * settings.rotation.sensitivityY
 			);
 
 		}
@@ -367,13 +376,15 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	}
 
 	/**
-	 * Handles pointer button events.
+	 * Handles mouse button events.
 	 *
-	 * @param event - A pointer event.
-	 * @param pressed - Whether the pointer button has been pressed down.
+	 * Note: mousedown/mouseup events are used because pointer events don't fire for each button.
+	 *
+	 * @param event - A mouse event.
+	 * @param pressed - Whether the button has been pressed down.
 	 */
 
-	private handlePointerButtonEvent(event: PointerEvent, pressed: boolean): void {
+	private handleMouseButtonEvent(event: MouseEvent, pressed: boolean): void {
 
 		const bindings = this.settings.pointerBindings;
 
@@ -383,58 +394,11 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 
 		}
 
-		p.set(event.clientX, event.clientY);
+		for(const action of bindings.match(event)!) {
 
-		// Mouse buttons are handled via mousedown/mouseup since pointer events don't fire for each button.
-		if(!(event instanceof PointerEvent && event.pointerType === PointerType.MOUSE as string)) {
-
-			const action = bindings.get(event.button)!;
-			const strategy = this.strategies.get(action);
-			strategy?.execute(pressed, event);
-
-			if(action === Action.ROTATE) {
-
-				this.dragging = pressed;
-
-			}
+			this.strategies.get(action)?.execute(pressed, event);
 
 		}
-
-		if(event instanceof PointerEvent) {
-
-			const behaviour = this.settings.pointer.behaviour;
-
-			if(pressed && behaviour === PointerBehaviour.DEFAULT) {
-
-				this.domElement?.setPointerCapture(event.pointerId);
-
-			}
-
-		}
-
-	}
-
-	/**
-	 * Handles pointer cancel and leave events.
-	 *
-	 * @param event - A pointer event.
-	 */
-
-	private handlePointerCancelEvent(event: PointerEvent): void {
-
-		this.domElement?.removeEventListener("pointermove", this);
-
-	}
-
-	/**
-	 * Handles wheel events.
-	 *
-	 * @param event - A wheel event.
-	 */
-
-	private handleWheelEvent(event: WheelEvent): void {
-
-		this.rotationManager.zoom(Math.sign(event.deltaY));
 
 	}
 
@@ -445,42 +409,6 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 	private handlePointerLockEvent(): void {
 
 		this.setRotationEnabled(document.pointerLockElement === this.domElement);
-
-	}
-
-	/**
-	 * Handles keyboard events.
-	 *
-	 * @param event - A keyboard event.
-	 * @param pressed - Whether the key has been pressed down.
-	 */
-
-	private handleKeyboardEvent(event: KeyboardEvent, pressed: boolean): void {
-
-		const keyBindings = this.settings.keyBindings;
-		const code = event.code !== undefined ? event.code as KeyCode : keyCodeLegacy.get(event.keyCode)!;
-
-		if(keyBindings.has(code)) {
-
-			event.preventDefault();
-			const strategy = this.strategies.get(keyBindings.get(code)!);
-			strategy?.execute(pressed);
-
-		}
-
-	}
-
-	/**
-	 * Cancels active interactions on visibility loss.
-	 */
-
-	private handleVisibilityChangeEvent(): void {
-
-		if(document.hidden) {
-
-			this.domElement?.removeEventListener("pointermove", this);
-
-		}
 
 	}
 
@@ -498,7 +426,7 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 
 		if(!settings.rotation.enabled) {
 
-			this.rotationManager.resetVelocity();
+			rotationManager.resetVelocity();
 
 		}
 
@@ -604,18 +532,28 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 				this.handlePointerMoveEvent(event as PointerEvent);
 				break;
 
-			case "pointerdown":
 			case "mousedown":
+				this.handleMouseButtonEvent(event as MouseEvent, true);
+				break;
+
+			case "mouseup":
+				this.handleMouseButtonEvent(event as MouseEvent, false);
+				break;
+
+			case "pointerdown":
 				this.handlePointerButtonEvent(event as PointerEvent, true);
 				break;
 
 			case "pointerup":
-			case "mouseup":
 				this.handlePointerButtonEvent(event as PointerEvent, false);
 				break;
 
 			case "pointercancel":
 				this.handlePointerCancelEvent(event as PointerEvent);
+				break;
+
+			case "contextmenu":
+				this.handleContextMenuEvent(event as PointerEvent);
 				break;
 
 			case "wheel":
@@ -633,10 +571,6 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 
 			case "keyup":
 				this.handleKeyboardEvent(event as KeyboardEvent, false);
-				break;
-
-			case "visibilitychange":
-				this.handleVisibilityChangeEvent();
 				break;
 
 			case "change":

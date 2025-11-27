@@ -1,5 +1,6 @@
 import { EventDispatcher } from "three";
 import { Action } from "../core/Action.js";
+import { Input } from "../input/Input.js";
 import { KeyCode } from "../input/KeyCode.js";
 import { PointerButton } from "../input/PointerButton.js";
 import { Bindings } from "./Bindings.js";
@@ -9,6 +10,7 @@ import { RotationSettings } from "./RotationSettings.js";
 import { SettingsEventMap } from "./SettingsEventMap.js";
 import { TranslationSettings } from "./TranslationSettings.js";
 import { ZoomSettings } from "./ZoomSettings.js";
+import { WheelRotation } from "../input/WheelRotation.js";
 
 /**
  * Control settings.
@@ -29,10 +31,11 @@ export class Settings extends EventDispatcher<SettingsEventMap> {
 	/**
 	 * Pointer bindings.
 	 *
-	 * This collection maps {@linkplain PointerButton pointer buttons} to {@linkplain Action actions}.
+	 * This collection maps {@linkplain PointerButton pointer buttons} and {@linkplain WheelRotation wheel rotations} to
+	 * {@linkplain Action actions}.
 	 */
 
-	readonly pointerBindings: Bindings<PointerButton>;
+	readonly pointerBindings: Bindings<PointerButton | WheelRotation>;
 
 	/**
 	 * General settings.
@@ -74,24 +77,28 @@ export class Settings extends EventDispatcher<SettingsEventMap> {
 
 		this.keyBindings = new Bindings<KeyCode>();
 		this.keyBindings.setDefault(new Map<KeyCode, Action>([
-			[KeyCode.KEY_W, Action.MOVE_FORWARD],
-			[KeyCode.KEY_A, Action.MOVE_LEFT],
-			[KeyCode.KEY_S, Action.MOVE_BACKWARD],
-			[KeyCode.KEY_D, Action.MOVE_RIGHT],
-			[KeyCode.ARROW_UP, Action.MOVE_FORWARD],
-			[KeyCode.ARROW_LEFT, Action.MOVE_LEFT],
-			[KeyCode.ARROW_DOWN, Action.MOVE_BACKWARD],
-			[KeyCode.ARROW_RIGHT, Action.MOVE_RIGHT],
-			[KeyCode.KEY_X, Action.MOVE_DOWN],
-			[KeyCode.SPACE, Action.MOVE_UP],
-			[KeyCode.PAGE_DOWN, Action.ZOOM_OUT],
-			[KeyCode.PAGE_UP, Action.ZOOM_IN],
-			[KeyCode.SHIFT_LEFT, Action.BOOST]
+			["KeyW", Action.MOVE_FORWARD],
+			["KeyA", Action.MOVE_LEFT],
+			["KeyS", Action.MOVE_BACKWARD],
+			["KeyD", Action.MOVE_RIGHT],
+			["ArrowUp", Action.MOVE_FORWARD],
+			["ArrowLeft", Action.MOVE_LEFT],
+			["ArrowDown", Action.MOVE_BACKWARD],
+			["ArrowRight", Action.MOVE_RIGHT],
+			["KeyX", Action.MOVE_DOWN],
+			["Space", Action.MOVE_UP],
+			["PageDown", Action.DOLLY_OUT],
+			["PageUp", Action.DOLLY_IN],
+			["ShiftLeft", Action.BOOST]
 		]));
 
-		this.pointerBindings = new Bindings<PointerButton>();
-		this.pointerBindings.setDefault(new Map([
-			[PointerButton.MAIN, Action.ROTATE]
+		this.pointerBindings = new Bindings<PointerButton | WheelRotation>();
+		this.pointerBindings.setDefault(new Map<Input<PointerButton | WheelRotation>, Action>([
+			[new Input<PointerButton>(PointerButton.MAIN), Action.ROTATE],
+			[new Input<PointerButton>(PointerButton.MAIN, { modifiers: ["Ctrl"] }), Action.MOVE_PLANAR],
+			[new Input<PointerButton>(PointerButton.SECONDARY), Action.PAN],
+			[new Input<WheelRotation>(WheelRotation.NEGATIVE_Y), Action.DOLLY_OUT],
+			[new Input<WheelRotation>(WheelRotation.POSITIVE_Y), Action.DOLLY_IN]
 		]));
 
 		this.general = new GeneralSettings();

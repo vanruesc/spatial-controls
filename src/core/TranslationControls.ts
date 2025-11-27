@@ -1,11 +1,10 @@
 import { EventDispatcher, Quaternion, Vector3 } from "three";
+import { KeyCode } from "../input/KeyCode.js";
+import { TranslationManager } from "../managers/TranslationManager.js";
+import { Settings } from "../settings/Settings.js";
 import { BoostStrategy } from "../strategies/BoostStrategy.js";
 import { MovementStrategy } from "../strategies/MovementStrategy.js";
 import { Strategy } from "../strategies/Strategy.js";
-import { KeyCode } from "../input/KeyCode.js";
-import { keyCodeLegacy } from "../input/keyCodeLegacy.js";
-import { TranslationManager } from "../managers/TranslationManager.js";
-import { Settings } from "../settings/Settings.js";
 import { Action } from "./Action.js";
 import { ControlsEventMap } from "./ControlsEventMap.js";
 import { Direction } from "./Direction.js";
@@ -129,30 +128,61 @@ export class TranslationControls extends EventDispatcher<ControlsEventMap>
 
 	set enabled(value: boolean) {
 
+		if(value === this.enabled) {
+
+			return;
+
+		}
+
+		this._enabled = value;
+
+		if(value) {
+
+			this.addEventListeners();
+
+		} else {
+
+			this.removeEventListeners();
+			this.translationManager.movementState.reset();
+			this.translationManager.resetVelocity();
+
+		}
+
+	}
+
+	/**
+	 * Adds all necessary event listeners.
+	 */
+
+	private addEventListeners(): void {
+
 		if(typeof document === "undefined") {
 
 			return;
 
 		}
 
-		this.translationManager.movementState.reset();
+		document.addEventListener("visibilitychange", this);
+		document.body.addEventListener("keyup", this);
+		document.body.addEventListener("keydown", this);
 
-		if(value && !this._enabled) {
+	}
 
-			document.addEventListener("visibilitychange", this);
-			document.body.addEventListener("keyup", this);
-			document.body.addEventListener("keydown", this);
+	/**
+	 * Removes all event listeners.
+	 */
 
-		} else if(!value && this._enabled) {
+	private removeEventListeners(): void {
 
-			document.removeEventListener("visibilitychange", this);
-			document.body.removeEventListener("keyup", this);
-			document.body.removeEventListener("keydown", this);
+		if(typeof document === "undefined") {
+
+			return;
 
 		}
 
-		this.translationManager.resetVelocity();
-		this._enabled = value;
+		document.removeEventListener("visibilitychange", this);
+		document.body.removeEventListener("keyup", this);
+		document.body.removeEventListener("keydown", this);
 
 	}
 
@@ -164,15 +194,25 @@ export class TranslationControls extends EventDispatcher<ControlsEventMap>
 	 */
 
 	private handleKeyboardEvent(event: KeyboardEvent, pressed: boolean): void {
+console.log(event.code);
+		if(event.repeat) {
 
-		const keyBindings = this.settings.keyBindings;
-		const code = event.code !== undefined ? event.code as KeyCode : keyCodeLegacy.get(event.keyCode)!;
+			return;
 
-		if(keyBindings.has(code)) {
+		}
+
+		const bindings = this.settings.keyBindings;
+		const code = event.code as KeyCode;
+
+		if(bindings.has(code)) {
 
 			event.preventDefault();
-			const strategy = this.strategies.get(keyBindings.get(code)!);
-			strategy?.execute(pressed);
+
+			for(const action of bindings.match(event)!) {
+
+				this.strategies.get(action)?.execute(pressed);
+
+			}
 
 		}
 

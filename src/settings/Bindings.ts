@@ -1,25 +1,48 @@
 import { Action } from "../core/Action.js";
+import { BoundAction } from "../core/BoundAction.js";
+import { Input } from "../input/Input.js";
+import { getWheelRotation } from "../input/WheelRotation.js";
+
+/**
+ * Sets the modifiers bitmask based on a list of modifier keys.
+ *
+ * @param event - An event.
+ * @return The modifiers as a bitmask.
+ */
+
+function getModifiersFromEvent(event: MouseEvent | KeyboardEvent): number {
+
+	let flags = 0;
+
+	if(event.altKey) { flags |= 1; }
+	if(event.ctrlKey) { flags |= 2; }
+	if(event.metaKey) { flags |= 4; }
+	if(event.shiftKey) { flags |= 8; }
+
+	return flags;
+
+}
 
 /**
  * Input bindings.
  *
  * @group Settings
- * @param TKey - The type of the binding keys.
+ * @param TKey - The type of the input values.
  */
 
-export class Bindings<TKey> {
+export class Bindings<TInput> {
 
 	/**
 	 * The default bindings.
 	 */
 
-	defaultActions: Map<TKey, Action>;
+	private defaultActions: Map<TInput, BoundAction[]>;
 
 	/**
-	 * A collection that maps keys to actions.
+	 * A collection that maps inputs to actions.
 	 */
 
-	actions: Map<TKey, Action>;
+	private actions: Map<TInput, BoundAction[]>;
 
 	/**
 	 * Constructs new input bindings.
@@ -27,8 +50,8 @@ export class Bindings<TKey> {
 
 	constructor() {
 
-		this.defaultActions = new Map<TKey, Action>();
-		this.actions = new Map<TKey, Action>();
+		this.defaultActions = new Map();
+		this.actions = new Map();
 
 	}
 
@@ -38,7 +61,7 @@ export class Bindings<TKey> {
 	 * @return This instance.
 	 */
 
-	reset(): Bindings<TKey> {
+	reset(): this {
 
 		this.actions = new Map(this.defaultActions);
 		return this;
@@ -46,16 +69,24 @@ export class Bindings<TKey> {
 	}
 
 	/**
-	 * Establishes default bindings and resets the current bindings.
+	 * Resets the current bindings and establishes default bindings.
 	 *
-	 * @param actions - A collection that maps keys to actions.
+	 * @param actions - A collection that maps inputs to actions.
 	 * @return This instance.
 	 */
 
-	setDefault(actions: Map<TKey, Action>): Bindings<TKey> {
+	setDefault(actions: Map<TInput | Input<TInput>, Action>): this {
 
-		this.defaultActions = actions;
-		return this.reset();
+		this.actions.clear();
+
+		for(const entry of actions) {
+
+			this.set(entry[0], entry[1]);
+
+		}
+
+		this.defaultActions = new Map(this.actions);
+		return this;
 
 	}
 
@@ -65,7 +96,7 @@ export class Bindings<TKey> {
 	 * @return This instance.
 	 */
 
-	clearDefault(): Bindings<TKey> {
+	clearDefault(): this {
 
 		this.defaultActions.clear();
 		return this;
@@ -78,7 +109,7 @@ export class Bindings<TKey> {
 	 * @return This instance.
 	 */
 
-	clear(): Bindings<TKey> {
+	clear(): this {
 
 		this.actions.clear();
 		return this;
@@ -92,11 +123,10 @@ export class Bindings<TKey> {
 	 * @return This instance.
 	 */
 
-	copy(bindings: Bindings<TKey>): Bindings<TKey> {
+	copy(bindings: Bindings<TInput>): this {
 
 		this.defaultActions = new Map(bindings.defaultActions);
 		this.actions = new Map(bindings.actions);
-
 		return this;
 
 	}
@@ -107,10 +137,200 @@ export class Bindings<TKey> {
 	 * @return The cloned bindings.
 	 */
 
-	clone(): Bindings<TKey> {
+	clone(): Bindings<TInput> {
 
-		const clone = new Bindings<TKey>();
+		const clone = new Bindings<TInput>();
 		return clone.copy(this);
+
+	}
+
+	/**
+	 * Checks if any actions are bound to the given input.
+	 *
+	 * @param input - An input.
+	 * @return Whether the given input is bound to an action.
+	 */
+
+	has(input: TInput | Input<TInput>): boolean {
+
+		if(input instanceof Input) {
+
+			const value = input.value;
+			const modifiers = input.modifiers;
+
+			return this.actions.get(value)?.some(x => x.modifiers === modifiers) !== undefined;
+
+		}
+
+		return this.actions.has(input);
+
+	}
+
+	/**
+	 * Returns the action that exactly matches the given input.
+	 *
+	 * @param input - An input.
+	 * @return The action, or undefined if the input is not bound to any action.
+	 */
+
+	get(input: TInput | Input<TInput>): Action | undefined {
+
+		let value = input as TInput;
+		let modifiers = 0;
+
+		if(input instanceof Input) {
+
+			value = input.value;
+			modifiers = input.modifiers;
+
+		}
+
+		return this.actions.get(value)?.find(x => x.modifiers === modifiers)?.action;
+
+	}
+
+	/**
+	 * Binds an action to an input.
+	 *
+	 * @param input - An input.
+	 * @param action - An action.
+	 * @return This instance.
+	 */
+
+	set(input: TInput | Input<TInput>, action: Action): this {
+
+		let value = input as TInput;
+		let modifiers = 0;
+
+		if(input instanceof Input) {
+
+			value = input.value;
+			modifiers = input.modifiers;
+
+		}
+
+		if(this.actions.has(value)) {
+
+			const boundActions = this.actions.get(value)!;
+
+			if(!boundActions.some(x => x.action === action && x.modifiers === modifiers)) {
+
+				boundActions.push({ action, modifiers });
+
+			}
+
+		} else {
+
+			this.actions.set(value, [{ action, modifiers }]);
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	 * Unbinds an action.
+	 *
+	 * @param input - The input.
+	 * @return Whether the binding existed.
+	 */
+
+	delete(input: TInput | Input<TInput>): boolean {
+
+		let value = input as TInput;
+		let modifiers = 0;
+
+		if(input instanceof Input) {
+
+			value = input.value;
+			modifiers = input.modifiers;
+
+		}
+
+		const boundActions = this.actions.get(value);
+		const match = boundActions?.find(x => x.modifiers === modifiers);
+
+		if(boundActions === undefined || match === undefined) {
+
+			return false;
+
+		}
+
+		if(boundActions.length === 1) {
+
+			return this.actions.delete(value);
+
+		}
+
+		boundActions.splice(boundActions.indexOf(match), 1);
+		return true;
+
+	}
+
+	/**
+	 * Returns all actions that match the given mouse event.
+	 *
+	 * @param event - A mouse event
+	 * @return The matching actions, or undefined if the input is not bound to any action.
+	 */
+
+	matchMouseEvent(event: MouseEvent): Action[] | undefined {
+
+		const value = event.button as TInput;
+		const modifiers = getModifiersFromEvent(event);
+		return this.match(value, modifiers);
+
+	}
+
+	/**
+	 * Returns all actions that match the given wheel event.
+	 *
+	 * @param event - A wheel event
+	 * @return The matching actions, or undefined if the input is not bound to any action.
+	 */
+
+	matchWheelEvent(event: WheelEvent): Action[] | undefined {
+
+		const value = getWheelRotation(event) as TInput;
+		const modifiers = getModifiersFromEvent(event);
+		return this.match(value, modifiers);
+
+	}
+
+	/**
+	 * Returns all actions that match the given keyboard event.
+	 *
+	 * @param event - A keyboard event
+	 * @return The matching actions, or undefined if the input is not bound to any action.
+	 */
+
+	matchKeyboardEvent(event: KeyboardEvent): Action[] | undefined {
+
+		const value = event.code as TInput;
+		const modifiers = getModifiersFromEvent(event);
+		return this.match(value, modifiers);
+
+	}
+
+	/**
+	 * Returns all actions that match the given input.
+	 *
+	 * @param input - An input.
+	 * @return The matching actions, or undefined if the input is not bound to any action.
+	 */
+
+	match(input: TInput, modifiers = 0): Action[] | undefined {
+
+		if(!this.actions.has(input)) {
+
+			return undefined;
+
+		}
+
+		return this.actions.get(input)!
+			.filter(x => (x.modifiers & modifiers) === x.modifiers)
+			.map(x => x.action);
 
 	}
 
@@ -121,70 +341,16 @@ export class Bindings<TKey> {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: Bindings<TKey>): Bindings<TKey> {
+	fromJSON(json: Bindings<TInput>): this {
 
 		if(json !== undefined) {
 
-			this.defaultActions = new Map<TKey, Action>(json.defaultActions);
-			this.actions = new Map<TKey, Action>(json.actions);
+			this.defaultActions = new Map(json.defaultActions);
+			this.actions = new Map(json.actions);
 
 		}
 
 		return this;
-
-	}
-
-	/**
-	 * Checks if the given key is bound to an action.
-	 *
-	 * @param key - A key.
-	 * @return Whether the given key is bound to an action.
-	 */
-
-	has(key: TKey): boolean {
-
-		return this.actions.has(key);
-
-	}
-
-	/**
-	 * Returns the action that is bound to the given key.
-	 *
-	 * @param key - A key.
-	 * @return The action, or undefined if the key is not bound to any action.
-	 */
-
-	get(key: TKey): Action | undefined {
-
-		return this.actions.get(key);
-
-	}
-
-	/**
-	 * Binds a key to an action.
-	 *
-	 * @param key - A key.
-	 * @param action - An action.
-	 * @return This instance.
-	 */
-
-	set(key: TKey, action: Action): Bindings<TKey> {
-
-		this.actions.set(key, action);
-		return this;
-
-	}
-
-	/**
-	 * Unbinds a key.
-	 *
-	 * @param key - The key.
-	 * @return Whether the binding existed.
-	 */
-
-	delete(key: TKey): boolean {
-
-		return this.actions.delete(key);
 
 	}
 

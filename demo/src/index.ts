@@ -25,7 +25,7 @@ import {
 	WebGLRenderer
 } from "three";
 
-import { ControlMode, PointerBehaviour, SpatialControls } from "spatial-controls";
+import { Action, ControlMode, Input, KeyCode, PointerBehaviour, SpatialControls } from "spatial-controls";
 import { Pane } from "tweakpane";
 import { calculateVerticalFoV, getSkyboxUrls } from "./utils/index.js";
 
@@ -104,6 +104,8 @@ window.addEventListener("load", () => void load().then((assets) => {
 	settings.translation.damping = 0.1;
 	settings.zoom.sensitivity = 0.1;
 	settings.zoom.damping = 0.2;
+
+	settings.keyBindings.set(new Input<KeyCode>("Space", { modifiers: ["Ctrl"] }), Action.MOVE_DOWN);
 
 	const box = new Box3();
 	box.min.set(-2, 0, -4);
@@ -195,6 +197,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 	});
 
 	let folder = pane.addFolder({ title: "General" });
+	folder.addBinding(controls, "enabled");
 	folder.addBinding(settings.general, "mode", { options: ControlMode })
 		.on("change", (e) => void (sphere.visible = (e.value === ControlMode.THIRD_PERSON)));
 
