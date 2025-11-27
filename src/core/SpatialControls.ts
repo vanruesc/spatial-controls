@@ -365,10 +365,7 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 	}
 
 	/**
-	 * Constrains the given vector.
-	 *
-	 * @param A vector.
-	 * @return The constrained vector.
+	 * Applies constraints to the target and position vectors.
 	 */
 
 	private applyConstraints(): void {

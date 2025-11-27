@@ -12,7 +12,7 @@ const v = /* @__PURE__ */ new Vector3();
 const m = /* @__PURE__ */ new Matrix4();
 
 /**
- * A rotation manager.
+ * A manager that handles rotation changes.
  *
  * @group Managers
  */

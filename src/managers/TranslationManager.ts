@@ -11,7 +11,7 @@ const u = /* @__PURE__ */ new Vector3();
 const v = /* @__PURE__ */ new Vector3();
 
 /**
- * A translation manager.
+ * A manager that handles position changes.
  *
  * @group Managers
  */
