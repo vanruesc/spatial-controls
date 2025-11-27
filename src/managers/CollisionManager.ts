@@ -116,6 +116,30 @@ export class CollisionManager extends EventDispatcher<ManagerEventMap> implement
 
 	private collisionTest(): void {
 
+		/*
+
+		if(this.constraints.size === 0) {
+
+			return;
+
+		}
+
+		this.spherical2.copy(this.spherical1);
+
+		const s1 = this.spherical1;
+		u.addVectors(this.target, this.settings.rotation.pivotOffset);
+		v.setFromSpherical(this.spherical1).add(u);
+
+		const projectedPosition = this.applyConstraints(v);
+		const adjustedRadius = projectedPosition.distanceTo(u);
+
+		console.log(projectedPosition, u, adjustedRadius);
+
+		s1.radius = Math.min(adjustedRadius, s1.radius);
+		this.restrictRadius();
+
+		*/
+
 	}
 
 	update(timestamp: number): void {
