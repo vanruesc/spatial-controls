@@ -1,12 +1,11 @@
-import { EventDispatcher, Vector2 } from "three";
+import { Event, EventDispatcher, Vector2 } from "three";
 import { Disposable } from "../core/Disposable.js";
+import { MovementEvent } from "../events/MovementEvent.js";
 import { Settings } from "../settings/Settings.js";
 import { InputManagerEventMap } from "./InputManagerEventMap.js";
 import { KeyCode } from "../input/KeyCode.js";
 import { getWheelRotation } from "../input/WheelRotation.js";
-import { PointerBehaviour } from "../input/PointerBehaviour.js";
-
-const screen = /* @__PURE__ */ new Vector2();
+import { PointerBehavior } from "../input/PointerBehavior.js";
 
 /**
  * An input manager.
@@ -14,7 +13,10 @@ const screen = /* @__PURE__ */ new Vector2();
  * @group Managers
  */
 
-export class InputManager extends EventDispatcher<InputManagerEventMap> implements Disposable, EventListenerObject {
+export class InputManager extends EventDispatcher<InputManagerEventMap>
+	implements Disposable, EventListenerObject {
+
+	// #region Backing Data
 
 	/**
 	 * @see {@link domElement}
@@ -28,6 +30,10 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 
 	private _enabled: boolean;
 
+	// #endregion
+
+	// #region Input State
+
 	/**
 	 * A collection that organizes active pointer events by ID.
 	 */
@@ -35,10 +41,24 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 	private readonly pointerEvents: Map<number, PointerEvent>;
 
 	/**
-	 * Indicates whether the user is currently holding the pointer button down.
+	 * The previous screen position.
 	 */
 
-	private dragging: boolean;
+	private readonly previousPosition: Vector2;
+
+	/**
+	 * The previous screen position.
+	 */
+
+	private readonly currentPosition: Vector2;
+
+	// #endregion
+
+	// #region Reusable Events
+
+	private readonly movementEvent: MovementEvent;
+
+	// #endregion
 
 	/**
 	 * The control settings.
@@ -52,23 +72,34 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 	 * @param settings - The settings.
 	 */
 
-	constructor(settings = new Settings()) {
+	constructor(settings = new Settings(), domElement: HTMLElement | null = null) {
 
 		super();
 
 		this._domElement = null;
 		this._enabled = false;
 
-		this.dragging = false;
 		this.pointerEvents = new Map();
+		this.previousPosition = new Vector2();
+		this.currentPosition = new Vector2();
+
+		this.movementEvent = {
+			type: "move",
+			pointerCount: 0,
+			x: 0,
+			y: 0
+		};
 
 		this.settings = settings;
 		settings.addEventListener("change", (e: unknown) => this.handleEvent(e as Event));
 
+		this.domElement = domElement;
+		this.enabled = true;
+
 	}
 
 	/**
-	 * A DOM element. Acts as the primary event target.
+	 * A DOM element that acts as the primary event target.
 	 */
 
 	get domElement() {
@@ -79,18 +110,19 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 
 	set domElement(value: HTMLElement | null) {
 
+		this.removeEventListeners();
 		this._domElement = value;
 
-		const enabled = this.enabled;
-		this.removeEventListeners();
-		this.enabled = enabled;
+		if(this.enabled) {
+
+			this.addEventListeners();
+
+		}
 
 	}
 
 	/**
-	 * Indicates whether the controls are enabled.
-	 *
-	 * Event listeners will be registered or unregistered depending on this flag.
+	 * Determines whether the input listeners are currently enabled.
 	 */
 
 	get enabled(): boolean {
@@ -116,7 +148,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 		} else {
 
 			this.removeEventListeners();
-			this.resetPointerState();
+			this.resetInputState();
 
 			void this.setPointerLocked(false);
 
@@ -125,7 +157,17 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 	}
 
 	/**
-	 * Adds all necessary event listeners.
+	 * Indicates whether the pointer is currently locked.
+	 */
+
+	get pointerLocked(): boolean {
+
+		return (document.pointerLockElement === this.domElement);
+
+	}
+
+	/**
+	 * Registers event listeners.
 	 */
 
 	private addEventListeners(): void {
@@ -144,6 +186,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 		document.addEventListener("visibilitychange", this);
 		document.body.addEventListener("keyup", this);
 		document.body.addEventListener("keydown", this);
+
 		domElement.addEventListener("pointermove", this, { passive: true });
 		domElement.addEventListener("mousedown", this);
 		domElement.addEventListener("mouseup", this);
@@ -156,7 +199,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 	}
 
 	/**
-	 * Removes all event listeners.
+	 * Unregisters event listeners.
 	 */
 
 	private removeEventListeners(): void {
@@ -175,6 +218,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 		document.removeEventListener("visibilitychange", this);
 		document.body.removeEventListener("keyup", this);
 		document.body.removeEventListener("keydown", this);
+
 		domElement.removeEventListener("pointermove", this);
 		domElement.removeEventListener("mousedown", this);
 		domElement.removeEventListener("mouseup", this);
@@ -182,19 +226,21 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 		domElement.removeEventListener("pointerup", this);
 		domElement.removeEventListener("pointercancel", this);
 		domElement.removeEventListener("wheel", this);
-		domElement.removeEventListener("pointermove", this);
 		domElement.removeEventListener("contextmenu", this);
 
 	}
 
 	/**
-	 * Reset the current pointer state.
+	 * Reset the input state.
 	 */
 
-	private resetPointerState(): void {
+	private resetInputState(): void {
 
 		this.pointerEvents.clear();
-		this.dragging = false;
+
+		this.dispatchEvent({
+			type: "reset"
+		});
 
 	}
 
@@ -214,7 +260,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 
 		if(value) {
 
-			if(document.pointerLockElement !== this.domElement) {
+			if(!this.pointerLocked) {
 
 				await this.domElement.requestPointerLock();
 
@@ -229,6 +275,36 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 	}
 
 	/**
+	 * Calculates the current average pointer position.
+	 *
+	 * @return The current screen position.
+	 */
+
+	private calculateCurrentPosition(): Vector2 {
+
+		const n = this.pointerEvents.size;
+		let x = 0;
+		let y = 0;
+
+		for(const pointerEvent of this.pointerEvents.values()) {
+
+			x += pointerEvent.screenX;
+			y += pointerEvent.screenY;
+
+		}
+
+		if(n > 1) {
+
+			x /= n;
+			y /= n;
+
+		}
+
+		return this.currentPosition.set(x, y);
+
+	}
+
+	/**
 	 * Handles pointer move events.
 	 *
 	 * @param event - A pointer event.
@@ -236,68 +312,39 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 
 	private handlePointerMoveEvent(event: PointerEvent): void {
 
-		let { movementX, movementY } = event;
+		const pointerLocked = this.pointerLocked;
 
-		if(movementX === undefined || movementY === undefined) {
-
-			movementX = event.screenX - screen.x;
-			movementY = event.screenY - screen.y;
-			screen.set(event.screenX, event.screenY);
-
-		}
-
-		//if(settings.pointer.behaviour === PointerBehaviour.LOCK_HOLD && !this.dragging) {
-		if(this.rotating) {
-
-			this.dispatchEvent({
-				type: "rotate",
-				theta: movementX,
-				phi: movementY
-			});
-
-		}
-
-		if(this.panning) {
-
-			this.dispatchEvent({
-				type: "pan",
-				deltaX: movementX,
-				deltaY: movementY,
-				deltaZ: 0.0
-			});
-
-		}
-
-	}
-
-	/**
-	 * Handles pointer lock for mouse events on desktop.
-	 *
-	 * @param event - A mouse event.
-	 */
-
-	private handlePointerLockEvent(event: MouseEvent, pressed: boolean): void {
-
-		const bindings = this.settings.pointerBindings;
-
-		if(!bindings.has(event.button)) {
+		if(!this.pointerEvents.has(event.pointerId) && !pointerLocked) {
 
 			return;
 
 		}
 
-		if(this.settings.pointer.behaviour !== PointerBehaviour.DEFAULT) {
+		this.pointerEvents.set(event.pointerId, event);
+		let { movementX, movementY } = event;
 
-			void this.setPointerLocked();
+		if(!pointerLocked) {
+
+			const previousPosition = this.previousPosition;
+			const currentPosition = this.calculateCurrentPosition();
+			movementX = currentPosition.x - previousPosition.x;
+			movementY = currentPosition.y - previousPosition.y;
+			previousPosition.copy(currentPosition);
 
 		}
+
+		const movementEvent = this.movementEvent;
+		movementEvent.x = movementX;
+		movementEvent.y = movementY;
+		movementEvent.pointerCount = this.pointerEvents.size;
+		this.dispatchEvent(movementEvent);
 
 	}
 
 	/**
 	 * Handles mouse button events.
 	 *
-	 * Note: mousedown/mouseup events are used because pointer events don't fire for each button.
+	 * Note: pointer events don't fire for other mouse buttons while the pointer is active.
 	 *
 	 * @param event - A mouse event.
 	 * @param pressed - Whether the button has been pressed down.
@@ -325,7 +372,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 	}
 
 	/**
-	 * Handles pointer button events.
+	 * Handles pointer events.
 	 *
 	 * @param event - A pointer event.
 	 * @param pressed - Whether the button has been pressed down.
@@ -333,26 +380,29 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 
 	private handlePointerButtonEvent(event: PointerEvent, pressed: boolean): void {
 
-		if(event.pointerType !== "mouse") {
+		const isMouse = event.pointerType === "mouse";
 
-			// Handle touch/pen events as mouse events.
+		if(!isMouse) {
+
+			// Handle touch/pen events like mouse events.
 			this.handleMouseButtonEvent(event, pressed);
-			return;
+			event.preventDefault();
 
 		}
 
 		if(pressed) {
 
-			if(!this.pointerEvents.has(event.pointerId)) {
+			this.pointerEvents.set(event.pointerId, event);
+			this.previousPosition.copy(this.calculateCurrentPosition());
 
-				this.pointerEvents.set(event.pointerId, event); // count active rotation triggers? for pointer lock and stuff...
-				screen.set(event.screenX, event.screenY);
+			if(this.settings.pointer.getBehavior(event.button) === PointerBehavior.DEFAULT) {
 
-			}
-
-			if(this.settings.pointer.behaviour === PointerBehaviour.DEFAULT) {
-
+				// The capture will be implicitly released after a pointerup or pointercancel event.
 				this.domElement?.setPointerCapture(event.pointerId);
+
+			} else if(isMouse) {
+
+				void this.setPointerLocked(pressed);
 
 			}
 
@@ -449,7 +499,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 
 	private handlePointerCancelEvent(event: PointerEvent): void {
 
-		this.resetPointerState();
+		this.resetInputState();
 
 	}
 
@@ -461,7 +511,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap> implemen
 
 		if(document.hidden) {
 
-			this.resetPointerState();
+			this.resetInputState();
 
 		}
 

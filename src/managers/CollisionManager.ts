@@ -1,7 +1,32 @@
-import { EventDispatcher, Quaternion, Vector3 } from "three";
+import { EventDispatcher, Vector3 } from "three";
 import { Updatable } from "../core/Updatable.js";
 import { Settings } from "../settings/Settings.js";
-import { ManagerEventMap } from "./ManagerEventMap.js";
+import { BaseEventMap } from "../core/BaseEventMap.js";
+import { ControlMode } from "../core/ControlMode.js";
+import { Constraint } from "../core/Constraint.js";
+import { TransformationData } from "../core/TransformationData.js";
+
+const v = /* @__PURE__ */ new Vector3();
+
+/**
+ * Constrains the given vector.
+ *
+ * @param p - A vector.
+ * @param constraints - A collection of constraints.
+ * @return The constrained vector.
+ */
+
+function applyConstraints(p: Vector3, constraints: Set<Constraint<Vector3>>): Vector3 {
+
+	for(const applyConstraint of constraints) {
+
+		p = applyConstraint(p);
+
+	}
+
+	return p;
+
+}
 
 /**
  * A collision manager.
@@ -10,25 +35,7 @@ import { ManagerEventMap } from "./ManagerEventMap.js";
  * @group Managers
  */
 
-export class CollisionManager extends EventDispatcher<ManagerEventMap> implements Updatable {
-
-	/**
-	 * @see {@link position}
-	 */
-
-	private _position: Vector3;
-
-	/**
-	 * @see {@link quaternion}
-	 */
-
-	private _quaternion: Quaternion;
-
-	/**
-	 * @see {@link target}
-	 */
-
-	private _target: Vector3;
+export class CollisionManager extends EventDispatcher<BaseEventMap> implements Updatable {
 
 	/**
 	 * The settings.
@@ -37,76 +44,72 @@ export class CollisionManager extends EventDispatcher<ManagerEventMap> implement
 	private readonly settings: Settings;
 
 	/**
-	 * Constructs a new translation manager.
-	 *
-	 * @param position - The position.
-	 * @param quaternion - The quaternion.
-	 * @param target - The target.
-	 * @param settings - The settings.
+	 * The primary transformation data.
 	 */
 
-	constructor(
-		position: Vector3,
-		quaternion: Quaternion,
-		target: Vector3,
-		settings: Settings
-	) {
+	private readonly transformation: TransformationData;
+
+	/**
+	 * Custom constraints for the {@link position} and {@link target}.
+	 */
+
+	readonly constraints: Set<Constraint<Vector3>>;
+
+	/**
+	 * Colliders to consider for collision tests.
+	 *
+	 * @todo NYI
+	 */
+
+	private readonly colliders: Set<unknown>;
+
+	/**
+	 * Constructs a new translation manager.
+	 *
+	 * @param settings - The settings.
+	 * @param transformation - The transformation data.
+	 */
+
+	constructor(settings: Settings, transformation: TransformationData) {
 
 		super();
 
-		this._position = position;
-		this._quaternion = quaternion;
-		this._target = target;
-
 		this.settings = settings;
+		this.transformation = transformation;
+		this.constraints = new Set();
+		this.colliders = new Set();
 
 	}
 
 	/**
-	 * The position.
+	 * Applies constraints to the target and position vectors.
 	 */
 
-	get position(): Vector3 {
+	applyConstraints(): void {
 
-		return this._position;
+		if(this.constraints.size === 0) {
 
-	}
+			return;
 
-	set position(value: Vector3) {
+		}
 
-		this._position = value;
+		const transformation = this.transformation;
 
-	}
+		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
 
-	/**
-	 * The quaternion.
-	 */
+			// Constrain the target.
+			v.copy(transformation.target);
+			transformation.target.copy(applyConstraints(transformation.target, this.constraints));
 
-	get quaternion(): Quaternion {
+			// Move the position together with the target.
+			transformation.position.add(v.subVectors(transformation.target, v));
 
-		return this._quaternion;
+		} else {
 
-	}
+			// Constrain the position.
+			transformation.position.copy(applyConstraints(transformation.position, this.constraints));
 
-	set quaternion(value: Quaternion) {
-
-		this._quaternion = value;
-
-	}
-
-	/**
-	 * The target.
-	 */
-
-	get target(): Vector3 {
-
-		return this._target;
-
-	}
-
-	set target(value: Vector3) {
-
-		this._target = value;
+		}
 
 	}
 
@@ -116,33 +119,18 @@ export class CollisionManager extends EventDispatcher<ManagerEventMap> implement
 
 	private collisionTest(): void {
 
-		/*
-
-		if(this.constraints.size === 0) {
+		if(this.colliders.size === 0) {
 
 			return;
 
 		}
 
-		this.spherical2.copy(this.spherical1);
-
-		const s1 = this.spherical1;
-		u.addVectors(this.target, this.settings.rotation.pivotOffset);
-		v.setFromSpherical(this.spherical1).add(u);
-
-		const projectedPosition = this.applyConstraints(v);
-		const adjustedRadius = projectedPosition.distanceTo(u);
-
-		console.log(projectedPosition, u, adjustedRadius);
-
-		s1.radius = Math.min(adjustedRadius, s1.radius);
-		this.restrictRadius();
-
-		*/
-
 	}
 
 	update(timestamp: number): void {
+
+		this.applyConstraints();
+		this.collisionTest();
 
 	}
 

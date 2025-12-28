@@ -1,43 +1,38 @@
-import { ActionEvent } from "../input/ActionEvent.js";
-import { SphericalRotationEvent } from "../input/RotationEvent.js";
-import { TranslationEvent } from "../input/TranslationEvent.js";
+import { BaseEvent } from "three";
+import { BaseEventMap } from "../core/BaseEventMap.js";
+import { ActionEvent } from "../events/ActionEvent.js";
+import { MovementEvent } from "../events/MovementEvent.js";
 
 /**
  * Events emitted by the input manager.
  *
- * @group Input
+ * @group Managers
  */
 
-export interface InputManagerEventMap {
+export interface InputManagerEventMap extends BaseEventMap {
 
 	/**
 	 * Indicates that a specific action was activated.
 	 */
 
-	activate: ActionEvent;
+	activate: ActionEvent<"activate">;
 
 	/**
 	 * Indicates that a specific action was deactivated.
 	 */
 
-	deactivate: ActionEvent;
+	deactivate: ActionEvent<"deactivate">;
 
 	/**
-	 * A spherical rotation change.
+	 * A pointer movement change.
 	 */
 
-	rotate: SphericalRotationEvent;
+	move: MovementEvent;
 
 	/**
-	 * A planar position change.
+	 * Signals that the input state has been reset.
 	 */
 
-	truck: TranslationEvent;
-
-	/**
-	 * A screen-aligned position change.
-	 */
-
-	pan: TranslationEvent;
+	reset: BaseEvent<"reset">;
 
 }

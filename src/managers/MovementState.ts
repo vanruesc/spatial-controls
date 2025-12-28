@@ -4,6 +4,9 @@
  * @group Managers
  */
 
+import { Vector3 } from "three";
+import { Direction } from "../core/Direction.js";
+
 export class MovementState {
 
 	/**
@@ -87,6 +90,113 @@ export class MovementState {
 			this.left || this.right ||
 			this.up || this.down
 		);
+
+	}
+
+	/**
+	 * Changes the movement state.
+	 *
+	 * @param active - Indicates whether the respective movement state should be activated or deactivated.
+	 */
+
+	setActive(direction: Direction, active: boolean): void {
+
+		switch(direction) {
+
+			case Direction.BACKWARD:
+				this.backward = active;
+				this.backwardBeforeForward = active;
+				break;
+
+			case Direction.FORWARD:
+				this.forward = active;
+				this.backwardBeforeForward = !active;
+				break;
+
+			case Direction.RIGHT:
+				this.right = active;
+				this.rightBeforeLeft = active;
+				break;
+
+			case Direction.LEFT:
+				this.left = active;
+				this.rightBeforeLeft = !active;
+				break;
+
+			case Direction.UP:
+				this.up = active;
+				this.upBeforeDown = active;
+				break;
+
+			case Direction.DOWN:
+				this.down = active;
+				this.upBeforeDown = !active;
+				break;
+
+		}
+
+	}
+
+	/**
+	 * Converts this movement state into a vector.
+	 *
+	 * @param v - A target vector.
+	 * @return The vector.
+	 */
+
+	toVector3(v: Vector3): Vector3 {
+
+		v.setScalar(0.0);
+
+		if(!this.active) {
+
+			return v;
+
+		}
+
+		if(this.right && this.left) {
+
+			v.x = this.rightBeforeLeft ? 1 : -1;
+
+		} else if(this.right) {
+
+			v.x = 1;
+
+		} else if(this.left) {
+
+			v.x = -1;
+
+		}
+
+		if(this.up && this.down) {
+
+			v.y = this.upBeforeDown ? 1 : -1;
+
+		} else if(this.up) {
+
+			v.y = 1;
+
+		} else if(this.down) {
+
+			v.y = -1;
+
+		}
+
+		if(this.backward && this.forward) {
+
+			v.z = this.backwardBeforeForward ? 1 : -1;
+
+		} else if(this.backward) {
+
+			v.z = 1;
+
+		} else if(this.forward) {
+
+			v.z = -1;
+
+		}
+
+		return v;
 
 	}
 

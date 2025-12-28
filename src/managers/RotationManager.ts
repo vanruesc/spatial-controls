@@ -1,10 +1,15 @@
 import { BaseEvent, EventDispatcher, Matrix4, Quaternion, Spherical, Vector3 } from "three";
+import { Action } from "../core/Action.js";
 import { ControlMode } from "../core/ControlMode.js";
 import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
+import { TransformationData } from "../core/TransformationData.js";
 import { Updatable } from "../core/Updatable.js";
+import { ActionEvent } from "../events/ActionEvent.js";
+import { MovementEvent } from "../events/MovementEvent.js";
+import { SphericalRotationEvent } from "../events/SphericalRotationEvent.js";
 import { ScalarDamper } from "../math/ScalarDamper.js";
 import { Settings } from "../settings/Settings.js";
-import { ManagerEventMap } from "./ManagerEventMap.js";
+import { RotationManagerEventMap } from "./RotationManagerEventMap.js";
 
 const TWO_PI = 2 * Math.PI;
 const u = /* @__PURE__ */ new Vector3();
@@ -17,31 +22,20 @@ const m = /* @__PURE__ */ new Matrix4();
  * @group Managers
  */
 
-export class RotationManager extends EventDispatcher<ManagerEventMap> implements Updatable {
-
-	/**
-	 * @see {@link position}
-	 */
-
-	private _position: Vector3;
-
-	/**
-	 * @see {@link quaternion}
-	 */
-
-	private _quaternion: Quaternion;
-
-	/**
-	 * @see {@link target}
-	 */
-
-	private _target: Vector3;
+export class RotationManager extends EventDispatcher<RotationManagerEventMap>
+	implements EventListenerObject, Updatable {
 
 	/**
 	 * The settings.
 	 */
 
 	private readonly settings: Settings;
+
+	/**
+	 * The primary transformation data.
+	 */
+
+	private readonly transformation: TransformationData;
 
 	/**
 	 * The current spherical coordinates.
@@ -56,45 +50,71 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	private readonly spherical1: Spherical;
 
 	/**
+	 * A collection of action strategies.
+	 */
+
+	private readonly strategies: Map<Action, (x: boolean) => void>;
+
+	/**
 	 * Scalar dampers.
 	 */
 
 	private readonly scalarDampers: readonly ScalarDamper[];
 
-	/**
-	 * A timestamp.
-	 */
-
-	private timestamp: number;
+	// #region Reusable Events
 
 	/**
-	 * A reusable update event.
+	 * An update event.
 	 */
 
 	private readonly updateEvent: BaseEvent<"update">;
 
 	/**
-	 * Constructs a new rotation manager.
- 	 *
- 	 * @param position - The position.
- 	 * @param quaternion - The quaternion.
- 	 * @param target - The target.
- 	 * @param settings - The settings.
+	 * A rotation event.
 	 */
 
-	constructor(position: Vector3, quaternion: Quaternion, target: Vector3, settings: Settings) {
+	private readonly rotationEvent: SphericalRotationEvent;
+
+	// #endregion
+
+	// #region State
+
+	/**
+	 * A timestamp in milliseconds for calculating the elapsed time since the last update.
+	 */
+
+	private timestamp: number;
+
+	/**
+	 * Determines whether the rotation is currently being changed.
+	 */
+
+	private rotating: boolean;
+
+	// #endregion
+
+	/**
+	 * Constructs a new rotation manager.
+ 	 *
+	 * @param settings - The settings.
+	 * @param transformation - The transformation data.
+	 */
+
+	constructor(settings: Settings, transformation: TransformationData) {
 
 		super();
 
-		this._position = position;
-		this._quaternion = quaternion;
-		this._target = target;
-
+		this.transformation = transformation;
 		this.settings = settings;
+
 		this.spherical0 = new Spherical();
 		this.spherical1 = new Spherical();
-		this.timestamp = 0;
-		this.updateEvent = { type: "update" };
+
+		this.strategies = new Map<Action, (x: boolean) => void>([
+			[Action.DOLLY_IN, () => this.dollyIn()],
+			[Action.DOLLY_OUT, () => this.dollyOut()],
+			[Action.ROTATE, (x) => void (this.rotating = x)]
+		]);
 
 		this.scalarDampers = Object.freeze([
 			new ScalarDamper(),
@@ -102,21 +122,23 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 			new ScalarDamper()
 		]);
 
+		this.updateEvent = { type: "update" };
+		this.rotationEvent = { type: "rotate", theta: 0, phi: 0 };
+
+		this.timestamp = 0;
+		this.rotating = false;
+
 	}
+
+	// #region Getters
 
 	/**
 	 * The position.
 	 */
 
-	get position(): Vector3 {
+	private get position(): Vector3 {
 
-		return this._position;
-
-	}
-
-	set position(value: Vector3) {
-
-		this._position = value;
+		return this.transformation.position;
 
 	}
 
@@ -124,15 +146,9 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	 * The quaternion.
 	 */
 
-	get quaternion(): Quaternion {
+	private get quaternion(): Quaternion {
 
-		return this._quaternion;
-
-	}
-
-	set quaternion(value: Quaternion) {
-
-		this._quaternion = value;
+		return this.transformation.quaternion;
 
 	}
 
@@ -140,15 +156,9 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	 * The target.
 	 */
 
-	get target(): Vector3 {
+	private get target(): Vector3 {
 
-		return this._target;
-
-	}
-
-	set target(value: Vector3) {
-
-		this._target = value;
+		return this.transformation.target;
 
 	}
 
@@ -156,28 +166,13 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	 * The current radius.
 	 */
 
-	get radius(): number {
+	private get radius(): number {
 
 		return this.spherical0.radius;
 
 	}
 
-	/**
-	 * Resets the current velocity.
-	 */
-
-	resetVelocity(): void {
-
-		// Stop moving.
-		this.spherical1.copy(this.spherical0);
-
-		for(const scalarDamper of this.scalarDampers) {
-
-			scalarDamper.resetVelocity();
-
-		}
-
-	}
+	// #endregion
 
 	/**
 	 * Restricts the spherical angles.
@@ -217,9 +212,9 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	private restrictRadius(): this {
 
 		const s = this.spherical1;
-		const zoom = this.settings.zoom;
-		const min = zoom.minDistance;
-		const max = zoom.maxDistance;
+		const settings = this.settings;
+		const min = settings.dolly.minDistance;
+		const max = settings.dolly.maxDistance;
 
 		s.radius = Math.min(Math.max(s.radius, min), max);
 
@@ -233,7 +228,7 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	 * @return This manager.
 	 */
 
-	restrictSpherical(): this {
+	private restrictSpherical(): this {
 
 		return this.restrictRadius().restrictAngles();
 
@@ -245,7 +240,7 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	 * @return This manager.
 	 */
 
-	updateSpherical(): this {
+	private updateSpherical(): this {
 
 		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
 
@@ -272,7 +267,7 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	 * @return This manager.
 	 */
 
-	updatePosition(): this {
+	private updatePosition(): this {
 
 		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
 
@@ -292,7 +287,7 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	 * @return This manager.
 	 */
 
-	updateQuaternion(): this {
+	private updateQuaternion(): this {
 
 		const settings = this.settings;
 		const rotation = settings.rotation;
@@ -332,7 +327,7 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	 * @return This manager.
 	 */
 
-	adjustSpherical(theta: number, phi: number): this {
+	private adjustSpherical(theta: number, phi: number): this {
 
 		const s = this.spherical1;
 		const settings = this.settings;
@@ -349,22 +344,22 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	}
 
 	/**
-	 * Zooms in or out. Only applies in third person mode.
+	 * Dollies in or out. Only applies in third person mode.
 	 *
-	 * @param sign - The zoom sign. Possible values are [-1, 0, 1].
+	 * @param sign - The normalized direction. Possible values are [-1, 1].
 	 * @return This manager.
 	 */
 
-	zoom(sign: number): this {
+	private dolly(sign: number): this {
 
 		const s = this.spherical1;
 		const settings = this.settings;
-		const zoom = settings.zoom;
+		const dolly = settings.dolly;
 
-		if(zoom.enabled && settings.general.mode === ControlMode.THIRD_PERSON) {
+		if(dolly.enabled && settings.general.mode === ControlMode.THIRD_PERSON) {
 
-			const amount = sign * zoom.sensitivity;
-			s.radius = zoom.inverted ? s.radius - amount : s.radius + amount;
+			const amount = sign * dolly.sensitivity;
+			s.radius = dolly.inverted ? s.radius - amount : s.radius + amount;
 			this.restrictRadius();
 
 		}
@@ -374,9 +369,56 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 	}
 
 	/**
-	 * Looks at the given point.
+	 * Dollies in by one step. Only applies in third person mode.
 	 *
-	 * @param point - The target point.
+	 * The step size is defined by the dolly sensitivity.
+	 *
+	 * @return This manager.
+	 */
+
+	private dollyIn(): this {
+
+		return this.dolly(-1);
+
+	}
+
+	/**
+	 * Dollies out by one step. Only applies in third person mode.
+	 *
+	 * The step size is defined by the dolly sensitivity.
+	 *
+	 * @return This manager.
+	 */
+
+	private dollyOut(): this {
+
+		return this.dolly(1);
+
+	}
+
+	/**
+	 * Resets the current velocity.
+	 */
+
+	private reset(): void {
+
+		// Reset the target coordinates.
+		this.spherical1.copy(this.spherical0);
+
+		for(const scalarDamper of this.scalarDampers) {
+
+			scalarDamper.resetVelocity();
+
+		}
+
+		this.rotating = false;
+
+	}
+
+	/**
+	 * Adjusts the rotation to look at the given point.
+	 *
+	 * @param point - A point.
 	 * @return This manager.
 	 */
 
@@ -431,72 +473,299 @@ export class RotationManager extends EventDispatcher<ManagerEventMap> implements
 
 	}
 
-	update(timestamp: number): void {
+	// #region Event Handling
 
-		const s0 = this.spherical0;
-		const s1 = this.spherical1;
+	/**
+	 * Handles action events.
+	 *
+	 * @param event - An event.
+	 * @param activate - True if the action was activated, false if it was deactivated.
+	 */
 
-		const equal = (s0.radius === s1.radius && s0.theta === s1.theta && s0.phi === s1.phi);
+	private onAction(event: ActionEvent, activate: boolean): void {
 
-		if(!equal) {
+		if(this.strategies.has(event.action)) {
 
-			const settings = this.settings;
-			const scalarDampers = this.scalarDampers;
-			const elapsed = (timestamp - this.timestamp) * MILLISECONDS_TO_SECONDS;
+			this.strategies.get(event.action)!(activate);
 
-			if(settings.rotation.damping > 0.0) {
+		}
 
-				const damping = settings.rotation.damping;
-				const omega = ScalarDamper.calculateOmega(damping);
-				const exp = ScalarDamper.calculateExp(omega, elapsed);
+	}
 
-				s0.theta = scalarDampers[0].interpolate(s0.theta, s1.theta, damping, omega, exp, elapsed);
-				s0.phi = scalarDampers[1].interpolate(s0.phi, s1.phi, damping, omega, exp, elapsed);
+	/**
+	 * Handles movement events.
+	 *
+	 * @param event - An event.
+	 */
+
+	private onMove(event: MovementEvent): void {
+
+		if(!this.rotating) {
+
+			return;
+
+		}
+
+		const settings = this.settings;
+
+		this.adjustSpherical(
+			event.x * settings.pointer.sensitivity * settings.rotation.sensitivityX,
+			event.y * settings.pointer.sensitivity * settings.rotation.sensitivityY
+		);
+
+	}
+
+	/**
+	 * Handles setting changes.
+	 *
+	 * @param event - An event.
+	 */
+
+	private onSettingsChanged(event: BaseEvent): void {
+
+		const settings = this.settings;
+		const general = settings.general;
+
+		if(!settings.rotation.enabled) {
+
+			this.reset();
+
+		}
+
+		if(general.mode !== general.previousMode) {
+
+			if(general.mode === ControlMode.THIRD_PERSON) {
+
+				// Switch to third person.
+				v.copy(this.target);
+				this.target.copy(this.position);
+				this.position.sub(v);
 
 			} else {
 
-				s0.theta = s1.theta;
-				s0.phi = s1.phi;
+				// Switch to first person.
+				this.position.copy(this.target);
+				this.target.set(0, 0, -1).applyQuaternion(this.quaternion);
 
 			}
 
-			if(settings.zoom.damping > 0.0) {
-
-				const damping = settings.zoom.damping;
-				const omega = ScalarDamper.calculateOmega(damping);
-				const exp = ScalarDamper.calculateExp(omega, elapsed);
-
-				s0.radius = scalarDampers[2].interpolate(s0.radius, s1.radius, damping, omega, exp, elapsed);
-
-			} else {
-
-				s0.radius = s1.radius;
-
-			}
-
-			this.updatePosition().updateQuaternion();
+			this.updateSpherical();
 
 		} else {
 
-			// Prevent overflow.
+			this.restrictSpherical();
 
-			if(Math.abs(s0.theta) >= TWO_PI) {
+		}
 
-				s0.theta %= TWO_PI;
-				s1.theta %= TWO_PI;
+		this.updatePosition().updateQuaternion();
+
+	}
+
+	handleEvent(event: BaseEvent | ActionEvent | MovementEvent): void {
+
+		switch(event.type) {
+
+			case "move":
+				this.onMove(event as MovementEvent);
+				break;
+
+			case "activate":
+				this.onAction(event as ActionEvent, true);
+				break;
+
+			case "deactivate":
+				this.onAction(event as ActionEvent, false);
+				break;
+
+			case "change":
+				this.onSettingsChanged(event);
+				break;
+
+			case "reset":
+				this.reset();
+				break;
+
+		}
+
+	}
+
+	// #endregion
+
+	/**
+	 * Synchronizes the internal state with external changes.
+	 *
+	 * @param previousPosition - The previous position.
+	 * @param previousQuaternion - The previous quaternion.
+	 * @param previousTarget - The previous target.
+	 */
+
+	synchronize(previousTransformation: TransformationData): void {
+
+		const mode = this.settings.general.mode;
+		const position = this.position;
+		const quaternion = this.quaternion;
+		const target = this.target;
+
+		if(!previousTransformation.quaternion.equals(quaternion)) {
+
+			if(mode === ControlMode.THIRD_PERSON) {
+
+				target.set(0, 0, -1).applyQuaternion(quaternion);
+				target.multiplyScalar(this.radius);
+				target.add(position);
+
+			} else {
+
+				target.set(0, 0, -1).applyQuaternion(quaternion);
 
 			}
 
-			if(Math.abs(s0.phi) >= TWO_PI) {
+			this.updateSpherical();
 
-				s0.phi %= TWO_PI;
-				s1.phi %= TWO_PI;
+		} else if(!previousTransformation.target.equals(target)) {
+
+			if(!previousTransformation.position.equals(position)) {
+
+				this.updateSpherical().updateQuaternion();
+
+			} else {
+
+				if(mode === ControlMode.THIRD_PERSON) {
+
+					this.updatePosition();
+
+				} else {
+
+					this.updateSpherical().updateQuaternion();
+
+				}
+
+			}
+
+		} else if(!previousTransformation.position.equals(position)) {
+
+			if(mode === ControlMode.THIRD_PERSON) {
+
+				this.updateSpherical().updateQuaternion();
 
 			}
 
 		}
 
+	}
+
+	/**
+	 * Keeps the spherical coordinates within the range [0, 2Pi].
+	 *
+	 * @return This instance.
+	 */
+
+	private preventRotationOverflow(): this {
+
+		const s0 = this.spherical0;
+		const s1 = this.spherical1;
+
+		if(Math.abs(s0.theta) >= TWO_PI) {
+
+			s0.theta %= TWO_PI;
+			s1.theta %= TWO_PI;
+
+		}
+
+		if(Math.abs(s0.phi) >= TWO_PI) {
+
+			s0.phi %= TWO_PI;
+			s1.phi %= TWO_PI;
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	 * Updates the rotation.
+	 *
+	 * @param elapsed - The time since the last update in seconds.
+	 * @return This instance.
+	 */
+
+	private updateRotation(elapsed: number): this {
+
+		const s0 = this.spherical0;
+		const s1 = this.spherical1;
+
+		if(s0.theta === s1.theta && s0.phi === s1.phi) {
+
+			return this;
+
+		}
+
+		if(this.settings.rotation.damping > 0.0) {
+
+			const damping = this.settings.rotation.damping;
+			const omega = ScalarDamper.calculateOmega(damping);
+			const exp = ScalarDamper.calculateExp(omega, elapsed);
+
+			s0.theta = this.scalarDampers[0].interpolate(s0.theta, s1.theta, damping, omega, exp, elapsed);
+			s0.phi = this.scalarDampers[1].interpolate(s0.phi, s1.phi, damping, omega, exp, elapsed);
+
+		} else {
+
+			s0.theta = s1.theta;
+			s0.phi = s1.phi;
+
+		}
+
+		return this.preventRotationOverflow();
+
+	}
+
+	/**
+	 * Updates the radius.
+	 *
+	 * @param elapsed - The time since the last update in seconds.
+	 * @return This instance.
+	 */
+
+	private updateRadius(elapsed: number): this {
+
+		const s0 = this.spherical0;
+		const s1 = this.spherical1;
+
+		if(s0.radius === s1.radius) {
+
+			return this;
+
+		}
+
+		if(this.settings.dolly.damping > 0.0) {
+
+			const damping = this.settings.dolly.damping;
+			const omega = ScalarDamper.calculateOmega(damping);
+			const exp = ScalarDamper.calculateExp(omega, elapsed);
+
+			s0.radius = this.scalarDampers[2].interpolate(s0.radius, s1.radius, damping, omega, exp, elapsed);
+
+		} else {
+
+			s0.radius = s1.radius;
+
+		}
+
+		return this;
+
+	}
+
+	update(timestamp: number): void {
+
+		const elapsed = (timestamp - this.timestamp) * MILLISECONDS_TO_SECONDS;
 		this.timestamp = timestamp;
+
+		this.updateRotation(elapsed)
+			.updateRadius(elapsed)
+			.updatePosition()
+			.updateQuaternion();
 
 	}
 

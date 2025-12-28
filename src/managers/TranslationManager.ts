@@ -1,11 +1,15 @@
 import { BaseEvent, EventDispatcher, Quaternion, Vector3 } from "three";
+import { Action } from "../core/Action.js";
 import { ControlMode } from "../core/ControlMode.js";
+import { Direction } from "../core/Direction.js";
 import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
+import { TransformationData } from "../core/TransformationData.js";
 import { Updatable } from "../core/Updatable.js";
+import { ActionEvent } from "../events/ActionEvent.js";
 import { ScalarDamper } from "../math/ScalarDamper.js";
 import { Settings } from "../settings/Settings.js";
 import { MovementState } from "./MovementState.js";
-import { ManagerEventMap } from "./ManagerEventMap.js";
+import { TranslationManagerEventMap } from "./TranslationManagerEventMap.js";
 
 const u = /* @__PURE__ */ new Vector3();
 const v = /* @__PURE__ */ new Vector3();
@@ -16,37 +20,20 @@ const v = /* @__PURE__ */ new Vector3();
  * @group Managers
  */
 
-export class TranslationManager extends EventDispatcher<ManagerEventMap> implements Updatable {
+export class TranslationManager extends EventDispatcher<TranslationManagerEventMap>
+	implements EventListenerObject, Updatable {
 
 	/**
-	 * @see {@link position}
+	 * The primary transformation data.
 	 */
 
-	private _position: Vector3;
-
-	/**
-	 * @see {@link quaternion}
-	 */
-
-	private _quaternion: Quaternion;
-
-	/**
-	 * @see {@link target}
-	 */
-
-	private _target: Vector3;
+	private readonly transformation: TransformationData;
 
 	/**
 	 * The settings.
 	 */
 
 	private readonly settings: Settings;
-
-	/**
-	 * The movement state.
-	 */
-
-	readonly movementState: MovementState;
 
 	/**
 	 * The current velocity.
@@ -61,13 +48,25 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 	private readonly velocity1: Vector3;
 
 	/**
+	 * The movement state.
+	 */
+
+	private readonly movementState: MovementState;
+
+	/**
+	 * A collection of action strategies.
+	 */
+
+	private readonly strategies: Map<Action, (x: boolean) => void>;
+
+	/**
 	 * Scalar dampers.
 	 */
 
 	private readonly scalarDampers: readonly ScalarDamper[];
 
 	/**
-	 * A timestamp.
+	 * A timestamp in milliseconds for calculating the elapsed time since the last update.
 	 */
 
 	private timestamp: number;
@@ -81,31 +80,32 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 	/**
 	 * Constructs a new translation manager.
 	 *
-	 * @param position - The position.
-	 * @param quaternion - The quaternion.
-	 * @param target - The target.
 	 * @param settings - The settings.
+	 * @param transformation - The transformation data.
 	 */
 
-	constructor(
-		position: Vector3,
-		quaternion: Quaternion,
-		target: Vector3,
-		settings: Settings
-	) {
+	constructor(settings: Settings, transformation: TransformationData) {
 
 		super();
 
-		this._position = position;
-		this._quaternion = quaternion;
-		this._target = target;
-
+		this.transformation = transformation;
 		this.settings = settings;
-		this.movementState = new MovementState();
+
 		this.velocity0 = new Vector3();
 		this.velocity1 = new Vector3();
-		this.timestamp = 0;
-		this.updateEvent = { type: "update" };
+
+		const state = new MovementState();
+		this.movementState = state;
+
+		this.strategies = new Map<Action, (x: boolean) => void>([
+			[Action.MOVE_FORWARD, (x) => state.setActive(Direction.FORWARD, x)],
+			[Action.MOVE_LEFT, (x) => state.setActive(Direction.LEFT, x)],
+			[Action.MOVE_BACKWARD, (x) => state.setActive(Direction.BACKWARD, x)],
+			[Action.MOVE_RIGHT, (x) => state.setActive(Direction.RIGHT, x)],
+			[Action.MOVE_DOWN, (x) => state.setActive(Direction.DOWN, x)],
+			[Action.MOVE_UP, (x) => state.setActive(Direction.UP, x)],
+			[Action.BOOST, (x) => void (state.boost = x)]
+		]);
 
 		this.scalarDampers = Object.freeze([
 			new ScalarDamper(),
@@ -113,21 +113,18 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 			new ScalarDamper()
 		]);
 
+		this.timestamp = 0;
+		this.updateEvent = { type: "update" };
+
 	}
 
 	/**
 	 * The position.
 	 */
 
-	get position(): Vector3 {
+	private get position(): Vector3 {
 
-		return this._position;
-
-	}
-
-	set position(value: Vector3) {
-
-		this._position = value;
+		return this.transformation.position;
 
 	}
 
@@ -135,15 +132,9 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 	 * The quaternion.
 	 */
 
-	get quaternion(): Quaternion {
+	private get quaternion(): Quaternion {
 
-		return this._quaternion;
-
-	}
-
-	set quaternion(value: Quaternion) {
-
-		this._quaternion = value;
+		return this.transformation.quaternion;
 
 	}
 
@@ -151,15 +142,9 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 	 * The target.
 	 */
 
-	get target(): Vector3 {
+	private get target(): Vector3 {
 
-		return this._target;
-
-	}
-
-	set target(value: Vector3) {
-
-		this._target = value;
+		return this.transformation.target;
 
 	}
 
@@ -167,14 +152,65 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 	 * Resets the current velocity.
 	 */
 
-	resetVelocity(): void {
+	private resetVelocity(): void {
 
-		this.velocity0.set(0, 0, 0);
-		this.velocity1.set(0, 0, 0);
+		this.velocity0.setScalar(0);
+		this.velocity1.setScalar(0);
 
 		for(const scalarDamper of this.scalarDampers) {
 
 			scalarDamper.resetVelocity();
+
+		}
+
+	}
+
+	/**
+	 * Handles action events.
+	 *
+	 * @param event - An event.
+	 * @param activate - True if the action was activated, false if it was deactivated.
+	 */
+
+	private onAction(event: ActionEvent, activate: boolean): void {
+
+		if(this.strategies.has(event.action)) {
+
+			this.strategies.get(event.action)!(activate);
+
+		}
+
+	}
+
+	/**
+	 * Handles setting changes.
+	 */
+
+	private onSettingsChanged(): void {
+
+		if(!this.settings.translation.enabled) {
+
+			this.resetVelocity();
+
+		}
+
+	}
+
+	handleEvent(event: Event | ActionEvent): void {
+
+		switch(event.type) {
+
+			case "activate":
+				this.onAction((event as ActionEvent), true);
+				break;
+
+			case "deactivate":
+				this.onAction((event as ActionEvent), false);
+				break;
+
+			case "change":
+				this.onSettingsChanged();
+				break;
 
 		}
 
@@ -229,53 +265,7 @@ export class TranslationManager extends EventDispatcher<ManagerEventMap> impleme
 
 		const v0 = this.velocity0;
 		const v1 = this.velocity1;
-		v1.setScalar(0.0);
-
-		if(state.active) {
-
-			if(state.backward && state.forward) {
-
-				v1.z = state.backwardBeforeForward ? 1 : -1;
-
-			} else if(state.backward) {
-
-				v1.z = 1;
-
-			} else if(state.forward) {
-
-				v1.z = -1;
-
-			}
-
-			if(state.right && state.left) {
-
-				v1.x = state.rightBeforeLeft ? 1 : -1;
-
-			} else if(state.right) {
-
-				v1.x = 1;
-
-			} else if(state.left) {
-
-				v1.x = -1;
-
-			}
-
-			if(state.up && state.down) {
-
-				v1.y = state.upBeforeDown ? 1 : -1;
-
-			} else if(state.up) {
-
-				v1.y = 1;
-
-			} else if(state.down) {
-
-				v1.y = -1;
-
-			}
-
-		}
+		state.toVector3(v1);
 
 		const distance = sensitivity * boost;
 		v1.normalize().multiplyScalar(distance);
