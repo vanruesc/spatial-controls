@@ -7,6 +7,8 @@ import { KeyCode } from "../input/KeyCode.js";
 import { getWheelRotation } from "../input/WheelRotation.js";
 import { PointerBehavior } from "../input/PointerBehavior.js";
 
+const screen = /* @__PURE__ */ new Vector2();
+
 /**
  * An input manager.
  *
@@ -40,18 +42,6 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 	private readonly pointerEvents: Map<number, PointerEvent>;
 
-	/**
-	 * The previous screen position.
-	 */
-
-	private readonly previousPosition: Vector2;
-
-	/**
-	 * The previous screen position.
-	 */
-
-	private readonly currentPosition: Vector2;
-
 	// #endregion
 
 	// #region Reusable Events
@@ -80,8 +70,6 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 		this._enabled = false;
 
 		this.pointerEvents = new Map();
-		this.previousPosition = new Vector2();
-		this.currentPosition = new Vector2();
 
 		this.movementEvent = {
 			type: "move",
@@ -149,8 +137,6 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 			this.removeEventListeners();
 			this.resetInputState();
-
-			void this.setPointerLocked(false);
 
 		}
 
@@ -237,6 +223,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 	private resetInputState(): void {
 
 		this.pointerEvents.clear();
+		this.unlockPointer();
 
 		this.dispatchEvent({
 			type: "reset"
@@ -245,62 +232,36 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 	}
 
 	/**
-	 * Locks or unlocks the pointer.
+	 * Locks the pointer.
 	 *
-	 * @param value - Whether the pointer should be locked.
+	 * @return A promise that resolves when the pointer has been locked.
 	 */
 
-	private async setPointerLocked(value = true): Promise<void> {
+	private async lockPointer(): Promise<void> {
 
-		if(this.domElement?.requestPointerLock === undefined) {
+		if(this.domElement?.requestPointerLock === undefined || this.pointerLocked) {
 
 			return;
 
 		}
 
-		if(value) {
-
-			if(!this.pointerLocked) {
-
-				await this.domElement.requestPointerLock();
-
-			}
-
-		} else if(document.exitPointerLock === undefined) {
-
-			document.exitPointerLock();
-
-		}
+		await this.domElement.requestPointerLock();
 
 	}
 
 	/**
-	 * Calculates the current average pointer position.
-	 *
-	 * @return The current screen position.
+	 * Unlocks the pointer.
 	 */
 
-	private calculateCurrentPosition(): Vector2 {
+	private unlockPointer(): void {
 
-		const n = this.pointerEvents.size;
-		let x = 0;
-		let y = 0;
+		if(document.exitPointerLock === undefined || !this.pointerLocked) {
 
-		for(const pointerEvent of this.pointerEvents.values()) {
-
-			x += pointerEvent.screenX;
-			y += pointerEvent.screenY;
+			return;
 
 		}
 
-		if(n > 1) {
-
-			x /= n;
-			y /= n;
-
-		}
-
-		return this.currentPosition.set(x, y);
+		document.exitPointerLock();
 
 	}
 
@@ -312,24 +273,24 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 	private handlePointerMoveEvent(event: PointerEvent): void {
 
-		const pointerLocked = this.pointerLocked;
+		if(this.pointerEvents.has(event.pointerId)) {
 
-		if(!this.pointerEvents.has(event.pointerId) && !pointerLocked) {
+			this.pointerEvents.set(event.pointerId, event);
 
+		} else if(!this.pointerLocked) {
+
+			// No active actions require movement updates.
 			return;
 
 		}
 
-		this.pointerEvents.set(event.pointerId, event);
 		let { movementX, movementY } = event;
 
-		if(!pointerLocked) {
+		if(movementX === undefined || movementY === undefined) {
 
-			const previousPosition = this.previousPosition;
-			const currentPosition = this.calculateCurrentPosition();
-			movementX = currentPosition.x - previousPosition.x;
-			movementY = currentPosition.y - previousPosition.y;
-			previousPosition.copy(currentPosition);
+			movementX = event.screenX - screen.x;
+			movementY = event.screenY - screen.y;
+			screen.set(event.screenX, event.screenY);
 
 		}
 
@@ -384,7 +345,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 		if(!isMouse) {
 
-			// Handle touch/pen events like mouse events.
+			// Handle touch/pen events like mouse events and prevent simulated mouse events.
 			this.handleMouseButtonEvent(event, pressed);
 			event.preventDefault();
 
@@ -393,7 +354,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 		if(pressed) {
 
 			this.pointerEvents.set(event.pointerId, event);
-			this.previousPosition.copy(this.calculateCurrentPosition());
+			screen.set(event.screenX, event.screenY);
 
 			if(this.settings.pointer.getBehavior(event.button) === PointerBehavior.DEFAULT) {
 
@@ -402,7 +363,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 			} else if(isMouse) {
 
-				void this.setPointerLocked(pressed);
+				void this.lockPointer();
 
 			}
 
