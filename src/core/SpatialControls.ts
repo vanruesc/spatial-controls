@@ -1,32 +1,31 @@
 import { EventDispatcher, Quaternion, Vector3 } from "three";
 import { Settings } from "../settings/Settings.js";
 import { Constraint } from "./Constraint.js";
-import { ControlsEventMap } from "./ControlsEventMap.js";
+import { BaseEventMap } from "./BaseEventMap.js";
 import { Disposable } from "./Disposable.js";
-import { RotationControls } from "./RotationControls.js";
-import { TranslationControls } from "./TranslationControls.js";
 import { Updatable } from "./Updatable.js";
-import { ControlMode } from "./ControlMode.js";
+import { Spatial } from "./Spatial.js";
+import { TransformationData } from "./TransformationData.js";
+import { CollisionManager } from "../managers/CollisionManager.js";
+import { InputManager } from "../managers/InputManager.js";
+import { RotationManager } from "../managers/RotationManager.js";
+import { TranslationManager } from "../managers/TranslationManager.js";
 
 const v = /* @__PURE__ */ new Vector3();
 
-/**
- * Constrains the given vector.
- *
- * @param p - A vector.
- * @param constraints - A collection of constraints.
- * @return The constrained vector.
- */
+export interface SpatialControlsOptions {
 
-function applyConstraints(p: Vector3, constraints: Set<Constraint<Vector3>>): Vector3 {
+	/**
+	 * The entity that will be transformed by these controls.
+	 */
 
-	for(const applyConstraint of constraints) {
+	spatial?: Spatial | null;
 
-		p = applyConstraint(p);
+	/**
+	 * The DOM element that acts as the primary event target.
+	 */
 
-	}
-
-	return p;
+	domElement?: HTMLElement | null;
 
 }
 
@@ -38,72 +37,48 @@ function applyConstraints(p: Vector3, constraints: Set<Constraint<Vector3>>): Ve
  * @group Core
  */
 
-export class SpatialControls extends EventDispatcher<ControlsEventMap>
+export class SpatialControls extends EventDispatcher<BaseEventMap>
 	implements Disposable, EventListenerObject, Updatable {
 
-	// #region Backing Data
-
 	/**
-	 * @see {@link domElement}
+	 * The primary transformation data.
 	 */
 
-	private _domElement: HTMLElement | null;
+	private readonly transformation: TransformationData;
 
 	/**
-	 * @see {@link position}
+	 * The previous transformation data.
 	 */
 
-	private _position: Vector3;
+	private readonly previousTransformation: TransformationData;
+
+	// #region Managers
 
 	/**
-	 * @see {@link quaternion}
+	 * Handles user input.
 	 */
 
-	private _quaternion: Quaternion;
+	private readonly inputManager: InputManager;
 
 	/**
-	 * @see {@link target}
+	 * Handles rotational updates.
 	 */
 
-	private _target: Vector3;
+	private readonly rotationManager: RotationManager;
 
 	/**
-	 * @see {@link enabled}
+	 * Handles positional updates.
 	 */
 
-	private _enabled: boolean;
+	private readonly translationManager: TranslationManager;
+
+	/**
+	 * Handles collisions and constraints.
+	 */
+
+	private readonly collisionManager: CollisionManager;
 
 	// #endregion
-
-	/**
-	 * The previous position.
-	 */
-
-	private readonly previousPosition: Vector3;
-
-	/**
-	 * The previous quaternion.
-	 */
-
-	private readonly previousQuaternion: Quaternion;
-
-	/**
-	 * The previous target.
-	 */
-
-	private readonly previousTarget: Vector3;
-
-	/**
-	 * Rotation controls.
-	 */
-
-	private readonly rotationControls: RotationControls;
-
-	/**
-	 * Translation controls.
-	 */
-
-	private readonly translationControls: TranslationControls;
 
 	/**
 	 * The control settings.
@@ -112,81 +87,94 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 	readonly settings: Settings;
 
 	/**
-	 * Custom constraints for {@link position} and {@link target}.
-	 */
-
-	readonly constraints: Set<Constraint<Vector3>>;
-
-	/**
 	 * Constructs new controls.
 	 *
-	 * @param position - A position.
-	 * @param quaternion - A quaternion.
-	 * @param domElement - A DOM element. Serves as the primary event target.
+	 * @param options - The options.
 	 */
 
-	constructor(position = new Vector3(), quaternion = new Quaternion(), domElement: HTMLElement | null = null) {
+	constructor({ spatial = null, domElement = null }: SpatialControlsOptions = {}) {
 
 		super();
 
-		this._domElement = null;
-		this._enabled = false;
-
-		const target = new Vector3();
-		this._target = target;
-		this._position = position;
-		this._quaternion = quaternion;
-
-		this.previousPosition = new Vector3();
-		this.previousQuaternion = new Quaternion();
-		this.previousTarget = new Vector3();
+		const transformation = TransformationData.from(spatial);
+		transformation.target.set(0, 0, -1).applyQuaternion(transformation.quaternion);
+		this.transformation = transformation;
+		this.previousTransformation = new TransformationData(transformation);
 
 		const settings = new Settings();
 		settings.addEventListener("change", (e: unknown) => this.handleEvent(e as Event));
 		this.settings = settings;
 
-		this.constraints = new Set<Constraint<Vector3>>();
+		const inputManager = new InputManager(settings, domElement);
+		inputManager.addEventListener("update", e => this.dispatchEvent(e));
+		this.inputManager = inputManager;
 
-		this.rotationControls = new RotationControls(position, quaternion, target, settings);
-		this.translationControls = new TranslationControls(position, quaternion, target, settings);
-		this.rotationControls.addEventListener("update", e => this.dispatchEvent(e));
-		this.translationControls.addEventListener("update", e => this.dispatchEvent(e));
+		const rotationManager = new RotationManager(settings, transformation);
+		inputManager.addEventListener("move", e => rotationManager.handleEvent(e));
+		inputManager.addEventListener("activate", e => rotationManager.handleEvent(e));
+		inputManager.addEventListener("deactivate", e => rotationManager.handleEvent(e));
+		inputManager.addEventListener("reset", e => rotationManager.handleEvent(e));
+		this.rotationManager = rotationManager;
 
-		if(position !== null && quaternion !== null) {
+		const translationManager = new TranslationManager(settings, transformation);
+		inputManager.addEventListener("activate", e => translationManager.handleEvent(e));
+		inputManager.addEventListener("deactivate", e => translationManager.handleEvent(e));
+		//inputManager.addEventListener("translate", e => translationManager.handleEvent(e));
+		this.translationManager = translationManager;
 
-			// Note: Default mode is first person.
-			target.set(0, 0, -1).applyQuaternion(quaternion);
-			this.lookAt(target);
+		this.collisionManager = new CollisionManager(settings, transformation);
 
-			this.domElement = domElement;
-			this.enabled = true;
-
-			this.previousPosition.copy(position);
-			this.previousQuaternion.copy(quaternion);
-			this.previousTarget.copy(target);
-
-		}
+		//this.lookAt(transformation.target); // is this necessary?
 
 	}
 
 	/**
-	 * A DOM element. Acts as the primary event target.
+	 * A DOM element that acts as the primary event target.
 	 */
 
 	get domElement(): HTMLElement | null {
 
-		return this._domElement;
+		return this.inputManager.domElement;
 
 	}
 
 	set domElement(value: HTMLElement | null) {
 
-		const enabled = this.enabled;
-		this.dispose();
+		this.inputManager.domElement = value;
 
-		this._domElement = value;
-		this.rotationControls.domElement = value;
-		this.enabled = enabled;
+	}
+
+	/**
+	 * Determines whether the controls are enabled.
+	 *
+	 * Event listeners will be registered or unregistered depending on this flag.
+	 */
+
+	get enabled(): boolean {
+
+		return this.inputManager.enabled;
+
+	}
+
+	set enabled(value: boolean) {
+
+		this.inputManager.enabled = value;
+
+	}
+
+	/**
+	 * The spatial data to control.
+	 */
+
+	get spatial(): Spatial {
+
+		return this.transformation;
+
+	}
+
+	set spatial(value: Spatial) {
+
+		this.transformation.spatial = value;
 
 	}
 
@@ -196,15 +184,13 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 
 	get position(): Vector3 {
 
-		return this._position;
+		return this.transformation.position;
 
 	}
 
 	set position(value: Vector3) {
 
-		this._position = value;
-		this.rotationControls.position = value;
-		this.translationControls.position = value;
+		this.transformation.position = value;
 
 	}
 
@@ -214,15 +200,13 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 
 	get quaternion(): Quaternion {
 
-		return this._quaternion;
+		return this.transformation.quaternion;
 
 	}
 
 	set quaternion(value: Quaternion) {
 
-		this._quaternion = value;
-		this.rotationControls.quaternion = value;
-		this.translationControls.quaternion = value;
+		this.transformation.quaternion = value;
 
 	}
 
@@ -232,15 +216,23 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 
 	get target(): Vector3 {
 
-		return this._target;
+		return this.transformation.target;
 
 	}
 
 	set target(value: Vector3) {
 
-		this._target = value;
-		this.rotationControls.target = value;
-		this.translationControls.target = value;
+		this.transformation.target = value;
+
+	}
+
+	/**
+	 * Custom constraints for the {@link position} and {@link target}.
+	 */
+
+	get constraints(): Set<Constraint<Vector3>> {
+
+		return this.collisionManager.constraints;
 
 	}
 
@@ -253,15 +245,15 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 	 * @return This instance.
 	 */
 
-	lookAt(x: number | Vector3, y?: number, z?: number): SpatialControls {
+	lookAt(x: number | Vector3, y?: number, z?: number): this {
 
 		if(x instanceof Vector3) {
 
-			this.rotationControls.lookAt(x);
+			this.rotationManager.lookAt(x);
 
 		} else {
 
-			this.rotationControls.lookAt(v.set(x, y!, z!));
+			this.rotationManager.lookAt(v.set(x, y!, z!));
 
 		}
 
@@ -278,7 +270,7 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 
 	getViewDirection(view: Vector3): Vector3 {
 
-		return this.rotationControls.getViewDirection(view);
+		return this.rotationManager.getViewDirection(view);
 
 	}
 
@@ -294,27 +286,7 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 
 	getProjectedViewDirection(view: Vector3): Vector3 {
 
-		return this.rotationControls.getProjectedViewDirection(view);
-
-	}
-
-	/**
-	 * Indicates whether the controls are enabled.
-	 *
-	 * Event listeners will be registered or unregistered depending on this flag.
-	 */
-
-	get enabled(): boolean {
-
-		return this._enabled;
-
-	}
-
-	set enabled(value: boolean) {
-
-		this._enabled = value;
-		this.rotationControls.enabled = value;
-		this.translationControls.enabled = value;
+		return this.rotationManager.getProjectedViewDirection(view);
 
 	}
 
@@ -327,13 +299,11 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 
 	copy(controls: SpatialControls): SpatialControls {
 
-		this.position = controls.position;
-		this.quaternion = controls.quaternion;
-		this.target = controls.target;
 		this.domElement = controls.domElement;
+		this.transformation.copy(controls.transformation);
 		this.settings.copy(controls.settings);
 
-		return this.lookAt(this.target);
+		return this;
 
 	}
 
@@ -351,60 +321,14 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 	}
 
 	/**
-	 * Synchronizes the internal state with external changes.
-	 */
-
-	synchronize(): void {
-
-		this.rotationControls.synchronize(
-			this.previousPosition,
-			this.previousQuaternion,
-			this.previousTarget
-		);
-
-	}
-
-	/**
-	 * Applies constraints to the target and position vectors.
-	 */
-
-	private applyConstraints(): void {
-
-		if(this.constraints.size === 0) {
-
-			return;
-
-		}
-
-		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
-
-			// Constrain the target.
-			v.copy(this.target);
-			this.target.copy(applyConstraints(this.target, this.constraints));
-
-			// Move the position together with the target.
-			this.position.add(v.subVectors(this.target, v));
-
-		} else {
-
-			// Constrain the position.
-			this.position.copy(applyConstraints(this.position, this.constraints));
-
-		}
-
-	}
-
-	/**
-	 * Reacts to setting changes.
+	 * Handles setting changes.
 	 *
 	 * @param event - An event.
 	 */
 
 	private onSettingsChanged(event: Event): void {
 
-		this.previousPosition.copy(this.position);
-		this.previousQuaternion.copy(this.quaternion);
-		this.previousTarget.copy(this.target);
+		this.previousTransformation.copy(this.transformation);
 
 	}
 
@@ -420,24 +344,31 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 
 	}
 
+	/**
+	 * Synchronizes the internal state with external changes.
+	 */
+
+	private synchronize(): void {
+
+		this.rotationManager.synchronize(this.previousTransformation);
+
+	}
+
 	update(timestamp: number): void {
 
 		this.synchronize();
 
-		this.rotationControls.update(timestamp);
-		this.translationControls.update(timestamp);
+		this.rotationManager.update(timestamp);
+		this.translationManager.update(timestamp);
+		this.collisionManager.update(timestamp);
 
-		this.applyConstraints();
-
-		this.previousPosition.copy(this.position);
-		this.previousQuaternion.copy(this.quaternion);
-		this.previousTarget.copy(this.target);
+		this.previousTransformation.copy(this.transformation);
 
 	}
 
 	dispose(): void {
 
-		this.enabled = false;
+		this.inputManager.dispose();
 
 	}
 
