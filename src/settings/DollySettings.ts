@@ -2,12 +2,12 @@ import { EventDispatcher } from "three";
 import { SettingsEventMap } from "./SettingsEventMap.js";
 
 /**
- * Zoom settings.
+ * Dolly settings.
  *
  * @group Settings
  */
 
-export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
+export class DollySettings extends EventDispatcher<SettingsEventMap> {
 
 	// #region Backing Data
 
@@ -50,7 +50,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	// #endregion
 
 	/**
-	 * Constructs new zoom settings.
+	 * Constructs new dolly settings.
 	 */
 
 	constructor() {
@@ -84,7 +84,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	}
 
 	/**
-	 * Indicates whether the zoom controls should be inverted.
+	 * Indicates whether the dolly controls should be inverted.
 	 */
 
 	get inverted(): boolean {
@@ -101,7 +101,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	}
 
 	/**
-	 * The minimum zoom distance.
+	 * The minimum dolly distance.
 	 */
 
 	get minDistance(): number {
@@ -122,7 +122,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	}
 
 	/**
-	 * The maximum zoom distance.
+	 * The maximum dolly distance.
 	 */
 
 	get maxDistance(): number {
@@ -143,7 +143,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	}
 
 	/**
-	 * Sets the minimum and maximum zoom distance.
+	 * Sets the minimum and maximum dolly distance.
 	 *
 	 * @param min - The minimum distance.
 	 * @param max - The maximum distance.
@@ -158,7 +158,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	}
 
 	/**
-	 * The zoom sensitivity.
+	 * The dolly sensitivity.
 	 */
 
 	get sensitivity(): number {
@@ -192,13 +192,13 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	}
 
 	/**
-	 * Copies the given zoom settings.
+	 * Copies the given dolly settings.
 	 *
-	 * @param settings - Zoom settings.
+	 * @param settings - dolly settings.
 	 * @return This instance.
 	 */
 
-	copy(settings: ZoomSettings): ZoomSettings {
+	copy(settings: DollySettings): this {
 
 		this.enabled = settings.enabled;
 		this.inverted = settings.inverted;
@@ -212,14 +212,14 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	}
 
 	/**
-	 * Clones this zoom settings instance.
+	 * Clones this dolly settings instance.
 	 *
-	 * @return The cloned zoom settings.
+	 * @return The cloned dolly settings.
 	 */
 
-	clone(): ZoomSettings {
+	clone(): DollySettings {
 
-		const clone = new ZoomSettings();
+		const clone = new DollySettings();
 		return clone.copy(this);
 
 	}
@@ -231,7 +231,7 @@ export class ZoomSettings extends EventDispatcher<SettingsEventMap> {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: ZoomSettings): ZoomSettings {
+	fromJSON(json: DollySettings): this {
 
 		this.enabled = json.enabled;
 		this.inverted = json.inverted;

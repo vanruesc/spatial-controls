@@ -30,16 +30,16 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 	private _boostMultiplier: number;
 
 	/**
-	 * @see {@link axisModifier}
-	 */
-
-	private _axisWeights: Vector3;
-
-	/**
 	 * @see {@link damping}
 	 */
 
 	private _damping: number;
+
+	/**
+	 * @see {@link axisModifier}
+	 */
+
+	private readonly _axisWeights: Vector3;
 
 	// #endregion
 
@@ -54,8 +54,8 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 		this._enabled = true;
 		this._sensitivity = 1.0;
 		this._boostMultiplier = 2.0;
-		this._axisWeights = new Vector3(1, 1, 1);
 		this._damping = 0.0;
+		this._axisWeights = new Vector3(1, 1, 1);
 
 	}
 
@@ -111,23 +111,6 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 	}
 
 	/**
-	 * Weights that influence movement along each axis.
-	 */
-
-	get axisWeights(): Vector3 {
-
-		return this._axisWeights;
-
-	}
-
-	set axisWeights(value: Vector3) {
-
-		this._axisWeights = value;
-		this.dispatchEvent({ type: "change" });
-
-	}
-
-	/**
 	 * The damping factor. Range is [0.0, +Infinity]. Set to 0 to disable.
 	 */
 
@@ -140,6 +123,40 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 	set damping(value: number) {
 
 		this._damping = value;
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Weights that influence movement along each axis.
+	 *
+	 * @see {@link setAxisWeights} for changing the weights.
+	 */
+
+	get axisWeights(): Readonly<Vector3> {
+
+		return this._axisWeights;
+
+	}
+
+	private set axisWeights(value: Vector3) {
+
+		this._axisWeights.copy(value);
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Sets the axis weights individually.
+	 *
+	 * @param x - The weight for the X-axis.
+	 * @param y - The weight for the Y-axis.
+	 * @param z - The weight for the Z-axis.
+	 */
+
+	setAxisWeights(x: number, y: number, z: number): void {
+
+		this._axisWeights.set(x, y, z);
 		this.dispatchEvent({ type: "change" });
 
 	}

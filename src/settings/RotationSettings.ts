@@ -1,5 +1,5 @@
 import { EventDispatcher, Vector3 } from "three";
-import * as axes from "../core/axes.js";
+import * as axes from "../math/axes.js";
 import { SettingsEventMap } from "./SettingsEventMap.js";
 
 /**
@@ -22,13 +22,13 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	 * @see {@link up}
 	 */
 
-	private _up: Vector3;
+	private readonly _up: Vector3;
 
 	/**
 	 * @see {@link pivotOffset}
 	 */
 
-	private _pivotOffset: Vector3;
+	private readonly _pivotOffset: Vector3;
 
 	/**
 	 * @see {@link minAzimuthalAngle}
@@ -133,34 +133,68 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * A normalized up vector.
+	 *
+	 * @see {@link setUp} for changing the up vector.
 	 */
 
-	get up(): Vector3 {
+	get up(): Readonly<Vector3> {
 
 		return this._up;
 
 	}
 
-	set up(value: Vector3) {
+	private set up(value: Vector3) {
 
-		this._up = value;
+		this._up.copy(value);
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Sets the up vector components.
+	 *
+	 * @param x - The X-component.
+	 * @param y - The Y-component.
+	 * @param z - The Z-component.
+	 */
+
+	setUp(x: number, y: number, z: number): void {
+
+		this._up.set(x, y, z);
 		this.dispatchEvent({ type: "change" });
 
 	}
 
 	/**
 	 * The pivot offset.
+	 *
+	 * @see {@link setPivotOffset} for changing the pivot offset.
 	 */
 
-	get pivotOffset(): Vector3 {
+	get pivotOffset(): Readonly<Vector3> {
 
 		return this._pivotOffset;
 
 	}
 
-	set pivotOffset(value: Vector3) {
+	private set pivotOffset(value: Vector3) {
 
-		this._pivotOffset = value;
+		this._pivotOffset.copy(value);
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
+	 * Sets the pivot offset components.
+	 *
+	 * @param x - The X-component.
+	 * @param y - The Y-component.
+	 * @param z - The Z-component.
+	 */
+
+	setPivotOffset(x: number, y: number, z: number): void {
+
+		this._pivotOffset.set(x, y, z);
 		this.dispatchEvent({ type: "change" });
 
 	}

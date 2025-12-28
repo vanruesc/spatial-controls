@@ -1,6 +1,7 @@
 import { EventDispatcher } from "three";
-import { PointerBehaviour } from "../input/PointerBehaviour.js";
+import { PointerBehavior } from "../input/PointerBehavior.js";
 import { SettingsEventMap } from "./SettingsEventMap.js";
+import { PointerButton } from "../input/PointerButton.js";
 
 /**
  * Pointer settings.
@@ -13,16 +14,16 @@ export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 	// #region Backing Data
 
 	/**
-	 * @see {@link behaviour}
-	 */
-
-	private _behaviour: PointerBehaviour;
-
-	/**
 	 * @see {@link sensitivity}
 	 */
 
 	private _sensitivity: number;
+
+	/**
+	 * @see {@link behavior}
+	 */
+
+	private _behavior: Map<PointerButton, PointerBehavior>;
 
 	// #endregion
 
@@ -34,25 +35,8 @@ export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 
 		super();
 
-		this._behaviour = PointerBehaviour.DEFAULT;
 		this._sensitivity = 1e-3;
-
-	}
-
-	/**
-	 * The pointer behaviour.
-	 */
-
-	get behaviour(): PointerBehaviour {
-
-		return this._behaviour;
-
-	}
-
-	set behaviour(value: PointerBehaviour) {
-
-		this._behaviour = value;
-		this.dispatchEvent({ type: "change" });
+		this._behavior = new Map();
 
 	}
 
@@ -76,6 +60,51 @@ export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 	}
 
 	/**
+	 * Defines the locking behavior of pointer behavior.
+	 *
+	 * @see {@link setBehavior} for changing the pointer behavior.
+	 */
+
+	private get behavior(): ReadonlyMap<PointerButton, PointerBehavior> {
+
+		return this._behavior;
+
+	}
+
+	private set behavior(value: Map<PointerButton, PointerBehavior>) {
+
+		this._behavior = value;
+
+	}
+
+	/**
+	 * Returns the pointer behavior for a specific button.
+	 *
+	 * @param button - A pointer button.
+	 * @return The behavior.
+	 */
+
+	getBehavior(button: PointerButton): PointerBehavior {
+
+		return this._behavior.get(button) ?? PointerBehavior.DEFAULT;
+
+	}
+
+	/**
+	 * Sets the pointer behavior for a specific button.
+	 *
+	 * @param button - The button.
+	 * @param behavior - The behavior.
+	 */
+
+	setBehavior(button: PointerButton, behavior: PointerBehavior): void {
+
+		this._behavior.set(button, behavior);
+		this.dispatchEvent({ type: "change" });
+
+	}
+
+	/**
 	 * Copies the given pointer settings.
 	 *
 	 * @param settings - Pointer settings.
@@ -84,7 +113,7 @@ export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 
 	copy(settings: PointerSettings): PointerSettings {
 
-		this.behaviour = settings.behaviour;
+		this.behavior = new Map(settings.behavior);
 		this.sensitivity = settings.sensitivity;
 
 		return this;
@@ -113,7 +142,7 @@ export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 
 	fromJSON(json: PointerSettings): PointerSettings {
 
-		this.behaviour = json.behaviour;
+		this.behavior = new Map(json.behavior);
 		this.sensitivity = json.sensitivity;
 
 		return this;
@@ -123,7 +152,7 @@ export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 	toJSON(): Record<string, unknown> {
 
 		return {
-			behaviour: this.behaviour,
+			behaviour: Array.from(this.behavior.entries()),
 			sensitivity: this.sensitivity
 		};
 

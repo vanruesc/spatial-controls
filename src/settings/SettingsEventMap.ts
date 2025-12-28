@@ -8,6 +8,6 @@ import { BaseEvent } from "three";
 
 export interface SettingsEventMap {
 
-	change: BaseEvent;
+	change: BaseEvent<"change">;
 
 }
