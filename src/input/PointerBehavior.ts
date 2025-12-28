@@ -1,10 +1,10 @@
 /**
- * An enumeration of pointer behaviours.
+ * An enumeration of pointer behaviors.
  *
  * @group Input
  */
 
-export enum PointerBehaviour {
+export enum PointerBehavior {
 
 	/**
 	 * The pointer will not be locked and the pointer button must be held down.
