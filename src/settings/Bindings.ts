@@ -215,13 +215,13 @@ export class Bindings<TInput> {
 
 			if(!boundActions.some(x => x.action === action && x.modifiers === modifiers)) {
 
-				boundActions.push({ action, modifiers });
+				boundActions.push(new BoundAction(action, modifiers));
 
 			}
 
 		} else {
 
-			this.actions.set(value, [{ action, modifiers }]);
+			this.actions.set(value, [new BoundAction(action, modifiers)]);
 
 		}
 
