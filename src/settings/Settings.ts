@@ -94,11 +94,11 @@ export class Settings extends EventDispatcher<SettingsEventMap> {
 
 		this.pointerBindings = new Bindings<PointerButton | WheelRotation>();
 		this.pointerBindings.setDefault(new Map<Input<PointerButton | WheelRotation>, Action>([
-			[new Input<PointerButton>(PointerButton.MAIN), Action.ROTATE],
-			[new Input<PointerButton>(PointerButton.MAIN, { modifiers: ["Ctrl"] }), Action.MOVE_PLANAR],
-			[new Input<PointerButton>(PointerButton.SECONDARY), Action.PAN],
-			[new Input<WheelRotation>(WheelRotation.NEGATIVE_Y), Action.DOLLY_OUT],
-			[new Input<WheelRotation>(WheelRotation.POSITIVE_Y), Action.DOLLY_IN]
+			[new Input(PointerButton.MAIN), Action.ROTATE],
+			[new Input(PointerButton.MAIN, { modifiers: ["Ctrl"] }), Action.MOVE_PLANAR],
+			[new Input(PointerButton.SECONDARY), Action.PAN],
+			[new Input(WheelRotation.NEGATIVE_Y), Action.DOLLY_IN],
+			[new Input(WheelRotation.POSITIVE_Y), Action.DOLLY_OUT]
 		]));
 
 		this.general = new GeneralSettings();
