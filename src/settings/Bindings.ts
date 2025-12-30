@@ -318,7 +318,7 @@ export class Bindings<TInput> {
 	 *
 	 * @param input - An input.
 	 * @param modifiers - A modifier bitmask. Default is `~0 >>> 0` which allows all modifiers.
-	 * @return The matching actions, or undefined if the input is not bound to any action.
+	 * @return The matching actions sorted by specificity, or undefined if the input is not bound to any action.
 	 */
 
 	match(input: TInput, modifiers = (~0 >>> 0)): Action[] | undefined {
@@ -331,6 +331,7 @@ export class Bindings<TInput> {
 
 		return this.actions.get(input)!
 			.filter(x => (x.modifiers & modifiers) === x.modifiers)
+			.sort((a, b) => (b.modifierCount - a.modifierCount))
 			.map(x => x.action);
 
 	}
