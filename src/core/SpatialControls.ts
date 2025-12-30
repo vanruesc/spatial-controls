@@ -356,6 +356,12 @@ export class SpatialControls extends EventDispatcher<BaseEventMap>
 
 	update(timestamp: number): void {
 
+		if(!this.enabled) {
+
+			return;
+
+		}
+
 		this.synchronize();
 
 		this.rotationManager.update(timestamp);
