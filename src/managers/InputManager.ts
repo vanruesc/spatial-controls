@@ -4,7 +4,6 @@ import { MovementEvent } from "../events/MovementEvent.js";
 import { Settings } from "../settings/Settings.js";
 import { InputManagerEventMap } from "./InputManagerEventMap.js";
 import { KeyCode } from "../input/KeyCode.js";
-import { getWheelRotation } from "../input/WheelRotation.js";
 import { PointerBehavior } from "../input/PointerBehavior.js";
 
 const screen = /* @__PURE__ */ new Vector2();
@@ -42,6 +41,12 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 	private readonly pointerEvents: Map<number, PointerEvent>;
 
+	/**
+	 * A collection of events that issued a pointer lock request.
+	 */
+
+	private readonly pointerLockTriggers: Set<MouseEvent>;
+
 	// #endregion
 
 	// #region Reusable Events
@@ -70,6 +75,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 		this._enabled = false;
 
 		this.pointerEvents = new Map();
+		this.pointerLockTriggers = new Set();
 
 		this.movementEvent = {
 			type: "move",
@@ -179,7 +185,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 		domElement.addEventListener("pointerdown", this);
 		domElement.addEventListener("pointerup", this);
 		domElement.addEventListener("pointercancel", this);
-		domElement.addEventListener("wheel", this, { passive: true });
+		domElement.addEventListener("wheel", this);
 		domElement.addEventListener("contextmenu", this);
 
 	}
@@ -223,6 +229,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 	private resetInputState(): void {
 
 		this.pointerEvents.clear();
+		this.pointerLockTriggers.clear();
 		this.unlockPointer();
 
 		this.dispatchEvent({
@@ -245,7 +252,15 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 		}
 
-		await this.domElement.requestPointerLock();
+		try {
+
+			await this.domElement.requestPointerLock();
+
+		} catch(e) {
+
+			console.warn(e);
+
+		}
 
 	}
 
@@ -265,6 +280,8 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 	}
 
+	// #region Event Handling
+
 	/**
 	 * Handles pointer move events.
 	 *
@@ -275,11 +292,12 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 		if(this.pointerEvents.has(event.pointerId)) {
 
+			// Refresh the pointer event.
 			this.pointerEvents.set(event.pointerId, event);
 
 		} else if(!this.pointerLocked) {
 
-			// No active actions require movement updates.
+			// No active actions.
 			return;
 
 		}
@@ -303,9 +321,76 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 	}
 
 	/**
-	 * Handles mouse button events.
+	 * Handles pointer lock change events.
 	 *
-	 * Note: pointer events don't fire for other mouse buttons while the pointer is active.
+	 * @param event - An event.
+	 */
+
+	private handlePointerLockChangeEvent(event: Event): void {
+
+		const pointerLocked = this.pointerLocked;
+
+		for(const trigger of this.pointerLockTriggers) {
+
+			this.handleMouseButtonEvent(trigger, pointerLocked);
+
+		}
+
+		if(!pointerLocked) {
+
+			this.pointerLockTriggers.clear();
+
+		}
+
+	}
+
+	/**
+	 * Handles mouse events.
+	 *
+	 * Note: mouse events are used because pointer events don't fire for other mouse buttons while a pointer is active.
+	 *
+	 * @param event - A mouse event.
+	 * @param pressed - Whether the button has been pressed down.
+	 */
+
+	private handleMouseEvent(event: MouseEvent, pressed: boolean): void {
+
+		const behavior = this.settings.pointer.getBehavior(event.button);
+
+		if(behavior === PointerBehavior.LOCK) {
+
+			if(pressed) {
+
+				this.pointerLockTriggers.add(event);
+				void this.lockPointer();
+
+				if(this.pointerLocked) {
+
+					// Already locked by another pointer: trigger actions now.
+					this.handleMouseButtonEvent(event, true);
+
+				}
+
+			}
+
+		} else {
+
+			if(pressed && behavior === PointerBehavior.LOCK_HOLD) {
+
+				void this.lockPointer();
+
+			}
+
+			this.handleMouseButtonEvent(event, pressed);
+
+		}
+
+	}
+
+	/**
+	 * Handles pseudo mouse button events triggered by touch/pen events.
+	 *
+	 * Note: pointer lock doesn't exist for touch/pen input.
 	 *
 	 * @param event - A mouse event.
 	 * @param pressed - Whether the button has been pressed down.
@@ -313,15 +398,17 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 	private handleMouseButtonEvent(event: MouseEvent, pressed: boolean): void {
 
-		const bindings = this.settings.pointerBindings;
+		const actions = pressed ?
+			this.settings.pointerBindings.matchMouseEvent(event) :
+			this.settings.pointerBindings.match(event.button);
 
-		if(!bindings.has(event.button)) {
+		if(actions === undefined || actions.length === 0) {
 
 			return;
 
 		}
 
-		for(const action of bindings.matchMouseEvent(event)!) {
+		for(const action of actions) {
 
 			this.dispatchEvent({
 				type: pressed ? "activate" : "deactivate",
@@ -341,35 +428,31 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 	private handlePointerButtonEvent(event: PointerEvent, pressed: boolean): void {
 
-		const isMouse = event.pointerType === "mouse";
+		if(!pressed) {
 
-		if(!isMouse) {
+			this.pointerEvents.delete(event.pointerId);
 
-			// Handle touch/pen events like mouse events and prevent simulated mouse events.
-			this.handleMouseButtonEvent(event, pressed);
-			event.preventDefault();
-
-		}
-
-		if(pressed) {
+		} else {
 
 			this.pointerEvents.set(event.pointerId, event);
 			screen.set(event.screenX, event.screenY);
 
-			if(this.settings.pointer.getBehavior(event.button) === PointerBehavior.DEFAULT) {
+			if(!this.pointerLocked && this.settings.pointer.getBehavior(event.button) === PointerBehavior.DEFAULT) {
 
 				// The capture will be implicitly released after a pointerup or pointercancel event.
 				this.domElement?.setPointerCapture(event.pointerId);
 
-			} else if(isMouse) {
-
-				void this.lockPointer();
-
 			}
 
-		} else {
+		}
 
-			this.pointerEvents.delete(event.pointerId);
+		if(event.pointerType !== "mouse") {
+
+			// Handle touch/pen events like mouse events.
+			this.handleMouseButtonEvent(event, pressed);
+
+			// Prevent native simulated mouse events.
+			event.preventDefault();
 
 		}
 
@@ -399,10 +482,9 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 	private handleWheelEvent(event: WheelEvent): void {
 
-		const bindings = this.settings.pointerBindings;
-		const wheelRotation = getWheelRotation(event);
+		const actions = this.settings.pointerBindings.matchWheelEvent(event);
 
-		if(wheelRotation === undefined || !bindings.has(wheelRotation)) {
+		if(actions === undefined || actions.length === 0) {
 
 			return;
 
@@ -410,7 +492,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 		event.preventDefault();
 
-		for(const action of bindings.matchWheelEvent(event)!) {
+		for(const action of actions) {
 
 			this.dispatchEvent({
 				type: "activate",
@@ -430,10 +512,11 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 	private handleKeyboardEvent(event: KeyboardEvent, pressed: boolean): void {
 
-		const bindings = this.settings.keyBindings;
-		const code = event.code as KeyCode;
+		const actions = pressed ?
+			this.settings.keyBindings.matchKeyboardEvent(event) :
+			this.settings.keyBindings.match(event.code as KeyCode);
 
-		if(!bindings.has(code)) {
+		if(actions === undefined || actions.length === 0) {
 
 			return;
 
@@ -441,7 +524,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 		event.preventDefault();
 
-		for(const action of bindings.matchKeyboardEvent(event)!) {
+		for(const action of actions) {
 
 			this.dispatchEvent({
 				type: pressed ? "activate" : "deactivate",
@@ -487,11 +570,11 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 				break;
 
 			case "mousedown":
-				this.handleMouseButtonEvent(event as MouseEvent, true);
+				this.handleMouseEvent(event as MouseEvent, true);
 				break;
 
 			case "mouseup":
-				this.handleMouseButtonEvent(event as MouseEvent, false);
+				this.handleMouseEvent(event as MouseEvent, false);
 				break;
 
 			case "pointerdown":
@@ -504,6 +587,10 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 			case "pointercancel":
 				this.handlePointerCancelEvent(event as PointerEvent);
+				break;
+
+			case "pointerlockchange":
+				this.handlePointerLockChangeEvent(event);
 				break;
 
 			case "contextmenu":
@@ -529,6 +616,8 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 		}
 
 	}
+
+	// #endregion
 
 	dispose(): void {
 
