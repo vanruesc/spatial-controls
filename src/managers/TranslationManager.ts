@@ -229,10 +229,10 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 		const axisWeights = this.settings.translation.axisWeights;
 		v.copy(velocity).applyQuaternion(this.quaternion);
 
-		if(axisWeights.x !== 1 || axisWeights.y !== 1 || axisWeights.z !== 1) {
+		if(axisWeights.x !== 1.0 || axisWeights.y !== 1.0 || axisWeights.z !== 1.0) {
 
-			v.multiply(this.settings.translation.axisWeights).normalize();
-			v.multiplyScalar(velocity.length() * elapsed);
+			v.multiply(this.settings.translation.axisWeights);
+			v.multiplyScalar(elapsed);
 
 		} else {
 
