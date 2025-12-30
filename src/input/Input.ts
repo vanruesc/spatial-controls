@@ -1,6 +1,26 @@
 import { Modifier } from "./Modifier.js";
 
 /**
+ * Converts the given modifiers into a bitmask.
+ *
+ * @param modifiers - A list of modifiers.
+ * @return The modifiers as a bitmask.
+ */
+
+function modifiersToBitmask(modifiers: Modifier[]): number {
+
+	let flags = 0;
+
+	if(modifiers.includes("Alt")) { flags = (flags | 1) >>> 0; }
+	if(modifiers.includes("Ctrl")) { flags = (flags | 2) >>> 0; }
+	if(modifiers.includes("Meta")) { flags = (flags | 4) >>> 0; }
+	if(modifiers.includes("Shift")) { flags = (flags | 8) >>> 0; }
+
+	return flags;
+
+}
+
+/**
  * Input options.
  */
 
@@ -91,14 +111,7 @@ export class Input<T = unknown> {
 
 		}
 
-		let flags = 0;
-
-		if(value.includes("Alt")) { flags |= 1; }
-		if(value.includes("Ctrl")) { flags |= 2; }
-		if(value.includes("Meta")) { flags |= 4; }
-		if(value.includes("Shift")) { flags |= 8; }
-
-		this._modifiers = flags;
+		this._modifiers = modifiersToBitmask(value);
 
 	}
 

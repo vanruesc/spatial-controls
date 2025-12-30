@@ -4,7 +4,7 @@ import { Input } from "../input/Input.js";
 import { getWheelRotation } from "../input/WheelRotation.js";
 
 /**
- * Sets the modifiers bitmask based on a list of modifier keys.
+ * Extracts active modifiers from a given event and returns them as a bitmask.
  *
  * @param event - An event.
  * @return The modifiers as a bitmask.
@@ -14,10 +14,10 @@ function getModifiersFromEvent(event: MouseEvent | KeyboardEvent): number {
 
 	let flags = 0;
 
-	if(event.altKey) { flags |= 1; }
-	if(event.ctrlKey) { flags |= 2; }
-	if(event.metaKey) { flags |= 4; }
-	if(event.shiftKey) { flags |= 8; }
+	if(event.altKey) { flags = (flags | 1) >>> 0; }
+	if(event.ctrlKey) { flags = (flags | 2) >>> 0; }
+	if(event.metaKey) { flags = (flags | 4) >>> 0; }
+	if(event.shiftKey) { flags = (flags | 8) >>> 0; }
 
 	return flags;
 
