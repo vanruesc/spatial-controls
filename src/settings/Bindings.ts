@@ -317,10 +317,11 @@ export class Bindings<TInput> {
 	 * Returns all actions that match the given input.
 	 *
 	 * @param input - An input.
+	 * @param modifiers - A modifier bitmask. Default is `~0 >>> 0` which allows all modifiers.
 	 * @return The matching actions, or undefined if the input is not bound to any action.
 	 */
 
-	match(input: TInput, modifiers = 0): Action[] | undefined {
+	match(input: TInput, modifiers = (~0 >>> 0)): Action[] | undefined {
 
 		if(!this.actions.has(input)) {
 
