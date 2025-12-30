@@ -94,15 +94,15 @@ window.addEventListener("load", () => void load().then((assets) => {
 	const settings = controls.settings;
 	settings.general.mode = ControlMode.THIRD_PERSON;
 	settings.pointer.setBehavior(PointerButton.MAIN, PointerBehavior.DEFAULT);
-	settings.zoom.setRange(0.25, 3.0);
 	settings.rotation.sensitivity = 2.2;
 	settings.rotation.damping = 0.1;
 	settings.rotation.minPolarAngle = Number.NEGATIVE_INFINITY;
 	settings.rotation.maxPolarAngle = Number.POSITIVE_INFINITY;
 	settings.translation.sensitivity = 1;
 	settings.translation.damping = 0.1;
-	settings.zoom.sensitivity = 0.1;
-	settings.zoom.damping = 0.2;
+	settings.dolly.setRange(0.25, 3.0);
+	settings.dolly.sensitivity = 0.1;
+	settings.dolly.damping = 0.2;
 
 	settings.keyBindings.set(new Input<KeyCode>("Space", { modifiers: ["Ctrl"] }), Action.MOVE_DOWN);
 
@@ -213,16 +213,17 @@ window.addEventListener("load", () => void load().then((assets) => {
 	folder.addBinding(settings.rotation, "sensitivityY", { label: "rotation Y", min: 0.1, max: 3.0, step: 0.01 });
 	folder.addBinding(settings.translation, "sensitivity", { label: "translation", min: 0.1, max: 3.0, step: 0.01 });
 	folder.addBinding(settings.translation, "boostMultiplier", { min: 0.1, max: 4.0, step: 0.01 });
-	folder.addBinding(settings.zoom, "sensitivity", { label: "zoom", min: 0.01, max: 3.0, step: 0.01 });
+	folder.addBinding(settings.dolly, "sensitivity", { label: "dolly", min: 0.01, max: 3.0, step: 0.01 });
 
 	folder = pane.addFolder({ title: "Damping" });
 	folder.addBinding(settings.rotation, "damping", { label: "rotation", min: 0, max: 1, step: 0.01 });
-	folder.addBinding(settings.zoom, "damping", { label: "zoom", min: 0, max: 1, step: 0.01 });
+	folder.addBinding(settings.dolly, "damping", { label: "dolly", min: 0, max: 1, step: 0.01 });
 	folder.addBinding(settings.translation, "damping", { label: "translation", min: 0, max: 1, step: 0.01 });
 
 	folder = pane.addFolder({ title: "Rotation", expanded: false });
 	folder.addBinding(settings.rotation, "enabled");
-	folder.addBinding(settings.rotation, "pivotOffset");
+	folder.addBinding(settings.rotation, "pivotOffset")
+		.on("change", (e) => settings.rotation.setPivotOffset(...e.value.toArray()));
 
 	folder.addBinding(params.rotation, "min azim. angle", { min: -Math.PI, max: 0, step: 1e-3 }).on("change", (e) => {
 
@@ -269,16 +270,16 @@ window.addEventListener("load", () => void load().then((assets) => {
 	});
 
 	folder.addBinding(settings.translation, "axisWeights", {
-		x: { min: 0, max: 1, step: 1 },
-		y: { min: 0, max: 1, step: 1 },
-		z: { min: 0, max: 1, step: 1 }
-	});
+		x: { min: 0, max: 1, step: 0.1 },
+		y: { min: 0, max: 1, step: 0.1 },
+		z: { min: 0, max: 1, step: 0.1 }
+	}).on("change", (e) => settings.translation.setAxisWeights(...e.value.toArray()));
 
-	folder = pane.addFolder({ title: "Zooming", expanded: false });
-	folder.addBinding(settings.zoom, "enabled");
-	folder.addBinding(settings.zoom, "inverted");
-	folder.addBinding(settings.zoom, "minDistance", { min: 0.1, max: 1, step: 0.01 });
-	folder.addBinding(settings.zoom, "maxDistance", { min: 1, max: 10, step: 0.01 });
+	folder = pane.addFolder({ title: "Dolly", expanded: false });
+	folder.addBinding(settings.dolly, "enabled");
+	folder.addBinding(settings.dolly, "inverted");
+	folder.addBinding(settings.dolly, "minDistance", { min: 0.1, max: 1, step: 0.01 });
+	folder.addBinding(settings.dolly, "maxDistance", { min: 1, max: 10, step: 0.01 });
 
 	pane.addButton({ title: "save as JSON" }).on("click", () => {
 
