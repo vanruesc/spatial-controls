@@ -1,5 +1,4 @@
 import { BaseEvent } from "three";
-import { Action } from "../core/Action.js";
 
 /**
  * An action event.
@@ -13,6 +12,6 @@ export interface ActionEvent<TEventType extends string = string> extends BaseEve
 	 * The action.
 	 */
 
-	action: Action;
+	action: string;
 
 }

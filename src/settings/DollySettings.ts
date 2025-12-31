@@ -68,6 +68,8 @@ export class DollySettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Indicates whether zooming is enabled.
+	 *
+	 * @defaultValue true
 	 */
 
 	get enabled(): boolean {
@@ -85,6 +87,8 @@ export class DollySettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Indicates whether the dolly controls should be inverted.
+	 *
+	 * @defaultValue false
 	 */
 
 	get inverted(): boolean {
@@ -102,6 +106,8 @@ export class DollySettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The minimum dolly distance.
+	 *
+	 * @defaultValue 1e-6
 	 */
 
 	get minDistance(): number {
@@ -123,6 +129,8 @@ export class DollySettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The maximum dolly distance.
+	 *
+	 * @defaultValue {@link Number.POSITIVE_INFINITY}
 	 */
 
 	get maxDistance(): number {
@@ -159,6 +167,8 @@ export class DollySettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The dolly sensitivity.
+	 *
+	 * @defaultValue 1.0
 	 */
 
 	get sensitivity(): number {
@@ -176,6 +186,8 @@ export class DollySettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The damping factor.
+	 *
+	 * @defaultValue 0.0
 	 */
 
 	get damping(): number {

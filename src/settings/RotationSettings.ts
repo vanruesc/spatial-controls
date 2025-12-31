@@ -116,6 +116,8 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Indicates whether rotation is enabled.
+	 *
+	 * @defaultValue true
 	 */
 
 	get enabled(): boolean {
@@ -133,6 +135,8 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * A normalized up vector.
+	 *
+	 * Default is +Y.
 	 *
 	 * @see {@link setUp} for changing the up vector.
 	 */
@@ -201,6 +205,8 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The minimum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
+	 *
+	 * @defaultValue {@link Number.NEGATIVE_INFINITY}
 	 */
 
 	get minAzimuthalAngle(): number {
@@ -218,6 +224,8 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The maximum azimuthal angle in radians. Range: [-Math.PI, Math.PI].
+	 *
+	 * @defaultValue {@link Number.POSITIVE_INFINITY}
 	 */
 
 	get maxAzimuthalAngle(): number {
@@ -235,6 +243,8 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The minimum polar angle in radians. Range: [0, Math.PI].
+	 *
+	 * @defaultValue 0
 	 */
 
 	get minPolarAngle(): number {
@@ -252,6 +262,8 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The maximum polar angle in radians. Range: [0, Math.PI].
+	 *
+	 * @defaultValue {@link Math.PI}
 	 */
 
 	get maxPolarAngle(): number {
@@ -269,6 +281,8 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Indicates whether the horizontal rotation is inverted.
+	 *
+	 * @defaultValue false
 	 */
 
 	get invertedX(): boolean {
@@ -286,6 +300,8 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Indicates whether the vertical rotation is inverted.
+	 *
+	 * @defaultValue false
 	 */
 
 	get invertedY(): boolean {
@@ -303,6 +319,8 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The horizontal rotation sensitivity.
+	 *
+	 * @defaultValue 1.0
 	 */
 
 	get sensitivityX(): number {
@@ -320,6 +338,8 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The vertical rotation sensitivity.
+	 *
+	 * @defaultValue 1.0
 	 */
 
 	get sensitivityY(): number {
@@ -337,6 +357,8 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Sets the horizontal and vertical rotation sensitivity.
+	 *
+	 * @defaultValue 1.0
 	 */
 
 	set sensitivity(value: number) {
@@ -348,6 +370,8 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The damping factor.
+	 *
+	 * @defaultValue 0.0
 	 */
 
 	get damping(): number {

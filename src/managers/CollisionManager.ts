@@ -95,7 +95,7 @@ export class CollisionManager extends EventDispatcher<BaseEventMap> implements U
 
 		const transformation = this.transformation;
 
-		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
+		if(this.settings.general.mode === "third-person") {
 
 			// Constrain the target.
 			v.copy(transformation.target);

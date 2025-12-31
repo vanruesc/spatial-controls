@@ -4,18 +4,4 @@
  * @group Core
  */
 
-export enum ControlMode {
-
-	/**
-	 * First person mode.
-	 */
-
-	FIRST_PERSON = "first-person",
-
-	/**
-	 * Third person mode, AKA orbiting.
-	 */
-
-	THIRD_PERSON = "third-person"
-
-}
+export type ControlMode = "first-person" | "third-person";

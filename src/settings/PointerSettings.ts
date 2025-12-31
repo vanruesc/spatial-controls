@@ -1,7 +1,7 @@
 import { EventDispatcher } from "three";
 import { PointerBehavior } from "../input/PointerBehavior.js";
-import { SettingsEventMap } from "./SettingsEventMap.js";
 import { PointerButton } from "../input/PointerButton.js";
+import { SettingsEventMap } from "./SettingsEventMap.js";
 
 /**
  * Pointer settings.
@@ -43,7 +43,9 @@ export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 	/**
 	 * Sets the sensitivity.
 	 *
-	 * This sensitivity acts as a baseline scale for pointer movement deltas. Default is `1e-3`.
+	 * This sensitivity acts as a baseline scale for pointer movement deltas.
+	 *
+	 * @defaultValue 1e-3
 	 */
 
 	get sensitivity(): number {
@@ -61,6 +63,8 @@ export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Defines the locking behavior of pointer behavior.
+	 *
+	 * All pointers use {@link PointerBehavior.DEFAULT} by default.
 	 *
 	 * @see {@link setBehavior} for changing the pointer behavior.
 	 */

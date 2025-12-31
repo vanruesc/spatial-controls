@@ -272,7 +272,7 @@ export class Bindings<TInput> {
 	 * Returns all actions that match the given mouse event.
 	 *
 	 * @param event - A mouse event
-	 * @return The matching actions, or undefined if the input is not bound to any action.
+	 * @return The matching actions sorted by specificity, DESC, or undefined if there is no bound action.
 	 */
 
 	matchMouseEvent(event: MouseEvent): Action[] | undefined {
@@ -287,7 +287,7 @@ export class Bindings<TInput> {
 	 * Returns all actions that match the given wheel event.
 	 *
 	 * @param event - A wheel event
-	 * @return The matching actions, or undefined if the input is not bound to any action.
+	 * @return The matching actions sorted by specificity, DESC, or undefined if there is no bound action.
 	 */
 
 	matchWheelEvent(event: WheelEvent): Action[] | undefined {
@@ -302,7 +302,7 @@ export class Bindings<TInput> {
 	 * Returns all actions that match the given keyboard event.
 	 *
 	 * @param event - A keyboard event
-	 * @return The matching actions, or undefined if the input is not bound to any action.
+	 * @return The matching actions sorted by specificity, DESC, or undefined if there is no bound action.
 	 */
 
 	matchKeyboardEvent(event: KeyboardEvent): Action[] | undefined {
@@ -318,7 +318,7 @@ export class Bindings<TInput> {
 	 *
 	 * @param input - An input.
 	 * @param modifiers - A modifier bitmask. Default is `~0 >>> 0` which allows all modifiers.
-	 * @return The matching actions sorted by specificity, or undefined if the input is not bound to any action.
+	 * @return The matching actions sorted by specificity, DESC, or undefined if there is no bound action.
 	 */
 
 	match(input: TInput, modifiers = (~0 >>> 0)): Action[] | undefined {

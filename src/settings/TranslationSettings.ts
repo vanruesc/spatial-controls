@@ -61,6 +61,8 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * Indicates whether positional translation is enabled.
+	 *
+	 * @defaultValue true
 	 */
 
 	get enabled(): boolean {
@@ -78,6 +80,8 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The translation sensitivity.
+	 *
+	 * @defaultValue 1.0
 	 */
 
 	get sensitivity(): number {
@@ -95,6 +99,8 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The translation boost multiplier.
+	 *
+	 * @defaultValue 2.0
 	 */
 
 	get boostMultiplier(): number {
@@ -112,6 +118,8 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The damping factor. Range is [0.0, +Infinity]. Set to 0 to disable.
+	 *
+	 * @defaultValue 0.0
 	 */
 
 	get damping(): number {

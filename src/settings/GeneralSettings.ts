@@ -34,7 +34,7 @@ export class GeneralSettings extends EventDispatcher<SettingsEventMap> {
 
 		super();
 
-		this._mode = ControlMode.FIRST_PERSON;
+		this._mode = "first-person";
 		this._previousMode = this._mode;
 
 	}
@@ -53,6 +53,8 @@ export class GeneralSettings extends EventDispatcher<SettingsEventMap> {
 
 	/**
 	 * The control mode.
+	 *
+	 * @defaultValue {@link ControlMode.FIRST_PERSON}
 	 */
 
 	get mode(): ControlMode {

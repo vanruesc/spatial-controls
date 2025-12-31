@@ -53,7 +53,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	 * A collection of action strategies.
 	 */
 
-	private readonly strategies: Map<Action, (x: boolean) => void>;
+	private readonly strategies: Map<string, (x: boolean) => void>;
 
 	/**
 	 * Scalar dampers.
@@ -86,7 +86,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	private timestamp: number;
 
 	/**
-	 * Determines whether the rotation is currently being changed.
+	 * Determines whether rotation is currently enabled.
 	 */
 
 	private rotating: boolean;
@@ -111,9 +111,9 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 		this.spherical1 = new Spherical();
 
 		this.strategies = new Map<Action, (x: boolean) => void>([
-			[Action.DOLLY_IN, () => this.dollyIn()],
-			[Action.DOLLY_OUT, () => this.dollyOut()],
-			[Action.ROTATE, (x) => void (this.rotating = x)]
+			["dolly-in", () => this.dollyIn()],
+			["dolly-out", () => this.dollyOut()],
+			["rotate", (x) => void (this.rotating = x)]
 		]);
 
 		this.scalarDampers = Object.freeze([
@@ -177,7 +177,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	/**
 	 * Restricts the spherical angles.
 	 *
-	 * @return This manager.
+	 * @return This instance.
 	 */
 
 	private restrictAngles(): this {
@@ -206,7 +206,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	/**
 	 * Restricts the spherical radius.
 	 *
-	 * @return This manager.
+	 * @return This instance.
 	 */
 
 	private restrictRadius(): this {
@@ -225,7 +225,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	/**
 	 * Restricts the spherical system.
 	 *
-	 * @return This manager.
+	 * @return This instance.
 	 */
 
 	private restrictSpherical(): this {
@@ -237,12 +237,12 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	/**
 	 * Updates the spherical coordinates based on the position and target.
 	 *
-	 * @return This manager.
+	 * @return This instance.
 	 */
 
 	private updateSpherical(): this {
 
-		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
+		if(this.settings.general.mode === "third-person") {
 
 			const pivotOffset = this.settings.rotation.pivotOffset;
 			v.subVectors(u.subVectors(this.position, pivotOffset), this.target);
@@ -264,12 +264,12 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	/**
 	 * Updates the position based on the spherical coordinates.
 	 *
-	 * @return This manager.
+	 * @return This instance.
 	 */
 
 	private updatePosition(): this {
 
-		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
+		if(this.settings.general.mode === "third-person") {
 
 			// Construct the position using spherical0 and the target.
 			const pivotOffset = this.settings.rotation.pivotOffset;
@@ -284,7 +284,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	/**
 	 * Updates the quaternion.
 	 *
-	 * @return This manager.
+	 * @return This instance.
 	 */
 
 	private updateQuaternion(): this {
@@ -302,7 +302,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 
 		}
 
-		if(settings.general.mode === ControlMode.THIRD_PERSON) {
+		if(settings.general.mode === "third-person") {
 
 			m.lookAt(v.subVectors(this.position, target), rotation.pivotOffset, up);
 
@@ -324,7 +324,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	 *
 	 * @param theta - The angle to add to theta in radians.
 	 * @param phi - The angle to add to phi in radians.
-	 * @return This manager.
+	 * @return This instance.
 	 */
 
 	private adjustSpherical(theta: number, phi: number): this {
@@ -333,7 +333,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 		const settings = this.settings;
 		const rotation = settings.rotation;
 		const invertedY = rotation.invertedY;
-		const orbit = (settings.general.mode === ControlMode.THIRD_PERSON);
+		const orbit = (settings.general.mode === "third-person");
 		const orbitXorInvertedY = ((orbit || invertedY) && !(orbit && invertedY));
 
 		s.theta = rotation.invertedX ? s.theta + theta : s.theta - theta;
@@ -347,7 +347,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	 * Dollies in or out. Only applies in third person mode.
 	 *
 	 * @param sign - The normalized direction. Possible values are [-1, 1].
-	 * @return This manager.
+	 * @return This instance.
 	 */
 
 	private dolly(sign: number): this {
@@ -356,7 +356,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 		const settings = this.settings;
 		const dolly = settings.dolly;
 
-		if(dolly.enabled && settings.general.mode === ControlMode.THIRD_PERSON) {
+		if(dolly.enabled && settings.general.mode === "third-person") {
 
 			const amount = sign * dolly.sensitivity;
 			s.radius = dolly.inverted ? s.radius - amount : s.radius + amount;
@@ -373,7 +373,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	 *
 	 * The step size is defined by the dolly sensitivity.
 	 *
-	 * @return This manager.
+	 * @return This instance.
 	 */
 
 	private dollyIn(): this {
@@ -387,7 +387,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	 *
 	 * The step size is defined by the dolly sensitivity.
 	 *
-	 * @return This manager.
+	 * @return This instance.
 	 */
 
 	private dollyOut(): this {
@@ -419,12 +419,12 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	 * Adjusts the rotation to look at the given point.
 	 *
 	 * @param point - A point.
-	 * @return This manager.
+	 * @return This instance.
 	 */
 
 	lookAt(point: Vector3): this {
 
-		if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
+		if(this.settings.general.mode === "third-person") {
 
 			this.target.copy(point).sub(this.settings.rotation.pivotOffset);
 
@@ -447,7 +447,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 
 	getViewDirection(view: Vector3): Vector3 {
 
-		const orbit = (this.settings.general.mode === ControlMode.THIRD_PERSON);
+		const orbit = (this.settings.general.mode === "third-person");
 		view.setFromSpherical(this.spherical0).normalize();
 
 		return orbit ? view.negate() : view;
@@ -466,7 +466,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 
 	getProjectedViewDirection(view: Vector3): Vector3 {
 
-		const orbit = (this.settings.general.mode === ControlMode.THIRD_PERSON);
+		const orbit = (this.settings.general.mode === "third-person");
 		view.setFromSpherical(this.spherical1).normalize();
 
 		return orbit ? view.negate() : view;
@@ -534,7 +534,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 
 		if(general.mode !== general.previousMode) {
 
-			if(general.mode === ControlMode.THIRD_PERSON) {
+			if(general.mode === "third-person") {
 
 				// Switch to third person.
 				v.copy(this.target);
@@ -608,7 +608,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 
 		if(!previousTransformation.quaternion.equals(quaternion)) {
 
-			if(mode === ControlMode.THIRD_PERSON) {
+			if(mode === "third-person") {
 
 				target.set(0, 0, -1).applyQuaternion(quaternion);
 				target.multiplyScalar(this.radius);
@@ -630,7 +630,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 
 			} else {
 
-				if(mode === ControlMode.THIRD_PERSON) {
+				if(mode === "third-person") {
 
 					this.updatePosition();
 
@@ -644,7 +644,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 
 		} else if(!previousTransformation.position.equals(position)) {
 
-			if(mode === ControlMode.THIRD_PERSON) {
+			if(mode === "third-person") {
 
 				this.updateSpherical().updateQuaternion();
 

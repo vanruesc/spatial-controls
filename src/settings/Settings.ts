@@ -3,6 +3,7 @@ import { Action } from "../core/Action.js";
 import { Input } from "../input/Input.js";
 import { KeyCode } from "../input/KeyCode.js";
 import { PointerButton } from "../input/PointerButton.js";
+import { WheelRotation } from "../input/WheelRotation.js";
 import { Bindings } from "./Bindings.js";
 import { DollySettings } from "./DollySettings.js";
 import { GeneralSettings } from "./GeneralSettings.js";
@@ -10,7 +11,6 @@ import { PointerSettings } from "./PointerSettings.js";
 import { RotationSettings } from "./RotationSettings.js";
 import { SettingsEventMap } from "./SettingsEventMap.js";
 import { TranslationSettings } from "./TranslationSettings.js";
-import { WheelRotation } from "../input/WheelRotation.js";
 
 /**
  * Control settings.
@@ -77,28 +77,28 @@ export class Settings extends EventDispatcher<SettingsEventMap> {
 
 		this.keyBindings = new Bindings<KeyCode>();
 		this.keyBindings.setDefault(new Map<KeyCode, Action>([
-			["KeyW", Action.MOVE_FORWARD],
-			["KeyA", Action.MOVE_LEFT],
-			["KeyS", Action.MOVE_BACKWARD],
-			["KeyD", Action.MOVE_RIGHT],
-			["ArrowUp", Action.MOVE_FORWARD],
-			["ArrowLeft", Action.MOVE_LEFT],
-			["ArrowDown", Action.MOVE_BACKWARD],
-			["ArrowRight", Action.MOVE_RIGHT],
-			["KeyX", Action.MOVE_DOWN],
-			["Space", Action.MOVE_UP],
-			["PageDown", Action.DOLLY_OUT],
-			["PageUp", Action.DOLLY_IN],
-			["ShiftLeft", Action.BOOST]
+			["KeyW", "move-forward"],
+			["KeyA", "move-left"],
+			["KeyS", "move-backward"],
+			["KeyD", "move-right"],
+			["ArrowUp", "move-forward"],
+			["ArrowLeft", "move-left"],
+			["ArrowDown", "move-backward"],
+			["ArrowRight", "move-right"],
+			["KeyX", "move-down"],
+			["Space", "move-up"],
+			["PageUp", "dolly-in"],
+			["PageDown", "dolly-out"],
+			["ShiftLeft", "boost"]
 		]));
 
 		this.pointerBindings = new Bindings<PointerButton | WheelRotation>();
 		this.pointerBindings.setDefault(new Map<Input<PointerButton | WheelRotation>, Action>([
-			[new Input(PointerButton.MAIN), Action.ROTATE],
-			[new Input(PointerButton.MAIN, { modifiers: ["Ctrl"] }), Action.MOVE_PLANAR],
-			[new Input(PointerButton.SECONDARY), Action.PAN],
-			[new Input(WheelRotation.NEGATIVE_Y), Action.DOLLY_IN],
-			[new Input(WheelRotation.POSITIVE_Y), Action.DOLLY_OUT]
+			[new Input(PointerButton.MAIN), "rotate"],
+			[new Input(PointerButton.MAIN, { modifiers: ["Ctrl"] }), "truck"],
+			[new Input(PointerButton.SECONDARY), "pan"],
+			[new Input(WheelRotation.NEGATIVE_Y), "dolly-in"],
+			[new Input(WheelRotation.POSITIVE_Y), "dolly-out"]
 		]));
 
 		this.general = new GeneralSettings();

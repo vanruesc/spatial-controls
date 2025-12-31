@@ -1,6 +1,5 @@
 import { BaseEvent, EventDispatcher, Quaternion, Vector3 } from "three";
 import { Action } from "../core/Action.js";
-import { ControlMode } from "../core/ControlMode.js";
 import { Direction } from "../core/Direction.js";
 import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
 import { TransformationData } from "../core/TransformationData.js";
@@ -57,7 +56,7 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 	 * A collection of action strategies.
 	 */
 
-	private readonly strategies: Map<Action, (x: boolean) => void>;
+	private readonly strategies: Map<string, (x: boolean) => void>;
 
 	/**
 	 * Scalar dampers.
@@ -98,13 +97,15 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 		this.movementState = state;
 
 		this.strategies = new Map<Action, (x: boolean) => void>([
-			[Action.MOVE_FORWARD, (x) => state.setActive(Direction.FORWARD, x)],
-			[Action.MOVE_LEFT, (x) => state.setActive(Direction.LEFT, x)],
-			[Action.MOVE_BACKWARD, (x) => state.setActive(Direction.BACKWARD, x)],
-			[Action.MOVE_RIGHT, (x) => state.setActive(Direction.RIGHT, x)],
-			[Action.MOVE_DOWN, (x) => state.setActive(Direction.DOWN, x)],
-			[Action.MOVE_UP, (x) => state.setActive(Direction.UP, x)],
-			[Action.BOOST, (x) => void (state.boost = x)]
+			["move-forward", (x) => state.setActive(Direction.FORWARD, x)],
+			["move-left", (x) => state.setActive(Direction.LEFT, x)],
+			["move-backward", (x) => state.setActive(Direction.BACKWARD, x)],
+			["move-right", (x) => state.setActive(Direction.RIGHT, x)],
+			["move-down", (x) => state.setActive(Direction.DOWN, x)],
+			["move-up", (x) => state.setActive(Direction.UP, x)],
+			["boost", (x) => void (state.boost = x)],
+			["pan", (x) => void (this.panning = x)],
+			["truck", (x) => void (this.trucking = x)]
 		]);
 
 		this.scalarDampers = Object.freeze([
@@ -295,7 +296,7 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 
 		if(v0.x !== 0.0 || v0.y !== 0.0 || v0.z !== 0.0) {
 
-			if(this.settings.general.mode === ControlMode.THIRD_PERSON) {
+			if(this.settings.general.mode === "third-person") {
 
 				// Update the target.
 				u.copy(this.target);
