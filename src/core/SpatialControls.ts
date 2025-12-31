@@ -117,9 +117,9 @@ export class SpatialControls extends EventDispatcher<BaseEventMap>
 		this.rotationManager = rotationManager;
 
 		const translationManager = new TranslationManager(settings, transformation);
+		inputManager.addEventListener("move", e => translationManager.handleEvent(e));
 		inputManager.addEventListener("activate", e => translationManager.handleEvent(e));
 		inputManager.addEventListener("deactivate", e => translationManager.handleEvent(e));
-		//inputManager.addEventListener("translate", e => translationManager.handleEvent(e));
 		this.translationManager = translationManager;
 
 		this.collisionManager = new CollisionManager(settings, transformation);
