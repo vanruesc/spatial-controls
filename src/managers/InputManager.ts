@@ -1,12 +1,13 @@
-import { Event, EventDispatcher, Vector2 } from "three";
+import { Event, EventDispatcher } from "three";
+import { Action } from "../core/Action.js";
 import { Disposable } from "../core/Disposable.js";
 import { MovementEvent } from "../events/MovementEvent.js";
-import { Settings } from "../settings/Settings.js";
-import { InputManagerEventMap } from "./InputManagerEventMap.js";
 import { KeyCode } from "../input/KeyCode.js";
 import { PointerBehavior } from "../input/PointerBehavior.js";
+import { Settings } from "../settings/Settings.js";
+import { InputManagerEventMap } from "./InputManagerEventMap.js";
 
-const screen = /* @__PURE__ */ new Vector2();
+const screen = { x: 0, y: 0 };
 
 /**
  * An input manager.
@@ -42,10 +43,16 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 	private readonly pointerEvents: Map<number, PointerEvent>;
 
 	/**
-	 * A collection of events that issued a pointer lock request.
+	 * A collection of deferred mouse events that are handled when the pointer lock state changes.
 	 */
 
-	private readonly pointerLockTriggers: Set<MouseEvent>;
+	private readonly deferredMouseEvents: Set<MouseEvent>;
+
+	/**
+	 * A collection of actions that are currently active.
+	 */
+
+	private readonly activeActions: Set<Action>;
 
 	// #endregion
 
@@ -75,7 +82,8 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 		this._enabled = false;
 
 		this.pointerEvents = new Map();
-		this.pointerLockTriggers = new Set();
+		this.deferredMouseEvents = new Set();
+		this.activeActions = new Set();
 
 		this.movementEvent = {
 			type: "move",
@@ -229,7 +237,8 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 	private resetInputState(): void {
 
 		this.pointerEvents.clear();
-		this.pointerLockTriggers.clear();
+		this.deferredMouseEvents.clear();
+		this.activeActions.clear();
 		this.unlockPointer();
 
 		this.dispatchEvent({
@@ -288,7 +297,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 	 * @param event - A pointer event.
 	 */
 
-	private handlePointerMoveEvent(event: PointerEvent): void {
+	private onPointerMove(event: PointerEvent): void {
 
 		if(this.pointerEvents.has(event.pointerId)) {
 
@@ -308,7 +317,8 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 			movementX = event.screenX - screen.x;
 			movementY = event.screenY - screen.y;
-			screen.set(event.screenX, event.screenY);
+			screen.x = event.screenX;
+			screen.y = event.screenY;
 
 		}
 
@@ -322,85 +332,122 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 	/**
 	 * Handles pointer lock change events.
-	 *
-	 * @param event - An event.
 	 */
 
-	private handlePointerLockChangeEvent(event: Event): void {
+	private onPointerLockChange(): void {
 
-		const pointerLocked = this.pointerLocked;
+		if(this.pointerLocked) {
 
-		for(const trigger of this.pointerLockTriggers) {
+			for(const event of this.deferredMouseEvents) {
 
-			this.handleMouseButtonEvent(trigger, pointerLocked);
+				this.onMouseDown(event);
+
+			}
+
+			return;
+
+		}
+
+		for(const event of this.deferredMouseEvents) {
+
+			this.onMouseUp(event);
 
 		}
 
-		if(!pointerLocked) {
-
-			this.pointerLockTriggers.clear();
-
-		}
+		this.deferredMouseEvents.clear();
 
 	}
 
 	/**
-	 * Handles mouse events.
+	 * Handles `mousedown` events.
 	 *
-	 * Note: mouse events are used because pointer events don't fire for other mouse buttons while a pointer is active.
+	 * Mouse events are used because pointer events don't fire for other mouse buttons while a pointer is active.
 	 *
 	 * @param event - A mouse event.
-	 * @param pressed - Whether the button has been pressed down.
 	 */
 
-	private handleMouseEvent(event: MouseEvent, pressed: boolean): void {
+	private onMouseDownNative(event: MouseEvent): void {
 
 		const behavior = this.settings.pointer.getBehavior(event.button);
 
 		if(behavior === PointerBehavior.LOCK) {
 
-			if(pressed) {
+			this.deferredMouseEvents.add(event);
+			void this.lockPointer();
 
-				this.pointerLockTriggers.add(event);
-				void this.lockPointer();
+			if(this.pointerLocked) {
 
-				if(this.pointerLocked) {
-
-					// Already locked by another pointer: trigger actions now.
-					this.handleMouseButtonEvent(event, true);
-
-				}
+				// Already locked by another pointer.
+				this.onMouseDown(event);
 
 			}
 
-		} else {
+			return;
 
-			if(pressed && behavior === PointerBehavior.LOCK_HOLD) {
+		}
 
-				void this.lockPointer();
+		if(behavior === PointerBehavior.LOCK_HOLD) {
 
-			}
+			void this.lockPointer();
 
-			this.handleMouseButtonEvent(event, pressed);
+		}
+
+		this.onMouseDown(event);
+
+	}
+
+	/**
+	 * Handles `mouseup` events.
+	 *
+	 * Mouse events are used because pointer events don't fire for other mouse buttons while a pointer is active.
+	 *
+	 * @param event - A mouse event.
+	 */
+
+	private onMouseUpNative(event: MouseEvent): void {
+
+		if(this.settings.pointer.getBehavior(event.button) !== PointerBehavior.LOCK) {
+
+			this.onMouseUp(event);
 
 		}
 
 	}
 
 	/**
-	 * Handles pseudo mouse button events triggered by touch/pen events.
-	 *
-	 * Note: pointer lock doesn't exist for touch/pen input.
+	 * Handles `mousedown` events.
 	 *
 	 * @param event - A mouse event.
-	 * @param pressed - Whether the button has been pressed down.
 	 */
 
-	private handleMouseButtonEvent(event: MouseEvent, pressed: boolean): void {
+	private onMouseDown(event: MouseEvent): void {
 
-		const actions = pressed ?
-			this.settings.pointerBindings.matchMouseEvent(event) :
-			this.settings.pointerBindings.match(event.button);
+		const actions = this.settings.pointerBindings.matchMouseEvent(event);
+
+		if(actions === undefined || actions.length === 0) {
+
+			return;
+
+		}
+
+		this.dispatchEvent({
+			type: "activate",
+			action: actions[0]
+		});
+
+		this.activeActions.add(actions[0]);
+
+	}
+
+	/**
+	 * Handles `mouseup` events.
+	 *
+	 * @param event - A mouse event.
+	 */
+
+	private onMouseUp(event: MouseEvent): void {
+
+		const actions = this.settings.pointerBindings.match(event.button);
 
 		if(actions === undefined || actions.length === 0) {
 
@@ -410,48 +457,49 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 		for(const action of actions) {
 
+			if(!this.activeActions.has(action)) {
+
+				continue;
+
+			}
+
 			this.dispatchEvent({
-				type: pressed ? "activate" : "deactivate",
+				type: "deactivate",
 				action
 			});
+
+			this.activeActions.delete(action);
 
 		}
 
 	}
 
 	/**
-	 * Handles pointer events.
+	 * Handles `pointerdown` events.
 	 *
 	 * @param event - A pointer event.
-	 * @param pressed - Whether the button has been pressed down.
 	 */
 
-	private handlePointerButtonEvent(event: PointerEvent, pressed: boolean): void {
+	private onPointerDown(event: PointerEvent): void {
 
-		if(!pressed) {
+		this.pointerEvents.set(event.pointerId, event);
 
-			this.pointerEvents.delete(event.pointerId);
+		screen.x = event.screenX;
+		screen.y = event.screenY;
 
-		} else {
+		if(!this.pointerLocked && this.settings.pointer.getBehavior(event.button) === PointerBehavior.DEFAULT) {
 
-			this.pointerEvents.set(event.pointerId, event);
-			screen.set(event.screenX, event.screenY);
-
-			if(!this.pointerLocked && this.settings.pointer.getBehavior(event.button) === PointerBehavior.DEFAULT) {
-
-				// The capture will be implicitly released after a pointerup or pointercancel event.
-				this.domElement?.setPointerCapture(event.pointerId);
-
-			}
+			// The capture will be implicitly released after a pointerup or pointercancel event.
+			this.domElement?.setPointerCapture(event.pointerId);
 
 		}
 
 		if(event.pointerType !== "mouse") {
 
 			// Handle touch/pen events like mouse events.
-			this.handleMouseButtonEvent(event, pressed);
+			this.onMouseDown(event);
 
-			// Prevent native simulated mouse events.
+			// Prevent simulated mouse events.
 			event.preventDefault();
 
 		}
@@ -459,12 +507,34 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 	}
 
 	/**
-	 * Handles contextmenu events.
+	 * Handles `pointerup` events.
 	 *
 	 * @param event - A pointer event.
 	 */
 
-	private handleContextMenuEvent(event: PointerEvent): void {
+	private onPointerUp(event: PointerEvent): void {
+
+		this.pointerEvents.delete(event.pointerId);
+
+		if(event.pointerType !== "mouse") {
+
+			// Handle touch/pen events like mouse events.
+			this.onMouseUp(event);
+
+			// Prevent simulated mouse events.
+			event.preventDefault();
+
+		}
+
+	}
+
+	/**
+	 * Handles `contextmenu` events.
+	 *
+	 * @param event - A pointer event.
+	 */
+
+	private onContextMenu(event: PointerEvent): void {
 
 		if(this.settings.pointerBindings.matchMouseEvent(event)?.length !== 0) {
 
@@ -475,12 +545,12 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 	}
 
 	/**
-	 * Handles wheel events.
+	 * Handles `wheel` events.
 	 *
 	 * @param event - A wheel event.
 	 */
 
-	private handleWheelEvent(event: WheelEvent): void {
+	private onWheel(event: WheelEvent): void {
 
 		const actions = this.settings.pointerBindings.matchWheelEvent(event);
 
@@ -492,29 +562,63 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 		event.preventDefault();
 
-		for(const action of actions) {
+		this.dispatchEvent({
+			type: "activate",
+			action: actions[0]
+		});
 
-			this.dispatchEvent({
-				type: "activate",
-				action
-			});
-
-		}
+		this.activeActions.add(actions[0]);
 
 	}
 
 	/**
-	 * Handles keyboard events.
+	 * Handles `keydown` events.
 	 *
 	 * @param event - A keyboard event.
-	 * @param pressed - Whether the key has been pressed down.
 	 */
 
-	private handleKeyboardEvent(event: KeyboardEvent, pressed: boolean): void {
+	private onKeyDown(event: KeyboardEvent): void {
 
-		const actions = pressed ?
-			this.settings.keyBindings.matchKeyboardEvent(event) :
-			this.settings.keyBindings.match(event.code as KeyCode);
+		if(event.repeat) {
+
+			return;
+
+		}
+
+		const actions = this.settings.keyBindings.matchKeyboardEvent(event);
+
+		if(actions === undefined || actions.length === 0) {
+
+			return;
+
+		}
+
+		event.preventDefault();
+
+		this.dispatchEvent({
+			type: "activate",
+			action: actions[0]
+		});
+
+		this.activeActions.add(actions[0]);
+
+	}
+
+	/**
+	 * Handles `keyup` events.
+	 *
+	 * @param event - A keyboard event.
+	 */
+
+	private onKeyUp(event: KeyboardEvent): void {
+
+		if(event.repeat) {
+
+			return;
+
+		}
+
+		const actions = this.settings.keyBindings.match(event.code as KeyCode);
 
 		if(actions === undefined || actions.length === 0) {
 
@@ -526,22 +630,30 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 		for(const action of actions) {
 
+			if(!this.activeActions.has(action)) {
+
+				continue;
+
+			}
+
 			this.dispatchEvent({
-				type: pressed ? "activate" : "deactivate",
+				type: "deactivate",
 				action
 			});
+
+			this.activeActions.delete(action);
 
 		}
 
 	}
 
 	/**
-	 * Handles pointer cancel and leave events.
+	 * Handles `pointercancel` events.
 	 *
 	 * @param event - A pointer event.
 	 */
 
-	private handlePointerCancelEvent(event: PointerEvent): void {
+	private onPointerCancel(event: PointerEvent): void {
 
 		this.resetInputState();
 
@@ -551,7 +663,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 	 * Cancels active interactions on visibility loss.
 	 */
 
-	private handleVisibilityChangeEvent(): void {
+	private onVisibilityChange(): void {
 
 		if(document.hidden) {
 
@@ -566,51 +678,51 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 		switch(event.type) {
 
 			case "pointermove":
-				this.handlePointerMoveEvent(event as PointerEvent);
+				this.onPointerMove(event as PointerEvent);
 				break;
 
 			case "mousedown":
-				this.handleMouseEvent(event as MouseEvent, true);
+				this.onMouseDownNative(event as MouseEvent);
 				break;
 
 			case "mouseup":
-				this.handleMouseEvent(event as MouseEvent, false);
+				this.onMouseUpNative(event as MouseEvent);
 				break;
 
 			case "pointerdown":
-				this.handlePointerButtonEvent(event as PointerEvent, true);
+				this.onPointerDown(event as PointerEvent);
 				break;
 
 			case "pointerup":
-				this.handlePointerButtonEvent(event as PointerEvent, false);
+				this.onPointerUp(event as PointerEvent);
 				break;
 
 			case "pointercancel":
-				this.handlePointerCancelEvent(event as PointerEvent);
+				this.onPointerCancel(event as PointerEvent);
 				break;
 
 			case "pointerlockchange":
-				this.handlePointerLockChangeEvent(event);
+				this.onPointerLockChange();
 				break;
 
 			case "contextmenu":
-				this.handleContextMenuEvent(event as PointerEvent);
+				this.onContextMenu(event as PointerEvent);
 				break;
 
 			case "wheel":
-				this.handleWheelEvent(event as WheelEvent);
+				this.onWheel(event as WheelEvent);
 				break;
 
 			case "keydown":
-				this.handleKeyboardEvent(event as KeyboardEvent, true);
+				this.onKeyDown(event as KeyboardEvent);
 				break;
 
 			case "keyup":
-				this.handleKeyboardEvent(event as KeyboardEvent, false);
+				this.onKeyUp(event as KeyboardEvent);
 				break;
 
 			case "visibilitychange":
-				this.handleVisibilityChangeEvent();
+				this.onVisibilityChange();
 				break;
 
 		}
