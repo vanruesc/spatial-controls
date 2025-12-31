@@ -2,7 +2,6 @@ import { EventDispatcher, Vector3 } from "three";
 import { Updatable } from "../core/Updatable.js";
 import { Settings } from "../settings/Settings.js";
 import { BaseEventMap } from "../core/BaseEventMap.js";
-import { ControlMode } from "../core/ControlMode.js";
 import { Constraint } from "../core/Constraint.js";
 import { TransformationData } from "../core/TransformationData.js";
 
