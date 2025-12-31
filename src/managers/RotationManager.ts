@@ -1,6 +1,5 @@
 import { BaseEvent, EventDispatcher, Matrix4, Quaternion, Spherical, Vector3 } from "three";
 import { Action } from "../core/Action.js";
-import { ControlMode } from "../core/ControlMode.js";
 import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
 import { TransformationData } from "../core/TransformationData.js";
 import { Updatable } from "../core/Updatable.js";
@@ -476,23 +475,6 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	// #region Event Handling
 
 	/**
-	 * Handles action events.
-	 *
-	 * @param event - An event.
-	 * @param activate - True if the action was activated, false if it was deactivated.
-	 */
-
-	private onAction(event: ActionEvent, activate: boolean): void {
-
-		if(this.strategies.has(event.action)) {
-
-			this.strategies.get(event.action)!(activate);
-
-		}
-
-	}
-
-	/**
 	 * Handles movement events.
 	 *
 	 * @param event - An event.
@@ -516,12 +498,42 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	}
 
 	/**
-	 * Handles setting changes.
+	 * Handles `activate` events.
 	 *
 	 * @param event - An event.
 	 */
 
-	private onSettingsChanged(event: BaseEvent): void {
+	private onActivate(event: ActionEvent): void {
+
+		if(this.strategies.has(event.action)) {
+
+			this.strategies.get(event.action)!(true);
+
+		}
+
+	}
+
+	/**
+	 * Handles `deactivate` events.
+	 *
+	 * @param event - An event.
+	 */
+
+	private onDeactivate(event: ActionEvent): void {
+
+		if(this.strategies.has(event.action)) {
+
+			this.strategies.get(event.action)!(false);
+
+		}
+
+	}
+
+	/**
+	 * Handles setting changes.
+	 */
+
+	private onSettingsChange(): void {
 
 		const settings = this.settings;
 		const general = settings.general;
@@ -570,15 +582,15 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 				break;
 
 			case "activate":
-				this.onAction(event as ActionEvent, true);
+				this.onActivate(event as ActionEvent);
 				break;
 
 			case "deactivate":
-				this.onAction(event as ActionEvent, false);
+				this.onDeactivate(event as ActionEvent);
 				break;
 
 			case "change":
-				this.onSettingsChanged(event);
+				this.onSettingsChange();
 				break;
 
 			case "reset":
