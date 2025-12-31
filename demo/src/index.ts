@@ -25,7 +25,7 @@ import {
 	WebGLRenderer
 } from "three";
 
-import { Action, ControlMode, Input, KeyCode, PointerBehavior, PointerButton, SpatialControls } from "spatial-controls";
+import { Input, KeyCode, PointerBehavior, PointerButton, SpatialControls } from "spatial-controls";
 import { Pane } from "tweakpane";
 import { calculateVerticalFoV, getSkyboxUrls } from "./utils/index.js";
 
@@ -92,7 +92,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 	const camera = new PerspectiveCamera();
 	const controls = new SpatialControls({ spatial: camera, domElement: renderer.domElement });
 	const settings = controls.settings;
-	settings.general.mode = ControlMode.THIRD_PERSON;
+	settings.general.mode = "third-person";
 	settings.pointer.setBehavior(PointerButton.MAIN, PointerBehavior.DEFAULT);
 	settings.rotation.sensitivity = 2.2;
 	settings.rotation.damping = 0.1;
@@ -104,7 +104,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 	settings.dolly.sensitivity = 0.1;
 	settings.dolly.damping = 0.2;
 
-	settings.keyBindings.set(new Input<KeyCode>("Space", { modifiers: ["Ctrl"] }), Action.MOVE_DOWN);
+	settings.keyBindings.set(new Input<KeyCode>("Space", { modifiers: ["Ctrl"] }), "move-down");
 
 	const box = new Box3();
 	box.min.set(-2, 0, -4);
@@ -177,7 +177,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 		s.theta -= timer.getDelta() * 0.25;
 		s.theta %= Math.PI * 2.0;
 
-		if(controls.settings.general.mode === ControlMode.THIRD_PERSON) {
+		if(controls.settings.general.mode === "third-person") {
 
 			controls.target.setFromSpherical(s);
 			controls.target.y = y;
@@ -197,10 +197,15 @@ window.addEventListener("load", () => void load().then((assets) => {
 		expanded: container.clientWidth >= 800
 	});
 
+	const controlModeOptions = {
+		"first-person": "first-person",
+		"third-person": "third-person"
+	};
+
 	let folder = pane.addFolder({ title: "General" });
 	folder.addBinding(controls, "enabled");
-	folder.addBinding(settings.general, "mode", { options: ControlMode })
-		.on("change", (e) => void (sphere.visible = (e.value === ControlMode.THIRD_PERSON)));
+	folder.addBinding(settings.general, "mode", { options: controlModeOptions })
+		.on("change", (e) => void (sphere.visible = (e.value === "third-person")));
 
 	folder = pane.addFolder({ title: "Pointer" });
 	folder.addBinding(params, "behaviorMain", { options: PointerBehavior })
