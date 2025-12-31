@@ -10,6 +10,7 @@ import { ScalarDamper } from "../math/ScalarDamper.js";
 import { Settings } from "../settings/Settings.js";
 import { MovementState } from "./MovementState.js";
 import { TranslationManagerEventMap } from "./TranslationManagerEventMap.js";
+import { TranslationEvent } from "../events/TranslationEvent.js";
 
 const u = /* @__PURE__ */ new Vector3();
 const v = /* @__PURE__ */ new Vector3();
@@ -74,10 +75,16 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 	// #region Reusable Events
 
 	/**
-	 * A reusable update event.
+	 * An update event.
 	 */
 
 	private readonly updateEvent: BaseEvent<"update">;
+
+	/**
+	 * A translation event.
+	 */
+
+	private readonly translationEvent: TranslationEvent;
 
 	// #endregion
 
@@ -143,6 +150,7 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 		]);
 
 		this.updateEvent = { type: "update" };
+		this.translationEvent = { type: "translate", deltaX: 0, deltaY: 0, deltaZ: 0 };
 
 		this.timestamp = 0;
 		this.panning = false;

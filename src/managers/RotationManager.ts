@@ -337,8 +337,14 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 
 		s.theta = rotation.invertedX ? s.theta + theta : s.theta - theta;
 		s.phi = orbitXorInvertedY ? s.phi - phi : s.phi + phi;
+		this.restrictAngles();
 
-		return this.restrictAngles();
+		const rotationEvent = this.rotationEvent;
+		rotationEvent.theta = s.theta;
+		rotationEvent.phi = s.phi;
+		this.dispatchEvent(rotationEvent);
+
+		return this;
 
 	}
 
