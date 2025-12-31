@@ -5,6 +5,7 @@ import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
 import { TransformationData } from "../core/TransformationData.js";
 import { Updatable } from "../core/Updatable.js";
 import { ActionEvent } from "../events/ActionEvent.js";
+import { MovementEvent } from "../events/MovementEvent.js";
 import { ScalarDamper } from "../math/ScalarDamper.js";
 import { Settings } from "../settings/Settings.js";
 import { MovementState } from "./MovementState.js";
@@ -47,6 +48,12 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 	private readonly velocity1: Vector3;
 
 	/**
+	 * The target position.
+	 */
+
+	private readonly position1: Vector3;
+
+	/**
 	 * The movement state.
 	 */
 
@@ -64,6 +71,18 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 
 	private readonly scalarDampers: readonly ScalarDamper[];
 
+	// #region Reusable Events
+
+	/**
+	 * A reusable update event.
+	 */
+
+	private readonly updateEvent: BaseEvent<"update">;
+
+	// #endregion
+
+	// #region State
+
 	/**
 	 * A timestamp in milliseconds for calculating the elapsed time since the last update.
 	 */
@@ -71,10 +90,18 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 	private timestamp: number;
 
 	/**
-	 * A reusable update event.
+	 * Determines whether panning is currently enabled.
 	 */
 
-	private readonly updateEvent: BaseEvent<"update">;
+	private panning: boolean;
+
+	/**
+	 * Determines whether trucking is currently enabled.
+	 */
+
+	private trucking: boolean;
+
+	// #endregion
 
 	/**
 	 * Constructs a new translation manager.
@@ -92,6 +119,7 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 
 		this.velocity0 = new Vector3();
 		this.velocity1 = new Vector3();
+		this.position1 = new Vector3();
 
 		const state = new MovementState();
 		this.movementState = state;
@@ -114,10 +142,15 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 			new ScalarDamper()
 		]);
 
-		this.timestamp = 0;
 		this.updateEvent = { type: "update" };
 
+		this.timestamp = 0;
+		this.panning = false;
+		this.trucking = false;
+
 	}
+
+	// #region Getters
 
 	/**
 	 * The position.
@@ -149,6 +182,8 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 
 	}
 
+	// #endregion
+
 	/**
 	 * Resets the current velocity.
 	 */
@@ -166,18 +201,55 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 
 	}
 
+	// #region Event Handling
+
 	/**
-	 * Handles action events.
+	 * Handles movement events.
 	 *
 	 * @param event - An event.
-	 * @param activate - True if the action was activated, false if it was deactivated.
 	 */
 
-	private onAction(event: ActionEvent, activate: boolean): void {
+	private onMove(event: MovementEvent): void {
+
+		if(this.panning) {
+
+			console.log("panning");
+
+		} else if(this.trucking) {
+
+			console.log("trucking");
+
+		}
+
+	}
+
+	/**
+	 * Handles `activate` events.
+	 *
+	 * @param event - An event.
+	 */
+
+	private onActivate(event: ActionEvent): void {
 
 		if(this.strategies.has(event.action)) {
 
-			this.strategies.get(event.action)!(activate);
+			this.strategies.get(event.action)!(true);
+
+		}
+
+	}
+
+	/**
+	 * Handles `deactivate` events.
+	 *
+	 * @param event - An event.
+	 */
+
+	private onDeactivate(event: ActionEvent): void {
+
+		if(this.strategies.has(event.action)) {
+
+			this.strategies.get(event.action)!(false);
 
 		}
 
@@ -187,7 +259,7 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 	 * Handles setting changes.
 	 */
 
-	private onSettingsChanged(): void {
+	private onSettingsChange(): void {
 
 		if(!this.settings.translation.enabled) {
 
@@ -197,25 +269,31 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 
 	}
 
-	handleEvent(event: Event | ActionEvent): void {
+	handleEvent(event: Event | ActionEvent | MovementEvent): void {
 
 		switch(event.type) {
 
+			case "move":
+				this.onMove(event as MovementEvent);
+				break;
+
 			case "activate":
-				this.onAction((event as ActionEvent), true);
+				this.onActivate((event as ActionEvent));
 				break;
 
 			case "deactivate":
-				this.onAction((event as ActionEvent), false);
+				this.onDeactivate((event as ActionEvent));
 				break;
 
 			case "change":
-				this.onSettingsChanged();
+				this.onSettingsChange();
 				break;
 
 		}
 
 	}
+
+	// #endregion
 
 	/**
 	 * Changes the position based on the current velocity and elapsed time.
