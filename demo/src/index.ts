@@ -93,7 +93,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 	const controls = new SpatialControls({ spatial: camera, domElement: renderer.domElement });
 	const settings = controls.settings;
 	settings.general.mode = "third-person";
-	settings.pointer.setBehavior(PointerButton.MAIN, PointerBehavior.DEFAULT);
+	settings.input.pointer.setBehavior(PointerButton.MAIN, PointerBehavior.DEFAULT);
 	settings.rotation.sensitivity = 2.2;
 	settings.rotation.damping = 0.1;
 	settings.rotation.minPolarAngle = Number.NEGATIVE_INFINITY;
@@ -104,7 +104,7 @@ window.addEventListener("load", () => void load().then((assets) => {
 	settings.dolly.sensitivity = 0.1;
 	settings.dolly.damping = 0.2;
 
-	settings.keyBindings.set(new Input<KeyCode>("Space", { modifiers: ["Ctrl"] }), "move-down");
+	settings.input.keyBindings.set(new Input<KeyCode>("Space", { modifiers: ["Ctrl"] }), "move-down");
 
 	const box = new Box3();
 	box.min.set(-2, 0, -4);
@@ -155,8 +155,8 @@ window.addEventListener("load", () => void load().then((assets) => {
 	const params = {
 		orbitEnabled: false,
 		constraintEnabled: false,
-		behaviorMain: settings.pointer.getBehavior(PointerButton.MAIN),
-		behaviorSecondary: settings.pointer.getBehavior(PointerButton.SECONDARY),
+		behaviorMain: settings.input.pointer.getBehavior(PointerButton.MAIN),
+		behaviorSecondary: settings.input.pointer.getBehavior(PointerButton.SECONDARY),
 		rotation: {
 			"min azim. angle": -Math.PI,
 			"max azim. angle": Math.PI,
@@ -209,9 +209,9 @@ window.addEventListener("load", () => void load().then((assets) => {
 
 	folder = pane.addFolder({ title: "Pointer" });
 	folder.addBinding(params, "behaviorMain", { options: PointerBehavior })
-		.on("change", (e) => settings.pointer.setBehavior(PointerButton.MAIN, e.value));
+		.on("change", (e) => settings.input.pointer.setBehavior(PointerButton.MAIN, e.value));
 	folder.addBinding(params, "behaviorSecondary", { options: PointerBehavior })
-		.on("change", (e) => settings.pointer.setBehavior(PointerButton.SECONDARY, e.value));
+		.on("change", (e) => settings.input.pointer.setBehavior(PointerButton.SECONDARY, e.value));
 
 	folder = pane.addFolder({ title: "Sensitivity" });
 	folder.addBinding(settings.rotation, "sensitivityX", { label: "rotation X", min: 0.1, max: 3.0, step: 0.01 });
