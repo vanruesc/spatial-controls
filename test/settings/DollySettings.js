@@ -1,16 +1,15 @@
 import test from "ava";
-import { Bindings } from "spatial-controls";
+import { DollySettings } from "spatial-controls";
 
 test("can be instantiated", t => {
 
-	const object = new Bindings();
-	t.pass();
+	t.truthy(new DollySettings());
 
 });
 
 test("can be cloned", t => {
 
-	const object = new Bindings();
+	const object = new DollySettings();
 	object.clone();
 	t.pass();
 

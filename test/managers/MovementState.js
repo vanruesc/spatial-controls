@@ -3,7 +3,6 @@ import { MovementState } from "spatial-controls";
 
 test("can be instantiated", t => {
 
-	const object = new MovementState();
-	t.pass();
+	t.truthy(new MovementState());
 
 });
