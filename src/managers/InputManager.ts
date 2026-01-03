@@ -89,12 +89,14 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 		this.movementEvent = {
 			type: "move",
 			pointerCount: 0,
+			deltaX: 0,
+			deltaY: 0,
 			x: 0,
 			y: 0
 		};
 
 		this.settings = settings;
-		settings.addEventListener("change", (e: unknown) => this.handleEvent(e as Event));
+		settings.addEventListener("change", e => this.handleEvent(e));
 
 		this.domElement = domElement;
 		this.enabled = true;
@@ -325,9 +327,11 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 		const movementEvent = this.movementEvent;
 		const sensitivity = this.settings.pointer.sensitivity;
-		movementEvent.x = movementX * sensitivity;
-		movementEvent.y = movementY * sensitivity;
 		movementEvent.pointerCount = this.pointerEvents.size;
+		movementEvent.deltaX = movementX * sensitivity;
+		movementEvent.deltaY = movementY * sensitivity;
+		movementEvent.x = event.screenX;
+		movementEvent.y = event.screenY;
 		this.dispatchEvent(movementEvent);
 
 	}

@@ -10,7 +10,6 @@ import { ScalarDamper } from "../math/ScalarDamper.js";
 import { Settings } from "../settings/Settings.js";
 import { MovementState } from "./MovementState.js";
 import { TranslationManagerEventMap } from "./TranslationManagerEventMap.js";
-import { TranslationEvent } from "../events/TranslationEvent.js";
 
 const u = /* @__PURE__ */ new Vector3();
 const v = /* @__PURE__ */ new Vector3();
@@ -75,16 +74,22 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 	// #region Reusable Events
 
 	/**
-	 * An update event.
+	 * A translation change event.
 	 */
 
-	private readonly updateEvent: BaseEvent<"update">;
+	private readonly translationEvent: BaseEvent<"translate">;
 
 	/**
-	 * A translation event.
+	 * A translation start event.
 	 */
 
-	private readonly translationEvent: TranslationEvent;
+	private readonly translationStartEvent: BaseEvent<"translationstart">;
+
+	/**
+	 * A translation end event.
+	 */
+
+	private readonly translationEndEvent: BaseEvent<"translationend">;
 
 	// #endregion
 
@@ -123,7 +128,7 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 
 		this.transformation = transformation;
 		this.settings = settings;
-		this.settings.addEventListener("change", (e) => this.handleEvent(e));
+		this.settings.addEventListener("change", e => this.handleEvent(e));
 
 		this.velocity0 = new Vector3();
 		this.velocity1 = new Vector3();
@@ -150,8 +155,9 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 			new ScalarDamper()
 		]);
 
-		this.updateEvent = { type: "update" };
-		this.translationEvent = { type: "translate", deltaX: 0, deltaY: 0, deltaZ: 0 };
+		this.translationEvent = { type: "translate" };
+		this.translationStartEvent = { type: "translationstart" };
+		this.translationEndEvent = { type: "translationend" };
 
 		this.timestamp = 0;
 		this.panning = false;
@@ -223,12 +229,6 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 		if(this.panning) {
 
 			console.log("panning");
-
-			const translationEvent = this.translationEvent;
-			translationEvent.deltaX = 0;
-			translationEvent.deltaY = 0;
-			translationEvent.deltaZ = 0;
-			this.dispatchEvent(translationEvent);
 
 		} else if(this.trucking) {
 
@@ -336,7 +336,7 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 
 		position.add(v);
 
-		this.dispatchEvent(this.updateEvent);
+		this.dispatchEvent(this.translationEvent);
 
 	}
 

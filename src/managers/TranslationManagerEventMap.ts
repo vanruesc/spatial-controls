@@ -1,5 +1,4 @@
-import { BaseEventMap } from "../core/BaseEventMap.js";
-import { TranslationEvent } from "../events/TranslationEvent.js";
+import { BaseEvent } from "three";
 
 /**
  * Events emitted by the translation manager.
@@ -7,24 +6,24 @@ import { TranslationEvent } from "../events/TranslationEvent.js";
  * @group Managers
  */
 
-export interface TranslationManagerEventMap extends BaseEventMap {
+export interface TranslationManagerEventMap {
 
 	/**
-	 * A general translation change.
+	 * A translation change event.
 	 */
 
-	translate: TranslationEvent;
+	translate: BaseEvent<"translate">;
 
 	/**
-	 * A planar position change.
+	 * A translation start event.
 	 */
 
-	truck: TranslationEvent;
+	translationstart: BaseEvent<"translationstart">;
 
 	/**
-	 * A screen-aligned position change.
+	 * A translation end event.
 	 */
 
-	pan: TranslationEvent;
+	translationend: BaseEvent<"translationend">;
 
 }

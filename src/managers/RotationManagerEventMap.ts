@@ -1,5 +1,4 @@
-import { BaseEventMap } from "../core/BaseEventMap.js";
-import { SphericalRotationEvent } from "../events/SphericalRotationEvent.js";
+import { BaseEvent } from "three";
 
 /**
  * Events emitted by the rotation manager.
@@ -7,12 +6,24 @@ import { SphericalRotationEvent } from "../events/SphericalRotationEvent.js";
  * @group Managers
  */
 
-export interface RotationManagerEventMap extends BaseEventMap {
+export interface RotationManagerEventMap {
 
 	/**
-	 * A spherical rotation change.
+	 * A rotation change event.
 	 */
 
-	rotate: SphericalRotationEvent;
+	rotate: BaseEvent<"rotate">;
+
+	/**
+	 * A rotation start event.
+	 */
+
+	rotationstart: BaseEvent<"rotationstart">;
+
+	/**
+	 * A rotation end event.
+	 */
+
+	rotationend: BaseEvent<"rotationend">;
 
 }

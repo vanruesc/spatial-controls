@@ -15,13 +15,25 @@ export interface MovementEvent extends BaseEvent<"move"> {
 	pointerCount: number;
 
 	/**
-	 * The position change along the X-Axis.
+	 * The position change along the X-axis.
+	 */
+
+	deltaX: number;
+
+	/**
+	 * The position change along the Y-axis.
+	 */
+
+	deltaY: number;
+
+	/**
+	 * The position on the X-axis.
 	 */
 
 	x: number;
 
 	/**
-	 * The position change along the Y-Axis.
+	 * The position on the Y-axis.
 	 */
 
 	y: number;

@@ -1,9 +1,10 @@
-import { EventDispatcher, Vector3 } from "three";
-import { Updatable } from "../core/Updatable.js";
-import { Settings } from "../settings/Settings.js";
-import { BaseEventMap } from "../core/BaseEventMap.js";
+import { BaseEvent, EventDispatcher, Vector3 } from "three";
 import { Constraint } from "../core/Constraint.js";
 import { TransformationData } from "../core/TransformationData.js";
+import { Updatable } from "../core/Updatable.js";
+import { Settings } from "../settings/Settings.js";
+import { CollisionManagerEventMap } from "./CollisionManagerEventMap.js";
+import { Collider } from "../core/Collider.js";
 
 const v = /* @__PURE__ */ new Vector3();
 
@@ -30,11 +31,10 @@ function applyConstraints(p: Vector3, constraints: Set<Constraint<Vector3>>): Ve
 /**
  * A collision manager.
  *
- * @experimental
  * @group Managers
  */
 
-export class CollisionManager extends EventDispatcher<BaseEventMap> implements Updatable {
+export class CollisionManager extends EventDispatcher<CollisionManagerEventMap> implements Updatable {
 
 	/**
 	 * The settings.
@@ -57,10 +57,27 @@ export class CollisionManager extends EventDispatcher<BaseEventMap> implements U
 	/**
 	 * Colliders to consider for collision tests.
 	 *
+	 * @experimental
 	 * @todo NYI
 	 */
 
-	private readonly colliders: Set<unknown>;
+	private readonly colliders: Set<Collider>;
+
+	// #region Reusable Events
+
+	/**
+	 * A constrain event.
+	 */
+
+	private readonly constrainEvent: BaseEvent<"constrain">;
+
+	/**
+	 * A collision event.
+	 */
+
+	private readonly collisionEvent: BaseEvent<"collision">;
+
+	// #endregion
 
 	/**
 	 * Constructs a new translation manager.
@@ -77,6 +94,9 @@ export class CollisionManager extends EventDispatcher<BaseEventMap> implements U
 		this.transformation = transformation;
 		this.constraints = new Set();
 		this.colliders = new Set();
+
+		this.constrainEvent = { type: "constrain" };
+		this.collisionEvent = { type: "collision" };
 
 	}
 
@@ -98,15 +118,27 @@ export class CollisionManager extends EventDispatcher<BaseEventMap> implements U
 
 			// Constrain the target.
 			v.copy(transformation.target);
-			transformation.target.copy(applyConstraints(transformation.target, this.constraints));
+			applyConstraints(transformation.target, this.constraints);
 
-			// Move the position together with the target.
-			transformation.position.add(v.subVectors(transformation.target, v));
+			if(!transformation.target.equals(v)) {
 
-		} else {
+				// Move the position together with the target.
+				transformation.position.add(v.subVectors(transformation.target, v));
+				this.dispatchEvent(this.constrainEvent);
 
-			// Constrain the position.
-			transformation.position.copy(applyConstraints(transformation.position, this.constraints));
+			}
+
+			return;
+
+		}
+
+		// Constrain the position.
+		v.copy(transformation.position);
+		applyConstraints(transformation.position, this.constraints);
+
+		if(!transformation.position.equals(v)) {
+
+			this.dispatchEvent(this.constrainEvent);
 
 		}
 
@@ -123,6 +155,8 @@ export class CollisionManager extends EventDispatcher<BaseEventMap> implements U
 			return;
 
 		}
+
+		this.dispatchEvent(this.collisionEvent);
 
 	}
 

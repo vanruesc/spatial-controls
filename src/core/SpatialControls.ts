@@ -1,7 +1,6 @@
 import { Event, EventDispatcher, Quaternion, Vector3 } from "three";
 import { Settings } from "../settings/Settings.js";
 import { Constraint } from "./Constraint.js";
-import { BaseEventMap } from "./BaseEventMap.js";
 import { Disposable } from "./Disposable.js";
 import { Updatable } from "./Updatable.js";
 import { Spatial } from "./Spatial.js";
@@ -10,8 +9,25 @@ import { CollisionManager } from "../managers/CollisionManager.js";
 import { InputManager } from "../managers/InputManager.js";
 import { RotationManager } from "../managers/RotationManager.js";
 import { TranslationManager } from "../managers/TranslationManager.js";
+import { RotationManagerEventMap } from "../managers/RotationManagerEventMap.js";
+import { TranslationManagerEventMap } from "../managers/TranslationManagerEventMap.js";
+import { CollisionManagerEventMap } from "../managers/CollisionManagerEventMap.js";
 
 const v = /* @__PURE__ */ new Vector3();
+
+/**
+ * SpatialControls events.
+ */
+
+export type SpatialControlsEventMap = (
+	RotationManagerEventMap &
+	TranslationManagerEventMap &
+	CollisionManagerEventMap
+);
+
+/**
+ * SpatialControls options.
+ */
 
 export interface SpatialControlsOptions {
 
@@ -37,7 +53,7 @@ export interface SpatialControlsOptions {
  * @group Core
  */
 
-export class SpatialControls extends EventDispatcher<BaseEventMap>
+export class SpatialControls extends EventDispatcher<SpatialControlsEventMap>
 	implements Disposable, EventListenerObject, Updatable {
 
 	/**
@@ -102,11 +118,10 @@ export class SpatialControls extends EventDispatcher<BaseEventMap>
 		this.previousTransformation = new TransformationData(transformation);
 
 		const settings = new Settings();
-		settings.addEventListener("change", (e) => this.handleEvent(e));
+		settings.addEventListener("change", e => this.handleEvent(e));
 		this.settings = settings;
 
 		const inputManager = new InputManager(settings.input, domElement);
-		inputManager.addEventListener("update", e => this.dispatchEvent(e));
 		this.inputManager = inputManager;
 
 		const rotationManager = new RotationManager(settings, transformation);
@@ -120,9 +135,21 @@ export class SpatialControls extends EventDispatcher<BaseEventMap>
 		inputManager.addEventListener("move", e => translationManager.handleEvent(e));
 		inputManager.addEventListener("activate", e => translationManager.handleEvent(e));
 		inputManager.addEventListener("deactivate", e => translationManager.handleEvent(e));
+		inputManager.addEventListener("reset", e => translationManager.handleEvent(e));
 		this.translationManager = translationManager;
 
-		this.collisionManager = new CollisionManager(settings, transformation);
+		const collisionManager = new CollisionManager(settings, transformation);
+		this.collisionManager = collisionManager;
+
+		// Forward events.
+		rotationManager.addEventListener("rotate", e => this.dispatchEvent(e));
+		rotationManager.addEventListener("rotationstart", e => this.dispatchEvent(e));
+		rotationManager.addEventListener("rotationend", e => this.dispatchEvent(e));
+		translationManager.addEventListener("translate", e => this.dispatchEvent(e));
+		translationManager.addEventListener("translationstart", e => this.dispatchEvent(e));
+		translationManager.addEventListener("translationend", e => this.dispatchEvent(e));
+		collisionManager.addEventListener("constrain", e => this.dispatchEvent(e));
+		collisionManager.addEventListener("collision", e => this.dispatchEvent(e));
 
 	}
 

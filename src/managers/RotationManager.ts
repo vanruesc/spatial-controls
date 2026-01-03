@@ -5,7 +5,6 @@ import { TransformationData } from "../core/TransformationData.js";
 import { Updatable } from "../core/Updatable.js";
 import { ActionEvent } from "../events/ActionEvent.js";
 import { MovementEvent } from "../events/MovementEvent.js";
-import { SphericalRotationEvent } from "../events/SphericalRotationEvent.js";
 import { ScalarDamper } from "../math/ScalarDamper.js";
 import { Settings } from "../settings/Settings.js";
 import { RotationManagerEventMap } from "./RotationManagerEventMap.js";
@@ -63,16 +62,22 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	// #region Reusable Events
 
 	/**
-	 * An update event.
+	 * A rotation change event.
 	 */
 
-	private readonly updateEvent: BaseEvent<"update">;
+	private readonly rotationEvent: BaseEvent<"rotate">;
 
 	/**
-	 * A rotation event.
+	 * A rotation start event.
 	 */
 
-	private readonly rotationEvent: SphericalRotationEvent;
+	private readonly rotationStartEvent: BaseEvent<"rotationstart">;
+
+	/**
+	 * A rotation end event.
+	 */
+
+	private readonly rotationEndEvent: BaseEvent<"rotationend">;
 
 	// #endregion
 
@@ -105,7 +110,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 
 		this.transformation = transformation;
 		this.settings = settings;
-		this.settings.addEventListener("change", (e) => this.handleEvent(e));
+		this.settings.addEventListener("change", e => this.handleEvent(e));
 
 		this.spherical0 = new Spherical();
 		this.spherical1 = new Spherical();
@@ -122,8 +127,9 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 			new ScalarDamper()
 		]);
 
-		this.updateEvent = { type: "update" };
-		this.rotationEvent = { type: "rotate", theta: 0, phi: 0 };
+		this.rotationEvent = { type: "rotate" };
+		this.rotationStartEvent = { type: "rotationstart" };
+		this.rotationEndEvent = { type: "rotationend" };
 
 		this.timestamp = 0;
 		this.rotating = false;
@@ -313,7 +319,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 		}
 
 		this.quaternion.setFromRotationMatrix(m);
-		this.dispatchEvent(this.updateEvent);
+		this.dispatchEvent(this.rotationEvent);
 
 		return this;
 
@@ -339,11 +345,6 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 		s.theta = rotation.invertedX ? s.theta + theta : s.theta - theta;
 		s.phi = orbitXorInvertedY ? s.phi - phi : s.phi + phi;
 		this.restrictAngles();
-
-		const rotationEvent = this.rotationEvent;
-		rotationEvent.theta = s.theta;
-		rotationEvent.phi = s.phi;
-		this.dispatchEvent(rotationEvent);
 
 		return this;
 
@@ -498,8 +499,8 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 		const settings = this.settings;
 
 		this.adjustSpherical(
-			event.x * settings.rotation.sensitivityX,
-			event.y * settings.rotation.sensitivityY
+			event.deltaX * settings.rotation.sensitivityX,
+			event.deltaY * settings.rotation.sensitivityY
 		);
 
 	}
