@@ -614,12 +614,6 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 
 	private onKeyUp(event: KeyboardEvent): void {
 
-		if(event.repeat) {
-
-			return;
-
-		}
-
 		const actions = this.settings.keyBindings.match(event.code as KeyCode);
 
 		if(actions === undefined || actions.length === 0) {
