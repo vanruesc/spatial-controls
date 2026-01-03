@@ -124,8 +124,6 @@ export class SpatialControls extends EventDispatcher<BaseEventMap>
 
 		this.collisionManager = new CollisionManager(settings, transformation);
 
-		//this.lookAt(transformation.target); // is this necessary?
-
 	}
 
 	/**

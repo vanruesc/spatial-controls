@@ -105,6 +105,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 
 		this.transformation = transformation;
 		this.settings = settings;
+		this.settings.addEventListener("change", (e) => this.handleEvent(e));
 
 		this.spherical0 = new Spherical();
 		this.spherical1 = new Spherical();
