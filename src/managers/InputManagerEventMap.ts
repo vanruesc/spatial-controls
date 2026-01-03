@@ -1,5 +1,4 @@
 import { BaseEvent } from "three";
-import { BaseEventMap } from "../core/BaseEventMap.js";
 import { ActionEvent } from "../events/ActionEvent.js";
 import { MovementEvent } from "../events/MovementEvent.js";
 
@@ -9,7 +8,7 @@ import { MovementEvent } from "../events/MovementEvent.js";
  * @group Managers
  */
 
-export interface InputManagerEventMap extends BaseEventMap {
+export interface InputManagerEventMap {
 
 	/**
 	 * Indicates that a specific action was activated.

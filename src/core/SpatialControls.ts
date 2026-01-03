@@ -48,8 +48,6 @@ export interface SpatialControlsOptions {
 /**
  * Spatial controls for 3D translation and rotation.
  *
- * This class emits events of type {@link EVENT_UPDATE} when the position or quaternion is changed.
- *
  * @group Core
  */
 

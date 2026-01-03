@@ -122,7 +122,7 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 	 * @param transformation - The transformation data.
 	 */
 
-	constructor(settings: Settings, transformation: TransformationData) {
+	constructor(settings = new Settings(), transformation = new TransformationData()) {
 
 		super();
 

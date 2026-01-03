@@ -1,4 +1,5 @@
 export * from "./CollisionManager.js";
+export * from "./CollisionManagerEventMap.js";
 export * from "./InputManager.js";
 export * from "./InputManagerEventMap.js";
 export * from "./MovementState.js";

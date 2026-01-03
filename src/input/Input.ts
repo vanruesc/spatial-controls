@@ -49,7 +49,7 @@ export class Input<T = unknown> {
 	_value: T;
 
 	/**
-	 * @see {@link modifers}
+	 * @see {@link modifiers}
 	 */
 
 	_modifiers: number;

@@ -54,7 +54,7 @@ export class GeneralSettings extends EventDispatcher<SettingsEventMap> {
 	/**
 	 * The control mode.
 	 *
-	 * @defaultValue {@link ControlMode.FIRST_PERSON}
+	 * @defaultValue "first-person"
 	 */
 
 	get mode(): ControlMode {

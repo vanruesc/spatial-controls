@@ -104,7 +104,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	 * @param transformation - The transformation data.
 	 */
 
-	constructor(settings: Settings, transformation: TransformationData) {
+	constructor(settings = new Settings(), transformation = new TransformationData()) {
 
 		super();
 
@@ -614,9 +614,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	/**
 	 * Synchronizes the internal state with external changes.
 	 *
-	 * @param previousPosition - The previous position.
-	 * @param previousQuaternion - The previous quaternion.
-	 * @param previousTarget - The previous target.
+	 * @param previousTransformation - The previous transformation.
 	 */
 
 	synchronize(previousTransformation: TransformationData): void {

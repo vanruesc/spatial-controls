@@ -49,7 +49,7 @@ export class CollisionManager extends EventDispatcher<CollisionManagerEventMap> 
 	private readonly transformation: TransformationData;
 
 	/**
-	 * Custom constraints for the {@link position} and {@link target}.
+	 * Custom constraints.
 	 */
 
 	readonly constraints: Set<Constraint<Vector3>>;
@@ -58,7 +58,6 @@ export class CollisionManager extends EventDispatcher<CollisionManagerEventMap> 
 	 * Colliders to consider for collision tests.
 	 *
 	 * @experimental
-	 * @todo NYI
 	 */
 
 	private readonly colliders: Set<Collider>;
@@ -86,7 +85,7 @@ export class CollisionManager extends EventDispatcher<CollisionManagerEventMap> 
 	 * @param transformation - The transformation data.
 	 */
 
-	constructor(settings: Settings, transformation: TransformationData) {
+	constructor(settings = new Settings(), transformation = new TransformationData()) {
 
 		super();
 
