@@ -497,8 +497,8 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 		const settings = this.settings;
 
 		this.adjustSpherical(
-			event.x * settings.pointer.sensitivity * settings.rotation.sensitivityX,
-			event.y * settings.pointer.sensitivity * settings.rotation.sensitivityY
+			event.x * settings.rotation.sensitivityX,
+			event.y * settings.rotation.sensitivityY
 		);
 
 	}

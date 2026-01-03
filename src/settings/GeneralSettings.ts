@@ -109,7 +109,13 @@ export class GeneralSettings extends EventDispatcher<SettingsEventMap> {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: GeneralSettings): GeneralSettings {
+	fromJSON(json: string | GeneralSettings): GeneralSettings {
+
+		if(typeof json === "string") {
+
+			json = JSON.parse(json) as GeneralSettings;
+
+		}
 
 		this.mode = json.mode;
 		return this;

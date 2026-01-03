@@ -1,4 +1,4 @@
-import { EventDispatcher, Quaternion, Vector3 } from "three";
+import { Event, EventDispatcher, Quaternion, Vector3 } from "three";
 import { Settings } from "../settings/Settings.js";
 import { Constraint } from "./Constraint.js";
 import { BaseEventMap } from "./BaseEventMap.js";
@@ -102,10 +102,10 @@ export class SpatialControls extends EventDispatcher<BaseEventMap>
 		this.previousTransformation = new TransformationData(transformation);
 
 		const settings = new Settings();
-		settings.addEventListener("change", (e: unknown) => this.handleEvent(e as Event));
+		settings.addEventListener("change", (e) => this.handleEvent(e));
 		this.settings = settings;
 
-		const inputManager = new InputManager(settings, domElement);
+		const inputManager = new InputManager(settings.input, domElement);
 		inputManager.addEventListener("update", e => this.dispatchEvent(e));
 		this.inputManager = inputManager;
 

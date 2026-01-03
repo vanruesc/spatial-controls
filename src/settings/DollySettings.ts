@@ -243,7 +243,13 @@ export class DollySettings extends EventDispatcher<SettingsEventMap> {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: DollySettings): this {
+	fromJSON(json: string | DollySettings): this {
+
+		if(typeof json === "string") {
+
+			json = JSON.parse(json) as DollySettings;
+
+		}
 
 		this.enabled = json.enabled;
 		this.inverted = json.inverted;

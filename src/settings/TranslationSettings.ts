@@ -207,7 +207,13 @@ export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: TranslationSettings): TranslationSettings {
+	fromJSON(json: string | TranslationSettings): TranslationSettings {
+
+		if(typeof json === "string") {
+
+			json = JSON.parse(json) as TranslationSettings;
+
+		}
 
 		this.enabled = json.enabled;
 		this.sensitivity = json.sensitivity;

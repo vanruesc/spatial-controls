@@ -436,7 +436,13 @@ export class RotationSettings extends EventDispatcher<SettingsEventMap> {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: RotationSettings): RotationSettings {
+	fromJSON(json: string | RotationSettings): RotationSettings {
+
+		if(typeof json === "string") {
+
+			json = JSON.parse(json) as RotationSettings;
+
+		}
 
 		this.enabled = json.enabled;
 

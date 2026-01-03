@@ -1,4 +1,5 @@
 import { BaseEventMap } from "../core/BaseEventMap.js";
+import { SphericalRotationEvent } from "../events/SphericalRotationEvent.js";
 
 /**
  * Events emitted by the rotation manager.

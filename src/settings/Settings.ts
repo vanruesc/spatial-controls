@@ -1,13 +1,7 @@
 import { EventDispatcher } from "three";
-import { Action } from "../core/Action.js";
-import { Input } from "../input/Input.js";
-import { KeyCode } from "../input/KeyCode.js";
-import { PointerButton } from "../input/PointerButton.js";
-import { WheelRotation } from "../input/WheelRotation.js";
-import { Bindings } from "./Bindings.js";
 import { DollySettings } from "./DollySettings.js";
 import { GeneralSettings } from "./GeneralSettings.js";
-import { PointerSettings } from "./PointerSettings.js";
+import { InputSettings } from "./InputSettings.js";
 import { RotationSettings } from "./RotationSettings.js";
 import { SettingsEventMap } from "./SettingsEventMap.js";
 import { TranslationSettings } from "./TranslationSettings.js";
@@ -21,33 +15,16 @@ import { TranslationSettings } from "./TranslationSettings.js";
 export class Settings extends EventDispatcher<SettingsEventMap> {
 
 	/**
-	 * Key bindings.
-	 *
-	 * This collection maps {@linkplain KeyCode key codes} to {@linkplain Action actions}.
-	 */
-
-	readonly keyBindings: Bindings<KeyCode>;
-
-	/**
-	 * Pointer bindings.
-	 *
-	 * This collection maps {@linkplain PointerButton pointer buttons} and {@linkplain WheelRotation wheel rotations} to
-	 * {@linkplain Action actions}.
-	 */
-
-	readonly pointerBindings: Bindings<PointerButton | WheelRotation>;
-
-	/**
 	 * General settings.
 	 */
 
 	readonly general: GeneralSettings;
 
 	/**
-	 * Pointer settings.
+	 * Input settings.
 	 */
 
-	readonly pointer: PointerSettings;
+	readonly input: InputSettings;
 
 	/**
 	 * Rotation settings.
@@ -75,54 +52,18 @@ export class Settings extends EventDispatcher<SettingsEventMap> {
 
 		super();
 
-		this.keyBindings = new Bindings<KeyCode>();
-		this.keyBindings.setDefault(new Map<KeyCode, Action>([
-			["KeyW", "move-forward"],
-			["KeyA", "move-left"],
-			["KeyS", "move-backward"],
-			["KeyD", "move-right"],
-			["ArrowUp", "move-forward"],
-			["ArrowLeft", "move-left"],
-			["ArrowDown", "move-backward"],
-			["ArrowRight", "move-right"],
-			["KeyX", "move-down"],
-			["Space", "move-up"],
-			["PageUp", "dolly-in"],
-			["PageDown", "dolly-out"],
-			["ShiftLeft", "boost"]
-		]));
-
-		this.pointerBindings = new Bindings<PointerButton | WheelRotation>();
-		this.pointerBindings.setDefault(new Map<Input<PointerButton | WheelRotation>, Action>([
-			[new Input(PointerButton.MAIN), "rotate"],
-			[new Input(PointerButton.MAIN, { modifiers: ["Ctrl"] }), "truck"],
-			[new Input(PointerButton.SECONDARY), "pan"],
-			[new Input(WheelRotation.NEGATIVE_Y), "dolly-in"],
-			[new Input(WheelRotation.POSITIVE_Y), "dolly-out"]
-		]));
-
 		this.general = new GeneralSettings();
-		this.pointer = new PointerSettings();
+		this.input = new InputSettings();
 		this.rotation = new RotationSettings();
 		this.translation = new TranslationSettings();
 		this.dolly = new DollySettings();
 
 		// Forward events.
 		this.general.addEventListener("change", e => this.dispatchEvent(e));
-		this.pointer.addEventListener("change", e => this.dispatchEvent(e));
+		this.input.addEventListener("change", e => this.dispatchEvent(e));
 		this.rotation.addEventListener("change", e => this.dispatchEvent(e));
 		this.translation.addEventListener("change", e => this.dispatchEvent(e));
 		this.dolly.addEventListener("change", e => this.dispatchEvent(e));
-
-	}
-
-	/**
-	 * Alias for {@link dolly}.
-	 */
-
-	get zoom(): DollySettings {
-
-		return this.dolly;
 
 	}
 
@@ -135,10 +76,8 @@ export class Settings extends EventDispatcher<SettingsEventMap> {
 
 	copy(settings: Settings): this {
 
-		this.keyBindings.copy(settings.keyBindings);
-		this.pointerBindings.copy(settings.pointerBindings);
 		this.general.copy(settings.general);
-		this.pointer.copy(settings.pointer);
+		this.input.copy(settings.input);
 		this.rotation.copy(settings.rotation);
 		this.translation.copy(settings.translation);
 		this.dolly.copy(settings.dolly);
@@ -169,16 +108,19 @@ export class Settings extends EventDispatcher<SettingsEventMap> {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: string): this {
+	fromJSON(json: string | Settings): this {
 
-		const settings = JSON.parse(json) as Settings;
-		this.keyBindings.fromJSON(settings.keyBindings);
-		this.pointerBindings.fromJSON(settings.pointerBindings);
-		this.general.fromJSON(settings.general);
-		this.pointer.fromJSON(settings.pointer);
-		this.rotation.fromJSON(settings.rotation);
-		this.translation.fromJSON(settings.translation);
-		this.dolly.fromJSON(settings.dolly);
+		if(typeof json === "string") {
+
+			json = JSON.parse(json) as Settings;
+
+		}
+
+		this.general.fromJSON(json.general);
+		this.input.fromJSON(json.input);
+		this.rotation.fromJSON(json.rotation);
+		this.translation.fromJSON(json.translation);
+		this.dolly.fromJSON(json.dolly);
 
 		this.dispatchEvent({ type: "change" });
 
@@ -203,10 +145,8 @@ export class Settings extends EventDispatcher<SettingsEventMap> {
 	toJSON(): Record<string, unknown> {
 
 		return {
-			keyBindings: this.keyBindings,
-			pointerBindings: this.pointerBindings,
 			general: this.general,
-			pointer: this.pointer,
+			input: this.input,
 			rotation: this.rotation,
 			translation: this.translation,
 			dolly: this.dolly

@@ -144,7 +144,13 @@ export class PointerSettings extends EventDispatcher<SettingsEventMap> {
 	 * @return This instance.
 	 */
 
-	fromJSON(json: PointerSettings): PointerSettings {
+	fromJSON(json: string | PointerSettings): PointerSettings {
+
+		if(typeof json === "string") {
+
+			json = JSON.parse(json) as PointerSettings;
+
+		}
 
 		this.behavior = new Map(json.behavior);
 		this.sensitivity = json.sensitivity;

@@ -1,4 +1,4 @@
-import { BaseEvent, EventDispatcher, Quaternion, Vector3 } from "three";
+import { BaseEvent, Event, EventDispatcher, Quaternion, Vector3 } from "three";
 import { Action } from "../core/Action.js";
 import { Direction } from "../core/Direction.js";
 import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
@@ -123,6 +123,7 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 
 		this.transformation = transformation;
 		this.settings = settings;
+		this.settings.addEventListener("change", (e) => this.handleEvent(e));
 
 		this.velocity0 = new Vector3();
 		this.velocity1 = new Vector3();
@@ -222,6 +223,12 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 		if(this.panning) {
 
 			console.log("panning");
+
+			const translationEvent = this.translationEvent;
+			translationEvent.deltaX = 0;
+			translationEvent.deltaY = 0;
+			translationEvent.deltaZ = 0;
+			this.dispatchEvent(translationEvent);
 
 		} else if(this.trucking) {
 

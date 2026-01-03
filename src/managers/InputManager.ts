@@ -4,7 +4,7 @@ import { Disposable } from "../core/Disposable.js";
 import { MovementEvent } from "../events/MovementEvent.js";
 import { KeyCode } from "../input/KeyCode.js";
 import { PointerBehavior } from "../input/PointerBehavior.js";
-import { Settings } from "../settings/Settings.js";
+import { InputSettings } from "../settings/InputSettings.js";
 import { InputManagerEventMap } from "./InputManagerEventMap.js";
 
 const screen = { x: 0, y: 0 };
@@ -63,18 +63,19 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 	// #endregion
 
 	/**
-	 * The control settings.
+	 * The settings.
 	 */
 
-	readonly settings: Settings;
+	readonly settings: InputSettings;
 
 	/**
 	 * Constructs a new input manager.
 	 *
 	 * @param settings - The settings.
+	 * @param domElement - The primary DOM element.
 	 */
 
-	constructor(settings = new Settings(), domElement: HTMLElement | null = null) {
+	constructor(settings = new InputSettings(), domElement: HTMLElement | null = null) {
 
 		super();
 
@@ -323,8 +324,9 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 		}
 
 		const movementEvent = this.movementEvent;
-		movementEvent.x = movementX;
-		movementEvent.y = movementY;
+		const sensitivity = this.settings.pointer.sensitivity;
+		movementEvent.x = movementX * sensitivity;
+		movementEvent.y = movementY * sensitivity;
 		movementEvent.pointerCount = this.pointerEvents.size;
 		this.dispatchEvent(movementEvent);
 

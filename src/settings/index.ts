@@ -1,6 +1,7 @@
 export * from "./Bindings.js";
 export * from "./DollySettings.js";
 export * from "./GeneralSettings.js";
+export * from "./InputSettings.js";
 export * from "./PointerSettings.js";
 export * from "./RotationSettings.js";
 export * from "./TranslationSettings.js";

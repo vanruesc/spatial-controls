@@ -62,7 +62,7 @@ export class TransformationData implements Spatial {
 	}
 
 	/**
-	 * Sets the internal spatial data.
+	 * Directly sets the internal spatial data without copying.
 	 */
 
 	set spatial(value: Spatial) {
