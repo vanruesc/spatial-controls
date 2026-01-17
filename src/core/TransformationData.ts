@@ -82,7 +82,7 @@ export class TransformationData implements Spatial {
 	 * @return This instance.
 	 */
 
-	static from(data: Spatial | null = null): TransformationData {
+	static from(data: Spatial | null): TransformationData {
 
 		const result = new TransformationData();
 
