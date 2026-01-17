@@ -1,4 +1,4 @@
-import { BaseEvent } from "three";
+import { Event } from "synthetic-event";
 
 /**
  * Events emitted by the collision manager.
@@ -12,12 +12,12 @@ export interface CollisionManagerEventMap {
 	 * Fires when the spatial is affected by a constraint.
 	 */
 
-	constrain: BaseEvent<"constrain">;
+	constrain: Event<"constrain">;
 
 	/**
 	 * A collision event.
 	 */
 
-	collision: BaseEvent<"collision">;
+	collision: Event<"collision">;
 
 }

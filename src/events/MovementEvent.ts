@@ -1,4 +1,4 @@
-import { BaseEvent } from "three";
+import { Event } from "synthetic-event";
 
 /**
  * A movement event.
@@ -6,7 +6,7 @@ import { BaseEvent } from "three";
  * @group Events
  */
 
-export interface MovementEvent extends BaseEvent<"move"> {
+export interface MovementEvent extends Event<"move"> {
 
 	/**
 	 * The number of active pointers.

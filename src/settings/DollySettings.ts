@@ -1,4 +1,4 @@
-import { EventDispatcher } from "three";
+import { EventTarget } from "synthetic-event";
 import { SettingsEventMap } from "./SettingsEventMap.js";
 
 /**
@@ -7,7 +7,7 @@ import { SettingsEventMap } from "./SettingsEventMap.js";
  * @group Settings
  */
 
-export class DollySettings extends EventDispatcher<SettingsEventMap> {
+export class DollySettings extends EventTarget<SettingsEventMap> {
 
 	// #region Backing Data
 

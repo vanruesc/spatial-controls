@@ -1,4 +1,5 @@
-import { EventDispatcher, Vector3 } from "three";
+import { EventTarget } from "synthetic-event";
+import { Vector3 } from "three";
 import * as axes from "../math/axes.js";
 import { SettingsEventMap } from "./SettingsEventMap.js";
 
@@ -8,7 +9,7 @@ import { SettingsEventMap } from "./SettingsEventMap.js";
  * @group Settings
  */
 
-export class RotationSettings extends EventDispatcher<SettingsEventMap> {
+export class RotationSettings extends EventTarget<SettingsEventMap> {
 
 	// #region Backing Data
 

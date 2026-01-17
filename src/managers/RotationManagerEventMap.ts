@@ -1,4 +1,4 @@
-import { BaseEvent } from "three";
+import { Event } from "synthetic-event";
 
 /**
  * Events emitted by the rotation manager.
@@ -12,18 +12,18 @@ export interface RotationManagerEventMap {
 	 * A rotation change event.
 	 */
 
-	rotate: BaseEvent<"rotate">;
+	rotate: Event<"rotate">;
 
 	/**
 	 * A rotation start event.
 	 */
 
-	rotationstart: BaseEvent<"rotationstart">;
+	rotationstart: Event<"rotationstart">;
 
 	/**
 	 * A rotation end event.
 	 */
 
-	rotationend: BaseEvent<"rotationend">;
+	rotationend: Event<"rotationend">;
 
 }

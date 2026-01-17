@@ -1,4 +1,5 @@
-import { BaseEvent, Event, EventDispatcher, Quaternion, Vector3 } from "three";
+import { Event, EventTarget } from "synthetic-event";
+import { Quaternion, Vector3 } from "three";
 import { Action } from "../core/Action.js";
 import { Direction } from "../core/Direction.js";
 import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
@@ -20,7 +21,7 @@ const v = /* @__PURE__ */ new Vector3();
  * @group Managers
  */
 
-export class TranslationManager extends EventDispatcher<TranslationManagerEventMap>
+export class TranslationManager extends EventTarget<TranslationManagerEventMap>
 	implements EventListenerObject, Updatable {
 
 	/**
@@ -77,19 +78,19 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 	 * A translation change event.
 	 */
 
-	private readonly translationEvent: BaseEvent<"translate">;
+	private readonly translationEvent: Event<"translate">;
 
 	/**
 	 * A translation start event.
 	 */
 
-	private readonly translationStartEvent: BaseEvent<"translationstart">;
+	private readonly translationStartEvent: Event<"translationstart">;
 
 	/**
 	 * A translation end event.
 	 */
 
-	private readonly translationEndEvent: BaseEvent<"translationend">;
+	private readonly translationEndEvent: Event<"translationend">;
 
 	// #endregion
 
@@ -128,7 +129,7 @@ export class TranslationManager extends EventDispatcher<TranslationManagerEventM
 
 		this.transformation = transformation;
 		this.settings = settings;
-		this.settings.addEventListener("change", e => this.handleEvent(e));
+		this.settings.addEventListener("change", this);
 
 		this.velocity0 = new Vector3();
 		this.velocity1 = new Vector3();

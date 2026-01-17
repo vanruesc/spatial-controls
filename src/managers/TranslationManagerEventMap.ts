@@ -1,4 +1,4 @@
-import { BaseEvent } from "three";
+import { Event } from "synthetic-event";
 
 /**
  * Events emitted by the translation manager.
@@ -12,18 +12,18 @@ export interface TranslationManagerEventMap {
 	 * A translation change event.
 	 */
 
-	translate: BaseEvent<"translate">;
+	translate: Event<"translate">;
 
 	/**
 	 * A translation start event.
 	 */
 
-	translationstart: BaseEvent<"translationstart">;
+	translationstart: Event<"translationstart">;
 
 	/**
 	 * A translation end event.
 	 */
 
-	translationend: BaseEvent<"translationend">;
+	translationend: Event<"translationend">;
 
 }

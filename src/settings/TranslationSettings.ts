@@ -1,4 +1,5 @@
-import { EventDispatcher, Vector3 } from "three";
+import { EventTarget } from "synthetic-event";
+import { Vector3 } from "three";
 import { SettingsEventMap } from "./SettingsEventMap.js";
 
 /**
@@ -7,7 +8,7 @@ import { SettingsEventMap } from "./SettingsEventMap.js";
  * @group Settings
  */
 
-export class TranslationSettings extends EventDispatcher<SettingsEventMap> {
+export class TranslationSettings extends EventTarget<SettingsEventMap> {
 
 	// #region Backing Data
 

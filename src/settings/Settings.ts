@@ -1,4 +1,4 @@
-import { EventDispatcher } from "three";
+import { EventTarget } from "synthetic-event";
 import { DollySettings } from "./DollySettings.js";
 import { GeneralSettings } from "./GeneralSettings.js";
 import { InputSettings } from "./InputSettings.js";
@@ -12,7 +12,7 @@ import { TranslationSettings } from "./TranslationSettings.js";
  * @group Settings
  */
 
-export class Settings extends EventDispatcher<SettingsEventMap> {
+export class Settings extends EventTarget<SettingsEventMap> {
 
 	/**
 	 * General settings.
@@ -58,7 +58,7 @@ export class Settings extends EventDispatcher<SettingsEventMap> {
 		this.translation = new TranslationSettings();
 		this.dolly = new DollySettings();
 
-		// Forward events.
+		// Propagate events.
 		this.general.addEventListener("change", e => this.dispatchEvent(e));
 		this.input.addEventListener("change", e => this.dispatchEvent(e));
 		this.rotation.addEventListener("change", e => this.dispatchEvent(e));

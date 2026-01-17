@@ -1,4 +1,4 @@
-import { EventDispatcher } from "three";
+import { EventTarget } from "synthetic-event";
 import { ControlMode } from "../core/ControlMode.js";
 import { SettingsEventMap } from "./SettingsEventMap.js";
 
@@ -8,7 +8,7 @@ import { SettingsEventMap } from "./SettingsEventMap.js";
  * @group Settings
  */
 
-export class GeneralSettings extends EventDispatcher<SettingsEventMap> {
+export class GeneralSettings extends EventTarget<SettingsEventMap> {
 
 	// #region Backing Data
 

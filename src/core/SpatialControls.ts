@@ -1,17 +1,18 @@
-import { Event, EventDispatcher, Quaternion, Vector3 } from "three";
+import { Event, EventTarget } from "synthetic-event";
+import { Quaternion, Vector3 } from "three";
+import { CollisionManager } from "../managers/CollisionManager.js";
+import { CollisionManagerEventMap } from "../managers/CollisionManagerEventMap.js";
+import { InputManager } from "../managers/InputManager.js";
+import { RotationManager } from "../managers/RotationManager.js";
+import { RotationManagerEventMap } from "../managers/RotationManagerEventMap.js";
+import { TranslationManager } from "../managers/TranslationManager.js";
+import { TranslationManagerEventMap } from "../managers/TranslationManagerEventMap.js";
 import { Settings } from "../settings/Settings.js";
 import { Constraint } from "./Constraint.js";
 import { Disposable } from "./Disposable.js";
-import { Updatable } from "./Updatable.js";
 import { Spatial } from "./Spatial.js";
 import { TransformationData } from "./TransformationData.js";
-import { CollisionManager } from "../managers/CollisionManager.js";
-import { InputManager } from "../managers/InputManager.js";
-import { RotationManager } from "../managers/RotationManager.js";
-import { TranslationManager } from "../managers/TranslationManager.js";
-import { RotationManagerEventMap } from "../managers/RotationManagerEventMap.js";
-import { TranslationManagerEventMap } from "../managers/TranslationManagerEventMap.js";
-import { CollisionManagerEventMap } from "../managers/CollisionManagerEventMap.js";
+import { Updatable } from "./Updatable.js";
 
 const v = /* @__PURE__ */ new Vector3();
 
@@ -51,7 +52,7 @@ export interface SpatialControlsOptions {
  * @group Core
  */
 
-export class SpatialControls extends EventDispatcher<SpatialControlsEventMap>
+export class SpatialControls extends EventTarget<SpatialControlsEventMap>
 	implements Disposable, EventListenerObject, Updatable {
 
 	/**
@@ -116,30 +117,30 @@ export class SpatialControls extends EventDispatcher<SpatialControlsEventMap>
 		this.previousTransformation = new TransformationData(transformation);
 
 		const settings = new Settings();
-		settings.addEventListener("change", e => this.handleEvent(e));
+		settings.addEventListener("change", this);
 		this.settings = settings;
 
 		const inputManager = new InputManager(settings.input, domElement);
 		this.inputManager = inputManager;
 
 		const rotationManager = new RotationManager(settings, transformation);
-		inputManager.addEventListener("move", e => rotationManager.handleEvent(e));
-		inputManager.addEventListener("activate", e => rotationManager.handleEvent(e));
-		inputManager.addEventListener("deactivate", e => rotationManager.handleEvent(e));
-		inputManager.addEventListener("reset", e => rotationManager.handleEvent(e));
+		inputManager.addEventListener("move", rotationManager);
+		inputManager.addEventListener("activate", rotationManager);
+		inputManager.addEventListener("deactivate", rotationManager);
+		inputManager.addEventListener("reset", rotationManager);
 		this.rotationManager = rotationManager;
 
 		const translationManager = new TranslationManager(settings, transformation);
-		inputManager.addEventListener("move", e => translationManager.handleEvent(e));
-		inputManager.addEventListener("activate", e => translationManager.handleEvent(e));
-		inputManager.addEventListener("deactivate", e => translationManager.handleEvent(e));
-		inputManager.addEventListener("reset", e => translationManager.handleEvent(e));
+		inputManager.addEventListener("move", translationManager);
+		inputManager.addEventListener("activate", translationManager);
+		inputManager.addEventListener("deactivate", translationManager);
+		inputManager.addEventListener("reset", translationManager);
 		this.translationManager = translationManager;
 
 		const collisionManager = new CollisionManager(settings, transformation);
 		this.collisionManager = collisionManager;
 
-		// Forward events.
+		// Propagate events.
 		rotationManager.addEventListener("rotate", e => this.dispatchEvent(e));
 		rotationManager.addEventListener("rotationstart", e => this.dispatchEvent(e));
 		rotationManager.addEventListener("rotationend", e => this.dispatchEvent(e));

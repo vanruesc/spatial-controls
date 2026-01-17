@@ -1,4 +1,4 @@
-import { BaseEvent } from "three";
+import { Event } from "synthetic-event";
 import { ActionEvent } from "../events/ActionEvent.js";
 import { MovementEvent } from "../events/MovementEvent.js";
 
@@ -32,6 +32,6 @@ export interface InputManagerEventMap {
 	 * Signals that the input state has been reset.
 	 */
 
-	reset: BaseEvent<"reset">;
+	reset: Event<"reset">;
 
 }

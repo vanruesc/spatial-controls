@@ -1,4 +1,5 @@
-import { BaseEvent, EventDispatcher, Vector3 } from "three";
+import { Event, EventTarget } from "synthetic-event";
+import { Vector3 } from "three";
 import { Constraint } from "../core/Constraint.js";
 import { TransformationData } from "../core/TransformationData.js";
 import { Updatable } from "../core/Updatable.js";
@@ -34,7 +35,7 @@ function applyConstraints(p: Vector3, constraints: Set<Constraint<Vector3>>): Ve
  * @group Managers
  */
 
-export class CollisionManager extends EventDispatcher<CollisionManagerEventMap> implements Updatable {
+export class CollisionManager extends EventTarget<CollisionManagerEventMap> implements Updatable {
 
 	/**
 	 * The settings.
@@ -68,13 +69,13 @@ export class CollisionManager extends EventDispatcher<CollisionManagerEventMap> 
 	 * A constrain event.
 	 */
 
-	private readonly constrainEvent: BaseEvent<"constrain">;
+	private readonly constrainEvent: Event<"constrain">;
 
 	/**
 	 * A collision event.
 	 */
 
-	private readonly collisionEvent: BaseEvent<"collision">;
+	private readonly collisionEvent: Event<"collision">;
 
 	// #endregion
 

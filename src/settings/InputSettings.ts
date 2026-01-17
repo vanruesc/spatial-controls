@@ -1,4 +1,4 @@
-import { EventDispatcher } from "three";
+import { EventTarget } from "synthetic-event";
 import { Action } from "../core/Action.js";
 import { Input } from "../input/Input.js";
 import { KeyCode } from "../input/KeyCode.js";
@@ -14,7 +14,7 @@ import { SettingsEventMap } from "./SettingsEventMap.js";
  * @group Settings
  */
 
-export class InputSettings extends EventDispatcher<SettingsEventMap> {
+export class InputSettings extends EventTarget<SettingsEventMap> {
 
 	/**
 	 * Key bindings.

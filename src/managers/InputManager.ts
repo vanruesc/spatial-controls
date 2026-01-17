@@ -1,4 +1,4 @@
-import { Event, EventDispatcher } from "three";
+import { Event, EventTarget } from "synthetic-event";
 import { Action } from "../core/Action.js";
 import { Disposable } from "../core/Disposable.js";
 import { MovementEvent } from "../events/MovementEvent.js";
@@ -15,8 +15,7 @@ const screen = { x: 0, y: 0 };
  * @group Managers
  */
 
-export class InputManager extends EventDispatcher<InputManagerEventMap>
-	implements Disposable, EventListenerObject {
+export class InputManager extends EventTarget<InputManagerEventMap> implements Disposable, EventListenerObject {
 
 	// #region Backing Data
 
@@ -96,7 +95,7 @@ export class InputManager extends EventDispatcher<InputManagerEventMap>
 		};
 
 		this.settings = settings;
-		settings.addEventListener("change", e => this.handleEvent(e));
+		settings.addEventListener("change", this);
 
 		this.domElement = domElement;
 		this.enabled = true;

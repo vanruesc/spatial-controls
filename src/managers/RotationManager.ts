@@ -1,4 +1,5 @@
-import { BaseEvent, EventDispatcher, Matrix4, Quaternion, Spherical, Vector3 } from "three";
+import { Event, EventTarget } from "synthetic-event";
+import { Matrix4, Quaternion, Spherical, Vector3 } from "three";
 import { Action } from "../core/Action.js";
 import { MILLISECONDS_TO_SECONDS } from "../core/time.js";
 import { TransformationData } from "../core/TransformationData.js";
@@ -20,8 +21,7 @@ const m = /* @__PURE__ */ new Matrix4();
  * @group Managers
  */
 
-export class RotationManager extends EventDispatcher<RotationManagerEventMap>
-	implements EventListenerObject, Updatable {
+export class RotationManager extends EventTarget<RotationManagerEventMap> implements EventListenerObject, Updatable {
 
 	/**
 	 * The settings.
@@ -65,19 +65,19 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 	 * A rotation change event.
 	 */
 
-	private readonly rotationEvent: BaseEvent<"rotate">;
+	private readonly rotationEvent: Event<"rotate">;
 
 	/**
 	 * A rotation start event.
 	 */
 
-	private readonly rotationStartEvent: BaseEvent<"rotationstart">;
+	private readonly rotationStartEvent: Event<"rotationstart">;
 
 	/**
 	 * A rotation end event.
 	 */
 
-	private readonly rotationEndEvent: BaseEvent<"rotationend">;
+	private readonly rotationEndEvent: Event<"rotationend">;
 
 	// #endregion
 
@@ -110,7 +110,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 
 		this.transformation = transformation;
 		this.settings = settings;
-		this.settings.addEventListener("change", e => this.handleEvent(e));
+		this.settings.addEventListener("change", this);
 
 		this.spherical0 = new Spherical();
 		this.spherical1 = new Spherical();
@@ -581,7 +581,7 @@ export class RotationManager extends EventDispatcher<RotationManagerEventMap>
 
 	}
 
-	handleEvent(event: BaseEvent | ActionEvent | MovementEvent): void {
+	handleEvent(event: Event | ActionEvent | MovementEvent): void {
 
 		switch(event.type) {
 

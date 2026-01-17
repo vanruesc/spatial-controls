@@ -1,4 +1,4 @@
-import { EventDispatcher } from "three";
+import { EventTarget } from "synthetic-event";
 import { PointerBehavior } from "../input/PointerBehavior.js";
 import { PointerButton } from "../input/PointerButton.js";
 import { SettingsEventMap } from "./SettingsEventMap.js";
@@ -9,7 +9,7 @@ import { SettingsEventMap } from "./SettingsEventMap.js";
  * @group Settings
  */
 
-export class PointerSettings extends EventDispatcher<SettingsEventMap> {
+export class PointerSettings extends EventTarget<SettingsEventMap> {
 
 	// #region Backing Data
 

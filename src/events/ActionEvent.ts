@@ -1,4 +1,4 @@
-import { BaseEvent } from "three";
+import { Event } from "synthetic-event";
 
 /**
  * An action event.
@@ -6,7 +6,7 @@ import { BaseEvent } from "three";
  * @group Events
  */
 
-export interface ActionEvent<TEventType extends string = string> extends BaseEvent<TEventType> {
+export interface ActionEvent<TEventType extends string = string> extends Event<TEventType> {
 
 	/**
 	 * The action.

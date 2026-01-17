@@ -1,4 +1,4 @@
-import { BaseEvent } from "three";
+import { Event } from "synthetic-event";
 
 /**
  * Events emitted by settings.
@@ -8,6 +8,6 @@ import { BaseEvent } from "three";
 
 export interface SettingsEventMap {
 
-	change: BaseEvent<"change">;
+	change: Event<"change">;
 
 }
