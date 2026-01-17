@@ -1,5 +1,3 @@
-import { Vector3 } from "three";
-
 /**
  * The X-axis.
  *
@@ -7,7 +5,7 @@ import { Vector3 } from "three";
  * @ignore
  */
 
-export const x = Object.freeze(new Vector3(1, 0, 0));
+export const x = Object.freeze({ x: 1.0, y: 0.0, z: 0.0 });
 
 /**
  * The Y-axis.
@@ -16,7 +14,7 @@ export const x = Object.freeze(new Vector3(1, 0, 0));
  * @ignore
  */
 
-export const y = Object.freeze(new Vector3(0, 1, 0));
+export const y = Object.freeze({ x: 0.0, y: 1.0, z: 0.0 });
 
 /**
  * The Z-axis.
@@ -25,4 +23,4 @@ export const y = Object.freeze(new Vector3(0, 1, 0));
  * @ignore
  */
 
-export const z = Object.freeze(new Vector3(0, 0, 1));
+export const z = Object.freeze({ x: 0.0, y: 0.0, z: 1.0 });
