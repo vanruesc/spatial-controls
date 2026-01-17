@@ -39,11 +39,8 @@
 	"files": [
 		"dist"
 	],
-	"ava": {
-		"failFast": true,
-		"files": [
-			"test/**/*.js"
-		]
+	"engines": {
+		"node": ">= 21"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
@@ -51,12 +48,11 @@
 		]
 	},
 	"scripts": {
-		"ava": "ava",
 		"build": "run-p build:js:min build:dts",
 		"build:js": "node esbuild",
 		"build:js:min": "node esbuild -m",
 		"build:dts": "tsc -p tsconfig.d.json",
-		"postbuild": "cpy \"demo/static/**/*\" public/demo",
+		"postbuild": "copyfiles cpy \"demo/static/**/*\" public/demo -u 2",
 		"clean": "del-cli dist public",
 		"doc": "typedoc --plugin typedoc-plugin-mdn-links",
 		"lint": "run-p lint:*",
@@ -64,7 +60,10 @@
 		"lint:tsc": "tsc --noEmit",
 		"prepublishOnly": "npm test",
 		"start": "serve public",
-		"test": "run-s lint clean build ava doc",
+		"pretest": "run-s clean lint build",
+		"test": "run-s test:*",
+		"test:unit": "node --import tsx --test",
+		"posttest": "npm run doc",
 		"prewatch": "run-s clean build:js build:dts postbuild",
 		"watch": "run-p watch:* start",
 		"watch:tsc": "tsc --noEmit --watch --preserveWatchOutput",
@@ -73,22 +72,23 @@
 	"peerDependencies": {
 		"three": "0.x.x"
 	},
+	"dependencies": {
+		"synthetic-event": "2.x.x"
+	},
 	"devDependencies": {
 		"@tweakpane/core": "2.x.x",
 		"@types/node": "25.x.x",
 		"@types/three": "0.x.x",
-		"@typescript-eslint/eslint-plugin": "8.x.x",
-		"@typescript-eslint/parser": "8.x.x",
-		"ava": "6.x.x",
-		"cpy-cli": "6.x.x",
 		"del-cli": "7.x.x",
 		"esbuild": "0.27.x",
 		"eslint": "9.x.x",
 		"eslint-config-aether": "2.x.x",
+		"native-copyfiles": "1.x.x",
 		"npm-run-all": "4.x.x",
 		"serve": "14.x.x",
 		"three": "0.x.x",
 		"tslib": "2.x.x",
+		"tsx": "4.x.x",
 		"tweakpane": "4.x.x",
 		"typedoc": "0.x.x",
 		"typedoc-plugin-mdn-links": "5.x.x",
