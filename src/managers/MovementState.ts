@@ -1,11 +1,11 @@
+import { Vector3 } from "three";
+import { Direction } from "../core/Direction.js";
+
 /**
  * A collection of movement flags.
  *
  * @group Managers
  */
-
-import { Vector3 } from "three";
-import { Direction } from "../core/Direction.js";
 
 export class MovementState {
 
