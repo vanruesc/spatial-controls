@@ -17,12 +17,6 @@ importers:
       '@types/three':
         specifier: 0.x.x
         version: 0.182.0
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.x.x
-        version: 8.54.0(@typescript-eslint/parser@8.54.0(eslint@9.39.2)(typescript@5.9.3))(eslint@9.39.2)(typescript@5.9.3)
-      '@typescript-eslint/parser':
-        specifier: 8.x.x
-        version: 8.54.0(eslint@9.39.2)(typescript@5.9.3)
       ava:
         specifier: 6.x.x
         version: 6.4.1
