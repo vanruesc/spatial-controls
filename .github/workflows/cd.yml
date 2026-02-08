@@ -18,16 +18,17 @@ jobs:
         with:
           version: 10
       - name: Install Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: "pnpm"
-      - name: Install dependencies and test
+      - name: Install and test
         run: pnpm install-test --frozen-lockfile
       - name: Publish
-        run: pnpm publish --ignore-scripts --no-git-checks
-        env:
-          NPM_CONFIG_PROVENANCE: true
+        uses: JS-DevTools/npm-publish@v4
+        with:
+          provenance: true
+          ignore-scripts: true
       - uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
