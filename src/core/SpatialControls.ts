@@ -28,6 +28,8 @@ export type SpatialControlsEventMap = (
 
 /**
  * SpatialControls options.
+ *
+ * @group Core
  */
 
 export interface SpatialControlsOptions {
