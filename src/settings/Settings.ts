@@ -128,6 +128,18 @@ export class Settings extends EventTarget<SettingsEventMap> {
 
 	}
 
+	toJSON(): Record<string, unknown> {
+
+		return {
+			general: this.general,
+			input: this.input,
+			rotation: this.rotation,
+			translation: this.translation,
+			dolly: this.dolly
+		};
+
+	}
+
 	/**
 	 * Exports these settings as a data blob.
 	 *
@@ -139,18 +151,6 @@ export class Settings extends EventTarget<SettingsEventMap> {
 		return new Blob([JSON.stringify(this)], {
 			type: "text/json"
 		});
-
-	}
-
-	toJSON(): Record<string, unknown> {
-
-		return {
-			general: this.general,
-			input: this.input,
-			rotation: this.rotation,
-			translation: this.translation,
-			dolly: this.dolly
-		};
 
 	}
 
