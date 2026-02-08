@@ -259,8 +259,8 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 			document.addEventListener("pointerlockchange", this);
 			document.addEventListener("pointerlockerror", this);
 			document.addEventListener("visibilitychange", this);
-			document.body.addEventListener("keyup", this);
-			document.body.addEventListener("keydown", this);
+			domElement.addEventListener("keyup", this);
+			domElement.addEventListener("keydown", this);
 			domElement.addEventListener("mousedown", this);
 			domElement.addEventListener("mouseup", this);
 			domElement.addEventListener("pointerdown", this);
@@ -275,8 +275,8 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 			document.removeEventListener("pointerlockchange", this);
 			document.removeEventListener("pointerlockerror", this);
 			document.removeEventListener("visibilitychange", this);
-			document.body.removeEventListener("keyup", this);
-			document.body.removeEventListener("keydown", this);
+			domElement.removeEventListener("keyup", this);
+			domElement.removeEventListener("keydown", this);
 			domElement.removeEventListener("mousedown", this);
 			domElement.removeEventListener("mouseup", this);
 			domElement.removeEventListener("pointerdown", this);

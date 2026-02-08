@@ -192,8 +192,15 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 		const enabled = this.enabled;
 		this.dispose();
 
+		if(value !== null && value.getAttribute("tabindex") === null) {
+
+			value.setAttribute("tabindex", "-1");
+
+		}
+
 		this._domElement = value;
 		this.rotationControls.domElement = value;
+		this.translationControls.domElement = value;
 		this.enabled = enabled;
 
 	}

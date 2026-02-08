@@ -44,6 +44,12 @@ export class TranslationControls extends EventDispatcher<ControlsEventMap>
 	private readonly strategies: Map<Action, Strategy>;
 
 	/**
+	 * @see {@link domElement}
+	 */
+
+	private _domElement: HTMLElement | null;
+
+	/**
 	 * @see {@link enabled}
 	 */
 
@@ -73,6 +79,7 @@ export class TranslationControls extends EventDispatcher<ControlsEventMap>
 
 		super();
 
+		this._domElement = null;
 		this._enabled = false;
 		this.settings = settings;
 		settings.addEventListener("change", (e: unknown) => this.handleEvent(e as Event));
@@ -90,6 +97,26 @@ export class TranslationControls extends EventDispatcher<ControlsEventMap>
 			[Action.MOVE_UP, new MovementStrategy(state, Direction.UP)],
 			[Action.BOOST, new BoostStrategy(state)]
 		]);
+
+	}
+
+	/**
+	 * A DOM element. Acts as the primary event target.
+	 */
+
+	get domElement() {
+
+		return this._domElement;
+
+	}
+
+	set domElement(value: HTMLElement | null) {
+
+		this._domElement = value;
+
+		const enabled = this.enabled;
+		this.dispose();
+		this.enabled = enabled;
 
 	}
 
@@ -137,25 +164,27 @@ export class TranslationControls extends EventDispatcher<ControlsEventMap>
 
 	set enabled(value: boolean) {
 
-		if(typeof document === "undefined") {
+		if(this.domElement === null || typeof document === "undefined") {
 
 			return;
 
 		}
+
+		const domElement = this.domElement;
 
 		this.translationManager.movementState.reset();
 
 		if(value && !this._enabled) {
 
 			document.addEventListener("visibilitychange", this);
-			document.body.addEventListener("keyup", this);
-			document.body.addEventListener("keydown", this);
+			domElement.addEventListener("keyup", this);
+			domElement.addEventListener("keydown", this);
 
 		} else if(!value && this._enabled) {
 
 			document.removeEventListener("visibilitychange", this);
-			document.body.removeEventListener("keyup", this);
-			document.body.removeEventListener("keydown", this);
+			domElement.removeEventListener("keyup", this);
+			domElement.removeEventListener("keydown", this);
 
 		}
 
