@@ -3,7 +3,7 @@ import { Settings } from "spatial-controls";
 
 test("can be instantiated", t => {
 
-	t.truthy(new Settings());
+	t.notThrows(() => new Settings());
 
 });
 

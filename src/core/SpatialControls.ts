@@ -276,7 +276,7 @@ export class SpatialControls extends EventDispatcher<ControlsEventMap>
 
 		} else {
 
-			this.rotationControls.lookAt(v.set(x, y!, z!));
+			this.rotationControls.lookAt(v.set(x, y!, z));
 
 		}
 

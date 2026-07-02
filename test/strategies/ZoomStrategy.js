@@ -3,7 +3,6 @@ import { ZoomStrategy } from "spatial-controls";
 
 test("can be instantiated", t => {
 
-	const object = new ZoomStrategy();
-	t.pass();
+	t.notThrows(() => new ZoomStrategy());
 
 });

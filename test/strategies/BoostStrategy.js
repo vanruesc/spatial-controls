@@ -3,7 +3,6 @@ import { BoostStrategy } from "spatial-controls";
 
 test("can be instantiated", t => {
 
-	const object = new BoostStrategy();
-	t.pass();
+	t.notThrows(() => new BoostStrategy());
 
 });

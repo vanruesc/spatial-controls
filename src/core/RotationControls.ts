@@ -193,7 +193,7 @@ export class RotationControls extends EventDispatcher<ControlsEventMap>
 
 		} else {
 
-			this.rotationManager.lookAt(v.set(x, y!, z!));
+			this.rotationManager.lookAt(v.set(x, y!, z));
 
 		}
 

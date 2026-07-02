@@ -3,8 +3,7 @@ import { Bindings } from "spatial-controls";
 
 test("can be instantiated", t => {
 
-	const object = new Bindings();
-	t.pass();
+	t.notThrows(() => new Bindings());
 
 });
 

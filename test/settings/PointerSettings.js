@@ -3,8 +3,7 @@ import { PointerSettings } from "spatial-controls";
 
 test("can be instantiated", t => {
 
-	const object = new PointerSettings();
-	t.pass();
+	t.notThrows(() => new PointerSettings());
 
 });
 
