@@ -5,7 +5,6 @@ import { Spatial } from "./Spatial.js";
  * Transformation data.
  *
  * @group Core
- * @internal
  */
 
 export class TransformationData implements Spatial {
