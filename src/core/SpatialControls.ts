@@ -279,7 +279,7 @@ export class SpatialControls extends EventTarget<SpatialControlsEventMap>
 
 		} else {
 
-			this.rotationManager.lookAt(v.set(x, y!, z!));
+			this.rotationManager.lookAt(v.set(x, y!, z));
 
 		}
 
