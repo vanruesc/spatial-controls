@@ -1,0 +1,8 @@
+save: false
+
+allowBuilds:
+  'esbuild': true
+
+minimumReleaseAgeExclude:
+- 'eslint-config-aether'
+- 'three'
