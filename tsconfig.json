@@ -1,28 +1,25 @@
 {
 	"include": [
-		"./*.js",
 		"./src",
-		"./demo/src",
-		"./test"
+		"./test",
+		"./demo/src"
 	],
 	"compilerOptions": {
 		// File Layout
-		"baseUrl": ".",
+		"rootDir": ".",
 		"outDir": "./dist",
-		"paths": {
-			"spatial-controls": ["./src/index.js"]
-		},
 		// Environment Settings
 		"moduleResolution": "bundler",
-		"module": "es2022",
-		"target": "es2022",
+		"module": "esnext",
+		"target": "es2025",
+		"types": ["node"],
 		// Style Options
 		"noImplicitReturns": true,
 		"noImplicitOverride": true,
 		// Other
+		"allowSyntheticDefaultImports": true,
 		"noUncheckedSideEffectImports": true,
 		"resolveJsonModule": true,
-		"strict": true,
 		"sourceMap": false,
 		"skipLibCheck": true
 	}
