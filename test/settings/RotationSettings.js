@@ -1,16 +1,20 @@
-import test from "ava";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { RotationSettings } from "spatial-controls";
 
-test("can be instantiated", t => {
+describe("RotationSettings", () => {
 
-	t.notThrows(() => new RotationSettings());
+	it("can be instantiated", () => {
 
-});
+		assert.doesNotThrow(() => new RotationSettings());
 
-test("can be cloned", t => {
+	});
 
-	const object = new RotationSettings();
-	object.clone();
-	t.pass();
+	it("can be cloned", () => {
+
+		const object = new RotationSettings();
+		assert.doesNotThrow(() => object.clone());
+
+	});
 
 });

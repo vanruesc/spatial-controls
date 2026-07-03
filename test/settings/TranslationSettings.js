@@ -1,16 +1,20 @@
-import test from "ava";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { TranslationSettings } from "spatial-controls";
 
-test("can be instantiated", t => {
+describe("TranslationSettings", () => {
 
-	t.notThrows(() => new TranslationSettings());
+	it("can be instantiated", () => {
 
-});
+		assert.doesNotThrow(() => new TranslationSettings());
 
-test("can be cloned", t => {
+	});
 
-	const object = new TranslationSettings();
-	object.clone();
-	t.pass();
+	it("can be cloned", () => {
+
+		const object = new TranslationSettings();
+		assert.doesNotThrow(() => object.clone());
+
+	});
 
 });

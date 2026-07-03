@@ -1,8 +1,13 @@
-import test from "ava";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { MovementState } from "spatial-controls";
 
-test("can be instantiated", t => {
+describe("MovementState", () => {
 
-	t.notThrows(() => new MovementState());
+	it("can be instantiated", () => {
+
+		assert.doesNotThrow(() => new MovementState());
+
+	});
 
 });

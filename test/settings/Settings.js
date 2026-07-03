@@ -1,36 +1,39 @@
-import test from "ava";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { Settings } from "spatial-controls";
 
-test("can be instantiated", t => {
+describe("Settings", () => {
 
-	t.notThrows(() => new Settings());
+	it("can be instantiated", () => {
 
-});
+		assert.doesNotThrow(() => new Settings());
 
-test("can be cloned", t => {
+	});
 
-	const object = new Settings();
-	object.clone();
-	t.pass();
+	it("can be cloned", () => {
 
-});
+		const object = new Settings();
+		assert.doesNotThrow(() => object.clone());
 
-test("can be serialized", t => {
+	});
 
-	const object = new Settings();
-	JSON.stringify(object);
-	t.pass();
+	it("can be serialized", () => {
 
-});
+		const object = new Settings();
+		assert.doesNotThrow(() => JSON.stringify(object));
 
-test("can be deserialized", t => {
+	});
 
-	const object0 = new Settings();
-	const object1 = new Settings();
+	it("can be deserialized", () => {
 
-	object1.fromJSON(JSON.stringify(object0));
+		const object0 = new Settings();
+		const object1 = new Settings();
 
-	// Compare JSON strings to ignore unrelated internal properties.
-	t.is(JSON.stringify(object0), JSON.stringify(object1));
+		object1.fromJSON(JSON.stringify(object0));
+
+		// Compare JSON strings to ignore unrelated internal properties.
+		assert.equal(JSON.stringify(object0), JSON.stringify(object1));
+
+	});
 
 });

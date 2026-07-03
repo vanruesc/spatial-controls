@@ -1,8 +1,13 @@
-import test from "ava";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { TranslationManager } from "spatial-controls";
 
-test("can be instantiated", t => {
+describe("TranslationManager", () => {
 
-	t.notThrows(() => new TranslationManager());
+	it("can be instantiated", () => {
+
+		assert.doesNotThrow(() => new TranslationManager());
+
+	});
 
 });

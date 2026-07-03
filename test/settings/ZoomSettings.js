@@ -1,16 +1,20 @@
-import test from "ava";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { ZoomSettings } from "spatial-controls";
 
-test("can be instantiated", t => {
+describe("ZoomSettings", () => {
 
-	t.notThrows(() => new ZoomSettings());
+	it("can be instantiated", () => {
 
-});
+		assert.doesNotThrow(() => new ZoomSettings());
 
-test("can be cloned", t => {
+	});
 
-	const object = new ZoomSettings();
-	object.clone();
-	t.pass();
+	it("can be cloned", () => {
+
+		const object = new ZoomSettings();
+		assert.doesNotThrow(() => object.clone());
+
+	});
 
 });

@@ -1,16 +1,20 @@
-import test from "ava";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { Bindings } from "spatial-controls";
 
-test("can be instantiated", t => {
+describe("Bindings", () => {
 
-	t.notThrows(() => new Bindings());
+	it("can be instantiated", () => {
 
-});
+		assert.doesNotThrow(() => new Bindings());
 
-test("can be cloned", t => {
+	});
 
-	const object = new Bindings();
-	object.clone();
-	t.pass();
+	it("can be cloned", () => {
+
+		const object = new Bindings();
+		assert.doesNotThrow(() => object.clone());
+
+	});
 
 });

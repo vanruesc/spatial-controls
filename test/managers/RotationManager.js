@@ -1,8 +1,13 @@
-import test from "ava";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { RotationManager } from "spatial-controls";
 
-test("can be instantiated", t => {
+describe("RotationManager", () => {
 
-	t.notThrows(() => new RotationManager());
+	it("can be instantiated", () => {
+
+		assert.doesNotThrow(() => new RotationManager());
+
+	});
 
 });

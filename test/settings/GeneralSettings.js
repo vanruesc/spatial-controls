@@ -1,16 +1,20 @@
-import test from "ava";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { GeneralSettings } from "spatial-controls";
 
-test("can be instantiated", t => {
+describe("GeneralSettings", () => {
 
-	t.notThrows(() => new GeneralSettings());
+	it("can be instantiated", () => {
 
-});
+		assert.doesNotThrow(() => new GeneralSettings());
 
-test("can be cloned", t => {
+	});
 
-	const object = new GeneralSettings();
-	object.clone();
-	t.pass();
+	it("can be cloned", () => {
+
+		const object = new GeneralSettings();
+		assert.doesNotThrow(() => object.clone());
+
+	});
 
 });

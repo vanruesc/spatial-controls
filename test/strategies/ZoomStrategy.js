@@ -1,8 +1,13 @@
-import test from "ava";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { ZoomStrategy } from "spatial-controls";
 
-test("can be instantiated", t => {
+describe("ZoomStrategy", () => {
 
-	t.notThrows(() => new ZoomStrategy());
+	it("can be instantiated", () => {
+
+		assert.doesNotThrow(() => new ZoomStrategy());
+
+	});
 
 });

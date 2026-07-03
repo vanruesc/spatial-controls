@@ -1,16 +1,20 @@
-import test from "ava";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { PointerSettings } from "spatial-controls";
 
-test("can be instantiated", t => {
+describe("PointerSettings", () => {
 
-	t.notThrows(() => new PointerSettings());
+	it("can be instantiated", () => {
 
-});
+		assert.doesNotThrow(() => new PointerSettings());
 
-test("can be cloned", t => {
+	});
 
-	const object = new PointerSettings();
-	object.clone();
-	t.pass();
+	it("can be cloned", () => {
+
+		const object = new PointerSettings();
+		assert.doesNotThrow(() => object.clone());
+
+	});
 
 });

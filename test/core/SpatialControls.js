@@ -1,25 +1,28 @@
-import test from "ava";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { SpatialControls } from "spatial-controls";
 
-test("can be instantiated", t => {
+describe("SpatialControls", () => {
 
-	t.notThrows(() => new SpatialControls());
+	it("can be instantiated", () => {
 
-});
+		assert.doesNotThrow(() => new SpatialControls());
 
-test("can copy another instance", t => {
+	});
 
-	const controls1 = new SpatialControls();
-	const controls2 = new SpatialControls();
-	controls1.copy(controls2);
-	t.pass();
+	it("can copy another instance", () => {
 
-});
+		const controls1 = new SpatialControls();
+		const controls2 = new SpatialControls();
+		assert.doesNotThrow(() => controls1.copy(controls2));
 
-test("can be cloned", t => {
+	});
 
-	const controls1 = new SpatialControls();
-	controls1.clone();
-	t.pass();
+	it("can be cloned", () => {
+
+		const controls1 = new SpatialControls();
+		assert.doesNotThrow(() => controls1.clone());
+
+	});
 
 });
