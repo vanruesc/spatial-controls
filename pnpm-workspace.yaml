@@ -4,7 +4,6 @@ allowBuilds:
   'esbuild': true
 
 minimumReleaseAgeExclude:
-- 'esbuild-plugin-glsl'
 - 'eslint-config-aether'
 - 'three'
 
