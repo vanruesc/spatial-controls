@@ -42,6 +42,10 @@ footer img:hover {
 	opacity: 0.25;
 }
 
+.viewport:focus-visible {
+	outline: none;
+}
+
 .loading {
 	align-items: center;
 	bottom: 0;
